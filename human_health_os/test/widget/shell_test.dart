@@ -1,5 +1,6 @@
-// FORGE 001 acceptance (v0.27 doc 209): app starts, responsive shell renders,
-// destinations change, non-production profile visible, Today shown, navigation to Labs.
+// F001 acceptance (v0.27 doc 209; v0.31 §17/§39 AC-5): app starts, responsive
+// shell renders, Today shown, Today → Timeline → Labs, non-production profile
+// and build identity visible.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/app/bootstrap.dart';
@@ -95,6 +96,74 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('screen-labs')), findsOneWidget);
   });
+
+  // v0.31 F001: Today → Timeline → Labs on both navigation forms.
+  Future<void> visit(
+    WidgetTester tester,
+    String label, {
+    Finder? within,
+  }) async {
+    final target = find.text(label);
+    await tester.tap(
+      within == null ? target : find.descendant(of: within, matching: target),
+    );
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('phone: Today → Timeline → Labs (bottom bar)', (tester) async {
+    await pumpApp(tester, size: phone);
+    expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
+    expect(find.byKey(const ValueKey('nav-bar')), findsOneWidget);
+    await visit(tester, 'Timeline');
+    expect(find.byKey(const ValueKey('screen-timeline')), findsOneWidget);
+    expect(find.text('Planned in Forge F003'), findsOneWidget);
+    await visit(tester, 'Labs');
+    expect(find.byKey(const ValueKey('screen-labs')), findsOneWidget);
+    expect(find.byKey(const ValueKey('screen-timeline')), findsNothing);
+    expect(find.text('Planned in Forge F004'), findsOneWidget);
+  });
+
+  testWidgets('desktop: Today → Timeline → Labs (rail)', (tester) async {
+    await pumpApp(tester, size: desktop);
+    final rail = find.byKey(const ValueKey('nav-rail'));
+    await visit(tester, 'Timeline', within: rail);
+    expect(find.byKey(const ValueKey('screen-timeline')), findsOneWidget);
+    await visit(tester, 'Labs', within: rail);
+    expect(find.byKey(const ValueKey('screen-labs')), findsOneWidget);
+    await visit(tester, 'Today', within: rail);
+    expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
+  });
+
+  testWidgets('This build shows the build identity it was given', (
+    tester,
+  ) async {
+    await pumpApp(
+      tester,
+      size: desktop,
+      config: const AppConfig(
+        profile: BuildProfile.development,
+        version: '0.1.0+1',
+        sourceRevision: 'abc',
+        flutterVersion: '3.47.6',
+        dartVersion: '3.13.5',
+      ),
+    );
+    expect(find.text('3.47.6'), findsOneWidget);
+    expect(find.text('3.13.5'), findsOneWidget);
+    expect(find.text('Record schema'), findsOneWidget);
+    expect(find.text('v1'), findsOneWidget);
+  });
+
+  testWidgets(
+    'build identity that was not passed reads "unknown", not a guess',
+    (tester) async {
+      await pumpApp(tester, size: desktop);
+      expect(find.text('Flutter'), findsOneWidget);
+      expect(find.text('Dart'), findsOneWidget);
+      // Flutter and Dart versions were not passed to devConfig.
+      expect(find.text('unknown'), findsNWidgets(2));
+    },
+  );
 
   testWidgets('phone: "More" reaches every non-primary destination', (
     tester,

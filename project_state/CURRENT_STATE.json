@@ -3,13 +3,13 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "FORGE_PLANNING",
+  "development_state": "TESTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 first run 2026-10-06; reconciled to v0.31 2026-10-06)",
   "active_forge": {
     "forge_id": "F001",
     "ladder": "v0.31 §39",
     "goal": "Repository heartbeat re-verified under v0.31: shell, Today/Timeline/Labs, build identity, one host build + runtime receipt",
-    "status": "SPECIFIED",
+    "status": "TESTING",
     "baseline_commit": "d1df671de4ad861166a0f2f97d5198ccac79cd61",
     "started_at": "2026-10-06T21:40:46Z",
     "scope": [
@@ -26,15 +26,37 @@
       "AC-5 flutter test passes and covers: shell at phone and desktop widths (rail >= 840 dp, bar below), Today shown at start, Today -> Timeline -> Labs on phone and desktop, non-production profile visible, build identity (version, source revision, profile, Flutter, Dart, record schema) visible, no network client in lib/ (receipt)",
       "AC-6 flutter build web --release --no-web-resources-cdn exits 0; build receipt with artifact SHA-256, lock digest, toolchain, source revision, profile",
       "AC-7 web runtime smoke in Chromium: app starts, Today shown, Today -> Timeline -> Labs, build banner and Flutter version visible, 0 external requests, 0 page errors (receipt)",
-      "AC-8 F001 adds no persistence: no changes under lib/src/data/ or lib/src/domain/",
+      "AC-8 F001 changes no persistence behavior: vault format, storage policy and repository code paths unchanged; test/data/* unchanged and passing. Only user-visible notice text citing Forge ids may change (refined during SPECIFY, before implementation)",
       "AC-9 every PASS above has a JSON receipt under evidence/; tools/validate_project_state.py passes"
     ],
     "completed_steps": [
-      "Phase 0 v0.31 reconciliation"
+      "Phase 0 v0.31 reconciliation",
+      "SPECIFY: AC-8 refined (notice texts cite legacy Forge ids)",
+      "IMPLEMENT: tools/evidence/run_gate.py (+6 unit tests)",
+      "IMPLEMENT: build identity (Flutter, Dart, record schema) in This build",
+      "IMPLEMENT: shell and capability texts cite v0.31 ladder ids",
+      "IMPLEMENT: Today -> Timeline -> Labs widget tests (phone, desktop) + identity tests",
+      "IMPLEMENT: web smoke Timeline step + identity check; CI passes identity defines"
     ],
     "last_verified_gate": null,
-    "next_action": "implement tools/evidence/run_gate.py",
-    "files_touched": [],
+    "next_action": "commit, then run gates through tools/evidence/run_gate.py",
+    "files_touched": [
+      "tools/evidence/run_gate.py",
+      "tools/evidence/test_run_gate.py",
+      "tools/validate_project_state.py",
+      "tools/flutter_web_smoke.mjs",
+      "human_health_os/lib/src/config/app_config.dart",
+      "human_health_os/lib/src/features/today/today_screen.dart",
+      "human_health_os/lib/src/l10n/strings.dart",
+      "human_health_os/lib/src/navigation/destinations.dart",
+      "human_health_os/lib/src/core/capabilities.dart",
+      "human_health_os/lib/src/data/local/storage_io.dart (notice text only)",
+      "human_health_os/lib/src/data/local/storage_web.dart (notice text only)",
+      "human_health_os/test/widget/shell_test.dart",
+      ".github/workflows/ci.yml",
+      "CLAUDE.md",
+      ".gitignore"
+    ],
     "migration_ids": [],
     "evidence_ids": [],
     "blocker": null

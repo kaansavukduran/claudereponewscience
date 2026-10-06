@@ -45,16 +45,20 @@ jobs:
           channel: stable
       - run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev ninja-build
       - run: flutter pub get --enforce-lockfile
-      - run: dart format --output=none --set-exit-if-changed lib test
+      - run: dart format --output=none --set-exit-if-changed .
       - run: flutter analyze
       - run: flutter test
-      - run: flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=${{ github.sha }}
-      - run: flutter build linux --release --dart-define=APP_ENV=development
+      # Build identity (v0.31 §12): versions come from the toolchain that builds.
+      - run: |
+          echo "FLUTTER_VERSION=$(flutter --version --machine | python3 -c 'import json,sys; print(json.load(sys.stdin)["frameworkVersion"])')" >> "$GITHUB_ENV"
+          echo "DART_VERSION=$(flutter --version --machine | python3 -c 'import json,sys; print(json.load(sys.stdin)["dartSdkVersion"])')" >> "$GITHUB_ENV"
+      - run: flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=${{ github.sha }} --dart-define=FLUTTER_VERSION=$FLUTTER_VERSION --dart-define=DART_VERSION=$DART_VERSION
+      - run: flutter build linux --release --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=${{ github.sha }} --dart-define=FLUTTER_VERSION=$FLUTTER_VERSION --dart-define=DART_VERSION=$DART_VERSION
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      - run: cd .. && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium && node tools/flutter_web_smoke.mjs
+      - run: cd .. && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium && EXPECT_FLUTTER_VERSION=$FLUTTER_VERSION node tools/flutter_web_smoke.mjs
 
   flutter-android:
     runs-on: ubuntu-latest

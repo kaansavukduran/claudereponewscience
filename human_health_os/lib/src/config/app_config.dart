@@ -27,9 +27,13 @@ class AppConfig {
     required this.profile,
     required this.version,
     required this.sourceRevision,
+    this.flutterVersion = 'unknown',
+    this.dartVersion = 'unknown',
   });
 
-  /// Reads `--dart-define=APP_ENV=…`, `APP_VERSION` and `SOURCE_REVISION`.
+  /// Reads `--dart-define=APP_ENV=…`, `APP_VERSION`, `SOURCE_REVISION`,
+  /// `FLUTTER_VERSION` and `DART_VERSION` (build identity, v0.31 §12).
+  /// Anything not passed stays `unknown`; nothing is guessed.
   factory AppConfig.fromEnvironment() {
     return AppConfig(
       profile: BuildProfile.parse(
@@ -43,18 +47,28 @@ class AppConfig {
         'SOURCE_REVISION',
         defaultValue: 'unknown',
       ),
+      flutterVersion: const String.fromEnvironment(
+        'FLUTTER_VERSION',
+        defaultValue: 'unknown',
+      ),
+      dartVersion: const String.fromEnvironment(
+        'DART_VERSION',
+        defaultValue: 'unknown',
+      ),
     );
   }
 
   final BuildProfile profile;
   final String version;
   final String sourceRevision;
+  final String flutterVersion;
+  final String dartVersion;
 
   bool get isProduction => profile == BuildProfile.production;
 
   /// Only development builds (run from source by developers) may keep an
   /// unencrypted vault. Staging previews and production packages stay
-  /// memory-only until the encrypted vault (FORGE 004), so no distributed
+  /// memory-only until the encrypted vault (v0.31 F006), so no distributed
   /// artifact ever writes plaintext health data (v0.28 / D-009 / D-010).
   bool get mayPersistUnencrypted => profile == BuildProfile.development;
 

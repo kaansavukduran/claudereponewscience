@@ -14,3 +14,6 @@ apps/client/android/
 apps/client/ios/
 .DS_Store
 __pycache__/
+
+# Raw gate logs (receipts keep only their SHA-256 and a tail)
+evidence/logs/

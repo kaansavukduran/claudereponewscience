@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
 import '../../core/capabilities.dart';
+import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
@@ -52,6 +53,12 @@ class TodayScreen extends StatelessWidget {
               _KeyValue(s.version, services.config.version),
               _KeyValue(s.platform, services.registry.platform.name),
               _KeyValue(s.sourceRevision, services.config.shortRevision),
+              _KeyValue(s.flutterVersion, services.config.flutterVersion),
+              _KeyValue(s.dartVersion, services.config.dartVersion),
+              _KeyValue(
+                s.recordSchema,
+                'v${HealthRecord.currentSchemaVersion}',
+              ),
             ],
           ),
         ),

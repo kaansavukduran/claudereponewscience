@@ -32,6 +32,9 @@ class S {
   String get version => _t('Version', 'Sürüm');
   String get platform => _t('Platform', 'Platform');
   String get sourceRevision => _t('Source revision', 'Kaynak revizyonu');
+  String get flutterVersion => _t('Flutter', 'Flutter');
+  String get dartVersion => _t('Dart', 'Dart');
+  String get recordSchema => _t('Record schema', 'Kayıt şeması');
   String get capabilities =>
       _t('Capabilities on this device', 'Bu cihazdaki yetenekler');
   String get devBanner => _t(

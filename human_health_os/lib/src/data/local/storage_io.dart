@@ -92,7 +92,7 @@ Future<StorageChoice> createPlatformRepository(
     return StorageChoice(
       inMemoryRepository(),
       notice:
-          '${config.isProduction ? 'Production' : 'Staging'} builds do not save unencrypted health data. Saving turns on with the encrypted vault (FORGE 004); entries last until the app closes.',
+          '${config.isProduction ? 'Production' : 'Staging'} builds do not save unencrypted health data. Saving turns on with the encrypted vault (Forge F006); entries last until the app closes.',
     );
   }
   // v0.28 / D-009: portable data must be encrypted. Never write a plaintext
@@ -100,7 +100,7 @@ Future<StorageChoice> createPlatformRepository(
   if (isPortableMode(executablePath: executablePath)) {
     return StorageChoice(
       inMemoryRepository(),
-      notice: 'Portable mode saves only to an encrypted vault, which arrives in FORGE 004. Nothing is written next to the app; entries last until it closes.',
+      notice: 'Portable mode saves only to an encrypted vault, which arrives in Forge F006. Nothing is written next to the app; entries last until it closes.',
     );
   }
   final dir = resolveDataDirectory(env: env, executablePath: executablePath);

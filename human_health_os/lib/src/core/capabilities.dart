@@ -74,19 +74,19 @@ class CapabilityRegistry {
         id: 'health_platform',
         label: 'Health Connect',
         status: CapabilityStatus.notImplemented,
-        detail: 'Android adapter planned (FORGE 023).',
+        detail: 'Android adapter planned (Forge F013).',
       ),
       HostPlatform.ios => const Capability(
         id: 'health_platform',
         label: 'Apple Health (HealthKit)',
         status: CapabilityStatus.notImplemented,
-        detail: 'iOS adapter planned (FORGE 024).',
+        detail: 'iOS adapter planned (Forge F013).',
       ),
       _ => const Capability(
         id: 'health_platform',
         label: 'Health platform',
         status: CapabilityStatus.unsupportedOnPlatform,
-        detail: 'No HealthKit or Health Connect on this platform. Manual entry works now; file import is planned (FORGE 025).',
+        detail: 'No HealthKit or Health Connect on this platform. Manual entry works now; file import is planned (Forge F005).',
       ),
     };
     final keyStore = switch (platform) {
@@ -94,13 +94,13 @@ class CapabilityRegistry {
         id: 'key_store',
         label: 'Key protection',
         status: CapabilityStatus.notImplemented,
-        detail: 'Browser: no OS keychain. WebCrypto + passphrase planned (FORGE 004).',
+        detail: 'Browser: no OS keychain. WebCrypto + passphrase planned (Forge F006).',
       ),
       _ => const Capability(
         id: 'key_store',
         label: 'Key protection',
         status: CapabilityStatus.notImplemented,
-        detail: 'Encrypted vault with passphrase + platform key store planned (FORGE 004).',
+        detail: 'Encrypted vault with passphrase + platform key store planned (Forge F006).',
       ),
     };
     final storageCap = switch (storage?.durability) {
@@ -108,7 +108,7 @@ class CapabilityRegistry {
         id: 'local_storage',
         label: 'Local health records',
         status: CapabilityStatus.available,
-        detail: 'Saved in a file on this device. Not encrypted yet (development build); encryption arrives in FORGE 004.',
+        detail: 'Saved in a file on this device. Not encrypted yet (development build); encryption arrives in Forge F006.',
       ),
       StorageDurability.browserStorage => const Capability(
         id: 'local_storage',

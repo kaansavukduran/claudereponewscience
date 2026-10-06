@@ -25,10 +25,12 @@ You are the technical lead of this repository. Read `project_state/CURRENT_STATE
 ```bash
 export PATH=/opt/toolchains/flutter/bin:$PATH               # Flutter 3.47.6 / Dart 3.13.5 (install: see docs/DEVELOPMENT_PLAN.md)
 export CHROME_EXECUTABLE=/opt/pw-browsers/chromium-1194/chrome-linux/chrome
-cd human_health_os && flutter pub get && dart format --output=none --set-exit-if-changed lib test && flutter analyze && flutter test
-flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=$(git rev-parse HEAD)
+cd human_health_os && flutter pub get && dart format --output=none --set-exit-if-changed . && flutter analyze && flutter test
+flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=$(git rev-parse HEAD) \
+  --dart-define=FLUTTER_VERSION=3.47.6 --dart-define=DART_VERSION=3.13.5   # build identity, read from `flutter --version`
 xvfb-run -a flutter test integration_test -d linux             # real file IO, relaunch, folder move (needs libgtk-3-dev)
-cd .. && node tools/flutter_web_smoke.mjs                       # Playwright runtime smoke of human_health_os/build/web
+cd .. && EXPECT_FLUTTER_VERSION=3.47.6 node tools/flutter_web_smoke.mjs   # Playwright smoke: Today → Timeline → Labs, identity
+python3 tools/validate_project_state.py && python3 -m unittest tools/evidence/test_run_gate.py   # state/evidence self-audit
 pnpm install && pnpm typecheck && pnpm test && python3 tools/verify_contracts.py   # TS reference + Build Lab
 ```
 

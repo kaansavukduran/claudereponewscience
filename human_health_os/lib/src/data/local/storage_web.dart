@@ -43,7 +43,7 @@ Future<StorageChoice> createPlatformRepository(AppConfig config) async {
     return StorageChoice(
       inMemoryRepository(),
       notice:
-          '${config.isProduction ? 'Production' : 'Staging'} builds do not save unencrypted health data. Saving turns on with the encrypted vault (FORGE 004); entries last until the app closes.',
+          '${config.isProduction ? 'Production' : 'Staging'} builds do not save unencrypted health data. Saving turns on with the encrypted vault (Forge F006); entries last until the app closes.',
     );
   }
   _Storage? storage;

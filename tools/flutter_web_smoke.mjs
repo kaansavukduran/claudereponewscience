@@ -4,6 +4,8 @@
 // enable Flutter semantics, assert Today is shown, navigate to Labs, and record
 // every network request (the app must not need any external host).
 // Usage: node tools/flutter_web_smoke.mjs [buildDir] [outDir]
+// Env: EXPECT_FLUTTER_VERSION=<x.y.z> also checks the in-app build identity
+// (v0.31 F001 AC-7); unset = the identity row is only required to exist.
 import { createServer } from 'node:http';
 import { readFile, stat, mkdir, writeFile } from 'node:fs/promises';
 import { extname, join, resolve } from 'node:path';
@@ -37,11 +39,12 @@ const browserVersion = browser.version();
 // Explicit BCP-47 locales: a POSIX-locale container makes headless Chromium report
 // 'en-US@posix', which Flutter web rejects at startup (see project_state/RISKS.md R-11).
 const RUNS = [
-  { label: 'desktop-en', viewport: { width: 1440, height: 900 }, locale: 'en-US', today: 'Today', labs: 'Labs', labsText: /Reference interval ≠ optimal target/, banner: /DEVELOPMENT BUILD/ },
-  { label: 'phone-en', viewport: { width: 390, height: 844 }, locale: 'en-US', today: 'Today', labs: 'Labs', labsText: /Reference interval ≠ optimal target/, banner: /DEVELOPMENT BUILD/ },
-  { label: 'phone-tr', viewport: { width: 390, height: 844 }, locale: 'tr-TR', today: 'Bugün', labs: 'Lab', labsText: /Referans aralığı ≠ optimal hedef/, banner: /GELİŞTİRME DERLEMESİ/ },
+  { label: 'desktop-en', viewport: { width: 1440, height: 900 }, locale: 'en-US', today: 'Today', timeline: 'Timeline', timelineText: /A correction adds a new version/, labs: 'Labs', labsText: /Reference interval ≠ optimal target/, banner: /DEVELOPMENT BUILD/ },
+  { label: 'phone-en', viewport: { width: 390, height: 844 }, locale: 'en-US', today: 'Today', timeline: 'Timeline', timelineText: /A correction adds a new version/, labs: 'Labs', labsText: /Reference interval ≠ optimal target/, banner: /DEVELOPMENT BUILD/ },
+  { label: 'phone-tr', viewport: { width: 390, height: 844 }, locale: 'tr-TR', today: 'Bugün', timeline: 'Zaman çizelgesi', timelineText: /Düzeltme yeni bir sürüm ekler/, labs: 'Lab', labsText: /Referans aralığı ≠ optimal hedef/, banner: /GELİŞTİRME DERLEMESİ/ },
 ];
-for (const { label, viewport, locale, today: todayLabel, labs: labsLabel, labsText, banner } of RUNS) {
+const expectFlutter = process.env.EXPECT_FLUTTER_VERSION;
+for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel, timelineText, labs: labsLabel, labsText, banner } of RUNS) {
   const page = await browser.newPage({ viewport, locale });
   const external = [];
   const errors = [];
@@ -62,7 +65,26 @@ for (const { label, viewport, locale, today: todayLabel, labs: labsLabel, labsTe
   await today.waitFor({ timeout: 30_000 }).catch(() => {});
   check(`${label}: app starts and shows ${todayLabel}`, await today.isVisible().catch(() => false));
   check(`${label}: development profile banner visible`, await page.getByText(banner).first().isVisible().catch(() => false));
+  if (locale === 'en-US') {
+    const flutterRow = page.getByText('Flutter', { exact: true }).first();
+    await flutterRow.scrollIntoViewIfNeeded().catch(() => {});
+    check(`${label}: build identity row (Flutter) present`, await flutterRow.isVisible().catch(() => false));
+    if (expectFlutter) {
+      check(`${label}: build identity shows Flutter ${expectFlutter}`, await page.getByText(expectFlutter, { exact: true }).first().isVisible().catch(() => false));
+    }
+  }
   await page.screenshot({ path: join(out, `flutter-web-${label}-today.png`) });
+  // v0.31 F001: Today → Timeline → Labs.
+  try {
+    await navItem(timelineLabel).click({ timeout: 15_000 });
+  } catch (e) {
+    check(`${label}: ${timelineLabel} navigation item found`, false, e.message.split('\n')[0]);
+  }
+  const timeline = heading(timelineLabel);
+  await timeline.waitFor({ timeout: 15_000 }).catch(() => {});
+  check(`${label}: navigates to ${timelineLabel}`, await timeline.isVisible().catch(() => false));
+  check(`${label}: Timeline principle visible`, await page.getByText(timelineText).first().isVisible().catch(() => false));
+  await page.screenshot({ path: join(out, `flutter-web-${label}-timeline.png`) });
   try {
     await navItem(labsLabel).click({ timeout: 15_000 });
   } catch (e) {
