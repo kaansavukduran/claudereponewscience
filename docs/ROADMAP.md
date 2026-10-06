@@ -3,9 +3,9 @@
 Each line is one bounded FORGE. A stage starts only after the stage it depends on reaches the stated evidence level. The status of each increment is tracked in `project_state/CURRENT_STATE.json`.
 
 ## FOUNDATION
-- **F001 – Flutter bootstrap + responsive shell.** `flutter create --empty` for 6 platforms. Ten destinations with rail/bar navigation. Visible build-profile badge. Widget tests. Web build and Playwright runtime smoke. Linux, Android, iOS, macOS and Windows are reported independently (v0.27 gate V1–V3).
-- **F002 – Local heartbeat.** Profile plus one canonical record (body weight) through the `HealthRepository` port. In-memory and file-backed vault adapters. Save, restart, and get the same record back. Missing ≠ 0 in the UI. *(The user's §32 first vertical slice.)*
-- **F003 – Dart core-derived engines** (`lib/src/domain/scoring`). Must pass `contracts/golden_vectors/core_derived_vectors.json` exactly like TS and Python. Adds an architecture test that blocks Flutter imports in the domain.
+- **F001 – Flutter bootstrap + responsive shell.** `flutter create --empty` for 6 platforms. Ten destinations with rail/bar navigation. Visible build-profile badge. Widget tests. Web build and Playwright runtime smoke. Linux, Android, iOS, macOS and Windows are reported independently (v0.27 gate V1–V3). — *Done: RUNTIME_TESTED on web and Linux (FORGE 001).*
+- **F002 – Local heartbeat.** Profile plus one canonical record (body weight) through the `HealthRepository` port. In-memory and file-backed vault adapters. Save, restart, and get the same record back. Missing ≠ 0 in the UI. *(The user's §32 first vertical slice.)* — *Done: RUNTIME_TESTED on web and Linux for development builds (FORGE 002). Storage is unencrypted; production and portable stay memory-only until F004.*
+- **F003 – Dart core-derived engines** (`lib/src/domain/scoring`). Must pass `contracts/golden_vectors/core_derived_vectors.json` exactly like TS and Python. The architecture test that blocks Flutter imports in the domain already exists (F002).
 - **F004 – Encrypted vault v1.** Versioned header, passphrase KDF, wrapped data key, wrong-passphrase and corrupt-header handling, and a portable-path-move test (same profile UUID). Web uses WebCrypto plus an export warning.
 - F005 – Schema migrations and backup/restore of the vault (checkpoint before migrate).
 

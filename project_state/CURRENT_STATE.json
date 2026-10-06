@@ -7,7 +7,10 @@
   "authoritative_sources": {
     "semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process": "docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md",
-    "candidate": "docs/handoff/v0.27-candidate/",
+    "candidate": [
+      "docs/handoff/v0.27-candidate/",
+      "docs/handoff/v0.28-candidate/ (Linux distribution layer; ZIP with docs 216–226 not supplied)"
+    ],
     "missing": [
       "v0.25 (user lineage)",
       "v0.26 baseline sha256 687335de…3369",
@@ -24,8 +27,8 @@
     "pnpm": "10.28.0",
     "python": "3.13"
   },
-  "last_forge": "FORGE 001",
-  "next_forge": "FORGE 002 — local heartbeat (profile + one canonical record, save/restart/read back)",
+  "last_forge": "FORGE 002",
+  "next_forge": "FORGE F030L-1 — Linux distribution, first real packages (tar.zst, deb, rpm; Flatpak/AppImage only if their builders install), per docs/handoff/v0.28-candidate/BUILD_LINUX_DESKTOP_DISTRIBUTION_v0.28.txt",
   "forges": {
     "F001": {
       "title": "Flutter bootstrap + responsive shell",
@@ -35,19 +38,34 @@
         "reports/runtime/flutter_web_smoke.json",
         "reports/artifacts/forge-001.json"
       ]
+    },
+    "F002": {
+      "title": "Local heartbeat: canonical record, append-only vault log, weight entry",
+      "status": "RUNTIME_TESTED (web: Playwright 26/26; Linux: integration_test + launch on Ubuntu 24.04 X11)",
+      "source_revision": "3243163d0808c396b69ceb039671b5272941f355",
+      "evidence": [
+        "project_state/FORGE_LOG.md#forge-002-local-heartbeat-profile--one-canonical-record-save--restart--read-back",
+        "reports/artifacts/forge-002.json",
+        "reports/runtime/flutter_web_smoke.json",
+        "reports/runtime/flutter-linux-run.log"
+      ]
     }
   },
   "targets": {
     "web": {
       "status": "RUNTIME_TESTED",
-      "evidence": "reports/runtime/flutter_web_smoke.json"
+      "evidence": "reports/runtime/flutter_web_smoke.json (F002, 26/26)"
     },
     "linux": {
-      "status": "RUNTIME_TESTED (launch only, Ubuntu 24.04)",
+      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch + integration_test)",
       "product_surface": true,
-      "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12)",
-      "distro_tests": "NOT_RUN (Fedora/Nobara, Debian, Ubuntu 22.04)",
-      "evidence": "reports/runtime/flutter-linux-today.png"
+      "packaged": "NOT_RUN (tar.zst, deb, rpm, AppImage, Flatpak)",
+      "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12); older distros need an older-glibc builder (D-009)",
+      "distro_tests": "NOT_RUN (Fedora, Nobara KDE/GNOME, Debian 12/13, Ubuntu 22.04; Wayland)",
+      "evidence": [
+        "reports/runtime/flutter-linux-run.log",
+        "reports/runtime/flutter-linux-today.png"
+      ]
     },
     "android": {
       "status": "BLOCKED_ENVIRONMENT",
@@ -72,14 +90,26 @@
   },
   "domains": {
     "shell": "RUNTIME_TESTED",
-    "persistence": "NOT_STARTED",
+    "persistence": "RUNTIME_TESTED for development builds only (unencrypted; production + portable memory-only until F004)",
     "encryption_vault": "NOT_STARTED",
     "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
     "labs": "NOT_STARTED in Flutter (TS reference engine exists)",
-    "sync": "NOT_STARTED (TS reference API exists, dev auth only)"
+    "sync": "NOT_STARTED (TS reference API exists, dev auth only)",
+    "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED (body.weight only)"
   },
   "git": {
     "branch": "claude/code-capabilities-kz21fr",
     "push": "BLOCKED (403: no GitHub access for Claude)"
+  },
+  "storage_policy": {
+    "production": "memory only",
+    "portable": "memory only until encrypted vault (F004); nothing written beside the executable",
+    "development_desktop": "unencrypted JSON-lines log in XDG data dir / Application Support / LOCALAPPDATA",
+    "development_web": "unencrypted localStorage (may be evicted)",
+    "android_ios": "memory only (path adapter planned)"
+  },
+  "audit": {
+    "F001_honesty_lens": "findings fixed in F002",
+    "F001_code_and_completeness_lenses": "did not complete; not rerun"
   }
 }

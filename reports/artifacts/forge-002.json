@@ -1,0 +1,61 @@
+{
+  "forge": "FORGE 002",
+  "recorded_at": "2026-10-06",
+  "source_revision": "3243163d0808c396b69ceb039671b5272941f355",
+  "note": "Built from commit 3243163 (code + docs). At build time the working tree differed only in reports/runtime/* (evidence outputs), which is why the smoke JSON says working_tree_dirty=true. Archives are deterministic tars (sorted, fixed mtime/owner) kept in the session scratchpad, not committed; hashes identify the exact bytes produced in this container.",
+  "toolchain": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "host": "Ubuntu 24.04.5 LTS x86_64, glibc 2.39",
+    "chromium": "141.0.7390.37 (Playwright 1.56.1)"
+  },
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "artifacts": [
+    {
+      "target": "web",
+      "profile": "development",
+      "command": "flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=3243163d0808c396b69ceb039671b5272941f355",
+      "archive": "scratchpad/hhos-web-f002.tgz (deterministic tar of build/web)",
+      "sha256": "91ff29f47a9c2b8ccae15314b207ada84cb41b141d6a291ae99ec84c97ae5ee2",
+      "main_dart_js_sha256": "9ceeb57c08e73e09d3149af83f86e987b914c75a40aef182651b305778d8f41d",
+      "signing": "n/a",
+      "status": "COMPILED + RUNTIME_TESTED (Playwright 26/26: desktop-en, phone-en, phone-tr; save → reload → persisted in localStorage; 0 external requests)",
+      "evidence": "reports/runtime/flutter_web_smoke.json"
+    },
+    {
+      "target": "linux-x64",
+      "profile": "development",
+      "command": "LANG=C.UTF-8 flutter build linux --release --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=3243163d0808c396b69ceb039671b5272941f355",
+      "archive": "scratchpad/hhos-linux-f002.tgz (deterministic tar of the release bundle)",
+      "sha256": "5ce04aca2816d893d5526671c55ab6802e413cf2968e29cfcfd9e84b5fc3dc7d",
+      "executable_sha256": "e097cd0828912654350e36ac26ad5b2af31edd4a3604c5b2afa50e249eaf0359",
+      "executable_note": "The GTK runner is identical to F001; the Dart code lives in lib/libapp.so.",
+      "libapp_so_sha256": "3568ddbf041a28fd8a9a0a5979861eeee8eb214e822cc075c1c71c5e3d2e6883",
+      "glibc_floor": "GLIBC_2.34 (objdump -T over the executable and bundled .so files)",
+      "ldd_unresolved": 0,
+      "signing": "none",
+      "status": "COMPILED + RUNTIME_TESTED on Ubuntu 24.04 / Xvfb X11 only (launch + 12 s liveness + screenshot). NOT PACKAGED. Other distros and Wayland: NOT_RUN.",
+      "evidence": ["reports/runtime/flutter-linux-run.log", "reports/runtime/flutter-linux-today.png"]
+    }
+  ],
+  "tests": {
+    "dart_format": "PASS (0 changed)",
+    "flutter_analyze": "PASS (no issues)",
+    "flutter_test": "PASS 58/58 (unit, domain, data contract + storage policy, architecture, widget)",
+    "integration_test_linux": "PASS 1/1 (debug bundle under Xvfb: save '77,9' → relaunch on same file → same record → folder moved → same record)",
+    "mutation_check": "Adding `export \"package:flutter/foundation.dart\"` to lib/src/domain/profile/profile.dart makes test/architecture fail (+4 -1); reverted"
+  },
+  "not_built": [
+    { "target": "android-apk/aab", "status": "BLOCKED_ENVIRONMENT", "reason": "no Android SDK; dl.google.com / maven.google.com return 403" },
+    { "target": "ios", "status": "BLOCKED_BY_HOST_OS", "reason": "requires macOS + Xcode" },
+    { "target": "macos", "status": "BLOCKED_BY_HOST_OS", "reason": "requires macOS + Xcode" },
+    { "target": "windows-portable/installer", "status": "BLOCKED_BY_HOST_OS", "reason": "requires Windows + Visual Studio C++ workload" },
+    { "target": "linux packages (flatpak, appimage, tar.zst, deb, rpm)", "status": "NOT_RUN", "reason": "scheduled for the Linux distribution FORGE (F030L)" }
+  ],
+  "attestation": "NOT_GENERATED",
+  "sbom": "NOT_GENERATED. No direct third-party runtime package; SDK-pinned transitive runtime packages: characters, clock, collection, intl, material_color_utilities, meta, path, vector_math (see DECISIONS D-007). Hosted dev dependency: flutter_lints 6.0.0."
+}
