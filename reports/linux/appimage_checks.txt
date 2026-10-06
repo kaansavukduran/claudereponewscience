@@ -1,0 +1,7 @@
+## /dev/fuse: crw------- 1 root root 10, 229 Oct  5 05; fusermount3: /usr/bin/fusermount3
+## runtime: AppImage runtime version: https://github.com/AppImage/type2-runtime/commit/8f39b89
+## FUSE mount while running:
+HumanHealthOS-0.1.0-staging2-x86_64.AppImage fuse.HumanHealthOS-0.1.0-staging2-x86_64.AppImage
+## mounts left after stop: 0
+## without fusermount3 (no FUSE helper), plain launch:
+Error: No suitable fusermount binary found on the $PATH

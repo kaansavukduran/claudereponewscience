@@ -1,0 +1,16 @@
+## apt-get install ./human-health-os_0.1.0~staging2_amd64.deb on Ubuntu 24.04.5 LTS
+Unpacking human-health-os (0.1.0~staging2) ...
+Setting up human-health-os (0.1.0~staging2) ...
+Status: install ok installed
+Version: 0.1.0~staging2
+lrwxrwxrwx 1 root root 38 Oct  6 21:31 /usr/bin/human-health-os -> ../lib/human-health-os/human_health_os
+desktop-file-validate (installed): OK
+? Validation was successful: pedantic: 1
+## apt-get remove human-health-os
+Removing human-health-os (0.1.0~staging2) ...
+## leftover package paths:
+  gone /usr/lib/human-health-os
+  gone /usr/bin/human-health-os
+  gone /usr/share/applications/org.humanhealthos.HumanHealthOS.desktop
+## user data sentinel after remove:
+{"sentinel":"user data must survive uninstall"}

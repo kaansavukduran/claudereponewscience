@@ -1,0 +1,12 @@
+# ubuntu22-deb-x11 2026-10-06T21:34:37Z
+# host: Ubuntu 22.04 LTS, x86_64, glibc 2.35
+# display: DISPLAY=:99 WAYLAND_DISPLAY= GDK_BACKEND=
+# command: /usr/bin/human-health-os
+
+(org.humanhealthos.HumanHealthOS:6577): Atk-CRITICAL **: 21:34:37.534: atk_socket_embed: assertion 'plug_id != NULL' failed
+Couldn't open libGLESv2.so.2: libGLESv2.so.2: cannot open shared object file: No such file or directory
+# liveness: exited early with status 134
+# screenshot: none kept (process had exited; root window was blank)
+# app files under watched dir: unchanged
+# mesa shader cache files (driver, not app data): 0
+# result: FAIL

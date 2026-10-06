@@ -1,0 +1,17 @@
+# ubuntu24-portable-tarzst-x11 2026-10-06T21:33:26Z
+# host: Ubuntu 24.04.5 LTS, x86_64, glibc 2.39
+# display: DISPLAY=:99 WAYLAND_DISPLAY= GDK_BACKEND=
+# command: <scratch>/port/HumanHealthOS-Linux-x86_64-Portable/human_health_os
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(org.humanhealthos.HumanHealthOS:6111): Atk-CRITICAL **: 21:33:26.705: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+
+** (org.humanhealthos.HumanHealthOS:6111): CRITICAL **: 21:33:27.125: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed
+# liveness: alive after 12 s
+# screenshot: byte-identical to ubuntu24-deb-x11.png (md5 be4334448edcb83d2f390c99729fa326), duplicate not kept
+# app files under watched dir: unchanged
+# mesa shader cache files (driver, not app data): 0
+# result: PASS
+# home dir app files after run: 0

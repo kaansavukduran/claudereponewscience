@@ -1,0 +1,54 @@
+{
+  "forge": "F030L-1 (Linux distribution, first real packages); v0.31 ladder: part of F015",
+  "status": "IN_PROGRESS_RECOVERABLE",
+  "interrupted_at": "2026-10-06, by the user's v0.31 one-shot directive (Phase 0 + F001)",
+  "source_revision": "9ac285bd (code e4c64e3 + GLib fix 66572f9 + metainfo 9ac285b)",
+  "build": {
+    "command": "LANG=C.UTF-8 flutter build linux --release --dart-define=APP_ENV=staging --dart-define=APP_VERSION=0.1.0~staging2 --dart-define=SOURCE_REVISION=<HEAD>",
+    "flutter": "3.47.6", "dart": "3.13.5",
+    "host": "Ubuntu 24.04.5 LTS x86_64, glibc 2.39, GLib 2.80",
+    "pubspec_lock_sha256": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+    "glibc_floor": "GLIBC_2.34",
+    "glib_api_cap": "2.64 (GLIB_VERSION_MAX_ALLOWED; fixes undefined g_once_init_enter_pointer on GLib < 2.80)",
+    "symbol_gate": "tools/linux/check_symbols.sh: PASS vs Ubuntu 24.04 and Ubuntu 22.04 rootfs"
+  },
+  "artifacts_session_scratchpad_not_committed": [
+    { "format": "tar.zst (portable)", "file": "HumanHealthOS-Linux-x86_64-Portable.tar.zst", "arch": "x86_64", "bytes": 7774773, "sha256": "39faa9ae2ac14847e2f55a157d8aa3662b5356225a05d0ba1f13e6d8c2aee5c2", "reproducible_rebuild": "same sha256 on two package runs from the same bundle", "signing": "UNSIGNED" },
+    { "format": "deb", "file": "human-health-os_0.1.0~staging2_amd64.deb", "arch": "amd64", "bytes": 7134272, "sha256": "0313b3b1904d824e9379acb08c87fa62c48a01750eb1492392c871f41d4c4f8d", "signing": "UNSIGNED" },
+    { "format": "rpm", "file": "human-health-os-0.1.0~staging2-1.x86_64.rpm", "arch": "x86_64", "bytes": 9537217, "sha256": "d9ff6cbc0e8e27958b2723c7a0b6aca1b33575e729bc25d6b7a9c5714319f578", "signing": "UNSIGNED" },
+    { "format": "AppImage (type 2)", "file": "HumanHealthOS-0.1.0-staging2-x86_64.AppImage", "arch": "x86_64", "bytes": 9701880, "sha256": "ab82820dc0ade0edda5ee81f8cc02bf5bf2aad27b71bfb539532427c258f9fd7", "tooling": "appimagetool 1.9.0 download sha256 46fdd785…83d1 (reports continuous build 172, git 81ee1db); runtime-x86_64 continuous sha256 156f4bdb…9074; neither verified against an upstream signature", "reproducible_rebuild": "no (sha differs per build)", "signing": "UNSIGNED" },
+    { "format": "Flatpak", "status": "NOT_BUILT", "reason": "BLOCKED_ENVIRONMENT: dl.flathub.org denied by egress policy; manifest only (packaging/linux/flatpak)" }
+  ],
+  "smoke": {
+    "ubuntu24_04_host": {
+      "deb": "PASS: apt install resolves deps, launch X11/Xvfb alive 12 s, desktop-file-validate OK, remove leaves no package files, user data sentinel kept (reports/linux/ubuntu24_deb_install.txt, ubuntu24-deb-x11.log/png)",
+      "tar.zst": "PASS: zstd -t, extract, launch X11 alive 12 s, nothing written beside the app or in HOME (ubuntu24-portable-tarzst-x11.log)",
+      "AppImage_fuse": "PASS: launches via FUSE (mount observed while running, cleaned up after) (appimage_checks.txt, ubuntu24-appimage-fuse-x11.log)",
+      "AppImage_extract_and_run": "PASS (ubuntu24-appimage-extract-and-run-x11.log)",
+      "AppImage_without_fusermount": "FAILS with 'No suitable fusermount binary found' (recorded caveat)",
+      "wayland": "PASS on weston 13 headless (pixman), not GNOME/KDE (ubuntu24-portable-wayland-weston.log/png)"
+    },
+    "ubuntu22_04_debootstrap_rootfs": {
+      "staging1": "FAIL: undefined symbol g_once_init_enter_pointer -> fixed by the GLib cap (ubuntu22-deb-x11-BEFORE-FIX.log)",
+      "staging2_deb": "FAIL (OPEN DEFECT): installs, then aborts: libGLESv2.so.2 missing. The Flutter engine dlopens it through libepoxy, so ELF dependency scans (ldd, dpkg-shlibdeps, rpm auto-requires) do not see it (ubuntu22-deb-x11.log)",
+      "staging2_tar.zst": "FAIL (same defect) (ubuntu22-portable-tarzst-x11.log)"
+    },
+    "fedora_44_container_rootfs": "STATIC ONLY: Fedora's rpm 6.0.2 reads the package, digests OK; rpm -i --test lists only the GUI stack as missing; dnf install + launch NOT_RUN (BLOCKED_ENVIRONMENT: Fedora mirrors denied) (fedora44_rpm_checks.txt)",
+    "debian_12_13": "NOT_RUN (BLOCKED_ENVIRONMENT: deb.debian.org denied; Docker Hub returned 429 for debian images)",
+    "nobara_44": "NOT_RUN (no image or mirror reachable; never inferred from Fedora)",
+    "gnome_wayland_kde_wayland": "NOT_RUN"
+  },
+  "static_checks": {
+    "lintian_deb": "3 E (embedded freetype/libjpeg inside libflutter_linux_gtk.so; unstripped runner) + 2 W; inherent to the Flutter engine bundle except the unstripped runner (reports/linux/deb_checks.txt)",
+    "appstream": "appstreamcli validate --no-net: pass (1 pedantic: uppercase in component id)",
+    "desktop_file": "desktop-file-validate: OK"
+  },
+  "next_action_on_resume": [
+    "add libgles2 (deb Depends) and libGLESv2.so.2()(64bit) (rpm Requires); recommend libgl1-mesa-dri",
+    "list runtime-dlopened libraries (libEGL, libGLESv2) in the portable README and a startup dependency check",
+    "adopt spec names: app id com.humanos.HumanHealthOS, AppImage HumanHealthOS-x86_64.AppImage, tarball layout with licenses/, RELEASE_STATE.json, CHECKSUMS.sha256 (v0.31 appendix 218/219/225)",
+    "rebuild staging3, rerun /tmp matrix incl. Ubuntu 22.04 rootfs"
+  ],
+  "sbom": "NOT_GENERATED",
+  "attestation": "NOT_GENERATED"
+}

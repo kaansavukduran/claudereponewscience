@@ -1,0 +1,31 @@
+# ubuntu24-portable-wayland-weston 2026-10-06T21:34:13Z
+# host: Ubuntu 24.04.5 LTS, x86_64, glibc 2.39
+# display: DISPLAY= WAYLAND_DISPLAY=wayland-hhos GDK_BACKEND=wayland
+# command: <scratch>/port/HumanHealthOS-Linux-x86_64-Portable/human_health_os
+
+(org.humanhealthos.HumanHealthOS:6441): Gdk-CRITICAL **: 21:34:13.437: gdk_seat_get_keyboard: assertion 'GDK_IS_SEAT (seat)' failed
+libEGL warning: failed to get driver name for fd -1
+
+libEGL warning: MESA-LOADER: failed to retrieve device information
+
+libEGL warning: failed to get driver name for fd -1
+
+MESA: error: ZINK: vkCreateInstance failed (VK_ERROR_INCOMPATIBLE_DRIVER)
+libEGL warning: egl: failed to create dri2 screen
+
+(org.humanhealthos.HumanHealthOS:6441): Gdk-CRITICAL **: 21:34:13.568: gdk_seat_get_keyboard: assertion 'GDK_IS_SEAT (seat)' failed
+
+(org.humanhealthos.HumanHealthOS:6441): Atk-CRITICAL **: 21:34:13.568: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+
+** (org.humanhealthos.HumanHealthOS:6441): CRITICAL **: 21:34:14.014: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed
+
+(org.humanhealthos.HumanHealthOS:6441): Gdk-CRITICAL **: 21:34:14.014: gdk_seat_get_keyboard: assertion 'GDK_IS_SEAT (seat)' failed
+Gdk-Message: 21:34:14.015: Unable to load  from the cursor theme
+
+(org.humanhealthos.HumanHealthOS:6441): Gdk-CRITICAL **: 21:34:14.015: gdk_seat_get_keyboard: assertion 'GDK_IS_SEAT (seat)' failed
+# liveness: alive after 12 s
+# app files under watched dir: unchanged
+# mesa shader cache files (driver, not app data): 91
+# result: PASS
+# screenshot (second run, weston-screenshooter): ubuntu24-portable-wayland-weston.png

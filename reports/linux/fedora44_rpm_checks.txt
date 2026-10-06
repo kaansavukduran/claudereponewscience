@@ -1,0 +1,21 @@
+## Fedora 44 container rootfs (Docker Hub library/fedora:44, layer sha256:59259e167f13...), RPM version 6.0.2, glibc 2.43
+## query
+human-health-os 0.1.0~staging2-1 x86_64
+## digests
+/tmp/human-health-os-0.1.0~staging2-1.x86_64.rpm: digests OK
+## rpm -i --test in the minimal image (Fedora mirrors are blocked here, so dnf cannot add GTK)
+error: Failed dependencies:
+	hicolor-icon-theme is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libEGL.so.1()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libatk-1.0.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libcairo-gobject.so.2()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libcairo.so.2()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libepoxy.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libfontconfig.so.1()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libgdk-3.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libgdk_pixbuf-2.0.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libgtk-3.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libharfbuzz.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libpango-1.0.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+	libpangocairo-1.0.so.0()(64bit) is needed by human-health-os-0.1.0~staging2-1.x86_64
+exit: 1

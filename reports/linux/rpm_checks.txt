@@ -1,0 +1,95 @@
+## RPM version 4.18.2 on build host
+<scratch>/dist/human-health-os-0.1.0~staging2-1.x86_64.rpm: digests OK
+Name        : human-health-os
+Version     : 0.1.0~staging2
+Release     : 1
+Architecture: x86_64
+Install Date: (not installed)
+Group       : Unspecified
+Size        : 23888465
+License     : LicenseRef-proprietary
+Signature   : (none)
+Source RPM  : human-health-os-0.1.0~staging2-1.src.rpm
+Build Date  : Tue Oct  6 21:31:05 2026
+Build Host  : vm
+URL         : https://github.com/kaansavukduran/claudereponewscience
+Summary     : Human OS personal health timeline (staging preview)
+Description :
+Offline-first personal health record built with Flutter. This staging
+preview records body weight by hand and keeps entries only until the app
+closes: the encrypted vault is not built yet, so nothing is written to disk.
+Not for clinical decisions. No network access.
+## requires
+hicolor-icon-theme
+ld-linux-x86-64.so.2()(64bit)
+ld-linux-x86-64.so.2(GLIBC_2.3)(64bit)
+libEGL.so.1()(64bit)
+libatk-1.0.so.0()(64bit)
+libc.so.6()(64bit)
+libc.so.6(GLIBC_2.10)(64bit)
+libc.so.6(GLIBC_2.14)(64bit)
+libc.so.6(GLIBC_2.16)(64bit)
+libc.so.6(GLIBC_2.17)(64bit)
+libc.so.6(GLIBC_2.18)(64bit)
+libc.so.6(GLIBC_2.2.5)(64bit)
+libc.so.6(GLIBC_2.3)(64bit)
+libc.so.6(GLIBC_2.3.2)(64bit)
+libc.so.6(GLIBC_2.3.3)(64bit)
+libc.so.6(GLIBC_2.34)(64bit)
+libc.so.6(GLIBC_2.4)(64bit)
+libc.so.6(GLIBC_2.6)(64bit)
+libc.so.6(GLIBC_2.7)(64bit)
+libc.so.6(GLIBC_2.8)(64bit)
+libc.so.6(GLIBC_2.9)(64bit)
+libcairo-gobject.so.2()(64bit)
+libcairo.so.2()(64bit)
+libdl.so.2()(64bit)
+libdl.so.2(GLIBC_2.2.5)(64bit)
+libepoxy.so.0()(64bit)
+libfontconfig.so.1()(64bit)
+libgcc_s.so.1()(64bit)
+libgcc_s.so.1(GCC_3.0)(64bit)
+libgdk-3.so.0()(64bit)
+libgdk_pixbuf-2.0.so.0()(64bit)
+libgio-2.0.so.0()(64bit)
+libglib-2.0.so.0()(64bit)
+libgobject-2.0.so.0()(64bit)
+libgtk-3.so.0()(64bit)
+libharfbuzz.so.0()(64bit)
+libm.so.6()(64bit)
+libm.so.6(GLIBC_2.2.5)(64bit)
+libpango-1.0.so.0()(64bit)
+libpangocairo-1.0.so.0()(64bit)
+libpthread.so.0()(64bit)
+libpthread.so.0(GLIBC_2.12)(64bit)
+libpthread.so.0(GLIBC_2.2.5)(64bit)
+libpthread.so.0(GLIBC_2.3.2)(64bit)
+libpthread.so.0(GLIBC_2.3.3)(64bit)
+libstdc++.so.6()(64bit)
+libstdc++.so.6(CXXABI_1.3)(64bit)
+libstdc++.so.6(GLIBCXX_3.4)(64bit)
+libz.so.1()(64bit)
+rpmlib(CompressedFileNames) <= 3.0.4-1
+rpmlib(FileDigests) <= 4.6.0-1
+rpmlib(PayloadFilesHavePrefix) <= 4.0-1
+rpmlib(TildeInVersions) <= 4.10.0-1
+rtld(GNU_HASH)
+## provides
+application()
+application(org.humanhealthos.HumanHealthOS.desktop)
+human-health-os = 0.1.0~staging2-1
+human-health-os(x86-64) = 0.1.0~staging2-1
+metainfo()
+metainfo(org.humanhealthos.HumanHealthOS.metainfo.xml)
+## payload: gzip
+## files (first 10)
+/usr/bin/human-health-os
+/usr/lib64/human-health-os
+/usr/lib64/human-health-os/data
+/usr/lib64/human-health-os/data/flutter_assets
+/usr/lib64/human-health-os/data/flutter_assets/AssetManifest.bin
+/usr/lib64/human-health-os/data/flutter_assets/FontManifest.json
+/usr/lib64/human-health-os/data/flutter_assets/NOTICES.Z
+/usr/lib64/human-health-os/data/flutter_assets/NativeAssetsManifest.json
+/usr/lib64/human-health-os/data/flutter_assets/fonts
+/usr/lib64/human-health-os/data/flutter_assets/fonts/MaterialIcons-Regular.otf

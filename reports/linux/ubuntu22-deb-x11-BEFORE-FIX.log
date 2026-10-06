@@ -1,0 +1,16 @@
+# ubuntu22-deb-x11 2026-10-06T21:28:32Z
+# host: Ubuntu 22.04 LTS, x86_64, glibc 2.35
+# display: DISPLAY=:99 WAYLAND_DISPLAY= GDK_BACKEND=
+# command: /usr/bin/human-health-os
+/usr/bin/human-health-os: symbol lookup error: /usr/bin/human-health-os: undefined symbol: g_once_init_enter_pointer
+# liveness: exited early with status 127
+# screenshot: ubuntu22-deb-x11.xwd (convert to PNG outside)
+# app files under watched dir: unchanged
+# mesa shader cache files (driver, not app data): 0
+# result: FAIL
+# Failing artifact: human-health-os_0.1.0~staging1_amd64.deb sha256 4b70156896a35c6c4e5b54dc99a8b1a9ef2f10acbe1303661958c4ca1a93e70d (built from e4c64e3, SUPERSEDED)
+# Process output:
+/usr/bin/human-health-os: symbol lookup error: /usr/bin/human-health-os: undefined symbol: g_once_init_enter_pointer
+# tools/linux/check_symbols.sh on that bundle vs the 22.04 rootfs:
+UNRESOLVED human_health_os: g_once_init_enter_pointer
+UNRESOLVED human_health_os: g_once_init_leave_pointer

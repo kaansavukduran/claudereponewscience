@@ -1,0 +1,13 @@
+## Ubuntu 22.04 userland (debootstrap minbase jammy from archive.ubuntu.com; host kernel shared), glibc 2.35
+## installed before: 0.1.0~staging1
+## apt-get install ./human-health-os_0.1.0~staging2_amd64.deb
+Unpacking human-health-os (0.1.0~staging2) over (0.1.0~staging1) ...
+Setting up human-health-os (0.1.0~staging2) ...
+Status: install ok installed
+Version: 0.1.0~staging2
+## dependency alternatives picked:
+libatk1.0-0 2.36.0-3build1
+libc6 2.35-0ubuntu3
+libegl1 1.4.0-1
+libglib2.0-0 2.72.4-0ubuntu2.10
+libgtk-3-0 3.24.33-1ubuntu2.2

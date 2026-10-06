@@ -1,0 +1,36 @@
+[✓] Flutter (Channel stable, 3.47.6, on Ubuntu 24.04.5 LTS 6.18.44-fc-v70, locale en_US) [41ms]
+    • Flutter version 3.47.6 on channel stable at /opt/toolchains/flutter
+    • Upstream repository https://github.com/flutter/flutter.git
+    • Framework revision 5fc346839b (6 days ago), 2026-09-30 15:02:49 -0700
+    • Engine revision 692136cb65
+    • Dart version 3.13.5
+    • DevTools version 2.60.0
+    • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-native-assets, enable-record-use, enable-swift-package-manager, omit-legacy-version-file, enable-lldb-debugging, enable-uiscene-migration
+
+[✗] Android toolchain - develop for Android devices [20ms]
+    ✗ Unable to locate Android SDK.
+      Install Android Studio from: https://developer.android.com/studio/index.html
+      On first launch it will assist you in installing the Android SDK components.
+      (or visit https://flutter.dev/to/linux-android-setup for detailed instructions).
+      If the Android SDK has been installed to a custom location, please use
+      `flutter config --android-sdk` to update to that location.
+
+
+[✗] Chrome - develop for the web (Cannot find Chrome executable at google-chrome) [12ms]
+    ! Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome executable.
+
+[✓] Linux toolchain - develop for Linux desktop [214ms]
+    • Ubuntu clang version 18.1.3 (1ubuntu1)
+    • cmake version 3.28.3
+    • ninja version 1.11.1
+    • pkg-config version 1.8.1
+    • GL_EXT_framebuffer_blit: no
+    • GL_EXT_texture_format_BGRA8888: no
+
+[✓] Connected device (1 available) [18ms]
+    • Linux (desktop) • linux • linux-x64 • Ubuntu 24.04.5 LTS 6.18.44-fc-v70
+
+[✓] Network resources [732ms]
+    • All expected network resources are available.
+
+! Doctor found issues in 2 categories.
