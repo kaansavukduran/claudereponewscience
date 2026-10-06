@@ -3,6 +3,7 @@
 /// secrets here, because they end up readable inside every client bundle.
 library;
 
+import 'package:flutter/foundation.dart' show kReleaseMode;
 import 'package:flutter/services.dart' show FlutterVersion;
 
 enum BuildProfile {
@@ -10,16 +11,24 @@ enum BuildProfile {
   staging,
   production;
 
-  static BuildProfile parse(String raw) {
+  /// Fails closed: only an explicit `development`/`dev` (or a missing value
+  /// in a debug/profile run) yields the one profile that may persist
+  /// unencrypted data. A typo, or a release build that forgot `APP_ENV`,
+  /// becomes `staging`: labelled, memory-only, never production.
+  static BuildProfile parse(String raw, {bool release = kReleaseMode}) {
     switch (raw.trim().toLowerCase()) {
       case 'production':
       case 'prod':
         return BuildProfile.production;
       case 'staging':
         return BuildProfile.staging;
-      default:
-        // Unknown values fall back to the safest *labelled* profile, never to production.
+      case 'development':
+      case 'dev':
         return BuildProfile.development;
+      case '':
+        return release ? BuildProfile.staging : BuildProfile.development;
+      default:
+        return BuildProfile.staging;
     }
   }
 }
@@ -39,12 +48,10 @@ class AppConfig {
   /// be passed by hand). Anything absent stays `unknown`; nothing is guessed.
   factory AppConfig.fromEnvironment() {
     return AppConfig(
-      profile: BuildProfile.parse(
-        const String.fromEnvironment('APP_ENV', defaultValue: 'development'),
-      ),
+      profile: BuildProfile.parse(const String.fromEnvironment('APP_ENV')),
       version: const String.fromEnvironment(
         'APP_VERSION',
-        defaultValue: '0.1.0+1',
+        defaultValue: 'unknown',
       ),
       sourceRevision: const String.fromEnvironment(
         'SOURCE_REVISION',

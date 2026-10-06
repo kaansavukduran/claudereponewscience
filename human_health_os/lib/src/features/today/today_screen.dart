@@ -88,6 +88,7 @@ class TodayScreen extends StatelessWidget {
                           CapabilityStatus.available => s.available,
                           CapabilityStatus.notImplemented => s.notImplemented,
                           CapabilityStatus.notRequired => s.notRequired,
+                          CapabilityStatus.offInThisBuild => s.offInThisBuild,
                           CapabilityStatus.unsupportedOnPlatform =>
                             s.unsupported,
                         },
@@ -95,6 +96,7 @@ class TodayScreen extends StatelessWidget {
                           CapabilityStatus.available => StatusTone.ok,
                           CapabilityStatus.notImplemented => StatusTone.muted,
                           CapabilityStatus.notRequired => StatusTone.ok,
+                          CapabilityStatus.offInThisBuild => StatusTone.info,
                           CapabilityStatus.unsupportedOnPlatform =>
                             StatusTone.info,
                         },

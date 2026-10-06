@@ -37,13 +37,15 @@ class S {
   String get recordSchema => _t('Record schema', 'Kayıt şeması');
   String get capabilities =>
       _t('Capabilities on this device', 'Bu cihazdaki yetenekler');
+  // The clinical disclaimer comes first so a narrow or large-text banner
+  // that ellipsizes never cuts it.
   String get devBanner => _t(
-    'DEVELOPMENT BUILD · test use only · not for clinical decisions',
-    'GELİŞTİRME DERLEMESİ · yalnız test · klinik karar için değil',
+    'Not for clinical decisions · DEVELOPMENT BUILD · test use only',
+    'Klinik karar için değil · GELİŞTİRME DERLEMESİ · yalnız test',
   );
   String get stagingBanner => _t(
-    'STAGING BUILD · test use only · not for clinical decisions',
-    'STAGING DERLEMESİ · yalnız test · klinik karar için değil',
+    'Not for clinical decisions · STAGING BUILD · test use only',
+    'Klinik karar için değil · STAGING DERLEMESİ · yalnız test',
   );
   String get todayIntro => _t(
     'Human OS is being built to keep every part of your health on one timeline. Today it records body weight by hand; each entry keeps where it came from.',
@@ -58,6 +60,8 @@ class S {
   String get notImplemented => _t('Not built yet', 'Henüz yapılmadı');
   String get unsupported => _t('Not on this platform', 'Bu platformda yok');
   String get notRequired => _t('Not required', 'Gerekmiyor');
+  String get offInThisBuild => _t('Off in this build', 'Bu derlemede kapalı');
+  String get plannedGroup => _t('Planned', 'Planlanan');
 
   // FORGE 002 — weight heartbeat
   String get weightTitle => _t('Body weight', 'Vücut ağırlığı');

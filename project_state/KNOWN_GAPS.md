@@ -23,6 +23,6 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-17 | No centralized log redaction (v0.31 §37) | OPEN | F006 |
 | G-18 | Weight card ignores the record's state, provenance and unit; a valid NOT_MEASURED weight (no quantity) appended through the repository API or a hand-edited vault would crash it; vault replay does not call validate() (v0.32 gap analysis SEM-9) | OPEN | F002 |
 | G-19 | Empty or relative `XDG_DATA_HOME` / `HHOS_DATA_DIR` accepted for the development vault (SEM-10) | OPEN | F002 (with the `human-health-os/` XDG move, C-4) |
-| G-20 | Android, Windows, macOS and iOS app labels are still the template name `human_health_os` (web title/manifest in F001@v0.32 scope) (LENS-7) | OPEN | F013 / F015 |
-| G-21 | Receipts for non-Flutter gates record only the Flutter lockfile digest (STATE-19) | OPEN | F001@v0.32 (evidence tooling) |
+| G-20 | Android, Windows, macOS and iOS app labels are still the template name `human_health_os`; web title and manifest read `Human OS` since F001@v0.32 (LENS-7) | PARTIAL | F013 / F015 |
+| G-21 | Receipts for non-Flutter gates recorded only the Flutter lockfile digest (STATE-19) | CLOSED | F001@v0.32: receipt schema 2 records both lockfiles |
 

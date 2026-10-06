@@ -1,6 +1,6 @@
 {
-    "name": "human_health_os",
-    "short_name": "human_health_os",
+    "name": "Human OS",
+    "short_name": "Human OS",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

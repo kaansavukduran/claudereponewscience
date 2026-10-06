@@ -1,12 +1,14 @@
 #!/usr/bin/env python3
-"""Repository checks for v0.31 F001 acceptance criteria AC-1 and AC-8.
+"""Repository scope checks for F001 (v0.31 AC-1/AC-8; v0.32 AC-1/AC-12).
 
-AC-1: human_health_os/ is a Flutter project with all six platform folders
-      and a committed pubspec.lock.
-AC-8: since the F001 baseline commit, nothing changed in the domain layer,
-      the data tests, the integration test or the lockfile; changes under
-      lib/src/data are limited to user-visible notice text that cites Forge
-      ids (legacy "FORGE 004" -> v0.31 "Forge F006").
+Platform: human_health_os/ is a Flutter project with all six platform
+          folders, an entry point, and a committed pubspec.lock.
+Scope:    since the F001 baseline commit, nothing changed in the domain
+          layer, the data tests, the integration test or the lockfile;
+          changes under lib/src/data are limited to comment lines and to
+          user-visible notice text that cites Forge ids (legacy
+          "FORGE 004" -> ladder "F006"). That is the evidence that F001
+          changed no persistence behaviour.
 
 Usage: python3 tools/evidence/check_f001_scope.py <baseline-commit>
 """
@@ -33,6 +35,8 @@ def main() -> int:
     failures = []
 
     missing = [p for p in PLATFORMS if not (APP / p).is_dir()]
+    if not (APP / "lib" / "main.dart").is_file():
+        failures.append("AC-1: entry point lib/main.dart missing")
     if missing:
         failures.append(f"AC-1: missing platform folders {missing}")
     if git("ls-files", "--error-unmatch", str(APP / "pubspec.lock")).returncode != 0:
@@ -44,7 +48,9 @@ def main() -> int:
         failures.append(f"AC-8: frozen paths changed: {changed}")
     data_diff = git("diff", "-U0", base, "HEAD", "--", str(APP / "lib/src/data")).stdout.splitlines()
     edits = [l for l in data_diff if l[:1] in "+-" and not l.startswith(("+++", "---"))]
-    other = [l for l in edits if "FORGE 004" not in l and "Forge F006" not in l]
+    other = [l for l in edits
+             if "FORGE 004" not in l and "Forge F006" not in l
+             and not l[1:].lstrip().startswith("//")]
     if other:
         failures.append(f"AC-8: {len(other)} lib/src/data line(s) beyond notice text, e.g. {other[0][:120]!r}")
 
@@ -52,8 +58,9 @@ def main() -> int:
         for f in failures:
             print(f"FAIL {f}")
         return 1
-    print(f"PASS AC-1: platform folders {' '.join(PLATFORMS)} present; pubspec.lock committed")
-    print(f"PASS AC-8: since {base}: frozen paths unchanged; lib/src/data edits = {len(edits)} notice-text lines")
+    print(f"PASS platform: lib/main.dart; folders {' '.join(PLATFORMS)}; pubspec.lock committed")
+    print(f"PASS scope: since {base}: domain, data tests, integration test and lockfile unchanged; "
+          f"lib/src/data edits = {len(edits)} comment/notice-text lines")
     return 0
 
 

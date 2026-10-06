@@ -23,6 +23,11 @@ enum CapabilityStatus {
 
   /// Deliberately not used by this build (e.g. network for the offline core).
   notRequired,
+
+  /// The adapter exists on this platform, but this build keeps it off:
+  /// its profile or portable mode forbids unencrypted saving, or the saved
+  /// data could not be opened. The weight card names the reason.
+  offInThisBuild,
 }
 
 class Capability {
@@ -116,12 +121,22 @@ class CapabilityRegistry {
         status: CapabilityStatus.available,
         detail: 'Saved in this browser. The browser may clear it; not encrypted yet (development build).',
       ),
-      StorageDurability.memoryOnly || null => const Capability(
-        id: 'local_storage',
-        label: 'Local health records',
-        status: CapabilityStatus.notImplemented,
-        detail: 'Not saved on this platform yet: entries last only until the app closes.',
-      ),
+      StorageDurability.memoryOnly || null => switch (platform) {
+        HostPlatform.android ||
+        HostPlatform.ios ||
+        HostPlatform.other => const Capability(
+          id: 'local_storage',
+          label: 'Local health records',
+          status: CapabilityStatus.notImplemented,
+          detail: 'Not saved on this platform yet: entries last only until the app closes.',
+        ),
+        _ => const Capability(
+          id: 'local_storage',
+          label: 'Local health records',
+          status: CapabilityStatus.offInThisBuild,
+          detail: 'Not saved in this build: entries last only until the app closes. The weight card says why.',
+        ),
+      },
     };
     return CapabilityRegistry(
       platform: platform,

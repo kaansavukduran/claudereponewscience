@@ -6,7 +6,7 @@
 /// silently. Valid history is never dropped.
 ///
 /// FORGE 002: the log is NOT encrypted (`encryption: none-dev-only`).
-/// FORGE 004 replaces the payload format with an encrypted envelope.
+/// The encrypted vault (ladder F006) replaces the payload with an encrypted envelope.
 library;
 
 import 'dart:convert';

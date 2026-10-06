@@ -14,6 +14,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 import sys
 from pathlib import Path
 
@@ -82,6 +83,45 @@ def check_receipt(path: Path, r: dict) -> list[str]:
     return problems
 
 
+BUILD_IDENTITY = ("target", "arch", "profile", "signing")
+
+
+def gate_problems(root: Path, gate: dict, receipt: dict) -> list[str]:
+    """Why a verified gate does not hold any more (empty list = it holds).
+
+    A verified gate needs a PASS receipt recorded on a clean source tree
+    (§33.1), must name the paths it covers, and goes stale when any covered
+    path differs from the receipt's revision in the current working tree
+    (§33.5). Build receipts must carry their §33.2 identity fields."""
+    name = gate.get("gate") or gate.get("evidence_id")
+    out = []
+    if receipt.get("result") != "PASS":
+        out.append(f"verified gate {name!r} cites non-PASS receipt {receipt.get('evidence_id')}")
+    if receipt.get("working_tree_dirty"):
+        out.append(f"verified gate {name!r}: receipt was recorded on a dirty source tree "
+                   f"({receipt.get('dirty_source_paths', [])[:3]})")
+    if gate.get("source_revision") and gate["source_revision"] != receipt.get("source_revision"):
+        out.append(f"verified gate {name!r}: revision differs from its receipt")
+    covers = receipt.get("covers") or gate.get("covers")
+    if not covers:
+        out.append(f"verified gate {name!r}: receipt names no covered paths (--covers), so staleness cannot be checked")
+    else:
+        rev = receipt.get("source_revision", "")
+        diff = subprocess.run(["git", "diff", "--quiet", rev, "--", *covers], cwd=root)
+        if diff.returncode == 1:
+            changed = subprocess.run(["git", "diff", "--name-only", rev, "--", *covers], cwd=root,
+                                     capture_output=True, text=True).stdout.split()
+            out.append(f"verified gate {name!r} is STALE: covered paths changed since "
+                       f"{rev[:12]}: {changed[:5]}")
+        elif diff.returncode != 0:
+            out.append(f"verified gate {name!r}: cannot diff against revision {rev[:12]}")
+    if receipt.get("kind") == "BUILD":
+        missing = [k for k in BUILD_IDENTITY if not receipt.get(k)]
+        if missing:
+            out.append(f"verified build gate {name!r}: receipt lacks §33.2 fields {missing}")
+    return out
+
+
 def main() -> int:
     root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve()
     problems: list[str] = []
@@ -118,17 +158,13 @@ def main() -> int:
     for path, r in receipts.values():
         problems += check_receipt(path, r)
 
-    # Verified gates must point at PASS receipts.
+    # Verified gates: PASS, clean tree, declared coverage, not stale.
     for g in state.get("verified_gates", []):
         rid = g.get("evidence_id")
         if rid not in receipts:
             problems.append(f"verified gate {g.get('gate')!r} cites unknown receipt {rid}")
             continue
-        _, r = receipts[rid]
-        if r["result"] != "PASS":
-            problems.append(f"verified gate {g.get('gate')!r} cites non-PASS receipt {rid}")
-        if g.get("source_revision") and g["source_revision"] != r["source_revision"]:
-            problems.append(f"verified gate {g.get('gate')!r}: revision differs from receipt {rid}")
+        problems += gate_problems(root, g, receipts[rid][1])
 
     active = state.get("active_forge") or {}
     for rid in active.get("evidence_ids", []):

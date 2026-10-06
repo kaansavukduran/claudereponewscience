@@ -70,7 +70,13 @@ void main() {
       find.byKey(const ValueKey('nav-rail')),
     );
     expect(rail.extended, isTrue);
-    expect(rail.destinations, hasLength(destinations.length));
+    // v0.32 F001: exactly Today, Timeline, Labs are primary (C-8).
+    expect(rail.destinations, hasLength(kPrimaryDestinations.length));
+    expect(
+      find.byKey(const ValueKey('rail-planned-group')),
+      findsOneWidget,
+      reason: 'planned areas are a separate, labelled group',
+    );
   });
 
   testWidgets('phone: navigate Today → Labs', (tester) async {
@@ -169,14 +175,7 @@ void main() {
     tester,
   ) async {
     await pumpApp(tester, size: phone);
-    for (final d in destinations.where(
-      (d) => !const [
-        DestinationId.today,
-        DestinationId.timeline,
-        DestinationId.labs,
-        DestinationId.medications,
-      ].contains(d.id),
-    )) {
+    for (final d in plannedDestinations) {
       await tester.tap(find.text('More'));
       await tester.pumpAndSettle();
       await tester.tap(
@@ -213,6 +212,10 @@ void main() {
         if (d.id == DestinationId.today) {
           // Today's built part is the weight card; its empty state is specific.
           expect(find.byKey(const ValueKey('weight-empty')), findsOneWidget);
+        } else if (d.emptyStateEn != null) {
+          // Records of this kind can exist elsewhere: never claim "none".
+          expect(find.text(d.emptyStateEn!), findsOneWidget);
+          expect(find.text('No records yet'), findsNothing);
         } else {
           expect(find.text('No records yet'), findsOneWidget);
         }
@@ -239,7 +242,7 @@ void main() {
       ),
     );
     expect(find.textContaining('STAGING BUILD'), findsOneWidget);
-    expect(find.textContaining('not for clinical decisions'), findsOneWidget);
+    expect(find.textContaining('Not for clinical decisions'), findsOneWidget);
   });
 
   testWidgets('This build card shows the source revision', (tester) async {

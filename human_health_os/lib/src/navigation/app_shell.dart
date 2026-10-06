@@ -1,5 +1,8 @@
-/// Responsive shell: navigation rail at ≥ 840 dp (extended labels at ≥ 1200 dp),
-/// compact bottom navigation below that, with the remaining destinations under "More".
+/// Responsive shell (v0.32 F001): primary navigation is exactly Today,
+/// Timeline and Labs — a navigation rail at ≥ 840 dp (extended labels at
+/// ≥ 1200 dp) and a compact bottom bar below that. The planned placeholder
+/// areas are a secondary group: a labelled section under the rail, and the
+/// "More" sheet on the bar (conflict C-8).
 library;
 
 import 'package:flutter/material.dart';
@@ -16,14 +19,6 @@ const double kExtendedRailBreakpoint = 1200;
 
 /// Fits two lines of banner text (narrow phones, long Turkish copy).
 const double kBuildBannerHeight = 44;
-
-/// Destinations shown directly in the compact bottom bar; the rest live under "More".
-const List<DestinationId> kCompactPrimary = [
-  DestinationId.today,
-  DestinationId.timeline,
-  DestinationId.labs,
-  DestinationId.medications,
-];
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.services});
@@ -115,29 +110,150 @@ class _ScrollableRail extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lang = langOf(context);
-    return LayoutBuilder(
-      builder: (context, constraints) => SingleChildScrollView(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(minHeight: constraints.maxHeight),
-          child: IntrinsicHeight(
-            child: NavigationRail(
-              key: const ValueKey('nav-rail'),
-              extended: extended,
-              labelType: extended
-                  ? NavigationRailLabelType.none
-                  : NavigationRailLabelType.all,
-              selectedIndex: destinations.indexWhere((d) => d.id == current),
-              onDestinationSelected: (i) => onSelect(destinations[i].id),
-              destinations: [
-                for (final d in destinations)
-                  NavigationRailDestination(
-                    icon: Icon(d.icon),
-                    selectedIcon: Icon(d.selectedIcon),
-                    label: Text(d.label(lang)),
-                  ),
-              ],
+    final primary = kPrimaryDestinations.map(destinationById).toList();
+    final selected = kPrimaryDestinations.indexOf(current);
+    // `scrollable` lets the framework scroll destinations + the planned group
+    // on short windows (an IntrinsicHeight wrapper under-measured the
+    // trailing group and overflowed at 1024×700).
+    return NavigationRail(
+      key: const ValueKey('nav-rail'),
+      scrollable: true,
+      extended: extended,
+      labelType: extended
+          ? NavigationRailLabelType.none
+          : NavigationRailLabelType.all,
+      // A planned area is open: no primary item is selected.
+      selectedIndex: selected >= 0 ? selected : null,
+      onDestinationSelected: (i) => onSelect(primary[i].id),
+      destinations: [
+        for (final d in primary)
+          NavigationRailDestination(
+            icon: Icon(d.icon),
+            selectedIcon: Icon(d.selectedIcon),
+            label: Text(d.label(lang)),
+          ),
+      ],
+      trailing: _PlannedRailGroup(
+        extended: extended,
+        current: current,
+        onSelect: onSelect,
+      ),
+    );
+  }
+}
+
+/// Secondary, clearly labelled group of planned areas under the rail.
+class _PlannedRailGroup extends StatelessWidget {
+  const _PlannedRailGroup({
+    required this.extended,
+    required this.current,
+    required this.onSelect,
+  });
+
+  final bool extended;
+  final DestinationId current;
+  final ValueChanged<DestinationId> onSelect;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final theme = Theme.of(context);
+    final width = extended ? 232.0 : 80.0;
+    return SizedBox(
+      key: const ValueKey('rail-planned-group'),
+      width: width,
+      child: Column(
+        crossAxisAlignment: extended
+            ? CrossAxisAlignment.start
+            : CrossAxisAlignment.center,
+        children: [
+          const Divider(height: 24),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: extended ? 24 : 4),
+            child: Semantics(
+              header: true,
+              child: Text(
+                s.plannedGroup,
+                style: theme.textTheme.labelSmall?.copyWith(
+                  color: theme.colorScheme.onSurfaceVariant,
+                ),
+              ),
             ),
           ),
+          const SizedBox(height: 4),
+          for (final d in plannedDestinations)
+            _PlannedRailItem(
+              destination: d,
+              extended: extended,
+              selected: d.id == current,
+              onTap: () => onSelect(d.id),
+            ),
+          const SizedBox(height: 12),
+        ],
+      ),
+    );
+  }
+}
+
+class _PlannedRailItem extends StatelessWidget {
+  const _PlannedRailItem({
+    required this.destination,
+    required this.extended,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final Destination destination;
+  final bool extended;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = selected
+        ? theme.colorScheme.primary
+        : theme.colorScheme.onSurfaceVariant;
+    final label = destination.label(langOf(context));
+    final icon = Icon(
+      selected ? destination.selectedIcon : destination.icon,
+      size: 20,
+      color: color,
+    );
+    final style = theme.textTheme.labelMedium?.copyWith(color: color);
+    return Semantics(
+      button: true,
+      selected: selected,
+      child: InkWell(
+        key: ValueKey('rail-planned-${destination.id.name}'),
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: EdgeInsets.symmetric(
+            horizontal: extended ? 24 : 4,
+            vertical: extended ? 10 : 6,
+          ),
+          child: extended
+              ? Row(
+                  children: [
+                    icon,
+                    const SizedBox(width: 12),
+                    Expanded(child: Text(label, style: style)),
+                  ],
+                )
+              : Column(
+                  children: [
+                    icon,
+                    const SizedBox(height: 2),
+                    Text(
+                      label,
+                      style: theme.textTheme.labelSmall?.copyWith(color: color),
+                      textAlign: TextAlign.center,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
         ),
       ),
     );
@@ -153,8 +269,8 @@ class _CompactBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    final primary = kCompactPrimary.map(destinationById).toList();
-    final inPrimary = kCompactPrimary.indexOf(current);
+    final primary = kPrimaryDestinations.map(destinationById).toList();
+    final inPrimary = kPrimaryDestinations.indexOf(current);
     return NavigationBar(
       key: const ValueKey('nav-bar'),
       selectedIndex: inPrimary >= 0 ? inPrimary : primary.length,
@@ -171,9 +287,17 @@ class _CompactBar extends StatelessWidget {
               key: const ValueKey('more-sheet'),
               shrinkWrap: true,
               children: [
-                for (final d in destinations.where(
-                  (d) => !kCompactPrimary.contains(d.id),
-                ))
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 4),
+                  child: Semantics(
+                    header: true,
+                    child: Text(
+                      s.plannedGroup,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                  ),
+                ),
+                for (final d in plannedDestinations)
                   ListTile(
                     leading: Icon(d.icon),
                     title: Text(d.label(s.lang)),

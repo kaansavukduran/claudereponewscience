@@ -1,5 +1,8 @@
-/// The ten first-level destinations (v0.27 doc 209). Each one names the
-/// FORGE that builds it, so an unbuilt area says so instead of faking content.
+/// Destinations. Primary navigation is exactly Today, Timeline and Labs
+/// (v0.32 kernel). The other seven areas from v0.27 doc 209 already exist as
+/// tested, honest placeholders and stay reachable as a secondary "Planned"
+/// group (conflict C-8). Each names the Forge that builds it, so an unbuilt
+/// area says so instead of faking content.
 library;
 
 import 'package:flutter/material.dart';
@@ -31,6 +34,8 @@ class Destination {
     required this.plannedForge,
     required this.principleEn,
     required this.principleTr,
+    this.emptyStateEn,
+    this.emptyStateTr,
   });
 
   final DestinationId id;
@@ -41,7 +46,7 @@ class Destination {
   final String purposeEn;
   final String purposeTr;
 
-  /// v0.31 ladder Forge(s) that deliver the area's stated purpose (D-011);
+  /// Ladder Forge(s) that deliver the area's stated purpose (D-011, D-013);
   /// null only when that purpose is fully built.
   final String? plannedForge;
 
@@ -49,11 +54,29 @@ class Destination {
   final String principleEn;
   final String principleTr;
 
+  /// What the unbuilt view truthfully says instead of "No records yet" when
+  /// records of its kind can already exist elsewhere (e.g. Timeline, while
+  /// Today saves weights). Null = "No records yet" is true for this area.
+  final String? emptyStateEn;
+  final String? emptyStateTr;
+
+  bool get isPrimary => kPrimaryDestinations.contains(id);
+
   String label(AppLang lang) => lang == AppLang.tr ? tr : en;
   String purpose(AppLang lang) => lang == AppLang.tr ? purposeTr : purposeEn;
   String principle(AppLang lang) =>
       lang == AppLang.tr ? principleTr : principleEn;
+  String? emptyState(AppLang lang) =>
+      lang == AppLang.tr ? emptyStateTr : emptyStateEn;
 }
+
+/// The F001 primary destinations (v0.32 kernel): the only first-level items
+/// in both the compact bar and the rail.
+const List<DestinationId> kPrimaryDestinations = [
+  DestinationId.today,
+  DestinationId.timeline,
+  DestinationId.labs,
+];
 
 const List<Destination> destinations = [
   Destination(
@@ -80,6 +103,8 @@ const List<Destination> destinations = [
     principleEn: 'A correction adds a new version; the old one stays visible in history.',
     principleTr:
         'Düzeltme yeni bir sürüm ekler; eskisi geçmişte görünür kalır.',
+    emptyStateEn: 'This view does not list records yet. Entries you save on Today are shown there, with how they are stored.',
+    emptyStateTr: 'Bu görünüm henüz kayıt listelemiyor. Bugün ekranında kaydettiğin girişler orada, nasıl saklandıklarıyla birlikte görünür.',
   ),
   Destination(
     id: DestinationId.labs,
@@ -188,3 +213,9 @@ const List<Destination> destinations = [
 
 Destination destinationById(DestinationId id) =>
     destinations.firstWhere((d) => d.id == id);
+
+/// Destinations outside primary navigation, in their canonical order.
+final List<Destination> plannedDestinations = [
+  for (final d in destinations)
+    if (!d.isPrimary) d,
+];

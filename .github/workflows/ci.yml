@@ -26,6 +26,7 @@ jobs:
       - run: pnpm typecheck
       - run: pnpm test
       - run: python3 tools/verify_contracts.py
+      - run: python3 -m unittest tools/evidence/test_run_gate.py tools/test_validate_project_state.py
       - run: pnpm build
       - run: pnpm --filter @hhos/site exec playwright install --with-deps chromium
       - run: pnpm --filter @hhos/site e2e
@@ -44,15 +45,16 @@ jobs:
           flutter-version: ${{ env.FLUTTER_VERSION }}
           channel: stable
       - run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev ninja-build
+      - run: flutter doctor -v
       - run: flutter pub get --enforce-lockfile
-      - run: dart format --output=none --set-exit-if-changed .
+      - run: dart format --set-exit-if-changed .
       - run: flutter analyze
       - run: flutter test
       # Build identity (v0.31 §12): the Flutter tool injects its own and Dart's
       # version (FlutterVersion); the smoke checks the expected value.
       - run: echo "EXPECTED_FLUTTER=$(flutter --version --machine | python3 -c 'import json,sys; print(json.load(sys.stdin)["frameworkVersion"])')" >> "$GITHUB_ENV"
-      - run: flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=${{ github.sha }}
-      - run: flutter build linux --release --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=${{ github.sha }}
+      - run: flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=${{ github.sha }}
+      - run: flutter build linux --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=${{ github.sha }}
       - uses: pnpm/action-setup@v4
       - uses: actions/setup-node@v4
         with:

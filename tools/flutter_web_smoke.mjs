@@ -50,6 +50,13 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   const errors = [];
   page.on('request', (r) => { const u = new URL(r.url()); if (!['127.0.0.1', 'localhost'].includes(u.hostname) && u.protocol !== 'data:' && u.protocol !== 'blob:') external.push(r.url()); });
   page.on('pageerror', (e) => errors.push(e.message));
+  // v0.32 runtime smoke step 4: no fatal console/runtime error. Every console
+  // 'error' entry fails the run (no allowlist); failed or >= 400 responses too.
+  const consoleErrors = [];
+  const failedRequests = [];
+  page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });
+  page.on('requestfailed', (r) => failedRequests.push(`${r.url()} (${r.failure()?.errorText ?? 'failed'})`));
+  page.on('response', (r) => { if (r.status() >= 400) failedRequests.push(`${r.url()} (HTTP ${r.status()})`); });
   await page.goto(base, { waitUntil: 'load' });
   await page.waitForSelector('flutter-view', { state: 'attached', timeout: 60_000 });
   // Turn on the Flutter semantics tree so text is queryable (same path a screen reader uses).
@@ -124,6 +131,8 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   }
   check(`${label}: no external network requests`, external.length === 0, external.slice(0, 5).join(' '));
   check(`${label}: no page errors`, errors.length === 0, errors.slice(0, 3).join(' | '));
+  check(`${label}: no console errors`, consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
+  check(`${label}: no failed requests`, failedRequests.length === 0, failedRequests.slice(0, 3).join(' | '));
   await page.close();
 }
 await browser.close();
@@ -131,7 +140,8 @@ server.close();
 // Evidence metadata ties this result to one exact build (audit L3).
 const sha256 = async (f) => createHash('sha256').update(await readFile(f)).digest('hex');
 const gitRev = (() => { try { return execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim(); } catch { return 'unknown'; } })();
-const gitDirty = (() => { try { return execFileSync('git', ['status', '--porcelain'], { encoding: 'utf8' }).trim() !== ''; } catch { return null; } })();
+// Same rule as tools/evidence/run_gate.py: evidence outputs do not make the source dirty.
+const gitDirty = (() => { try { return execFileSync('git', ['status', '--porcelain', '--', '.', ':!reports', ':!evidence'], { encoding: 'utf8' }).trim() !== ''; } catch { return null; } })();
 const meta = {
   ran_at: new Date().toISOString(),
   git_head: gitRev,
@@ -141,6 +151,9 @@ const meta = {
   browser: `chromium ${browserVersion}`,
   runs: RUNS.map(({ label, viewport, locale }) => ({ label, viewport, locale })),
 };
-await writeFile(join(out, 'flutter_web_smoke.json'), JSON.stringify({ ...meta, results }, null, 2));
+const report = JSON.stringify({ ...meta, results }, null, 2);
+await writeFile(join(out, 'flutter_web_smoke.json'), report);
+// Per-revision copy, so a later run never overwrites the evidence of this one.
+await writeFile(join(out, `flutter_web_smoke_${gitRev.slice(0, 12)}.json`), report);
 for (const r of results) console.log(`${r.status.padEnd(5)} ${r.name}${r.detail ? `  (${r.detail})` : ''}`);
 process.exit(results.every((r) => r.status === 'PASS') ? 0 : 1);

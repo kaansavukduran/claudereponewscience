@@ -89,6 +89,27 @@ class RunGateTest(unittest.TestCase):
             run_gate(self.ev, "--id", "EV-BUILD-4", "--kind", "BUILD", "--forge", "F001", "--artifact", rel, "--", "true")
             self.assertNotEqual(self.receipt("builds", "EV-BUILD-4")["artifacts"][0]["sha256"], a["sha256"])
 
+    def test_covers_build_identity_and_both_lockfiles_are_recorded(self):
+        p = run_gate(self.ev, "--id", "EV-BUILD-5", "--kind", "BUILD", "--forge", "F001@v0.32",
+                     "--covers", "tools/evidence", "--covers", "human_health_os/pubspec.lock",
+                     "--target", "web", "--arch", "js", "--profile", "development",
+                     "--signing", "NOT_APPLICABLE", "--smoke-evidence", "EV-RUNTIME-X", "--", "true")
+        self.assertEqual(p.returncode, 0, p.stderr)
+        r = self.receipt("builds", "EV-BUILD-5")
+        self.assertEqual(r["receipt_schema"], 2)
+        self.assertEqual(r["forge_id"], "F001@v0.32")
+        self.assertEqual(r["covers"], ["tools/evidence", "human_health_os/pubspec.lock"])
+        self.assertEqual((r["target"], r["arch"], r["profile"], r["signing"], r["smoke_evidence"]),
+                         ("web", "js", "development", "NOT_APPLICABLE", "EV-RUNTIME-X"))
+        self.assertIn("human_health_os/pubspec.lock", r["lockfiles"])
+        self.assertIn("pnpm-lock.yaml", r["lockfiles"])
+
+    def test_nonexistent_covers_path_is_a_usage_error(self):
+        p = run_gate(self.ev, "--id", "EV-TEST-6", "--kind", "TEST", "--forge", "F001",
+                     "--covers", "no/such/path", "--", "true")
+        self.assertEqual(p.returncode, 2)
+        self.assertFalse(Path(self.ev, "tests", "EV-TEST-6.json").exists())
+
     def test_bad_id_is_rejected(self):
         p = run_gate(self.ev, "--id", "test1", "--kind", "TEST", "--forge", "F001", "--", "true")
         self.assertEqual(p.returncode, 2)

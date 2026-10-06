@@ -8,8 +8,15 @@ PASS/FAIL is derived from the exit code, never typed in by hand. Receipts are
 immutable: an existing evidence id is never overwritten.
 
 Usage:
-  python3 tools/evidence/run_gate.py --id EV-TEST-0001 --kind TEST --forge F001 \
-      [--cwd human_health_os] [--artifact PATH ...] [--summary REGEX] -- CMD ARGS...
+  python3 tools/evidence/run_gate.py --id EV-TEST-0001 --kind TEST --forge F001@v0.32 \
+      [--cwd human_health_os] [--covers PATH ...] [--artifact PATH ...] [--summary REGEX] \
+      [--target web --arch js --profile development --signing NOT_APPLICABLE \
+       --smoke-evidence EV-RUNTIME-...]  -- CMD ARGS...
+
+--covers names the source paths whose content this evidence depends on; a
+later change to any of them makes the evidence stale (master §33.5), which
+tools/validate_project_state.py checks. Build receipts carry the §33.2
+identity fields (target, architecture, profile, signing, smoke evidence).
 
 Exit status: 0 when the gate passed, 1 when it failed, 2 on usage errors.
 """
@@ -29,6 +36,8 @@ KIND_DIRS = {"TEST": "tests", "BUILD": "builds", "RUNTIME": "runtime"}
 # Paths that gates themselves write; they do not make the *source* dirty.
 EVIDENCE_PATHS = ("evidence/", "reports/")
 LOCKFILE = Path("human_health_os/pubspec.lock")
+LOCKFILES = (LOCKFILE, Path("pnpm-lock.yaml"))
+RECEIPT_SCHEMA = 2
 
 
 def now() -> str:
@@ -96,6 +105,13 @@ def main() -> int:
     ap.add_argument("--summary", help="regex; the last matching log line becomes the summary")
     ap.add_argument("--expect-exit", type=int, default=0)
     ap.add_argument("--evidence-root", default="evidence", help="receipt root (tests use a temp dir)")
+    ap.add_argument("--covers", action="append", default=[],
+                    help="source path this evidence depends on (repeatable; §33.5)")
+    ap.add_argument("--target", help="build/runtime target platform, e.g. web, linux")
+    ap.add_argument("--arch", help="architecture, e.g. x86_64, js")
+    ap.add_argument("--profile", help="build profile: development, staging or production")
+    ap.add_argument("--signing", help="signing state, e.g. UNSIGNED, NOT_APPLICABLE")
+    ap.add_argument("--smoke-evidence", help="evidence id of the runtime smoke of this build")
     ap.add_argument("cmd", nargs=argparse.REMAINDER)
     args = ap.parse_args()
     cmd = args.cmd[1:] if args.cmd[:1] == ["--"] else args.cmd
@@ -129,7 +145,11 @@ def main() -> int:
     if args.summary:
         matches = [line for line in text if re.search(args.summary, line)]
         summary = matches[-1].strip() if matches else None
+    missing_covers = [c for c in args.covers if not (root / c).exists()]
+    if missing_covers:
+        ap.error(f"--covers paths do not exist: {missing_covers}")
     receipt = {
+        "receipt_schema": RECEIPT_SCHEMA,
         "evidence_id": args.id,
         "kind": args.kind,
         "forge_id": args.forge,
@@ -152,6 +172,13 @@ def main() -> int:
     }
     if (root / LOCKFILE).exists():
         receipt["lockfile_sha256"] = sha256_file(root / LOCKFILE)
+    receipt["lockfiles"] = {str(p): sha256_file(root / p) for p in LOCKFILES if (root / p).exists()}
+    if args.covers:
+        receipt["covers"] = args.covers
+    for key in ("target", "arch", "profile", "signing", "smoke_evidence"):
+        value = getattr(args, key)
+        if value:
+            receipt[key] = value
     if args.artifact:
         receipt["artifacts"] = [describe_artifact(root / a) for a in args.artifact]
         if receipt["result"] == "PASS" and any(a["sha256"] is None for a in receipt["artifacts"]):

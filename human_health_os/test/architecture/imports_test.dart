@@ -46,6 +46,13 @@ void main() {
         'WebSocket',
         'Socket.connect',
         'RawSocket',
+        // Browser and image paths to the network (v0.32 check 8).
+        'XMLHttpRequest',
+        "@JS('fetch')",
+        'window.fetch',
+        'Image.network',
+        'NetworkImage',
+        'package:web/',
       ]) {
         if (src.contains(banned)) offenders.add('${f.path}: $banned');
       }

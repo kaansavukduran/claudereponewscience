@@ -48,7 +48,11 @@ class PlannedDestinationScreen extends StatelessWidget {
                   ],
                 ),
                 const SizedBox(height: 12),
-                Text(s.noRecordsYet, style: text.titleMedium),
+                Text(
+                  destination.emptyState(lang) ?? s.noRecordsYet,
+                  key: const ValueKey('planned-empty-state'),
+                  style: text.titleMedium,
+                ),
                 const SizedBox(height: 8),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
