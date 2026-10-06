@@ -4,7 +4,7 @@
 
 | Id | Slice | Exit gate (v0.31 §39) | Status (2026-10-06) | Legacy ids folded in |
 |---|---|---|---|---|
-| **F001** | Repository heartbeat: Flutter repo, responsive shell, Today / Timeline / Labs navigation, build-profile indicator, first host-supported build + runtime smoke | analyze/test PASS; one host build + runtime **receipt**; no new persistence | Re-verified under v0.31 in this run (see FORGE_LOG) | F001 |
+| **F001** | Repository heartbeat: Flutter repo, responsive shell, Today / Timeline / Labs navigation, build-profile indicator, first host-supported build + runtime smoke | analyze/test PASS; one host build + runtime **receipt**; no new persistence | **DONE (v0.31), 2026-10-06**: web RUNTIME_TESTED + Linux regression, 13 receipt-backed gates (`evidence/`) | F001 |
 | F002 | Local profile + persistence heartbeat: profile identity, repository port, one canonical record, save/read after restart, provenance + stable id | persistence integration test; migration version initialized; no plaintext-secret shortcut | **IMPLEMENTED pre-v0.31** (legacy FORGE 002: unit + Linux integration tested, web smoke). v0.31 exit gate **not yet verified**: no migration graph/receipt; XDG subdir differs (C-4) | FORGE 002 |
 | F003 | Timeline + correction lineage | timeline ordering + correction-history tests | Domain supports `supersedes`/tombstones; no UI | F006 |
 | F004 | Labs vertical slice | missing unit/range stays missing; source flag kept; no diagnosis | NOT_STARTED in Flutter (TS reference engine exists) | F008, F009 |

@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-10-06T21:10:07.779Z",
-  "git_head": "3243163d0808c396b69ceb039671b5272941f355",
+  "ran_at": "2026-10-06T21:50:05.054Z",
+  "git_head": "9e86ed07bb020609e998496fdeba3ec24842de8c",
   "working_tree_dirty": true,
   "build": "/home/user/claudereponewscience/human_health_os/build/web",
-  "main_dart_js_sha256": "9ceeb57c08e73e09d3149af83f86e987b914c75a40aef182651b305778d8f41d",
+  "main_dart_js_sha256": "e4db1bc0670f1dbe02addd2aa71787e83f79e0ddf540419894332329143e2748",
   "browser": "chromium 141.0.7390.37",
   "runs": [
     {
@@ -39,6 +39,26 @@
     },
     {
       "name": "desktop-en: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: build identity row (Flutter) present",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: build identity shows Flutter 3.47.6",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: navigates to Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: Timeline principle visible",
       "status": "PASS",
       "detail": ""
     },
@@ -93,6 +113,26 @@
       "detail": ""
     },
     {
+      "name": "phone-en: build identity row (Flutter) present",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: build identity shows Flutter 3.47.6",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: navigates to Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: Timeline principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "phone-en: Labs principle visible",
       "status": "PASS",
       "detail": ""
@@ -139,6 +179,16 @@
     },
     {
       "name": "phone-tr: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: navigates to Zaman çizelgesi",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: Timeline principle visible",
       "status": "PASS",
       "detail": ""
     },

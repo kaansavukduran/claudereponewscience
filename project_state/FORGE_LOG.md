@@ -180,3 +180,86 @@ Router (v0.31 §42): canonical state existed → an unfinished Forge existed (F0
 - **F001 acceptance criteria** (objective, receipt-backed): AC-1…AC-9 in `CURRENT_STATE.json → active_forge.acceptance_criteria`.
 
 Hard blocker for F001: none. Continuing into F001 in the same run, per the v0.31 one-shot contract.
+
+---
+
+# FORGE F001 (v0.31 ladder): Repository heartbeat — F001_COMPLETE
+
+## Goal
+Prove the v0.31 F001 exit gate on the real repository: responsive shell, Today → Timeline → Labs, a visible build-profile indicator and build identity, analyzer/test PASS, one host-supported build plus runtime receipt, no new persistence. Repository reality (v0.31 §31.3, §44): the Flutter repo, shell and a pre-v0.31 persistence heartbeat already existed, so F001 repaired and re-proved instead of recreating.
+
+## Baseline State
+d1df671 / Phase 0 at 0ce5262. 59 widget/unit tests, web and Linux runtime-tested under legacy ids; no receipt system; no Timeline navigation test; build identity without Flutter/Dart/schema; shell texts citing legacy Forge ids.
+
+## Implemented
+- `tools/evidence/run_gate.py`: runs a gate and writes an immutable JSON receipt (real timestamps, exit code → PASS/FAIL, revision, source-dirty flag, Flutter/Dart/node/python versions, lockfile SHA-256, log SHA-256 + tail, artifact digests; directory digests ignore timestamps; a declared but missing artifact fails the gate). 6 unit tests.
+- `tools/evidence/check_f001_scope.py` (AC-1, AC-8) and `tools/validate_project_state.py` (Phase 0).
+- App: "This build" shows Flutter, Dart (from the framework's `FlutterVersion`) and record schema; absent values read `unknown`.
+- Shell empty states and capability texts cite v0.31 ladder ids (Timeline → F003, Labs → F004, vault → F006 …).
+- Tests: Today → Timeline → Labs on phone (bottom bar) and desktop (rail); identity given vs not given (mutation-checked: removing the Flutter row fails both).
+- Web smoke: Timeline step, identity row, `EXPECT_FLUTTER_VERSION`; CI computes the expected version.
+
+## Files Changed
+tools/evidence/{run_gate.py,test_run_gate.py,check_f001_scope.py}, tools/validate_project_state.py, tools/flutter_web_smoke.mjs, human_health_os/lib/src/{config/app_config.dart, features/today/today_screen.dart, l10n/strings.dart, navigation/destinations.dart, core/capabilities.dart, data/local/storage_io.dart + storage_web.dart (notice text only)}, human_health_os/test/widget/shell_test.dart, .github/workflows/ci.yml, CLAUDE.md, .gitignore, docs/ROADMAP.md, project_state/*, evidence/**.
+
+## Data / Migration Changes
+None. AC-8 receipt EV-TEST-F001-0015: domain, data tests, integration test and lockfile unchanged since d1df671; lib/src/data diff = 6 notice-text lines.
+
+## Security / Privacy Impact
+No new storage, network or dependency. Receipts contain commands, versions and log tails only; secret scan of all receipts clean; raw logs are gitignored (`evidence/logs/`). Build identity is non-secret by design.
+
+## Tests Actually Executed
+| Command | Receipt | Result |
+|---|---|---|
+| `flutter pub get --enforce-lockfile` | EV-TEST-F001-0006 | PASS |
+| `dart format --output=none --set-exit-if-changed .` | EV-TEST-F001-0007 | PASS (33 files, 0 changed) |
+| `flutter analyze` | EV-TEST-F001-0008 | PASS (no issues) |
+| `flutter test` | EV-TEST-F001-0009 | PASS (63) |
+| `python3 -m unittest tools/evidence/test_run_gate.py` | EV-TEST-F001-0010 | PASS (6) |
+| `xvfb-run flutter test integration_test -d linux` (regression) | EV-TEST-F001-0011 | PASS |
+| `python3 tools/verify_contracts.py` (regression) | EV-TEST-F001-0012 | PASS |
+| `pnpm test` (regression: 73 + 14 + 4 + 13 + 5) | EV-TEST-F001-0014 | PASS |
+| `python3 tools/evidence/check_f001_scope.py d1df671` | EV-TEST-F001-0015 | PASS |
+| `python3 tools/validate_project_state.py` | EV-TEST-F001-0016 | see final commit |
+| Earlier receipts 0001–0005 (dbe9b54) | — | PASS but stale after the repair; 0013 (`pnpm -s test`) exit 0 with an empty log, not counted |
+
+## Builds Actually Executed
+| Platform | Command | Result |
+|---|---|---|
+| Web | `flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=9e86ed0…` | **PASS** EV-BUILD-F001-0002: build/web tree sha256 `473f7258…7922` (39 files, 42 309 907 B), main.dart.js `e4db1bc0…2748` |
+| Web (first attempt, dbe9b54) | same + `--dart-define=FLUTTER_VERSION=…` | **FAIL** EV-BUILD-F001-0001 (reserved define) |
+| Linux x64 (regression) | `flutter build linux --release --dart-define=APP_ENV=development …` | **PASS** EV-BUILD-F001-0003: bundle tree `87ea1c11…3f44`, libapp.so `6be6bf48…ac05` |
+| Android | — | BLOCKED_ENVIRONMENT (no SDK; dl.google.com denied) |
+| iOS / macOS | — | BLOCKED_BY_HOST_OS |
+| Windows | — | BLOCKED_BY_HOST_OS |
+
+Runtime: web smoke **36/36 PASS** (EV-RUNTIME-F001-0001: desktop-en, phone-en, phone-tr; Today → Timeline → Labs; banner; "Flutter 3.47.6" shown; weight save → reload; 0 external requests; 0 page errors). Linux launch **PASS** (EV-RUNTIME-F001-0002: alive at 12 s under Xvfb X11; dev build wrote only the vault header + self profile; screenshot `reports/runtime/flutter-linux-f001-today.png`).
+
+## Bugs Found
+1. Web build failed: `FLUTTER_VERSION is used by the framework and cannot be set using --dart-define`.
+2. `run_gate.py` crashed while printing when the evidence root was outside the repository (exit code then wrong) — caught by its own unit test.
+3. Phase 0 validator flagged the state for citing a not-yet-existing file in a planned-work field.
+4. Shell and capability texts showed legacy Forge ids that no longer match the canonical ladder.
+5. `pnpm -s test` produced no output, so its PASS receipt was empty evidence.
+
+## Fixes Applied
+1 → read versions from `FlutterVersion` (framework-injected), drop the reserved defines in CI/CLAUDE.md. 2 → print relative path only when inside the repo. 3 → planned-work fields exempt from the path check. 4 → v0.31 ids. 5 → rerun without `-s`; the empty receipt is listed as uninformative.
+
+## Regression Check
+All F001 gates rerun on 9e86ed0 after the repair (0006–0012, 0014, builds 0002–0003, runtime 0001–0002). Persistence (Linux integration test), Linux build/launch and the TS/Python reference suites still pass.
+
+## Artifacts Produced
+Not committed (build outputs are gitignored); identified by their receipts: `human_health_os/build/web/` and `human_health_os/build/linux/x64/release/bundle/`. Committed: receipts in `evidence/`, screenshots `reports/runtime/flutter-web-*-{today,timeline,labs,weight}.png`, `reports/runtime/flutter-linux-f001-today.png`, smoke JSON `reports/runtime/flutter_web_smoke.json`. SBOM: NOT_GENERATED. Signing: n/a (web) / UNSIGNED (Linux bundle).
+
+## Known Limitations
+- Receipts store absolute artifact paths of this container.
+- Web smoke runs headless Chromium only; PWA install NOT_TESTED. Linux launch is X11/Xvfb only for F001.
+- Android, iOS, macOS, Windows not built here. CI never ran (GitHub push 403).
+- Release state CANDIDATE_UNMERGED (v0.26 baseline missing). F015-L1 (Linux packages) stays suspended with an open libGLESv2 defect.
+- The repository already contains a pre-v0.31 persistence slice; its v0.31 F002 exit gate is unverified.
+
+## State Update
+`development_state` READY; `active_forge` null; F001 DONE with 13 verified gates; F015-L1 suspended (IN_PROGRESS_RECOVERABLE); web RUNTIME_TESTED with receipts.
+
+## Next Recommended Forge
+**F002 — Local profile + persistence heartbeat (v0.31 exit-gate closure):** migration version and a migration receipt for vault log v1, the `human-health-os/` XDG subdirectory (conflict C-4) with a tested move of development data, persistence integration receipts on web and Linux, and a no-plaintext-secret review. No new record types. (Not started; requires an explicit `FORGE`.)

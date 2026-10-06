@@ -1,0 +1,56 @@
+{
+  "evidence_id": "EV-BUILD-F001-0002",
+  "kind": "BUILD",
+  "forge_id": "F001",
+  "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=9e86ed07bb020609e998496fdeba3ec24842de8c",
+  "cwd": "human_health_os",
+  "started_at": "2026-10-06T21:49:06.960Z",
+  "finished_at": "2026-10-06T21:49:46.880Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v70 x86_64",
+  "summary": "\u2713 Built build/web",
+  "log_sha256": "edead70c64d413d1c1e425564ea5be42eba3b63e148f64ddf997ef7ffe618b62",
+  "log_lines": 11,
+  "log_tail": [
+    "   Woah! You appear to be trying to run flutter as root.",
+    "   We strongly recommend running the flutter tool without superuser privileges.",
+    "  /",
+    "\ud83d\udcce",
+    "Compiling lib/main.dart for the Web...                          ",
+    "Wasm dry run succeeded. Consider building and testing your application with the `--wasm` flag. See docs for more info: https://docs.flutter.dev/platform-integration/web/wasm",
+    "Use --no-wasm-dry-run to disable these warnings.",
+    "Expected to find fonts for (MaterialIcons, packages/cupertino_icons/CupertinoIcons), but found (MaterialIcons). This usually means you are referring to font families in an IconData class but not including them in the assets section of your ",
+    "Font asset \"MaterialIcons-Regular.otf\" was tree-shaken, reducing it from 1645184 to 11164 bytes (99.3% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.",
+    "Compiling lib/main.dart for the Web...                             39.5s",
+    "\u2713 Built build/web"
+  ],
+  "lockfile_sha256": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/web",
+      "type": "directory",
+      "files": 39,
+      "bytes": 42309907,
+      "sha256": "473f7258e4d8dcc8bf463f5cb1e3825089c82766cda04543f2f209dcdf9f7922",
+      "digest_method": "sha256 of sorted '<relpath> <sha256>' lines"
+    },
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/web/main.dart.js",
+      "type": "file",
+      "bytes": 2867589,
+      "sha256": "e4db1bc0670f1dbe02addd2aa71787e83f79e0ddf540419894332329143e2748"
+    }
+  ]
+}
