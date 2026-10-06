@@ -2,9 +2,9 @@
 .shell { min-height: 100vh; display: grid; grid-template-columns: 232px minmax(0, 1fr); grid-template-rows: auto auto 1fr; grid-template-areas: "top top" "confirm confirm" "nav main"; }
 .skip { position: absolute; left: -999px; top: 8px; }
 .skip:focus { left: 8px; z-index: 10; background: var(--surface-1); padding: 8px; }
-.topbar { grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); background: var(--surface-1); position: sticky; top: 0; z-index: 5; flex-wrap: wrap; }
+.topbar { grid-area: top; display: flex; align-items: center; justify-content: space-between; gap: var(--space-3); padding: var(--space-3) var(--space-4); border-bottom: 1px solid var(--border); background: var(--surface-1); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; flex-wrap: wrap; }
 .brand { display: flex; gap: var(--space-3); align-items: center; min-width: 0; }
-.brand-title { font-weight: 700; font-size: var(--fs-heading); letter-spacing: -0.01em; }
+.brand-title { font-weight: 700; font-size: var(--fs-heading); letter-spacing: -0.01em; text-wrap: balance; }
 .logo { display: grid; place-items: center; width: 36px; height: 36px; border-radius: 10px; background: var(--accent-soft); color: var(--accent); font-size: 20px; }
 .toolbar { justify-content: flex-end; }
 .hh-input.compact { width: auto; }
@@ -48,7 +48,7 @@
 }
 @media (max-width: 820px) {
   .shell { grid-template-columns: minmax(0, 1fr); grid-template-areas: "top" "confirm" "nav" "main"; }
-  .tabs { flex-direction: row; position: sticky; top: 0; height: auto; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--border); padding: var(--space-2); z-index: 4; }
+  .tabs { flex-direction: row; position: sticky; top: env(safe-area-inset-top, 0px); height: auto; overflow-x: auto; border-right: 0; border-bottom: 1px solid var(--border); padding: var(--space-2) var(--space-4); z-index: 4; }
   .tab { white-space: nowrap; }
   .topbar { position: static; padding: var(--space-3) var(--space-4); }
   .main { padding: var(--space-3) var(--space-4) var(--space-6); }

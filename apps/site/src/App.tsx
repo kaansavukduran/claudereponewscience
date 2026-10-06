@@ -13,6 +13,9 @@ import { LearnLab } from './views/LearnLab.tsx';
 import { SourcesView } from './views/SourcesView.tsx';
 import { Tour } from './views/Tour.tsx';
 
+// Theme set by an embedding host (e.g. a published-artifact viewer) is restored when the lab theme is "auto".
+const HOST_THEME = typeof document === 'undefined' ? null : document.documentElement.getAttribute('data-theme');
+
 export interface ViewProps {
   s: SiteState;
   d: (a: Action) => void;
@@ -38,7 +41,10 @@ export function App() {
   useEffect(() => saveState(s), [s]);
   useEffect(() => {
     const root = document.documentElement;
-    if (s.theme === 'auto') root.removeAttribute('data-theme');
+    if (s.theme === 'auto') {
+      if (HOST_THEME) root.setAttribute('data-theme', HOST_THEME);
+      else root.removeAttribute('data-theme');
+    }
     else root.setAttribute('data-theme', s.theme);
     root.lang = s.lang;
   }, [s.theme, s.lang]);

@@ -16,6 +16,8 @@ Overall status: **NOT PRODUCTION_READY**. The native build, real authentication,
 | Site Lab e2e: the 10 required tests + lab/missions/preventive (desktop 1440×900 + Pixel 7) | PASS | `pnpm --filter @hhos/site e2e` → 25 passed, 1 skipped (keyboard test runs on desktop only) |
 | Client web e2e: local-only + cloud (against the API) + labs + missions (desktop + Pixel 7) | PASS | `pnpm --filter @hhos/client e2e` → 8 passed |
 | Production web builds (Site + client) | PASS | `pnpm build` → `apps/site/dist`, `apps/client/dist` |
+| Site published as a Site artifact | PASS | Single-file build (inlined CSS/JS) published privately at https://claude.ai/artifact/3qDv9zkev2WbfuhbWNFutV; checked locally at 390 px: 0 page errors, 0 px horizontal overflow |
+| Push to GitHub | **BLOCKED** | `git push` → 403: Claude has no GitHub access to `kaansavukduran/claudereponewscience`. The commits are preserved in `human-health-os-v0.25.bundle`. |
 | Android APK/AAB | **BLOCKED** | `npx cap add android` succeeded. `./gradlew assembleDebug` failed: the environment network policy returns **403 for `dl.google.com`** (Google Maven: AGP 8.13.0, google-services 4.4.4), and no Android SDK is installed (`ANDROID_HOME` is unset). Fix: allow `dl.google.com` and install an SDK, or build on a machine that has the Android toolchain. |
 | iOS / Xcode / TestFlight | **BLOCKED** | Needs macOS with Xcode; this container runs Linux. |
 | Native secure storage (SQLite store, Keystore/Keychain) | NOT_RUN | The interface is ready (`DocumentStore`); there is no native implementation yet. |
