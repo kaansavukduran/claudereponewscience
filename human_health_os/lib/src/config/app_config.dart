@@ -3,6 +3,8 @@
 /// secrets here, because they end up readable inside every client bundle.
 library;
 
+import 'package:flutter/services.dart' show FlutterVersion;
+
 enum BuildProfile {
   development,
   staging,
@@ -31,9 +33,10 @@ class AppConfig {
     this.dartVersion = 'unknown',
   });
 
-  /// Reads `--dart-define=APP_ENV=…`, `APP_VERSION`, `SOURCE_REVISION`,
-  /// `FLUTTER_VERSION` and `DART_VERSION` (build identity, v0.31 §12).
-  /// Anything not passed stays `unknown`; nothing is guessed.
+  /// Reads `--dart-define=APP_ENV=…`, `APP_VERSION` and `SOURCE_REVISION`.
+  /// Flutter and Dart versions come from [FlutterVersion], which the Flutter
+  /// tool injects into every build (`FLUTTER_VERSION` is reserved and cannot
+  /// be passed by hand). Anything absent stays `unknown`; nothing is guessed.
   factory AppConfig.fromEnvironment() {
     return AppConfig(
       profile: BuildProfile.parse(
@@ -47,14 +50,8 @@ class AppConfig {
         'SOURCE_REVISION',
         defaultValue: 'unknown',
       ),
-      flutterVersion: const String.fromEnvironment(
-        'FLUTTER_VERSION',
-        defaultValue: 'unknown',
-      ),
-      dartVersion: const String.fromEnvironment(
-        'DART_VERSION',
-        defaultValue: 'unknown',
-      ),
+      flutterVersion: FlutterVersion.version ?? 'unknown',
+      dartVersion: FlutterVersion.dartVersion ?? 'unknown',
     );
   }
 
