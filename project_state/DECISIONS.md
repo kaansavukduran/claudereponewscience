@@ -75,3 +75,12 @@ The user supplied `HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.31_CLAUDE_CODE_WEB_ONE_S
 
 `com.humanos.HumanHealthOS` (app id), `HumanHealthOS-x86_64.AppImage`, the appendix-218 tarball layout and the `human-health-os/` XDG subdirectory are the target names. They are applied in F015-L1 (packaging) and F002 (XDG path), not in F001, so F001 does not widen into packaging or persistence.
 
+## D-013: Adopt the v0.32 master and its execution kernel (2026-10-06)
+
+The user supplied `HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.32_CLAUDE_CODE_WEB_ONE_SHOT.md` (sha256 `9a8c50ef…c47d`) as the single authoritative specification and ordered its one-shot run (Phase 0 → F001 → stop; no F002). Consequences:
+- v0.32 replaces v0.31 as process master. Ladder ids (F001–F017) are unchanged.
+- **F001 is re-certified against the v0.32 contract** as `F001@v0.32` on the existing repository (kernel bootstrap rule 1: repair/use in place). The v0.31 certification stays in history as `F001@v0.31`; its receipts are history, not current verified gates, because v0.32 adds requirements (console errors, behavioral offline start, exactly three primary destinations) and the code changes.
+- Primary navigation is exactly Today, Timeline, Labs (conflict C-8). The seven placeholders stay as a secondary "Planned" group because they exist in verified code.
+- Evidence: receipts carry `forge_id` with the contract (`F001@v0.32`); verified gates name the paths they `cover`, and `tools/validate_project_state.py` fails a gate whose covered paths changed after its receipt's revision (§33.5) or whose receipt was recorded on a dirty source tree. Build receipts carry target, architecture, profile, signing and smoke-evidence fields (§33.2).
+- Phase 0 gap analysis: a read-only multi-agent review (4 lenses, each finding challenged by a skeptic) produced 40 confirmed and 6 refuted findings (`reports/audit/v032_phase0_gap_analysis.json`). In-scope findings are fixed in F001@v0.32; the rest are KNOWN_GAPS G-18…G-21.
+

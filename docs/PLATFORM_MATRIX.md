@@ -4,8 +4,8 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 
 | Target | Host needed | This container | Blocker | Distribution artifacts (eventual) |
 |---|---|---|---|---|
-| Web / PWA (private app) | any | **RUNTIME_TESTED** (F002): Playwright smoke 26/26 on Chromium 1194 incl. save → reload → persisted | PWA install NOT_RUN | static `build/web`, installable PWA |
-| **Linux desktop** (product surface, D-008/D-009) | Linux + GTK3 dev | **RUNTIME_TESTED** (F002) on Ubuntu 24.04 under Xvfb (X11): `integration_test` saves, relaunches and survives a moved data folder | Not PACKAGED. Wayland, Fedora/Nobara, Debian, Ubuntu 22.04: NOT_RUN. | Flatpak (primary), `x86_64.AppImage`, `Portable.tar.zst`, `.deb`, `.rpm`. ARM64 planned. |
+| Web / PWA (private app) | any | **RUNTIME_TESTED** (receipts in `evidence/`; current F001@v0.32 run listed in `CURRENT_STATE.json → verified_gates`): Playwright smoke on Chromium 141 (Today → Timeline → Labs, save → reload, 0 external requests) | PWA install NOT_RUN | static `build/web`, installable PWA |
+| **Linux desktop** (product surface, D-008/D-009) | Linux + GTK3 dev | **RUNTIME_TESTED** on Ubuntu 24.04 under Xvfb (X11): launch + `integration_test` (save, relaunch, moved data folder); receipts in `evidence/` | F015-L1 (IN_PROGRESS_RECOVERABLE): tar.zst/deb/rpm/AppImage built UNSIGNED; Ubuntu 24.04 install/launch PASS (X11 + Weston Wayland); Ubuntu 22.04 FAIL (open libGLESv2 dependency); Fedora 44 static rpm checks only; Debian 12/13, Nobara 44, GNOME/KDE Wayland, Flatpak NOT_RUN. Development vault moves to `$XDG_DATA_HOME/human-health-os/` in F002 (C-4). | Flatpak (primary), `x86_64.AppImage`, `Portable.tar.zst`, `.deb`, `.rpm`. ARM64 planned. |
 | Android | Android SDK + Google Maven | **BLOCKED_ENVIRONMENT** | no Android SDK; network policy returns 403 for `dl.google.com` / `maven.google.com` | APK, AAB |
 | iOS | macOS + Xcode | **BLOCKED_BY_HOST_OS** | Linux host | IPA / TestFlight |
 | macOS | macOS + Xcode | **BLOCKED_BY_HOST_OS** | Linux host | `.app`, DMG/PKG (Developer ID + notarization) |

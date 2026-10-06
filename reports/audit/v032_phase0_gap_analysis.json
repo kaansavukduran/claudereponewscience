@@ -1,0 +1,500 @@
+{
+ "confirmed": [
+  {
+   "id": "LENS-2",
+   "title": "Wide rail presents all 10 doc-209 destinations as equal first-level items; kernel-vs-appendix conflict not recorded",
+   "severity": "minor",
+   "evidence": "lib/src/navigation/destinations.dart:1 `/// The ten first-level destinations (v0.27 doc 209).`. app_shell.dart:131-138 builds one NavigationRailDestination per entry of `destinations` (10 items, 7 of them PlannedDestinationScreen placeholders). shell_test.dart:73 locks this in: `expect(rail.destinations, hasLength(destinations.length));`. The embedded appendix 209 (spec lines 2905-2915) lists 10 'Initial destinations'. grep of project_state/SOURCES.md and DECISIONS.md finds no conflict entry for the v0.32 'exactly these primary destinations' clause (SOURCES.md conflicts stop at C-7).",
+   "v032_clause": "\"exactly these primary destinations: Today, Timeline, Labs. The shell may expose future destinations only if they already exist in verified repository code\" (lines 123-129); \u00a745: \"If the integrated plan above conflicts with an embedded source, do not silently guess... Record the conflict.\"",
+   "suggested_fix": "Keep the 7 existing (tested) placeholder destinations, but make them visibly secondary on the rail: either a trailing 'More' entry or a separate labelled group after a divider below Today/Timeline/Labs. Change shell_test.dart:73 to assert the 3 primary rail items. Record a SOURCES.md conflict entry (kernel 'exactly 3 primary' outranks appendix 209's 10 'initial destinations'; the placeholders are kept as secondary because they already exist in verified code).",
+   "in_f001_scope": true,
+   "lens": "f001-contract",
+   "verifier_note": "The evidence holds. destinations.dart:1 says 'ten first-level destinations (v0.27 doc 209)', and shell_test.dart:73 asserts that the rail has destinations.length entries. project_state/SOURCES.md stops at C-7, and `git status` shows docs/handoff/v0.32/ as untracked, so nothing in project_state mentions v0.32 yet. The kernel's 'exactly these primary destinations' clause and appendix 209's 10 initial destinations are therefore an unrecorded interpretive tension, and line 2750 says: \"If the integrated plan above conflicts with an embedded source, do not silently guess... Record the conflict.\" I downgraded this to minor because the kernel's exception clause plausibly allows the current rail, so the confirmed gap is documentation, not behavior. The smallest fix is a SOURCES.md conflict entry, C-8 or similar, that records the chosen reading and its rationale. Making the rail visibly secondary is optional, unless the strict reading is adopted (then also apply LENS-1)."
+  },
+  {
+   "id": "LENS-3",
+   "title": "Timeline placeholder unconditionally claims \"No records yet\" even when records exist",
+   "severity": "major",
+   "evidence": "lib/src/features/common/planned_destination_screen.dart:51 `Text(s.noRecordsYet, style: text.titleMedium),` renders with no data check. strings.dart:29 `'No records yet'`. destinations.dart:280 says Timeline's purpose is 'Every record on one timeline...'. Today's WeightCard saves body.weight records (weight_card.dart:53 `_svc.recordWeightKg`), and development web and desktop builds persist them (smoke checks 'weight survives reload'). After a weight is saved, Timeline still says 'No records yet'. No test opens Timeline after a save (weight_heartbeat_test.dart has only 3 Today-only tests).",
+   "v032_clause": "\"explicit empty/unimplemented states instead of fabricated health data\" (F001 must contain); invariant \"unknown \u2260 false / missing \u2260 zero\" (CLAUDE.md invariants)",
+   "suggested_fix": "In PlannedDestinationScreen, do not assert a record count for a view that is not built. For Timeline, replace 'No records yet' with an unimplemented-state line, e.g. 'Timeline view not built yet; saved entries are shown on Today'. Alternatively, show 'No records yet' only for destinations whose record type does not exist yet. Add a widget test: save a weight on Today, open Timeline, expect no 'No records yet'.",
+   "in_f001_scope": true,
+   "lens": "f001-contract",
+   "verifier_note": "Confirmed. planned_destination_screen.dart:51 renders `Text(s.noRecordsYet, ...)` unconditionally. The widget takes only `destination` and has no data access (lines 10-12). Timeline's purpose is 'Every record on one timeline, with its source and corrections.' (destinations.dart:77, not :280). Today saves body.weight HealthRecords (weight_card.dart:53 \u2192 heartbeat_service.dart:61). The web smoke (flutter_web_smoke.mjs:106-121) and the integration test show these records persist in development builds, and staging keeps them in memory for the session. So once a weight is saved, Timeline makes a false absence claim ('No records yet'). That contradicts the unknown\u2260false and missing\u2260zero honesty rules, and it weakens the F001 'explicit empty/unimplemented states' requirement. For the other placeholder destinations the text is true, because those record types cannot exist yet. shell_test.dart:217 currently requires 'No records yet' on every placeholder, including Timeline, so that test needs adjusting with the fix. This is a small fix within F001 scope."
+  },
+  {
+   "id": "LENS-4",
+   "title": "Required check 8 (shell starts without network dependency) has no behavioral Flutter test; the static guard is partial",
+   "severity": "minor",
+   "evidence": "test/architecture/imports_test.dart:38-54 is only a substring grep for ['package:http/','HttpClient','package:dio/','WebSocket','Socket.connect','RawSocket']. It misses fetch/XMLHttpRequest via @JS interop (already used in storage_web.dart `@JS('localStorage')`), Image.network/NetworkImage and package:web. shell_test.dart:271-284 asserts `find.text('Not required')`, which is the hard-coded constant in capabilities.dart:132-137 ('This build makes no network calls.'), so it proves nothing about behavior. flutter_test installs `HttpOverrides.global = _MockHttpOverrides()` (/opt/toolchains/flutter/packages/flutter_test/lib/src/_binding_io.dart:27), so an HTTP call would quietly get a 400 and no test would fail. Every widget test builds services with servicesFor() (shell_test.dart:35). No test calls main() or bootstrap() (grep 'bootstrap(' in test/ finds nothing). Behavioral coverage exists only in the web smoke's external-request recorder (flutter_web_smoke.mjs:51,125).",
+   "v032_clause": "\"create/retain tests that objectively demonstrate at least: ... 8. the shell starts without a network dependency.\" and \"Do not overfit tests to implementation-private widget trees when user-visible behavior can be tested.\"",
+   "suggested_fix": "Add a widget test that runs `HttpOverrides.runZoned(..., createHttpClient: (_) => throw/record)` around `bootstrap(stagingConfig, HostPlatform.linux)`. Staging is memory-only, so it does not touch the disk. The test should pump HumanOsApp, assert screen-today renders, assert zero client creations or connection attempts, and navigate to Labs. Extend the imports_test banned list with 'XMLHttpRequest', \"@JS('fetch')\", 'Image.network', 'NetworkImage' and 'package:web/'.",
+   "in_f001_scope": true,
+   "lens": "f001-contract",
+   "verifier_note": "The facts are correct. imports_test.dart:38-54 is a substring guard. No test calls bootstrap(): shell_test and the integration test use servicesFor(). The flutter_test binding installs _MockHttpOverrides (_binding_io.dart:27,79ff), which answers HTTP with 400 without failing the test. Check 8 is still objectively demonstrated, though. The web smoke records every request and fails on any non-localhost host (flutter_web_smoke.mjs:51,125). Its receipt EV-RUNTIME-F001-0001 (exit 0) and reports/runtime/flutter_web_smoke.json show 'PASS ... no external network requests' for desktop-en, phone-en and phone-tr, running the real compiled main()\u2192bootstrap() path. All widget tests also render the full shell with no real network. lib/ also contains no Image.network, NetworkImage, fetch or XMLHttpRequest; its only @JS use is localStorage (storage_web.dart:11). The clause therefore is not violated, so I downgraded from major to minor. The value left is defence in depth: a VM-level test that runs bootstrap() under HttpOverrides.runZoned for staging (memory-only per storage_io.dart:91-97, so it is disk-safe), plus the extra banned tokens. Do not ban '@JS' generically, because storage_web.dart uses it legitimately."
+  },
+  {
+   "id": "LENS-5",
+   "title": "Web smoke checks only 'pageerror'; console errors and failed/4xx requests are not captured",
+   "severity": "minor",
+   "evidence": "tools/flutter_web_smoke.mjs:50-52 registers only `page.on('request', ...)` (external hosts) and `page.on('pageerror', (e) => errors.push(e.message));`. There is no page.on('console'), 'requestfailed' or 'response' listener. The local server returns 404 silently (line 28 `res.writeHead(404).end();`), so a missing asset or manifest would show up only as a console 'Failed to load resource' error and the smoke would still pass. Flutter framework exceptions in release builds are printed through the console, not raised as pageerror. The result is only 'no page errors' (line 126; reports/runtime/flutter_web_smoke.json shows 'PASS desktop-en: no page errors').",
+   "v032_clause": "Web runtime smoke step 4: \"verify no immediate fatal console/runtime error blocks the shell\"",
+   "suggested_fix": "Add `page.on('console', m => { if (m.type() === 'error' || /EXCEPTION CAUGHT|Another exception was thrown/.test(m.text())) consoleErrors.push(m.text()); })`, `page.on('requestfailed', ...)` and `page.on('response', r => r.status() >= 400 && failed.push(r.url()))`. Add PASS/FAIL checks '<label>: no console errors' and '<label>: no failed requests', and write them into flutter_web_smoke.json.",
+   "in_f001_scope": true,
+   "lens": "f001-contract",
+   "verifier_note": "The evidence holds. flutter_web_smoke.mjs:50-52 registers only 'request' and 'pageerror' listeners, and line 28 returns 404s silently. The clause's actual test is 'no immediate fatal console/runtime error *blocks the shell*', and the smoke checks that in substance. It asserts the shell renders, Today/Timeline/Labs navigation works and the principle texts are visible, on 3 runs (36 PASS checks in reports/runtime/flutter_web_smoke.json), plus no uncaught page errors. A fatal error that blocked the shell would fail those checks. No state file or report claims 'no console errors' (grep found none), so nothing is overclaimed. I downgraded from major to minor: capturing console output and requests that fail or return \u2265400 would strengthen the receipt cheaply, and the fix fits F001 scope. One caveat for the fix: Flutter release-mode framework errors are printed through print/console.log, not console.error. A filter on type()==='error' alone will miss them; the text regex in the suggested fix is needed."
+  },
+  {
+   "id": "LENS-7",
+   "title": "Web/PWA and Android display names are still the template package name, not 'Human OS'",
+   "severity": "minor",
+   "evidence": "human_health_os/web/index.html: `<title>human_health_os</title>` and `<meta name=\"apple-mobile-web-app-title\" content=\"human_health_os\">`; web/manifest.json `\"name\": \"human_health_os\", \"short_name\": \"human_health_os\"`; android/app/src/main/AndroidManifest.xml:3 `android:label=\"human_health_os\"`. Meanwhile human_os_app.dart:31 uses `title: 'Human OS'` and linux/runner/my_application.cc:48 uses \"Human OS\". The browser tab shows 'human_health_os' until Flutter boots, and PWA install uses that name.",
+   "v032_clause": "\"Human OS app/root widget\" (F001 must contain)",
+   "suggested_fix": "Set the index.html <title>, the apple-mobile-web-app-title and the manifest name/short_name to 'Human OS'. Leave the Android label to the Android adapter Forge, or change it alongside.",
+   "in_f001_scope": false,
+   "lens": "f001-contract",
+   "verifier_note": "Confirmed with one citation fix: the root widget title is at human_os_app.dart:16 (`title: 'Human OS'`), not :31. web/index.html:26 and :32 and web/manifest.json name/short_name are 'human_health_os', and AndroidManifest.xml:3 has the same label. The same inconsistency exists on Windows (main.cpp:30 window title, Runner.rc ProductName), on macOS (AppInfo.xcconfig PRODUCT_NAME) and on iOS (CFBundleDisplayName 'Human Health Os'). Linux uses 'Human OS'. The cited F001 clause, 'Human OS app/root widget', is satisfied because the root widget exists and is titled 'Human OS', and MaterialApp's title updates document.title after Flutter boots. What remains is stale or inconsistent display-name text: the tab title before boot and the PWA install name. Fixing it is optional and not required for F001; the web files are the only ones in F001's build target."
+  },
+  {
+   "id": "STATE-1",
+   "title": "Canonical cursor says READY / F001 complete / next F002 while the v0.32 F001 run is in progress; no v0.32 F001 baseline or acceptance criteria recorded",
+   "severity": "major",
+   "evidence": "project_state/CURRENT_STATE.json:6 \"development_state\": \"READY\"; :8 \"active_forge\": null; :19 \"last_completed_forge\": \"F001 (v0.31 ladder), 2026-10-06\"; :156-158 next_recommended_forge F002; :300 forge_history.F001 \"result\": \"F001_COMPLETE\" with only v0.31 AC-1..AC-9 (:301-311). git status shows only `?? docs/handoff/v0.32/`, so nothing has recorded this run. No DECISIONS entry explains re-running F001 under v0.32 even though v0.32 \u00a744 says \"If a real Flutter repository already exists and F001 evidence already passes, do not recreate it. Advance to the earliest incomplete ladder item\". A \u00a731.3 resume (read state, then the active Forge record) would find no active Forge and would route to F002.",
+   "v032_clause": "v0.32 PHASE 0 CONTRACT: \"7. Define the exact F001 baseline and acceptance criteria.\" \u00a731.2: \"During a Forge, active_forge should record enough information to resume after interruption\". Kernel: \"Do not begin F002 in the same run.\"",
+   "suggested_fix": "Before any app edit, set development_state to FORGE_PLANNING/IMPLEMENTING. Populate active_forge with forge_id F001, a v0.32 contract tag, baseline_commit 254c534, scope, and v0.32 acceptance criteria mapped to the kernel's 8 required checks plus the DoD (including the console-error smoke and the 3 primary destinations). Add completed_steps, next_action and evidence_ids. Record a D-013 that explains why F001 is re-verified under v0.32 instead of advancing per \u00a744. Leave next_recommended_forge until the run closes.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "The cited evidence is accurate. CURRENT_STATE.json:6 says READY, :8 has active_forge null, :19 and :300 record F001_COMPLETE (v0.31) with only AC-1..AC-9, and :156-158 recommend F002. git status shows only `?? docs/handoff/v0.32/`, and DECISIONS stops at D-012. I downgraded it from blocker. The state correctly reflects the v0.31 run that actually happened, so nothing in it is false. What is missing is Phase 0 step 7 for this run (\"Define the exact F001 baseline and acceptance criteria\"), and that is a Phase 0 contract item, not an F001 MUST or DoD item. The v0.31 AC already cover most of the kernel's 8 checks: AC-5 covers the rail/bar, Today\u2192Timeline\u2192Labs and no network client, and AC-7 covers 0 external requests. The real delta is the console-error check and \"exactly these primary destinations\". The \u00a744 versus kernel tension (\u00a744: \"F001 evidence already passes ... Advance\"; kernel: \"Do not begin F002\") is real and should be recorded in a decision. Fixing this belongs in this run's Phase 0."
+  },
+  {
+   "id": "STATE-2",
+   "title": "Master-spec and source-authority pointers still name v0.31 as the newest authority; v0.32 is absent from state, SOURCES, DECISIONS, CLAUDE.md and ROADMAP",
+   "severity": "major",
+   "evidence": "CURRENT_STATE.json:23-24 \"master_spec\": \"docs/handoff/v0.31/...v0.31...md\", \"master_spec_sha256\": \"7f999e0f...\". The v0.32 file on disk hashes to 9a8c50ef..., which matches docs/handoff/v0.32/SHA256SUMS. Also :7 \"reconciled to v0.31\", :163 \"process_master\": \"docs/handoff/v0.31/ (D-011)\", :20-22 baseline git_commit d1df671 \"clean at Phase 0 start\" (HEAD is 254c534 with untracked v0.32). CLAUDE.md:5 \"> the v0.31 master ... (process and plan, D-011)\"; :17, :41, :47 \"Done = v0.31 \u00a734\". SOURCES.md has no v0.32 row, and its lineage (line 24) ends at \"v0.31 single-file one-shot candidate (have...)\". DECISIONS.md:65 D-011 adopts v0.31 only. ROADMAP.md:3 and :5 cite \"docs/handoff/v0.31/\u2026 \u00a739\". The validator only checks the hash of whatever spec is recorded (validate_project_state.py:109-115), so it passes while v0.32 exists.",
+   "v032_clause": "Kernel: \"this section is the authoritative runtime instruction\"; precedence \"repository reality > v0.32 EXECUTION KERNEL > integrated current master sections > ...\"; PHASE 0 CONTRACT \"5. Reconcile repository reality with any existing Human OS state.\"",
+   "suggested_fix": "Commit docs/handoff/v0.32/. Add a SOURCES row and lineage step for v0.32 (sha 9a8c50ef\u2026, CANDIDATE, process authority) and a D-013 that adopts v0.32 (ladder unchanged from v0.31; kernel F001/DoD/final report added). Update CURRENT_STATE baseline (git_commit 254c534, working_tree, master_spec v0.32 path + sha), authoritative_sources.process_master and initialization. Update CLAUDE.md:5/17/41/47 and ROADMAP:3/5 to cite v0.32.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. The v0.32 file hashes to 9a8c50ef\u2026, matching docs/handoff/v0.32/SHA256SUMS. CURRENT_STATE.json:23-24 still records the v0.31 path and sha 7f999e0f\u2026, and :163 still has process_master v0.31. CLAUDE.md:5, :17, :41 and :47 cite v0.31. SOURCES.md has no v0.32 row, and its lineage at line 24 ends at v0.31. ROADMAP.md:3 cites v0.31 \u00a739. A grep for \"v0.32\" over project_state, ROADMAP, CLAUDE.md, README and tools returns nothing. validate_project_state.py:109-115 only hashes whatever spec the state records, so it passes. The spec is also untracked, so the authoritative spec has no recorded provenance in the repository. Major is fair because the state names v0.31 as process authority, against the kernel's precedence. This belongs in Phase 0 reconcile (item 5)."
+  },
+  {
+   "id": "STATE-3",
+   "title": "Untracked v0.32 spec will mark every gate run in this Forge as dirty, and the validator accepts dirty receipts as verified gates",
+   "severity": "minor",
+   "evidence": "git status --short shows `?? docs/handoff/v0.32/`. In run_gate.py, EVIDENCE_PATHS = (\"evidence/\", \"reports/\") (line 30). Line 118 builds `changed` from `git status --porcelain` and line 137 sets \"working_tree_dirty\": bool(source_changes), so docs/handoff/v0.32/ makes every new receipt working_tree_dirty=true. validate_project_state.py lists working_tree_dirty in RECEIPT_FIELDS (line 28) but never checks its value (lines 121-131).",
+   "v032_clause": "\u00a733.1 test receipt \"working_tree_dirty\": false; \u00a733.5 \"If source code ... or relevant configuration changes after a PASS, do not automatically carry the PASS forward.\"; DoD \"evidence/state files reflect only actual execution\".",
+   "suggested_fix": "Commit docs/handoff/v0.32/ (and the state reconcile) before running any v0.32 gate. In validate_project_state.py, reject a verified gate whose receipt has working_tree_dirty=true unless an explicit, recorded waiver exists.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "The mechanism is confirmed. run_gate.py:118-119 drops only paths starting with evidence/ or reports/, so the untracked `docs/handoff/v0.32/` makes working_tree_dirty true (:137). validate_project_state.py never reads that field's value (:121-131). I downgraded it to minor for three reasons. v0.32 \u00a733.1 only shows `false` in a sample; it asks for the field to be recorded honestly and does not forbid dirty receipts. Receipts also record dirty_source_paths (:138), so a receipt dirty only because of the spec doc would still be bound to the source revision. And all 21 existing receipts are dirty=false. Committing the spec before gates is the cheap fix, and a validator check for dirty source paths is optional hardening."
+  },
+  {
+   "id": "STATE-4",
+   "title": "State validator cannot detect \u00a733.5 evidence invalidation; its revision check is tautological",
+   "severity": "minor",
+   "evidence": "validate_project_state.py:130-131 only compares g[\"source_revision\"] to the receipt's source_revision, and both values are copied from the receipt. The validator never runs git or compares a receipt's revision with HEAD for the paths the gate covers, and verified_gates entries do not record which paths they cover. Verified gates currently span 3 revisions (9e86ed0, 879455b, 6f1f619). If v0.32 F001 edits human_health_os/lib, every 9e86ed0 gate stays listed and the validator still prints PASS. It also does not check forge_history.*.evidence_ids, does not check that verified_gates excludes ids in stale_or_uninformative_receipts, and FORGE_STATES (line 26) lacks the v0.32 outcomes F001_COMPLETE / F001_PARTIAL_BLOCKED / INITIALIZATION_BLOCKED.",
+   "v032_clause": "\u00a733.5 \"The Forge should know which gates must be rerun.\"; \u00a731.3 step 7 \"verify whether prior command evidence still corresponds to the same source tree\"; first-failure rule \"A code edit after a PASS invalidates any earlier evidence that depends on the changed code unless the relevant gate is rerun.\"",
+   "suggested_fix": "Give each verified gate a `covers` path list (e.g. human_health_os/, tools/flutter_web_smoke.mjs, pubspec.lock). In the validator, fail when `git diff --quiet <receipt.source_revision> HEAD -- <covers>` reports changes. Also cross-check forge_history evidence_ids, the stale list, and the v0.32 outcome vocabulary.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "The code facts are accurate. :130-131 only compares the gate entry's revision with the receipt's revision. Nothing compares receipts against HEAD or covered paths. forge_history evidence_ids and the stale list are not cross-checked. FORGE_STATES is only applied to active and suspended forges. I downgraded it to minor. \u00a733.5 says \"The Forge should know which gates must be rerun\", which is a process duty, not a validator requirement, and the first-failure rule already requires rerunning gates after edits. It also does no current harm: `git diff --stat 9e86ed0 HEAD` shows no changes under human_health_os/, tools/flutter_web_smoke.mjs, pnpm-lock or packages, so all 9e86ed0 gates still match the source. The suggested `covers` and git-diff check is a tooling enhancement, not an F001 requirement."
+  },
+  {
+   "id": "STATE-5",
+   "title": "Encrypted vault is called F004 / FORGE 004 in canonical state and control files; the canonical ladder says F006 (F004 = Labs)",
+   "severity": "minor",
+   "evidence": "CURRENT_STATE.json:224 \"production + portable memory-only until F004\" and :233 \"portable\": \"memory only until encrypted vault (F004)\", while :237 \"staging\": \"memory only until F006 encrypted vault (D-010)\" in the same object. CLAUDE.md:53 \"Production and portable modes stay memory-only until the encrypted vault (FORGE 004)\", which also omits staging (D-010). KNOWN_GAPS.md:8 G-02 \"memory-only until F004\"; :10 G-04 \"No encryption/vault | OPEN | F004\". RISKS.md:9 R-05 \"Dedicated F004\"; :17 R-13 \"F004 replaces the payload\". docs/ARCHITECTURE.md:60 \"not encrypted\" until F004, key_store \"planned F004/F030K\". Code comments: lib/src/data/local/vault_log.dart:9 \"FORGE 004 replaces the payload format\"; lib/src/domain/ports/health_repository.dart:31 \"encryption arrives in FORGE 004\". In-app notices already say \"Forge F006\" (storage_io.dart:95,103; capabilities.dart:103,111).",
+   "v032_clause": "\u00a739 \"## F004 \u2014 Labs vertical slice\" ... \"## F006 \u2014 Local security hardening ... native installed vault protection ... no plaintext fallback\"; D-011 \"the v0.31 vertical-slice ladder (F001\u2013F017, \u00a739) is canonical\".",
+   "suggested_fix": "Change F004/FORGE 004 to F006 in CURRENT_STATE (domains.persistence, storage_policy.portable), CLAUDE.md:53 (also add \"staging\"), KNOWN_GAPS G-02/G-04, RISKS R-05/R-13, ARCHITECTURE:60 and vault_log.dart:9. check_f001_scope allows lines containing FORGE 004/Forge F006. Leave the domain comment in health_repository.dart:31 for F002, because lib/src/domain is a frozen AC-8 path; record that.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. CURRENT_STATE.json:224 and :233 say F004 and :237 says F006 in the same object. CLAUDE.md:53 says \"FORGE 004\". KNOWN_GAPS G-02 and G-04 say F004. RISKS R-05 and R-13 say F004. ARCHITECTURE:60 says F004/F030K. vault_log.dart:9 and health_repository.dart:31 also say FORGE 004. The v0.32 ladder at line 2420 has F004 as Labs, and line 2444 has F006 as Local security hardening. I downgraded it to minor because the storage rule itself is correct: memory-only until the vault, and the in-app notices already say F006. Only the Forge id is wrong, which makes it stale or inconsistent text. The canonical ROADMAP rows are correct. Fixing the text belongs in Phase 0 reconcile. The comment in the frozen domain file can be deferred."
+  },
+  {
+   "id": "STATE-6",
+   "title": "Other legacy Forge ids remain in KNOWN_GAPS, RISKS and ARCHITECTURE and do not exist or mean something else on the canonical ladder",
+   "severity": "minor",
+   "evidence": "KNOWN_GAPS.md:9 G-03 \"No Dart engines | F003+\" (canonical F003 = Timeline; engines = F011, cf. TEST_STRATEGY.md:26 \"from v0.31 F011\"); :11 G-05 \"F027\" (ladder ends at F017; maps to F014); :13 G-07 \"before F017/F018/F020\" (F018/F020 do not exist); :14 G-08 \"F021/F036\". RISKS.md:15 R-11 \"evaluate in F034\"; :16 R-12 \"FORGE 002/021\". ARCHITECTURE.md:54 \"test/contracts (golden vectors, F003)\"; :60 \"adapters planned F023/F024\" (\u2192F013). Note that R-14 itself names this exact risk: \"Two Forge-id schemes ... cause a Forge to be skipped or repeated\".",
+   "v032_clause": "\u00a739 ladder (F001\u2013F017); D-011 \"Legacy roadmap ids are mapped in docs/ROADMAP.md\"; \u00a722.B SELECT GAP reads the gap list.",
+   "suggested_fix": "Rewrite the Planned/closed-by column and the risk mitigations to canonical ids using the ROADMAP.md legacy-mapping column (F003\u2192F011, F027\u2192F014, F017\u2013F022\u2192F011, F036\u2192F012, F034\u2192F016, F023/F024\u2192F013, F030K\u2192F006).",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. KNOWN_GAPS:9 has G-03 \"F003+\", :11 has G-05 \"F027\", :13 has G-07 \"before F017/F018/F020\" and :14 has G-08 \"F021/F036\". RISKS:15 has R-11 \"evaluate in F034\" and :16 has R-12 \"FORGE 002/021\". ARCHITECTURE has test/contracts \"F003\" and adapters \"F023/F024\". All of these are legacy ids with no meaning on the F001\u2013F017 ladder, and R-14 names exactly this risk. It is stale text with no effect on F001. Fixing it is optional reconcile work."
+  },
+  {
+   "id": "STATE-7",
+   "title": "Existing F001 evidence does not cover the v0.32 runtime-smoke requirement for fatal console errors",
+   "severity": "major",
+   "evidence": "tools/flutter_web_smoke.mjs:52 registers only `page.on('pageerror', ...)`; there is no `page.on('console')` listener (grep finds only console.log at :145). So EV-RUNTIME-F001-0001 (cited as AC-7, CURRENT_STATE.json:72-76) proves \"0 page errors\" but says nothing about console errors. docs/TEST_STRATEGY.md:15 lists the smoke checks without console errors. AC-7 text (CURRENT_STATE.json:308) says \"0 page errors\" only.",
+   "v032_clause": "Web runtime smoke: \"4. verify no immediate fatal console/runtime error blocks the shell; 5. record runtime evidence.\"",
+   "suggested_fix": "Add a console-error collector to flutter_web_smoke.mjs and fail on console 'error' entries, with an explicit, recorded allowlist for known benign engine warnings. Rerun the build and runtime gates with new receipts, add this to the v0.32 F001 AC, and update TEST_STRATEGY:15.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. tools/flutter_web_smoke.mjs:52 registers only `page.on('pageerror')`, and grep finds no console listener in the smoke, the CI workflows or TEST_STRATEGY:15. The kernel's web runtime smoke step 4 is \"verify no immediate fatal console/runtime error blocks the shell\". Rendering and navigation checks plus pageerror cover uncaught runtime exceptions. They do not cover Flutter framework errors that reach only the console, such as a grey error widget in release mode while headings stay visible. Major is appropriate. This belongs in this F001 run: add console capture with an explicit allowlist, rerun the build and smoke, and add it to the v0.32 AC."
+  },
+  {
+   "id": "STATE-8",
+   "title": "Build receipts lack \u00a733.2 fields: target platform, architecture, build profile, signing state and smoke-test state",
+   "severity": "minor",
+   "evidence": "EV-BUILD-F001-0002 and -0003 have only the keys artifacts, command, cwd, dirty_source_paths, evidence_id, exit_code, expected_exit_code, finished_at, forge_id, host, kind, lockfile_sha256, log_*, result, source_revision, started_at, summary, tool_versions, working_tree_dirty. run_gate.py:132-159 never emits a target/arch/profile/signing/smoke field. Platform and profile can be recovered only by parsing the command string (\"--dart-define=APP_ENV=development\"), and signing state appears only in FORGE_LOG prose (\"UNSIGNED (Linux bundle)\").",
+   "v032_clause": "\u00a733.2 \"A build receipt should identify: target platform, architecture, build profile, exact command, source revision, dependency lock digest, toolchain versions, produced artifact path, artifact size, SHA-256, signing state, smoke-test state.\"",
+   "suggested_fix": "Add optional run_gate flags --target, --arch, --profile, --signing (default UNSIGNED/N_A) and --smoke-evidence <EV-id>, and write them into BUILD receipts. Have the validator require them for kind BUILD with result PASS. Use them for the v0.32 web build receipt.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Partly overstated. The BUILD-0002 and BUILD-0003 receipts already record the exact command, which carries the target (`flutter build web` or `linux`) and the profile (`--release`, APP_ENV=development). They also record host arch x86_64, source revision, lock digest, toolchain versions, artifact path, bytes and SHA-256. What is truly missing is an explicit signing-state field and a smoke-test-state link; that link exists only in CURRENT_STATE targets.web.evidence. \u00a733.2 uses \"should identify\", and it is not an F001 MUST or DoD item. Downgraded to minor; adding the fields is optional hardening."
+  },
+  {
+   "id": "STATE-9",
+   "title": "Runtime receipts do not bind what they exercised; the Linux launch receipt has an empty log",
+   "severity": "minor",
+   "evidence": "EV-RUNTIME-F001-0002: \"log_lines\": 0, \"log_sha256\": \"e3b0c442...b855\" (the SHA-256 of empty input), \"summary\": null, no artifacts. The real output went to /tmp/claude-0/f001-linux/out and was copied to reports/runtime/flutter-linux-f001-run.log, with no digest link from the receipt. This is the same empty-log pattern that CURRENT_STATE.json:288-290 uses to disqualify EV-TEST-F001-0013 (\"exited 0 with an empty log, so it proves nothing\"), yet 0002 is a verified gate (:92-97). EV-RUNTIME-F001-0001 also carries no artifact digest. The served main.dart.js hash appears only in reports/runtime/flutter_web_smoke.json, which says \"working_tree_dirty\": true for the same run whose receipt says false (the smoke counts evidence/ and reports/ writes as dirty).",
+   "v032_clause": "Web runtime smoke \"5. record runtime evidence\"; \u00a733.2 \"smoke-test state\"; \u00a733 \"Store concise receipts and hashes/paths to larger CI artifacts\".",
+   "suggested_fix": "When rerunning runtime gates, pass --artifact for the launch/smoke log, the screenshot and the served build (or main.dart.js). Make flutter_web_smoke.mjs use the same evidence/ and reports/ exclusion as run_gate, or record dirty paths. Treat the empty-log rule the same way for 0002 and 0013.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. The EV-RUNTIME-F001-0002 receipt has log_lines 0 and log_sha256 e3b0c442\u2026 (empty input), with no artifacts. The real log is in reports/runtime/flutter-linux-f001-run.log, which is not hash-linked. reports/runtime/flutter_web_smoke.json records working_tree_dirty true for the 9e86ed0 run, while its receipt says false. The analogy to 0013 is weaker than claimed: launch_smoke.sh's exit code is meaningful (RC=1 if the app dies within 12 s), and 0002 is a regression gate, not the primary F001 runtime gate. The served main.dart.js hash (e4db1bc\u2026) does match the BUILD-0002 artifact. Minor."
+  },
+  {
+   "id": "STATE-10",
+   "title": "No `flutter doctor -v` receipt, and the environment inventory cited by state is the v0.31 one",
+   "severity": "minor",
+   "evidence": "No receipt under evidence/ runs `flutter doctor -v`; verified_gates start at `flutter pub get`. CURRENT_STATE.json:180 \"environment_report\": \"reports/toolchain/environment_v031_2026-10-06.txt\", which is headed \"Phase 0 v0.31 environment report \u2014 2026-10-06T21:38:33Z\" with \"HEAD: d1df671\". The only flutter doctor output is reports/toolchain/flutter_doctor_2026-10-06.txt (written 20:21, first Phase 0).",
+   "v032_clause": "PHASE 0 CONTRACT \"4. Inspect actual tool availability: Flutter, Dart, Git, browser/Web runtime, Android toolchain, Linux toolchain, Windows toolchain, Apple toolchain\"; REAL COMMAND GATES sequence begins \"flutter doctor -v\".",
+   "suggested_fix": "Run `flutter doctor -v` through run_gate (kind TEST, recorded honestly even if it reports missing Android or Apple toolchains). Write a v0.32 environment report and point CURRENT_STATE.environment_report and toolchain at it.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Accurate: no receipt under evidence/ runs `flutter doctor`. The state points at environment_v031_2026-10-06.txt, written at 21:38 with HEAD d1df671. That report does include a doctor summary, egress probes and toolchain versions, and a full `flutter doctor -v` exists from 20:21 the same day, in the same container. The kernel lists `flutter doctor -v` in a \"Preferred\" sequence, and Phase 0 item 4 asks to inspect tools, but neither requires a doctor receipt for the DoD. Refreshing the inventory for this run is cheap Phase 0 work. Downgraded to minor."
+  },
+  {
+   "id": "STATE-11",
+   "title": "CLAUDE.md points the Forge report at the v0.31 \u00a724 format instead of the v0.32 one-shot final report contract",
+   "severity": "minor",
+   "evidence": "CLAUDE.md:47 \"Report format = v0.31 \u00a724, appended to project_state/FORGE_LOG.md.\" The last F001 entry (FORGE_LOG.md:186-265) follows \u00a724 and has no Source Authority, Environment / Toolchain, Phase 0 Changes, Commands Actually Executed, Runtime Results or Final Status (F001_COMPLETE / F001_PARTIAL_BLOCKED / INITIALIZATION_BLOCKED) sections, and no per-target PASS/FAIL/NOT_RUN/UNAVAILABLE/BLOCKED_ENVIRONMENT/BLOCKED_BY_HOST_OS line.",
+   "v032_clause": "v0.32 FINAL REPORT CONTRACT: \"At the end of the single run, return one consolidated report: # HUMAN OS ONE-SHOT FORGE REPORT ## Repository State ## Source Authority ## Environment / Toolchain ... ## Final Status\" and \"For every build/test target, distinguish: PASS, FAIL, NOT_RUN, UNAVAILABLE, BLOCKED_ENVIRONMENT, BLOCKED_BY_HOST_OS.\"",
+   "suggested_fix": "Update CLAUDE.md:47 so one-shot runs use the v0.32 FINAL REPORT CONTRACT and later single Forges keep \u00a724. Write this run's FORGE_LOG entry in the v0.32 contract headings.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "CLAUDE.md:47 says \"Report format = v0.31 \u00a724\". v0.32 \u00a724 (line 1542) is unchanged and still governs later single Forges. The v0.32 FINAL REPORT CONTRACT applies to \"the end of the single run\" and asks to \"return\" a consolidated report; it does not say to rewrite FORGE_LOG. The existing v0.31 F001 entry is historically correct for its run. So nothing is violated now. CLAUDE.md merely omits the one-shot contract, and the run must produce that report at the end. This is stale text; downgraded to minor."
+  },
+  {
+   "id": "STATE-12",
+   "title": "AC-9 self-audit receipt is stale for the committed state, and updated_at / finished_at predate the evidence they cite",
+   "severity": "minor",
+   "evidence": "EV-TEST-F001-0016 ran validate_project_state.py on 6f1f619 (started 21:54:01.395Z). Commit 254c534 then changed project_state/CURRENT_STATE.json (+10 lines adding the 0016 gate) and FORGE_LOG.md, so the validated state is not the committed one. CURRENT_STATE.json:160 \"updated_at\": \"2026-10-06T21:53:14Z\" and :299 forge_history.F001 \"finished_at\": \"2026-10-06T21:53:14Z\" are both earlier than that receipt and that commit (21:54:01).",
+   "v032_clause": "\u00a733.5 \"If ... relevant configuration changes after a PASS, do not automatically carry the PASS forward.\"; \u00a731.1 \"updated_at\": \"RFC3339 timestamp\"; \u00a733.1 \"Do not fabricate timestamps\".",
+   "suggested_fix": "Run the validator as the very last gate after the final state edit (exclude project_state/ from run_gate's dirty set, or record the validated CURRENT_STATE.json sha256 in the receipt summary). Set updated_at and finished_at to the time of the last state write or the last receipt.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. The EV-TEST-F001-0016 summary is \"20 receipts, 13 verified gates\" on 6f1f619. Commit 254c534 (21:54:01) then added the 0016 gate to CURRENT_STATE.json, so the committed state was never validated. updated_at and forge_history.F001.finished_at are both 21:53:14Z, earlier than that last write. FORGE_LOG honestly says \"PASS (on 6f1f619)\", so nothing is fabricated; the timestamps are stale. Minor."
+  },
+  {
+   "id": "STATE-13",
+   "title": "Gate-count and pointer inconsistencies between ROADMAP, FORGE_LOG and state",
+   "severity": "minor",
+   "evidence": "docs/ROADMAP.md:7 \"13 receipt-backed gates\" and FORGE_LOG.md:262 \"F001 DONE with 13 verified gates\", but CURRENT_STATE.json verified_gates has 14 entries (validator: \"14 verified gates\"). FORGE_LOG.md:180 \"AC-1\u2026AC-9 in CURRENT_STATE.json \u2192 active_forge.acceptance_criteria\", but active_forge is null (:8) and the ACs live in forge_history.F001.acceptance_criteria (:301).",
+   "v032_clause": "DoD \"evidence/state files reflect only actual execution\"; \u00a731.3 \"If state and repository disagree ... Record the discrepancy and repair the state file.\"",
+   "suggested_fix": "Correct the counts to 14 (or derive them from state) and repoint the FORGE_LOG Phase 0 line to forge_history.F001.acceptance_criteria.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. ROADMAP.md:7 says \"13 receipt-backed gates\" and FORGE_LOG.md:262 says \"13 verified gates\", but verified_gates has 14 entries; the 14th, the 0016 gate, was added in 254c534. FORGE_LOG.md:180 points to `active_forge.acceptance_criteria`, but active_forge is null and the AC are in forge_history.F001.acceptance_criteria. Stale text; minor."
+  },
+  {
+   "id": "STATE-14",
+   "title": "forge_history is keyed by Forge id, so recording the v0.32 F001 overwrites the v0.31 F001 record; receipts do not say which contract they satisfy",
+   "severity": "minor",
+   "evidence": "CURRENT_STATE.json:293-329 \"forge_history\": { \"F001\": {...v0.31 record...} } is a JSON object keyed \"F001\". Receipts carry \"forge_id\": \"F001\" and nothing names the spec or acceptance set (e.g. EV-TEST-F001-0009). A second F001 close under v0.32 would replace the v0.31 entry, and v0.31 and v0.32 F001 receipts are distinguishable only by timestamp or revision.",
+   "v032_clause": "\u00a731.2 \"The active Forge record is a cursor, not a substitute for Git history or test evidence.\"; CLAUDE.md invariant \"History is never rewritten silently.\"",
+   "suggested_fix": "Turn forge_history into a list, or key it as \"F001@v0.31\" and \"F001@v0.32\". Add a \"contract\" (spec version) field to new receipts or to the active_forge record that lists them.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Accurate. forge_history is an object keyed \"F001\", and receipts carry only forge_id \"F001\", with no field naming the spec contract. Overwriting would only happen if the run chose to reuse the key, so this is a design hazard, not an existing defect; no v0.32 clause requires a contract field. Keeping the v0.31 record (as \"F001@v0.31\" or in a list) is a cheap safeguard. Minor."
+  },
+  {
+   "id": "STATE-15",
+   "title": "`audit` block uses unlabeled legacy ids that a resume reads as the canonical F001 being unaudited",
+   "severity": "minor",
+   "evidence": "CURRENT_STATE.json:261-264 \"audit\": { \"F001_honesty_lens\": \"findings fixed in F002\", \"F001_code_and_completeness_lenses\": \"did not complete; not rerun\" }. These refer to legacy FORGE 001/002 (FORGE_LOG.md:153-155). Schema 2 uses canonical ids, where F001 is recorded F001_COMPLETE (:300) and F002 is not started.",
+   "v032_clause": "DoD \"final self-audit finds no unresolved F001-blocking issue\"; \u00a734 item 8 \"semantic invariants are audited\".",
+   "suggested_fix": "Move these keys under forge_history_legacy_ids (or rename them legacy_FORGE_001_*). Record the v0.32 final self-audit result under the v0.32 F001 record.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. CURRENT_STATE.json:261-264 has `audit.F001_honesty_lens` and `F001_code_and_completeness_lenses`. These refer to legacy FORGE 001/002 (FORGE_LOG:104 and :154), not to the canonical F001 that schema 2 records as F001_COMPLETE. The unlabeled keys are misleading on resume. Minor relabel."
+  },
+  {
+   "id": "STATE-16",
+   "title": "Legacy evidence pointer was overwritten in place: flutter_web_smoke.json now holds the v0.31 F001 run",
+   "severity": "minor",
+   "evidence": "CURRENT_STATE.json:245 and :256 (forge_history_legacy_ids F001/F002) cite reports/runtime/flutter_web_smoke.json as legacy evidence, and :251 says F002 web \"Playwright 26/26\". The file now has git_head 9e86ed0 with 36 results (rewritten in 6f1f619). The 26-result legacy run (git_head 3243163) survives only at 6cf7db1:reports/runtime/flutter_web_smoke.json. docs/PLATFORM_MATRIX.md:7 also still says web \"RUNTIME_TESTED (F002): Playwright smoke 26/26\".",
+   "v032_clause": "\u00a733 \"Human OS development must derive claims from evidence rather than prose memory.\"; DoD \"evidence/state files reflect only actual execution\".",
+   "suggested_fix": "Pin the legacy pointers to the commit (\"6cf7db1:reports/runtime/flutter_web_smoke.json\"), or have the smoke write per-run files (e.g. flutter_web_smoke_<rev>.json).",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. reports/runtime/flutter_web_smoke.json now has git_head 9e86ed0 and 36 results. `git show 6cf7db1:reports/runtime/flutter_web_smoke.json` has git_head 3243163 and 26 results. Yet CURRENT_STATE.json:245 and :256 cite the path as legacy F001/F002 evidence, and :251 says \"26/26\". Git history preserves the old bytes, so nothing is lost, but the pointer is ambiguous. Minor."
+  },
+  {
+   "id": "STATE-17",
+   "title": "PLATFORM_MATRIX contradicts canonical state for web and Linux status",
+   "severity": "minor",
+   "evidence": "docs/PLATFORM_MATRIX.md:7 web \"RUNTIME_TESTED (F002) ... 26/26\" versus state targets.web evidence EV-RUNTIME-F001-0001 (36/36). :8 Linux \"Not PACKAGED. Wayland, Fedora/Nobara, Debian, Ubuntu 22.04: NOT_RUN.\" versus CURRENT_STATE.json:193 \"tar.zst, deb, rpm, AppImage built (UNSIGNED) ... Ubuntu 22.04 FAIL\" and :195 \"Weston Wayland\" PASS. :29 target path `$XDG_DATA_HOME/HumanHealthOS` versus D-012 / C-4 target `human-health-os/`. :3 cites the first Phase 0 flutter_doctor report.",
+   "v032_clause": "\u00a70.2 \"Never allow a summary to silently overwrite verified repository state.\"; \u00a731.3 \"repository reality > state summary\".",
+   "suggested_fix": "Update rows 7-8 to the current receipts and the F015-L1 package facts (Ubuntu 22.04 FAIL, Weston PASS on 24.04, others NOT_RUN). Mark the XDG path as changing to human-health-os/ in F002.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. PLATFORM_MATRIX.md:7 says web \"RUNTIME_TESTED (F002) ... 26/26\". :8 says Linux \"Not PACKAGED ... Wayland ... Ubuntu 22.04: NOT_RUN\", while CURRENT_STATE.json:193 and :195 record packages built, Ubuntu 22.04 FAIL and Weston PASS. :29 has the target path `$XDG_DATA_HOME/HumanHealthOS`, against the D-012/C-4 `human-health-os/`. :3 cites the first-run doctor report. The file says it defers to CURRENT_STATE, but it is still stale. Minor."
+  },
+  {
+   "id": "STATE-18",
+   "title": "CLAUDE.md source-authority rules contradict each other and the v0.32 precedence",
+   "severity": "minor",
+   "evidence": "CLAUDE.md:52 \"The invariant list above is a working subset. Where it and the digest differ, the digest wins.\" versus CLAUDE.md:5, which ranks the master and does not rank the digest, and SOURCES.md:17, where the digest is \"PROCESS (... v0.31 extends and wins on conflict)\". CLAUDE.md:51 \"Use the evidence ladder from the digest\" omits PLANNED and SPECIFIED from the master's \u00a70.3.",
+   "v032_clause": "v0.32 SINGLE-DOCUMENT RULE precedence \"repository reality > v0.32 EXECUTION KERNEL > integrated current master sections > embedded candidate/reference appendices > historical examples > assumptions\"; \u00a70.3 evidence states list.",
+   "suggested_fix": "Change :52 to say the master's \u00a72 list wins, with v0.24 governing product semantics, and that the digest is historical. Cite \u00a70.3 (with PLANNED and SPECIFIED) at :51.",
+   "in_f001_scope": true,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. CLAUDE.md:39 labels its invariant list \"(v0.31 \u00a72)\", and :52 says \"Where it and the digest differ, the digest wins\". SOURCES.md:17 says the digest is overridden by v0.31 (\"v0.31 extends and wins on conflict\"), which is a direct contradiction. CLAUDE.md:51 takes the ladder \"from the digest\" and omits PLANNED and SPECIFIED from v0.32 \u00a70.3 (line 402). Inconsistent text in a control file; minor."
+  },
+  {
+   "id": "STATE-19",
+   "title": "Non-Flutter regression receipts record the Flutter lockfile digest, so a pnpm-lock change cannot invalidate them",
+   "severity": "minor",
+   "evidence": "run_gate.py:31 LOCKFILE = human_health_os/pubspec.lock, used for every receipt (:153-154). EV-TEST-F001-0014 (`pnpm test`) and EV-TEST-F001-0012 (`verify_contracts.py`) record lockfile_sha256 dd69c741\u2026 = sha256(human_health_os/pubspec.lock); pnpm-lock.yaml hashes to ba397984\u2026.",
+   "v032_clause": "\u00a733.5 \"If source code, dependency lock ... changes after a PASS, do not automatically carry the PASS forward.\"; \u00a733.2 \"dependency lock digest\".",
+   "suggested_fix": "Add a --lockfile option (default pubspec.lock), or record both lock digests in every receipt.",
+   "in_f001_scope": false,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. run_gate.py:31 hard-codes human_health_os/pubspec.lock. EV-TEST-F001-0012 (verify_contracts.py) and EV-TEST-F001-0014 (pnpm test) record dd69c741\u2026, which is the sha256 of pubspec.lock; pnpm-lock.yaml hashes to ba397984\u2026. This affects only the non-Flutter regression receipts. I agree it is outside F001 scope; minor."
+  },
+  {
+   "id": "STATE-20",
+   "title": "README handoff section is stale and presents repo-local v0.25 as a user handoff",
+   "severity": "minor",
+   "evidence": "README.md:46-48 lists only docs/handoff/v0.24 and docs/handoff/v0.25 (\"build prompts extended with the connected-targets requirements, plus the v0.25 addendum\") and docs/adr \"including the deviation from the Flutter preference\". SOURCES.md:18 classifies v0.25 as REPO_LOCAL_CANDIDATE \"written by an earlier Claude session, not by the user\", and ADR-IMPL-001 is superseded by ADR-IMPL-002. v0.27, v0.28, v0.31 and v0.32 are not mentioned.",
+   "v032_clause": "\u00a70.2 source authority order (\"5. Historical/superseded material\"); \u00a70.1 \"report the release state as candidate/unmerged rather than CURRENT\".",
+   "suggested_fix": "Point README's Handoff section to project_state/SOURCES.md and the current master (v0.32). Label v0.25 repo-local and ADR-IMPL-001 superseded.",
+   "in_f001_scope": false,
+   "lens": "state-evidence",
+   "verifier_note": "Confirmed. README.md lines 46-48 list only v0.24 and v0.25 as handoff. They describe repo-local v0.25 as \"build prompts extended ...\", while SOURCES.md:18 classes it as REPO_LOCAL_CANDIDATE \"not by the user\". README also points to docs/adr \"including the deviation from the Flutter preference\", but ADR-IMPL-001 is superseded. v0.27, v0.28, v0.31 and v0.32 are not mentioned. Stale; I agree it is outside F001 scope."
+  },
+  {
+   "id": "SEM-1",
+   "title": "Timeline says \"No records yet\" when body-weight records exist in the vault",
+   "severity": "major",
+   "evidence": "lib/src/navigation/app_shell.dart:46 sends every destination except Today to `PlannedDestinationScreen(destination: destinationById(id))`. lib/src/features/common/planned_destination_screen.dart:51 always renders `Text(s.noRecordsYet ...)` ('No records yet' / 'Hen\u00fcz kay\u0131t yok', strings.dart:29). The Timeline purpose (destinations.dart:77) is 'Every record on one timeline, with its source and corrections.' In any development build, saving a weight on Today (weight_card.dart, persisted by LogRepository) and then opening Timeline shows 'No records yet' while the records are in the vault. test/widget/shell_test.dart:217 `expect(find.text('No records yet'), findsOneWidget);` locks this in for Timeline, and no test opens Timeline after a save.",
+   "v032_clause": "F001 must contain: \"explicit empty/unimplemented states instead of fabricated health data\"; \u00a72: \"missing != zero\", \"unknown != false\"",
+   "suggested_fix": "Give PlannedDestinationScreen an optional empty-state text. For Timeline, replace 'No records yet' with an unimplemented-view message such as 'The timeline view is not built yet (Forge F003). Entries you save on Today are kept but not listed here.' (EN and TR). Add a widget test: save a weight, open Timeline, and expect no 'No records yet'. Update shell_test.dart:217 to exempt Timeline.",
+   "in_f001_scope": true,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed. app_shell.dart:46 sends Timeline to PlannedDestinationScreen, which always renders s.noRecordsYet ('No records yet', planned_destination_screen.dart:51, strings.dart:29). The Timeline purpose says 'Every record on one timeline' (destinations.dart:77). After any weight save, in every profile including memory-only (weight_card.dart -> heartbeat.recordWeightKg), Timeline still states that no records exist. The 'Not built yet' chip sits next to it but does not cancel the definite claim of absence. That collapses 'not shown / unknown' into 'none', which the invariants forbid. shell_test.dart:217 asserts this text for every non-Today destination, Timeline included. No widget or integration test opens Timeline after a save (integration_test/heartbeat_test.dart and weight_heartbeat_test.dart never mention Timeline). Labs' 'No records yet' is true, because no lab record type exists. Timeline is a v0.32 F001 surface, so the fix belongs in this run. Major is fair: F001 can still be certified, but the empty state is false."
+  },
+  {
+   "id": "SEM-2",
+   "title": "Unknown or absent APP_ENV falls back to development, the only profile that persists plaintext",
+   "severity": "minor",
+   "evidence": "lib/src/config/app_config.dart:21-22: `// Unknown values fall back to the safest *labelled* profile, never to production.` followed by `return BuildProfile.development;`. Line 43: `String.fromEnvironment('APP_ENV', defaultValue: 'development')`. Line 70: `bool get mayPersistUnencrypted => profile == BuildProfile.development;`. test/unit/app_config_test.dart:11 asserts that 'typo' becomes development. So `flutter build linux --release` with no define, or with `APP_ENV=prd`/`release`/`stage`, yields a distributable binary that writes a plaintext vault to XDG/LOCALAPPDATA (storage_io.dart) or to localStorage (storage_web.dart). Nothing checks kReleaseMode. tools/linux/package.sh:21 packages any bundle without checking its profile. This contradicts D-010 ('Only development builds (run from source) ... so no distributed artifact writes plaintext health data'). For storage, development is the least safe profile, not the safest.",
+   "v032_clause": "Kernel: \"must not silently weaken health-data semantics, safety boundaries, source provenance, privacy rules\"; F001 semantic safety: \"must not ... silently introduce a production health database\"; \u00a711: \"persistent health data is encrypted\"",
+   "suggested_fix": "Fail closed. Map a non-empty APP_ENV that is not recognised to staging (labelled and memory-only) instead of development. Optionally treat a missing APP_ENV in kReleaseMode as staging. Update the comment and app_config_test.dart:11. CI and the documented commands already pass APP_ENV=development explicitly, so no gate changes.",
+   "in_f001_scope": false,
+   "lens": "semantics-privacy",
+   "verifier_note": "Code facts confirmed: an absent APP_ENV defaults to 'development' (app_config.dart:43), and an unknown value falls back to development (lines 20-22). Only development persists plaintext (line 70), and tests lock both behaviours in (app_config_test.dart:10-11, 14-16). Downgraded from major for three reasons. (1) It is not silent: a build like this shows the DEVELOPMENT BUILD banner and the 'not encrypted (development)' storage chip. (2) By the repo's own definition (CLAUDE.md storage rule, D-010), a build without APP_ENV is a development build, so no stated rule is broken as written. (3) No distributed artifact is built this way: the staging package used APP_ENV=staging (reports/artifacts/forge-f030l-1.json:7), and CI's development release builds are not uploaded (ci.yml has no upload step). What remains is fail-open hardening, plus a misleading comment that calls development the 'safest' fallback, which it is not for storage. Changing storage policy is F002/F006 territory, and F001 must not change persistence, so this is outside F001 scope."
+  },
+  {
+   "id": "SEM-3",
+   "title": "Storage capability blames the platform when the build profile, portable mode or an unreadable vault prevents saving",
+   "severity": "minor",
+   "evidence": "lib/src/core/capabilities.dart:119-123 maps memoryOnly to `status: CapabilityStatus.notImplemented` with detail 'Not saved on this platform yet: entries last only until the app closes.' The enum doc at line 18 reads 'The platform could support it, but the adapter is not built yet.' Staging and production builds (storage_io.dart:94, storage_web.dart:45), portable mode (storage_io.dart:103) and the unreadable-vault fallback (bootstrap.dart:24) all take this branch. So a Linux staging package says saving is not built on this platform, although the file adapter exists and is disabled by policy.",
+   "v032_clause": "\u00a77: \"At runtime build a capability registry from actual platform capabilities. Do not show a capability as available merely because another platform supports it.\"",
+   "suggested_fix": "Pass the reason (policy, portable, unreadable or unsupported platform) into the registry, or reword the memoryOnly detail to 'Not saved in this build: entries last only until the app closes (see the note on the weight card).'",
+   "in_f001_scope": true,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed. capabilities.dart:119-123 maps memoryOnly (or null) to notImplemented with 'Not saved on this platform yet', and the enum doc at line 18 says 'the adapter is not built yet'. The staging/production policy branch (storage_io.dart:91-96, storage_web.dart:42-47), the portable branch (storage_io.dart:100-104) and the unreadable-vault fallback (bootstrap.dart:20-26) all reach this text. So a Linux staging build says saving is not built on this platform, although the file adapter exists and is disabled by policy. Two mitigations: the weight card shows the accurate storageNotice beside it, and the cited \u00a77 clause is about over-claiming availability, which is not what happens here (this under-claims and misattributes the reason). The defect is inaccurate copy, so minor. A text-only fix fits this run if desired, but F001 certification does not need it."
+  },
+  {
+   "id": "SEM-6",
+   "title": "Safety notices, vault warnings and capability details reach Turkish users only in English",
+   "severity": "minor",
+   "evidence": "The app supports `Locale('tr')` (human_os_app.dart). These strings are shown verbatim on Today in English only: storage_io.dart:94 ('... builds do not save unencrypted health data ...'), :103 (portable), :110; storage_web.dart:45, :59; bootstrap.dart:24 ('Your saved data could not be opened ... kept in memory only'); vault_log.dart:134-136 ('The last vault entry was incomplete ... skipped', rendered in error colour by weight_card.dart); and every capability label and detail in capabilities.dart (for example 'Not encrypted yet (development build)'). The storage chip itself is localised (strings.dart:91-107).",
+   "v032_clause": "Kernel: \"must not silently weaken ... privacy rules\" (a Turkish user must be told why data is not saved, or that entries were skipped)",
+   "suggested_fix": "Return stable codes from the adapters, the vault parser and the registry, and map them to EN/TR text in S, as InputError codes already do.",
+   "in_f001_scope": false,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed: the storage notices (storage_io.dart:95, 103, 110; storage_web.dart:46, 59), the bootstrap notice (bootstrap.dart:24-26), the vault warnings (vault_log.dart:134-136) and all capability labels and details are English-only, while the storage chip is localized (strings.dart:91-107). This is not a new finding, though: project_state/KNOWN_GAPS.md G-14 ('UI copy partly EN-only (capability details, storage notices) | OPEN | ARB move (R-12)') and RISKS.md R-12 already track it. Outside F001 scope; the ARB move is planned."
+  },
+  {
+   "id": "SEM-7",
+   "title": "Stale Forge number for encryption: \"FORGE 004\", which is Labs on the canonical ladder",
+   "severity": "minor",
+   "evidence": "lib/src/domain/ports/health_repository.dart:31: 'encryption arrives in FORGE 004'. lib/src/data/local/vault_log.dart:9: 'FORGE 004 replaces the payload format with an encrypted envelope'. CLAUDE.md:53: 'Production and portable modes stay memory-only until the encrypted vault (FORGE 004)', which also omits staging (D-010). docs/ARCHITECTURE.md:66 omits staging the same way. packaging/linux/portable/portable_mode.json and README.txt say 'FORGE 004'. Meanwhile the app tells users 'Forge F006' for encryption (capabilities.dart, storage_io.dart:94/103) and 'Planned in Forge F004' for Labs (destinations.dart:92). D-011 makes the F001-F017 ladder canonical, where F004 is Labs and F006 is local security.",
+   "v032_clause": "Kernel: \"evidence/state files reflect only actual execution\"; source authority \"repository reality > v0.32 EXECUTION KERNEL\"",
+   "suggested_fix": "Replace FORGE 004 with F006 in the two lib comments and in CLAUDE.md:53, and add staging to the memory-only list in CLAUDE.md and ARCHITECTURE.md. The packaging marker and README text can follow in F015-L1.",
+   "in_f001_scope": true,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed. health_repository.dart:31 says 'encryption arrives in FORGE 004'. vault_log.dart:9 says 'FORGE 004 replaces the payload format'. CLAUDE.md:53 says 'Production and portable modes stay memory-only until the encrypted vault (FORGE 004)' and omits staging, which contradicts D-010. docs/ARCHITECTURE.md:66 also omits staging, and ARCHITECTURE.md:60 also says 'until F004'. The app tells users F006 (capabilities.dart:103, 111; storage_io.dart:95, 103), and destinations.dart:92 assigns F004 to Labs. D-011 makes that ladder canonical, and ROADMAP.md:12 folds legacy F004 into F006. More stale copies of the same kind exist in KNOWN_GAPS G-02/G-04 and RISKS R-05/R-13. This is stale, inconsistent text, so minor. Reconciling CLAUDE.md is Phase 0 work, so in scope."
+  },
+  {
+   "id": "SEM-8",
+   "title": "The \"not for clinical decisions\" disclaimer comes last in a 2-line, ellipsized, fixed-height banner",
+   "severity": "minor",
+   "evidence": "lib/src/presentation/widgets/build_profile_banner.dart:40-43 uses `maxLines: 2, overflow: TextOverflow.ellipsis` inside `SizedBox(height: kBuildBannerHeight)` (app_shell.dart, `kBuildBannerHeight = 44`). The banner strings (strings.dart:40-47) put the safety clause last: '... \u00b7 not for clinical decisions' / '... \u00b7 klinik karar i\u00e7in de\u011fil'. Estimate, not run: at roughly 1.5x or larger system text scale on a 390 dp phone, the about 60-character text needs more than 2 lines, so the disclaimer is the part cut by the ellipsis. Semantics carries the full label for screen readers only. No test covers text scale.",
+   "v032_clause": "F001 must contain: \"a visible development/build-profile indicator when appropriate for non-production builds\"",
+   "suggested_fix": "Put the disclaimer first ('Not for clinical decisions \u00b7 DEVELOPMENT BUILD'), or let the banner grow with the text scale instead of a fixed 44 dp with ellipsis. Add a widget test at textScaler 2.0 that finds the clinical clause.",
+   "in_f001_scope": true,
+   "lens": "semantics-privacy",
+   "verifier_note": "The code facts are confirmed: build_profile_banner.dart:40-46 uses maxLines 2 with ellipsis inside a fixed SizedBox of kBuildBannerHeight = 44 (app_shell.dart:18, 67-68). The clinical clause comes last (strings.dart:40-47). No text-scale clamping exists (human_os_app.dart), and no test covers text scale. A rough estimate at 12sp labelMedium: about 424 px of text against 334 px usable on a 390 dp phone. Above roughly 1.6x scale it needs 3 lines, so the ellipsis cuts 'not for clinical decisions'. At 1.5x, two 24 px lines exceed the 36 px inner height. This is not run, only estimated. The cited F001 clause is not violated: 'DEVELOPMENT BUILD' leads the string and stays visible. The truncated part is the repo-local disclaimer that R-13 relies on, and Semantics keeps the full label. An accessibility and copy defect, so minor."
+  },
+  {
+   "id": "SEM-9",
+   "title": "Weight UI ignores the record's state, provenance and unit, and crashes on a valid missing-value record",
+   "severity": "minor",
+   "evidence": "weight_card.dart:207 hard-codes `${s.observed} \u00b7 ${s.manualEntry}` for every row instead of reading w.state and w.provenance.kind. Lines 142 and 213 hard-code the unit as `'${_fmt(latest.quantity!.value)} kg'` and force-unwrap quantity. The domain accepts a NOT_MEASURED weight with no quantity as valid (test/domain/health_record_test.dart:46 `weight(status: ValueStatus.notMeasured, q: null).validate();`), and currentRecords() keeps it. vault_log.dart apply() calls HealthRecord.fromJson without validate(), so a vault line with that status, or with unit 'lb', loads and then crashes the Today card or is shown as kg. Today's only writer (heartbeat_service.dart) always writes a present value in kg, so this cannot be reached from the UI yet.",
+   "v032_clause": "\u00a72: \"missing != zero\"; \u00a78.1: \"Preserve source identifiers, timestamps, original value, normalized value ...\"",
+   "suggested_fix": "Render the state, provenance and unit from the record. Exclude or explicitly label records that are not present when choosing 'Latest'. Call validate() during the vault replay and turn failures into the existing visible warnings.",
+   "in_f001_scope": false,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed. weight_card.dart:207 hard-codes 'Observed \u00b7 Manual entry'. Lines 142, 208 and 213 force-unwrap quantity and append ' kg'. A NOT_MEASURED weight with null quantity passes validate() (health_record.dart:186-188; health_record_test.dart:46), and currentRecords keeps it, so a record appended through the repository API would crash the card. Vault replay (vault_log.dart:71) calls fromJson without validate(), so a hand-edited 'lb' line loads and is shown as kg. The only UI writer (heartbeat_service.dart:78-79) always writes present + kg, and LogRepository.appendRecord validates (log_repository.dart:81), so the UI cannot reach this today. This is latent F002 persistence robustness, outside F001 scope, which must not change persistence or record handling."
+  },
+  {
+   "id": "SEM-10",
+   "title": "Empty or relative XDG_DATA_HOME / HHOS_DATA_DIR are accepted for the plaintext development vault",
+   "severity": "minor",
+   "evidence": "lib/src/data/local/storage_io.dart:62 `e['XDG_DATA_HOME'] ?? (...)` falls back only on null. An empty value gives Directory('/HumanHealthOS') and a relative value resolves against the working directory. Line 51 accepts any non-empty HHOS_DATA_DIR, including a relative one. The XDG Base Directory spec requires ignoring empty and relative values. A development build launched from its bundle folder with XDG_DATA_HOME=. would write the plaintext vault beside the executable.",
+   "v032_clause": "Kernel: \"must not silently weaken ... privacy rules\"; CLAUDE.md: \"Never write plaintext health data next to an executable.\"",
+   "suggested_fix": "Treat an empty or relative XDG_DATA_HOME as unset, and reject or absolutise HHOS_DATA_DIR. Add storage_policy_test cases for both.",
+   "in_f001_scope": false,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed. storage_io.dart:61-63 falls back only when XDG_DATA_HOME is null, so an empty value resolves to '/HumanHealthOS' and a relative value resolves against the working directory. Line 52 accepts any non-empty HHOS_DATA_DIR, relative paths included. The XDG Base Directory spec says to ignore empty and relative values. storage_policy_test.dart covers only absolute XDG paths (lines 64, 80). Exploiting this needs a misconfigured environment in a development build, so minor. It is F002/F015 storage-path work, outside F001 scope."
+  },
+  {
+   "id": "SEM-11",
+   "title": "APP_VERSION defaults to a fixed '0.1.0+1' although the comment says absent values stay 'unknown'",
+   "severity": "minor",
+   "evidence": "lib/src/config/app_config.dart:39: 'Anything absent stays `unknown`; nothing is guessed.' Line 47: `defaultValue: '0.1.0+1',`. CI (ci.yml:54-55) does not pass APP_VERSION, so 'This build' shows a version that only matches pubspec.yaml by coincidence, not one recorded for the build.",
+   "v032_clause": "\u00a712: \"Every build should record: product version/build, source revision ...\"; kernel: \"evidence/state files reflect only actual execution\"",
+   "suggested_fix": "Default APP_VERSION to 'unknown', or reword the comment, and pass --dart-define=APP_VERSION in the build gates.",
+   "in_f001_scope": true,
+   "lens": "semantics-privacy",
+   "verifier_note": "Confirmed. app_config.dart:39 says 'Anything absent stays `unknown`; nothing is guessed', but line 47 defaults APP_VERSION to '0.1.0+1'. That constant is copied by hand from pubspec.yaml ('version: 0.1.0+1'), not derived from it. ci.yml:54-55 does not pass APP_VERSION. Only the v0.31 receipts pass it explicitly (EV-BUILD-F001-0002/0003). The value shown today is correct, so this is a comment that contradicts the code, plus drift risk when pubspec changes. Minor. Build identity was part of v0.31 F001, so a comment or default fix fits this run."
+  },
+  {
+   "id": "GATES-1",
+   "title": "State self-audit never checks for stale or dirty-tree evidence",
+   "severity": "minor",
+   "evidence": "tools/validate_project_state.py:121-131 checks only that each verified gate's receipt exists, is PASS, and that `g[\"source_revision\"] != r[\"source_revision\"]` matches the receipt. `working_tree_dirty` is in RECEIPT_FIELDS (line 28), but its value is never read. Nothing compares a receipt's source_revision or lockfile_sha256 with the current HEAD or pubspec.lock. tools/evidence/test_run_gate.py has no dirty or stale test (its tests are pass/fail/overwrite/artifact/digest/bad-id). So if a v0.32 F001 edit touches human_health_os/lib and the analyze/test/build/smoke gates are not rerun, validate_project_state.py still prints PASS on the 9e86ed0 receipts. Right now it happens to be fine: `git diff --stat 9e86ed0 HEAD -- human_health_os` is empty.",
+   "v032_clause": "FIRST-FAILURE REPAIR RULE: \"A code edit after a PASS invalidates any earlier evidence that depends on the changed code unless the relevant gate is rerun.\" \u00a733.5: \"If source code, dependency lock, build profile ... changes after a PASS, do not automatically carry the PASS forward.\" DoD: \"evidence/state files reflect only actual execution\".",
+   "suggested_fix": "In validate_project_state.py, for each verified_gates entry: (a) fail if the receipt has working_tree_dirty == true; (b) for receipts with cwd human_health_os, or any Flutter/web smoke receipt, fail if `git diff --quiet <receipt.source_revision> HEAD -- human_health_os tools/flutter_web_smoke.mjs` is non-zero, or if receipt.lockfile_sha256 differs from sha256(human_health_os/pubspec.lock). Add one unit test for each case.",
+   "in_f001_scope": true,
+   "lens": "gates-commands",
+   "verifier_note": "The facts check out. tools/validate_project_state.py:121-131 only compares the gate's recorded source_revision with the receipt's (line 130). It never reads working_tree_dirty and never compares anything with HEAD or the current pubspec.lock. Nothing is stale today, though. `git diff --stat 9e86ed0 HEAD -- human_health_os tools/flutter_web_smoke.mjs` is empty, every receipt has working_tree_dirty=False, and every receipt's lockfile_sha256 (dd69c741...) matches the current human_health_os/pubspec.lock. The repo also tracks stale receipts by hand in CURRENT_STATE.stale_or_uninformative_receipts. No doc claims the validator detects staleness: TEST_STRATEGY.md:44 states the \u00a733.5 rule as process, and v0.32 \u00a733.5 / FIRST-FAILURE REPAIR are process rules, not a requirement for an automated check. So no MUST is violated, and 'major' overstates it. It is still a cheap guard worth adding in this run, because v0.32 F001 (task #8) will edit human_health_os/lib. Note for the fix: a HEAD-diff check has to be scoped per gate. Flutter gates depend on human_health_os/; EV-TEST-F001-0010 depends on tools/evidence/; pnpm and verify_contracts depend on packages/ and contracts/; EV-TEST-F001-0016 depends on the validator itself. An unscoped check would be either noisy or too loose. Rejecting working_tree_dirty==true and a lockfile mismatch is trivial and safe."
+  },
+  {
+   "id": "GATES-2",
+   "title": "Untracked v0.32 spec will mark every new gate receipt dirty",
+   "severity": "minor",
+   "evidence": "`git status --short` prints `?? docs/handoff/v0.32/`. tools/evidence/run_gate.py:29-30 excludes only `EVIDENCE_PATHS = (\"evidence/\", \"reports/\")`. Lines 128-130 build `source_changes` from `git status --porcelain` and set `working_tree_dirty: bool(source_changes)`. Every v0.32 F001 gate run before that directory is committed will therefore record working_tree_dirty=true with dirty_source_paths ['docs/handoff/v0.32/'], for a reason that has nothing to do with the code. Because of GATES-1, the validator would still accept these receipts, so the flag would lose its meaning.",
+   "v032_clause": "\u00a733.1 test receipt: \"working_tree_dirty\": false ... \"Do not fabricate timestamps, tool versions or exit codes.\" PHASE 0 CONTRACT step 9: \"Continue immediately into F001\" (Phase 0 changes are expected to land before F001 gates run).",
+   "suggested_fix": "Commit docs/handoff/v0.32/ (the spec and SHA256SUMS, which `sha256sum -c` verifies as OK) as part of the Phase 0 commit, before running any F001 gate through run_gate.py.",
+   "in_f001_scope": true,
+   "lens": "gates-commands",
+   "verifier_note": "The facts check out. `git status --porcelain` prints `?? docs/handoff/v0.32/`. run_gate.py:30 excludes only evidence/ and reports/, so any gate run now would record working_tree_dirty=true with dirty_source_paths ['docs/handoff/v0.32/']. `sha256sum -c SHA256SUMS` in that directory prints OK. A dirty receipt would still be honest, not fabricated. The cited \u00a733.1 JSON is an example shape, not a rule that the tree must be clean, so no clause is violated. This is a sequencing item: commit the spec (and point baseline.master_spec at it) in the Phase 0 commit before running any F001 gate. In scope and trivial."
+  },
+  {
+   "id": "GATES-3",
+   "title": "Web runtime smoke ignores browser console errors",
+   "severity": "minor",
+   "evidence": "tools/flutter_web_smoke.mjs:51-52 registers only `page.on('request', ...)` and `page.on('pageerror', ...)`. A grep for 'console' finds only line 145 (`console.log` of results). Flutter routes framework errors through FlutterError.onError/presentError to the browser console, not as uncaught page errors, and lib/main.dart installs no handler of its own. Such errors are therefore invisible to the check behind receipt EV-RUNTIME-F001-0001 and its \"no page errors\" lines. Task #8 lists \"console-error smoke\" as still pending.",
+   "v032_clause": "Web runtime smoke step 4: \"verify no immediate fatal console/runtime error blocks the shell\"; step 5: \"record runtime evidence.\"",
+   "suggested_fix": "In the per-run loop, add `const consoleErrors = []; page.on('console', (m) => { if (m.type() === 'error') consoleErrors.push(m.text()); });` and `check(`${label}: no console errors`, consoleErrors.length === 0, consoleErrors.slice(0,3).join(' | '))`. Then rebuild and rerun the smoke through run_gate.",
+   "in_f001_scope": true,
+   "lens": "gates-commands",
+   "verifier_note": "The facts check out. flutter_web_smoke.mjs:51-52 registers only 'request' and 'pageerror' listeners and has no 'console' listener. lib/main.dart installs no error handler. But the kernel clause is \"verify no immediate fatal console/runtime error blocks the shell\". A blocking error would already fail the render, heading and navigation checks (lines 66, 85, 98), and uncaught runtime errors are caught by pageerror (line 126). So the DoD is substantively met and 'major' is overstated. No doc over-claims console coverage either. Caveat on the suggested fix: in this --release web build, FlutterError.dumpErrorToConsole calls debugPrintStack, which goes through print. In dart2js, print is console.log (dart-sdk js_runtime js_primitives.dart:28). So `m.type()==='error'` would NOT catch framework errors. The fix should also capture 'warning' messages and console.log lines that look like Flutter error output (e.g. 'Another exception was thrown'), or the receipt should state the limitation. In scope, since task #8 already plans it."
+  },
+  {
+   "id": "GATES-4",
+   "title": "`flutter doctor -v` missing from CI and CLAUDE.md; doctor report stale",
+   "severity": "minor",
+   "evidence": "`grep -n doctor .github/workflows/ci.yml` finds nothing (exit 1). CLAUDE.md:28 starts with `flutter pub get`. No receipt records `flutter doctor -v` (the commands in all 21 receipts are listed in evidence/*). The only full doctor output, reports/toolchain/flutter_doctor_2026-10-06.txt, says `[\u2717] Linux toolchain ... GTK 3.0 development libraries are required`. Yet `dpkg -s libgtk-3-dev` now reports `install ok installed 3.24.41-4ubuntu1.3`, and EV-BUILD-F001-0003 (flutter build linux) passed. So the full toolchain report no longer matches the host.",
+   "v032_clause": "REAL COMMAND GATES, preferred sequence: \"flutter doctor -v\" first. \u00a715 CI stage \"2. toolchain report\". PHASE 0 CONTRACT step 4: \"Inspect actual tool availability\".",
+   "suggested_fix": "Run `flutter doctor -v` at the start of the v0.32 run and save it as a fresh toolchain report or receipt, recording the exit code as observed; it is informational, not a PASS gate. Add a `- run: flutter doctor -v` step after flutter-action in the flutter-linux-web CI job, and put `flutter doctor -v` at the front of the CLAUDE.md:28 command chain.",
+   "in_f001_scope": true,
+   "lens": "gates-commands",
+   "verifier_note": "Partly refuted. The canonical environment report (CURRENT_STATE.environment_report = reports/toolchain/environment_v031_2026-10-06.txt) is newer than the flutter_doctor file. It holds a doctor summary showing '[\u2713] Linux toolchain', which matches dpkg (libgtk-3-dev 3.24.41-4ubuntu1.3 installed), so tool availability was inspected and recorded correctly. The real leftover: docs/PLATFORM_MATRIX.md:3 cites `reports/toolchain/flutter_doctor_2026-10-06.txt` (Linux \u2717 GTK missing) as the evidence for a matrix that claims Linux RUNTIME_TESTED. That evidence pointer is stale. CI lacking `flutter doctor -v` is not an F001 MUST: \u00a715 says CI stages 'should evolve toward', and ci.yml:53 already calls `flutter --version --machine`. CLAUDE.md does not need doctor either. Smallest fix: run `flutter doctor -v` once in v0.32 Phase 0 as an informational report (Phase 0 step 4), and point PLATFORM_MATRIX.md:3 at the current report. Leave the CI change out of F001."
+  },
+  {
+   "id": "GATES-6",
+   "title": "Two docs still show the write-mode format command and the CDN build",
+   "severity": "minor",
+   "evidence": "docs/DEVELOPMENT_PLAN.md:23: \"Run `dart format --set-exit-if-changed`, `flutter analyze`, ...\". That is write mode with no path, so a step labelled 'Test' rewrites files. docs/TEST_STRATEGY.md:14 lists the Build layer as `flutter build web --release` without `--no-web-resources-cdn`. This contradicts TEST_STRATEGY.md:38, docs/RELEASE_STRATEGY.md:22, ci.yml:54 and CLAUDE.md:29, which all use the flag.",
+   "v032_clause": "REAL COMMAND GATES: \"use the correct equivalent and record the actual command\". PHASE 0 CONTRACT step 6: \"Create/update CLAUDE.md and canonical state only if an equivalent authoritative mechanism is absent or incomplete.\"",
+   "suggested_fix": "Change DEVELOPMENT_PLAN.md:23 to `dart format --output=none --set-exit-if-changed .` and TEST_STRATEGY.md:14 to `flutter build web --release --no-web-resources-cdn`.",
+   "in_f001_scope": true,
+   "lens": "gates-commands",
+   "verifier_note": "Confirmed, with a correction. DEVELOPMENT_PLAN.md:23 reads 'Run `dart format --set-exit-if-changed`, `flutter analyze`...'. Run without a path, that command does not rewrite files. I ran it read-only in an empty dir: it exits 64 with 'Missing paths to code to format.', so the documented command does not run at all. TEST_STRATEGY.md:9 uses `--output=none --set-exit-if-changed .`. TEST_STRATEGY.md:14 lists the Build layer as `flutter build web --release` without --no-web-resources-cdn, which is inconsistent with its own line 38, RELEASE_STRATEGY.md:22, ci.yml:54 and CLAUDE.md:29. This is stale doc text and does not affect gates or receipts. It is a two-line fix that is cheap to fold into Phase 0, but optional for certification."
+  },
+  {
+   "id": "GATES-8",
+   "title": "Runtime receipt does not identify the build it smoked; dirty flags disagree",
+   "severity": "minor",
+   "evidence": "evidence/runtime/EV-RUNTIME-F001-0001.json has no `artifacts` key. Its keys are command, cwd, dirty_source_paths, evidence_id, exit_code, ..., working_tree_dirty. The only link to EV-BUILD-F001-0002 (main.dart.js e4db1bc0\u2026) is reports/runtime/flutter_web_smoke.json, a tracked file that every smoke run overwrites. That JSON says `working_tree_dirty: True`, while the receipt for the same run says `False`. The smoke's own check (flutter_web_smoke.mjs:134, `git status --porcelain` != '') counts the screenshots it just wrote to tracked reports/runtime/, but run_gate.py:30 excludes reports/. Build receipts also lack explicit target/profile/signing/smoke-state fields; those can only be read from the command string.",
+   "v032_clause": "Web runtime smoke step 5: \"record runtime evidence.\" \u00a733.2: \"A build receipt should identify: target platform, architecture, build profile, exact command, ... signing state, smoke-test state.\"",
+   "suggested_fix": "Run the smoke through run_gate with `--artifact human_health_os/build/web/main.dart.js --artifact reports/runtime/flutter_web_smoke.json`, so the receipt hashes both the smoked bundle and the result file. In flutter_web_smoke.mjs, compute gitDirty with `git status --porcelain -- . ':!reports' ':!evidence'` so it matches run_gate. Optionally have run_gate add `target`/`profile` fields for BUILD receipts.",
+   "in_f001_scope": true,
+   "lens": "gates-commands",
+   "verifier_note": "Confirmed. evidence/runtime/EV-RUNTIME-F001-0001.json has no 'artifacts' key. reports/runtime/flutter_web_smoke.json says working_tree_dirty: True, while the receipt says False. The smoke computes dirtiness with a full `git status --porcelain` (flutter_web_smoke.mjs:134), which counts its own screenshots and the uncommitted receipts; run_gate.py:30 excludes evidence/ and reports/. Mitigation: the link can still be rebuilt today. The smoke JSON committed in 6f1f619 has ran_at 21:50:05.054Z, inside the receipt window 21:49:51.978Z-21:50:05.071Z, and main_dart_js_sha256 e4db1bc0... equals the EV-BUILD-F001-0002 artifact hash. That link is fragile, though: every run overwrites the file and no receipt hashes it. \u00a733.2 fields are 'should', and build receipts already carry path, size, SHA-256, lock digest, toolchain, revision and the exact command (which includes the profile). The suggested fix is cheap and in scope, because the smoke will be rerun in v0.32 F001 anyway: add `--artifact human_health_os/build/web/main.dart.js --artifact reports/runtime/flutter_web_smoke.json` to the run_gate call, and align the smoke's gitDirty pathspec to exclude evidence/ and reports/."
+  }
+ ],
+ "refuted": [
+  {
+   "id": "LENS-1",
+   "lens": "f001-contract",
+   "title": "Compact navigation exposes 4 primary destinations (Medications promoted next to Today/Timeline/Labs)",
+   "verifier_note": "The evidence is accurate, though two line numbers are wrong. app_shell.dart:21-26 does put Medications in kCompactPrimary, shell_test.dart:172-178 and FORGE_LOG.md:25 match, and Medications' plannedForge 'Forge F008' is at destinations.dart:105, not :308. What fails is the claim that a MUST is violated. The kernel's next sentence (line 129) says: \"The shell may expose future destinations only if they already exist in verified repository code\". Medications is such a destination: it has been in destinations.dart since FORGE 001, and tests cover it in shell_test.dart:197-221. The spec never says an exposed future destination has to sit under 'More'. It also ranks \"repository reality > v0.32 EXECUTION KERNEL\" (line 340ff), and its own appendix 209 (lines 2905-2915) lists 10 'Initial destinations' with rail/compact navigation. A blocker therefore depends on reading 'primary' as 'any bottom-bar slot', and the spec does not define it that way. On top of that, under that strict reading the rail would violate too, since all 10 destinations show there as equal entries. Fixing only the bar would leave the shell inconsistent. The real gap is that the interpretation has not been recorded (see LENS-2). If the team chooses the strict reading, they should change the bar and the rail together, decided once."
+  },
+  {
+   "id": "LENS-6",
+   "lens": "f001-contract",
+   "title": "No narrow-layout test navigates back to Today via the compact bar",
+   "verifier_note": "It is accurate that the phone bottom-bar test (shell_test.dart:113-124) stops at Labs. Required check 2, 'Today is reachable', is still demonstrated several times over. Today is asserted as the start screen at phone, tablet, laptop and desktop sizes (shell_test.dart:46-57). The desktop rail navigates back to Today (line 133), and the every-destination loop taps Today on the rail (lines 197-209). In the runtime smoke, the phone-en run clicks Today in the bottom bar after Labs (flutter_web_smoke.mjs:102-105) and passes 'phone-en: empty state says no weight (not 0)'. The clause is not violated. Adding the phone return step is an optional one-liner, not a gap."
+  },
+  {
+   "id": "SEM-4",
+   "lens": "semantics-privacy",
+   "title": "\"This build makes no network calls\" is unconditional, but holds only for web builds made with --no-web-resources-cdn",
+   "verifier_note": "The technical facts are accurate. web-resources-cdn defaults to true (flutter_command.dart:812-816). The engine downloads Roboto from fonts.gstatic.com unless it is bundled (canvaskit/fonts.dart:17-18, 133-135), and flutter_tools bundles Roboto locally only when useLocalCanvasKit is set (build_system/targets/web.dart:702-704). But the repo already handles this. R-09 in RISKS.md records the CDN dependency with the mitigation 'Build with --no-web-resources-cdn'. Every documented and CI web build uses the flag (CLAUDE.md, ci.yml:54, docs/RELEASE_STRATEGY.md:22, EV-BUILD-F001-0001/0002). The built bundle carries assets/fonts/fallback/Roboto-Regular.ttf, and the runtime smoke fails on any external request (tools/flutter_web_smoke.mjs:51, 125). The v0.32 kernel explicitly allows 'use the correct equivalent and record the actual command'. The in-app claim is true for every build the repo produces. A bare build would be caught by the smoke gate, so the suggested fix is already in place."
+  },
+  {
+   "id": "SEM-5",
+   "lens": "semantics-privacy",
+   "title": "The architecture guard does not fully confine platform libraries to adapters and misses common network APIs",
+   "verifier_note": "The guard's limits are described accurately (imports_test.dart:59 does a substring match on single-quoted imports; the network list at lines 42-49 does not cover Image.network or NetworkImage; the domain ban list at line 21 omits dart:ffi, dart:js and dart:js_util). However, the double-quote bypass is already caught by `flutter analyze`, because analysis_options.yaml enables prefer_single_quotes. lib/ has no violation today: dart:io appears only in storage_io.dart and dart:js_interop only in storage_web.dart, and there is no NetworkImage or Image.network. The cited clause ('must not duplicate platform-specific domain logic into shared UI code') is not violated. This is speculative test hardening with no concrete gap, which the audit rules exclude."
+  },
+  {
+   "id": "GATES-5",
+   "lens": "gates-commands",
+   "title": "v0.32 literal format/build commands replaced but deviation not recorded",
+   "verifier_note": "Refuted. The kernel clause asks to 'record the actual command', and that is done in several places. CURRENT_STATE forge_history.F001.acceptance_criteria AC-3 reads 'dart format --output=none --set-exit-if-changed . exits 0' and AC-6 reads 'flutter build web --release --no-web-resources-cdn exits 0'. The verified_gates entries, the receipts EV-TEST-F001-0007 and EV-BUILD-F001-0002, and CLAUDE.md:28-29 also give the exact commands. The reason for the CDN flag is recorded in TEST_STRATEGY.md:38 ('sandboxed hosts can block the CanvasKit CDN') and RISKS.md R-09. Nothing requires SOURCES.md or DECISIONS.md to repeat it. F001 check 8 (no network dependency) is met for the build that was smoked: --no-web-resources-cdn plus the smoke check 'no external network requests' (flutter_web_smoke.mjs:125). The flutter_tools facts are correct (flag defaultsTo true at flutter_command.dart:811-816; gstatic URL at web.dart:128-136), but they confirm the repo's choice rather than revealing a gap. R-09 calling it a smoke risk with 'Low' impact is arguable framing, not a contradiction. When the v0.32 F001 AC are written in Phase 0, simply keep the same commands."
+  },
+  {
+   "id": "GATES-7",
+   "lens": "gates-commands",
+   "title": "CI and CLAUDE.md run different gate sets; pub get lockfile mode differs",
+   "verifier_note": "Mostly refuted. The v0.32 kernel's own gate sequence uses plain `flutter pub get`, so CLAUDE.md:28 matches the spec. DECISIONS.md:34 only says 'CI uses `flutter pub get --enforce-lockfile`', and CI does (ci.yml:47). The receipts used --enforce-lockfile too (EV-TEST-F001-0006). \u00a715 is a 'should evolve toward' list, and CI already covers lockfile restore, format, analyze, test, build and smoke (ci.yml:47-60). Adding validate_project_state/unittest to CI is not an F001 requirement. TEST_STRATEGY.md:40 sits in the 'Evidence' section about local receipts. CI having never run is already disclosed at FORGE_LOG.md:80, :154 and :257 ('CI never ran (GitHub push 403)'). Adding --enforce-lockfile to CLAUDE.md:28 is optional polish, not a gap."
+  }
+ ],
+ "lens_summaries": [
+  {
+   "lens": "f001-contract",
+   "summary": "These parts match the F001 contract. main.dart is the entry point and HumanOsApp is the root widget. The responsive shell uses one breakpoint system: kRailBreakpoint 840 and kExtendedRailBreakpoint 1200, defined only in app_shell.dart and matching docs/ARCHITECTURE.md:45. The NavigationBar is used below 840 and the NavigationRail at 840 and above. Today, Timeline and Labs exist. Timeline and Labs show honest \"Not built yet / Planned in Forge F003/F004\" states. Today shows a specific empty weight state. The development and staging banner sits in the AppBar and is hidden in production, and tests cover it. There is no cloud, login, LLM or HTTP client code in lib/, and dart format on lib, test and integration_test exits 0. Required checks 1 to 7 exist in test/widget/shell_test.dart: renders at 4 sizes, Today at start, Timeline and Labs reached on both nav forms, phone gets nav-bar, desktop gets nav-rail, the screen changes. Gaps found: (1) The narrow layout has 4 primary destinations, because Medications is in kCompactPrimary. This breaks \"exactly these primary destinations\". (2) The wide rail shows all 10 doc-209 destinations as equal top-level items. The conflict between the kernel's \"exactly Today/Timeline/Labs\" and doc 209's 10 destinations is not recorded anywhere. (3) The Timeline placeholder always says \"No records yet\", even after a body-weight record is saved. (4) Required check 8 (starts without a network dependency) is only a partial static grep plus an assertion on a hard-coded label. flutter_test's mock HttpOverrides would let any HTTP call quietly return 400, and no Flutter test runs main() or bootstrap(). (5) The web smoke listens only for 'pageerror'. It does not capture console errors or failed or 4xx requests, which smoke step 4 requires. (6) No narrow-layout test navigates back to Today. (7) The web and Android display names are still the template name \"human_health_os\"."
+  },
+  {
+   "lens": "state-evidence",
+   "summary": "Read-only audit at HEAD 254c534. The working tree is clean apart from the untracked docs/handoff/v0.32/; the v0.32 SHA256SUMS matches the file (9a8c50ef\u2026). The 14 verified_gates are currently NOT stale for committed app code. `git diff --quiet 9e86ed0 HEAD -- human_health_os tools/flutter_web_smoke.mjs tools/linux tools/evidence/run_gate.py tools/verify_contracts.py contracts packages apps services pnpm-lock.yaml package.json` returns clean. A read-only `dart format --output=none --set-exit-if-changed .` still exits 0, the validator prints PASS (21 receipts, 14 gates), and every receipt's log_sha256 matches its log on disk. The problems are elsewhere. (1) The canonical cursor and every authority pointer are still frozen at the v0.31 run: READY, no active_forge, F001_COMPLETE against the v0.31 AC-1..AC-9, next F002, master_spec v0.31 7f999e0f. There is also no decision recording v0.32 adoption. A \u00a731.3 resume would skip the v0.32 F001 and start F002. (2) The evidence tooling cannot detect \u00a733.5 invalidation or dirty receipts. Because the v0.32 spec is untracked, any gate run now would be marked dirty, and the validator would still accept it. (3) Receipts lack the \u00a733.2 build fields and do not bind runtime artifacts. The web smoke never checks console errors, which v0.32 asks for. There is no `flutter doctor -v` receipt. (4) Many control files use legacy Forge ids that contradict D-011 and the v0.32 \u00a739 ladder, most importantly naming the vault \"F004/FORGE 004\" where the ladder says F006. The state and FORGE_LOG also carry minor count, timestamp and pointer inconsistencies. Files: /home/user/claudereponewscience/project_state/CURRENT_STATE.json, /home/user/claudereponewscience/CLAUDE.md, /home/user/claudereponewscience/project_state/{SOURCES,DECISIONS,KNOWN_GAPS,RISKS,FORGE_LOG}.md, /home/user/claudereponewscience/docs/{ROADMAP,ARCHITECTURE,PLATFORM_MATRIX,TEST_STRATEGY}.md, /home/user/claudereponewscience/README.md, /home/user/claudereponewscience/tools/validate_project_state.py, /home/user/claudereponewscience/tools/evidence/run_gate.py, /home/user/claudereponewscience/tools/flutter_web_smoke.mjs, /home/user/claudereponewscience/evidence/**."
+  },
+  {
+   "lens": "semantics-privacy",
+   "summary": "Read-only audit of human_health_os/lib/**, test/architecture/imports_test.dart, the storage policy tests, CI, packaging markers and the v0.32 kernel plus spec sections 2, 6-7 and 10-12. Nothing in lib/ shows fabricated or demo health values. No text claims a diagnosis, a recommendation, sync, or encryption that already exists. Capabilities are never shown as available because another platform has them. dart:io and dart:js_interop appear only in the two storage adapters, the domain layer is pure Dart, and --dart-define carries only the non-secret APP_ENV, APP_VERSION and SOURCE_REVISION. The EN and TR destination principles and banners say the same things. A web smoke receipt (reports/runtime/flutter_web_smoke.json) shows no external requests for the --no-web-resources-cdn build. There are two major findings. First, the F001 Timeline surface always says \"No records yet\", even when the vault holds saved body-weight records. Second, an unknown or absent APP_ENV falls back to the development profile, which is the only profile that writes plaintext, so a mistyped or flag-less release build persists unencrypted health data. The remaining findings are minor: capability and notice wording that blames the platform for a build-policy limit, a \"no network calls\" claim that depends on a build flag, gaps in the architecture guard, untranslated safety notices, stale Forge numbers for encryption, a banner whose disclaimer can be cut off, weight UI that ignores record fields, and lax handling of XDG paths and the version default. No finding is a blocker."
+  },
+  {
+   "lens": "gates-commands",
+   "summary": "No blockers from this lens. The repository's gates are correct substitutes for the v0.32 literal commands.\n\nFormat gate. `dart format --help` on Dart 3.13.5 says `-o, --output [write] (default) Overwrite formatted files on disk`, so the literal `dart format --set-exit-if-changed .` rewrites files. The repo already runs the read-only form `dart format --output=none --set-exit-if-changed .` in CI line 48, CLAUDE.md line 28 and docs/TEST_STRATEGY.md line 9. Run now, it exits 0 (33 files visited, 0 changed).\n\nFormat scope. The CI scope `.` is safe. dart format skips hidden directories such as `.dart_tool`, `build/` holds no .dart files, and the 33 visited files are all under `lib/`, `test/` and `integration_test/`. So CI would not fail on generated files.\n\nWeb build. The literal `flutter build web` compiles here because the web SDK is cached. But the CDN flag defaults to true (`flutter_command.dart:811-816`), which embeds `FLUTTER_WEB_CANVASKIT_URL=https://www.gstatic.com/flutter-canvaskit/<engine>/` (`web.dart:128-136`). That host is blocked here: `curl -I` returns `CONNECT tunnel failed, response 403`. So the literal build has a network dependency and would fail the smoke's \"0 external requests\" check and v0.32 required check 8. `--no-web-resources-cdn` (risk R-09) is the right equivalent, and CI, CLAUDE.md and the receipts all use it.\n\nReceipt freshness. The receipt-backed gates at 9e86ed0 are still current for the app: `git diff 9e86ed0 HEAD -- human_health_os` is empty. CI has never run (the GitHub Actions API lists 0 workflow runs), and the state files say so.\n\nThe gaps are:\n- The state self-audit does not enforce stale or dirty evidence.\n- The untracked v0.32 spec will mark every new receipt dirty.\n- The web smoke does not capture console errors.\n- `flutter doctor -v` is absent from CI and CLAUDE.md, and the existing doctor report is stale.\n- The command substitutions are not recorded as v0.32 deviations, and two docs still show the old commands.\n- The gate sets in CI and CLAUDE.md differ, including `--enforce-lockfile`.\n- The runtime receipt does not bind to the build it tested, and the smoke and receipt disagree on the dirty flag."
+  }
+ ]
+}

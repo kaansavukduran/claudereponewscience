@@ -20,10 +20,10 @@ Cloud sessions start from a fresh container, so this has to be repeated each tim
 1. **Orient.** Read `project_state/CURRENT_STATE.json`, the latest entry in `FORGE_LOG.md`, `git status`, and the docs relevant to the gap.
 2. **Specify.** Write the goal, behaviour, data/migration effects, security effects, failure modes, tests and acceptance criteria into the FORGE log entry before coding.
 3. **Implement.** Keep changes small and vertical. Domain code stays pure Dart. Add no package without a decision record.
-4. **Test.** Run `dart format --set-exit-if-changed`, `flutter analyze`, `flutter test`, then builds and smoke where available. For the TS side, run `pnpm typecheck`, `pnpm test` and `python3 tools/verify_contracts.py` if contracts were touched.
+4. **Test.** Run the gates through `tools/evidence/run_gate.py`: `flutter doctor -v` (report), `flutter pub get`, `dart format --set-exit-if-changed .`, `flutter analyze`, `flutter test`, then `flutter build web --release --no-web-resources-cdn …` and the web smoke, plus Linux build/launch where available. For the TS side, run `pnpm typecheck`, `pnpm test` and `python3 tools/verify_contracts.py` if contracts were touched.
 5. **First failure.** Fix the root cause, re-run, then run regression.
 6. **Audit.** Check invariants, fake completion, dead UI, offline behaviour, error states, platform divergence and secrets.
-7. **Package.** Produce only real artifacts. Record their hashes in `reports/`.
+7. **Package.** Produce only real artifacts. Their hashes go into build receipts in `evidence/builds/` (§33.2).
 8. **State.** Update `CURRENT_STATE.json`, `FORGE_LOG.md`, `RISKS.md` and `KNOWN_GAPS.md`. Commit on the designated branch and push. If the push is blocked, say so.
 
 ## Definition of done for one FORGE

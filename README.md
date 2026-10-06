@@ -43,7 +43,7 @@ missing ≠ zero · plan ≠ completion · self-report ≠ diagnosis · app scor
 
 ## Handoff
 
-- `docs/handoff/v0.24/`: the authoritative Master Handoff and build prompts as received.
-- `docs/handoff/v0.25/`: build prompts extended with the connected-targets requirements, plus the v0.25 addendum (FR-456…463, AT-1109…1118).
-- `docs/adr/`: implementation decisions, including the deviation from the Flutter preference.
+- Source authority and lineage: `project_state/SOURCES.md`. Current process master: `docs/handoff/v0.32/` (candidate, D-013); product semantics: `docs/handoff/v0.24/`.
+- `docs/handoff/v0.25/`: **repo-local** prompts written by an earlier Claude session, not the user's v0.25 (which was never supplied).
+- `docs/adr/`: early implementation decisions; ADR-IMPL-001's client choice is superseded by ADR-IMPL-002 (`project_state/DECISIONS.md`).
 - `project_state/CURRENT_STATE.json` and `project_state/FORGE_LOG.md`: the current Forge checkpoint, evidence and the next increment.

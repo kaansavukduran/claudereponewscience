@@ -1,11 +1,56 @@
 {
-  "schema_version": "2",
+  "schema_version": "3",
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
-  "initialization": "INITIALIZATION_COMPLETE (Phase 0 first run 2026-10-06; reconciled to v0.31 2026-10-06)",
-  "active_forge": null,
+  "development_state": "FORGE_PLANNING",
+  "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
+  "active_forge": {
+    "forge_id": "F001",
+    "contract": "v0.32",
+    "run_id": "F001@v0.32",
+    "goal": "Re-certify the repository heartbeat against the v0.32 F001 contract on the existing repo and close its in-scope gaps",
+    "status": "SPECIFIED",
+    "baseline_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
+    "started_at": "2026-10-06T22:26:17Z",
+    "scope": [
+      "exactly three primary destinations (C-8)",
+      "honest Timeline empty state",
+      "behavioral offline-start test + stronger static guard",
+      "console-error / failed-request smoke",
+      "fail-closed APP_ENV, unknown APP_VERSION, disclaimer-first banner, honest storage capability status",
+      "web title/manifest 'Human OS'",
+      "evidence tooling: receipt §33.2 fields, covers-based staleness, dirty-tree rejection, both lockfile digests",
+      "gates: doctor, pub get, format, analyze, test, build web (plain + offline), smoke, regressions"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Existing Flutter repo used in place (kernel bootstrap rule 1): entry point lib/main.dart, root widget HumanOsApp, android/ios/web/windows/macos/linux folders, pubspec.lock committed",
+      "AC-2 Primary navigation is exactly Today, Timeline, Labs: NavigationBar (+ More) below 840 dp, NavigationRail at >= 840 dp (the single existing breakpoint); the seven placeholder destinations are reachable only in a secondary 'Planned' group (C-8)",
+      "AC-3 Today, Timeline and Labs show explicit empty/unimplemented states with no fabricated data; Timeline never claims 'No records yet' while it cannot list records (gap LENS-3/SEM-1)",
+      "AC-4 Non-production profile indicator visible with the clinical disclaimer first; build identity (version, revision, profile, Flutter, Dart, record schema) visible; absent APP_VERSION reads unknown; unknown APP_ENV or a release build without APP_ENV fails closed to staging (memory-only)",
+      "AC-5 No cloud, login or generative AI required: a behavioral test boots the real bootstrap() with HTTP client creation forbidden; the static guard also bans fetch/XMLHttpRequest/Image.network/NetworkImage/package:web",
+      "AC-6 v0.32 required checks 1-8 exist as automated tests and pass in `flutter test` (receipt)",
+      "AC-7 `flutter pub get` PASS (receipt)",
+      "AC-8 `dart format --set-exit-if-changed .` PASS, exact v0.32 command (receipt)",
+      "AC-9 `flutter analyze` PASS (receipt)",
+      "AC-10 `flutter build web` as written = COMPILED (receipt); offline variant `flutter build web --release --no-web-resources-cdn ...` PASS with a build receipt carrying target, arch, profile, signing and smoke-evidence fields",
+      "AC-11 Web runtime smoke on the offline build: shell renders, Today -> Timeline -> Labs, 0 page errors, 0 console errors, 0 failed requests, 0 external requests; receipt hashes main.dart.js and the smoke JSON",
+      "AC-12 No persistence behavior change since the baseline: lib/src/domain, test/data, integration_test and pubspec.lock unchanged; lib/src/data changes limited to comments (scope check receipt)",
+      "AC-13 Regression receipts: Linux integration test, Linux release build + launch, run_gate unit tests, Python contracts, TS tests",
+      "AC-14 Every verified gate has a clean-tree PASS receipt whose covered paths are unchanged at HEAD; tools/validate_project_state.py PASS; final multi-lens self-audit leaves no unresolved F001-blocking finding"
+    ],
+    "completed_steps": [
+      "Phase 0: v0.32 stored and diffed against v0.31",
+      "Phase 0: read-only gap analysis workflow (40 confirmed / 6 refuted)",
+      "Phase 0: SOURCES C-8/C-9, D-013, control-file fixes"
+    ],
+    "last_verified_gate": null,
+    "next_action": "Phase 0 self-audit (validator), commit, then implement",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -16,115 +61,17 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F001 (v0.31 ladder), 2026-10-06",
+  "last_completed_forge": "F001@v0.31 (2026-10-06); F001@v0.32 re-certification in progress",
   "baseline": {
-    "git_commit": "d1df671de4ad861166a0f2f97d5198ccac79cd61",
-    "working_tree": "clean at Phase 0 start",
-    "master_spec": "docs/handoff/v0.31/HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.31_CLAUDE_CODE_WEB_ONE_SHOT.md",
-    "master_spec_sha256": "7f999e0f1d09376e76c54436b5629f6e7e27284df01cb7b1da3626bf0223864c",
+    "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
+    "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
+    "master_spec": "docs/handoff/v0.32/HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.32_CLAUDE_CODE_WEB_ONE_SHOT.md",
+    "master_spec_sha256": "9a8c50ef6d05685fc9b45f0084d1cfeca9eeaf9b9a850867d425a2cec159c47d",
     "v026_baseline_sha256_required": "687335dedb86d654f77a13ca069c2c61688b93e0f7e437bb379e1d3c3b0b3369",
-    "v026_baseline_present": false
+    "v026_baseline_present": false,
+    "previous_master": "docs/handoff/v0.31/ (7f999e0f…864c), superseded"
   },
-  "verified_gates": [
-    {
-      "gate": "flutter pub get --enforce-lockfile",
-      "evidence_id": "EV-TEST-F001-0006",
-      "criterion": "AC-2",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "dart format --output=none --set-exit-if-changed .",
-      "evidence_id": "EV-TEST-F001-0007",
-      "criterion": "AC-3",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter analyze",
-      "evidence_id": "EV-TEST-F001-0008",
-      "criterion": "AC-4",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter test (63 tests)",
-      "evidence_id": "EV-TEST-F001-0009",
-      "criterion": "AC-5",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "run_gate unit tests (6)",
-      "evidence_id": "EV-TEST-F001-0010",
-      "criterion": "AC-9",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter build web --release (development)",
-      "evidence_id": "EV-BUILD-F001-0002",
-      "criterion": "AC-6",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "web runtime smoke 36/36 (Chromium 141)",
-      "evidence_id": "EV-RUNTIME-F001-0001",
-      "criterion": "AC-7",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "Linux integration_test (persistence regression)",
-      "evidence_id": "EV-TEST-F001-0011",
-      "criterion": "regression",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter build linux --release (development)",
-      "evidence_id": "EV-BUILD-F001-0003",
-      "criterion": "regression",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "Linux release launch under Xvfb (X11)",
-      "evidence_id": "EV-RUNTIME-F001-0002",
-      "criterion": "regression",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "verify_contracts.py (Python port, 73 vectors)",
-      "evidence_id": "EV-TEST-F001-0012",
-      "criterion": "regression",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "pnpm test (TS reference + Build Lab, 109 tests)",
-      "evidence_id": "EV-TEST-F001-0014",
-      "criterion": "regression",
-      "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
-      "result": "PASS"
-    },
-    {
-      "gate": "AC-1 platform folders + AC-8 scope check",
-      "evidence_id": "EV-TEST-F001-0015",
-      "criterion": "AC-1, AC-8",
-      "source_revision": "879455b9a623d49c0c45863b44220fcd279412af",
-      "result": "PASS"
-    },
-    {
-      "gate": "project state self-audit (validate_project_state.py)",
-      "evidence_id": "EV-TEST-F001-0016",
-      "criterion": "AC-9",
-      "source_revision": "6f1f61965d46da328f2be9599b19c767f6536e25",
-      "result": "PASS"
-    }
-  ],
+  "verified_gates": [],
   "known_blockers": [
     {
       "id": "B-1",
@@ -153,14 +100,11 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": {
-    "forge_id": "F002",
-    "goal": "Close the v0.31 F002 exit gate on the existing persistence heartbeat: migration version + migration receipt for vault log v1, XDG subdirectory human-health-os/ (conflict C-4) with a tested move of development data, persistence integration receipts on web and Linux, and a no-plaintext-secret review. No new record types."
-  },
-  "updated_at": "2026-10-06T21:53:14Z",
+  "next_recommended_forge": null,
+  "updated_at": "2026-10-06T22:26:17Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
-    "process_master": "docs/handoff/v0.31/ (D-011)",
+    "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
     "process_digest_legacy": "docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md",
     "candidates": [
       "docs/handoff/v0.27-candidate/",
@@ -177,7 +121,8 @@
     "pnpm": "10.28.0",
     "python": "3.13"
   },
-  "environment_report": "reports/toolchain/environment_v031_2026-10-06.txt",
+  "environment_report": "reports/toolchain/environment_v032_2026-10-06.txt",
+  "phase0_gap_analysis": "reports/audit/v032_phase0_gap_analysis.json",
   "targets": {
     "web": {
       "status": "RUNTIME_TESTED",
@@ -221,7 +166,7 @@
   },
   "domains": {
     "shell": "RUNTIME_TESTED (web + Linux, F001 v0.31 receipts)",
-    "persistence": "RUNTIME_TESTED for development builds only (unencrypted; production + portable memory-only until F004)",
+    "persistence": "RUNTIME_TESTED for development builds only (unencrypted; staging, production and portable memory-only until ladder F006)",
     "encryption_vault": "NOT_STARTED",
     "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
     "labs": "NOT_STARTED in Flutter (TS reference engine exists)",
@@ -230,68 +175,14 @@
   },
   "storage_policy": {
     "production": "memory only",
-    "portable": "memory only until encrypted vault (F004); nothing written beside the executable",
+    "portable": "memory only until the encrypted vault (ladder F006); nothing written beside the executable",
     "development_desktop": "unencrypted JSON-lines log in XDG data dir / Application Support / LOCALAPPDATA",
     "development_web": "unencrypted localStorage (may be evicted)",
     "android_ios": "memory only (path adapter planned)",
-    "staging": "memory only until F006 encrypted vault (D-010)"
+    "staging": "memory only until the encrypted vault (ladder F006) (D-010)"
   },
-  "forge_history_legacy_ids": {
-    "F001": {
-      "title": "Flutter bootstrap + responsive shell",
-      "status": "RUNTIME_TESTED",
-      "evidence": [
-        "project_state/FORGE_LOG.md#forge-001",
-        "reports/runtime/flutter_web_smoke.json",
-        "reports/artifacts/forge-001.json"
-      ]
-    },
-    "F002": {
-      "title": "Local heartbeat: canonical record, append-only vault log, weight entry",
-      "status": "RUNTIME_TESTED (web: Playwright 26/26; Linux: integration_test + launch on Ubuntu 24.04 X11)",
-      "source_revision": "3243163d0808c396b69ceb039671b5272941f355",
-      "evidence": [
-        "project_state/FORGE_LOG.md#forge-002-local-heartbeat-profile--one-canonical-record-save--restart--read-back",
-        "reports/artifacts/forge-002.json",
-        "reports/runtime/flutter_web_smoke.json",
-        "reports/runtime/flutter-linux-run.log"
-      ]
-    }
-  },
-  "audit": {
-    "F001_honesty_lens": "findings fixed in F002",
-    "F001_code_and_completeness_lenses": "did not complete; not rerun"
-  },
-  "git": {
-    "branch": "claude/code-capabilities-kz21fr",
-    "push": "BLOCKED (403: no GitHub access for Claude)"
-  },
-  "stale_or_uninformative_receipts": [
-    {
-      "evidence_ids": [
-        "EV-TEST-F001-0001",
-        "EV-TEST-F001-0002",
-        "EV-TEST-F001-0003",
-        "EV-TEST-F001-0004",
-        "EV-TEST-F001-0005"
-      ],
-      "why": "PASS on dbe9b54, before the FlutterVersion repair; stale (v0.31 §33.5), rerun as 0006-0010"
-    },
-    {
-      "evidence_ids": [
-        "EV-BUILD-F001-0001"
-      ],
-      "why": "FAIL: FLUTTER_VERSION is a reserved dart-define (the bug found by this Forge); kept as evidence"
-    },
-    {
-      "evidence_ids": [
-        "EV-TEST-F001-0013"
-      ],
-      "why": "pnpm -s test exited 0 with an empty log, so it proves nothing; rerun with output as 0014"
-    }
-  ],
   "forge_history": {
-    "F001": {
+    "F001@v0.31": {
       "forge_id": "F001",
       "goal": "Repository heartbeat re-verified under v0.31: shell, Today/Timeline/Labs, build identity, one host build + runtime receipt",
       "baseline_commit": "d1df671de4ad861166a0f2f97d5198ccac79cd61",
@@ -325,7 +216,163 @@
         "EV-TEST-F001-0015",
         "EV-TEST-F001-0016"
       ],
-      "app_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c"
+      "app_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+      "contract": "v0.31",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get --enforce-lockfile",
+          "evidence_id": "EV-TEST-F001-0006",
+          "criterion": "AC-2",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --output=none --set-exit-if-changed .",
+          "evidence_id": "EV-TEST-F001-0007",
+          "criterion": "AC-3",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze",
+          "evidence_id": "EV-TEST-F001-0008",
+          "criterion": "AC-4",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test (63 tests)",
+          "evidence_id": "EV-TEST-F001-0009",
+          "criterion": "AC-5",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "run_gate unit tests (6)",
+          "evidence_id": "EV-TEST-F001-0010",
+          "criterion": "AC-9",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release (development)",
+          "evidence_id": "EV-BUILD-F001-0002",
+          "criterion": "AC-6",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "web runtime smoke 36/36 (Chromium 141)",
+          "evidence_id": "EV-RUNTIME-F001-0001",
+          "criterion": "AC-7",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration_test (persistence regression)",
+          "evidence_id": "EV-TEST-F001-0011",
+          "criterion": "regression",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development)",
+          "evidence_id": "EV-BUILD-F001-0003",
+          "criterion": "regression",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release launch under Xvfb (X11)",
+          "evidence_id": "EV-RUNTIME-F001-0002",
+          "criterion": "regression",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "verify_contracts.py (Python port, 73 vectors)",
+          "evidence_id": "EV-TEST-F001-0012",
+          "criterion": "regression",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test (TS reference + Build Lab, 109 tests)",
+          "evidence_id": "EV-TEST-F001-0014",
+          "criterion": "regression",
+          "source_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c",
+          "result": "PASS"
+        },
+        {
+          "gate": "AC-1 platform folders + AC-8 scope check",
+          "evidence_id": "EV-TEST-F001-0015",
+          "criterion": "AC-1, AC-8",
+          "source_revision": "879455b9a623d49c0c45863b44220fcd279412af",
+          "result": "PASS"
+        },
+        {
+          "gate": "project state self-audit (validate_project_state.py)",
+          "evidence_id": "EV-TEST-F001-0016",
+          "criterion": "AC-9",
+          "source_revision": "6f1f61965d46da328f2be9599b19c767f6536e25",
+          "result": "PASS"
+        }
+      ],
+      "stale_or_uninformative_receipts": [
+        {
+          "evidence_ids": [
+            "EV-TEST-F001-0001",
+            "EV-TEST-F001-0002",
+            "EV-TEST-F001-0003",
+            "EV-TEST-F001-0004",
+            "EV-TEST-F001-0005"
+          ],
+          "why": "PASS on dbe9b54, before the FlutterVersion repair; stale (v0.31 §33.5), rerun as 0006-0010"
+        },
+        {
+          "evidence_ids": [
+            "EV-BUILD-F001-0001"
+          ],
+          "why": "FAIL: FLUTTER_VERSION is a reserved dart-define (the bug found by this Forge); kept as evidence"
+        },
+        {
+          "evidence_ids": [
+            "EV-TEST-F001-0013"
+          ],
+          "why": "pnpm -s test exited 0 with an empty log, so it proves nothing; rerun with output as 0014"
+        }
+      ],
+      "note": "Superseded as current evidence by the F001@v0.32 re-certification (D-013); receipts stay valid history for their revisions."
     }
+  },
+  "forge_history_legacy_ids": {
+    "F001": {
+      "title": "Flutter bootstrap + responsive shell",
+      "status": "RUNTIME_TESTED",
+      "evidence": [
+        "project_state/FORGE_LOG.md#forge-001",
+        "reports/runtime/flutter_web_smoke.json",
+        "reports/artifacts/forge-001.json"
+      ]
+    },
+    "F002": {
+      "title": "Local heartbeat: canonical record, append-only vault log, weight entry",
+      "status": "RUNTIME_TESTED (web: Playwright 26/26; Linux: integration_test + launch on Ubuntu 24.04 X11)",
+      "source_revision": "3243163d0808c396b69ceb039671b5272941f355",
+      "evidence": [
+        "project_state/FORGE_LOG.md#forge-002-local-heartbeat-profile--one-canonical-record-save--restart--read-back",
+        "reports/artifacts/forge-002.json",
+        "reports/runtime/flutter_web_smoke.json",
+        "reports/runtime/flutter-linux-run.log"
+      ]
+    },
+    "audit_of_legacy_FORGE_001": {
+      "F001_honesty_lens": "findings fixed in F002",
+      "F001_code_and_completeness_lenses": "did not complete; not rerun"
+    }
+  },
+  "git": {
+    "branch": "claude/code-capabilities-kz21fr",
+    "push": "BLOCKED (403: no GitHub access for Claude)"
   }
 }

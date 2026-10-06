@@ -1,10 +1,10 @@
 # Roadmap
 
-**Canonical Forge ids follow the v0.31 vertical-slice ladder** (`docs/handoff/v0.31/…` §39; decision D-011). Each Forge closes one usable slice under the v0.31 Definition of Done (§34). Live status is in `project_state/CURRENT_STATE.json`; this table is a summary and loses to it.
+**Canonical Forge ids follow the vertical-slice ladder** of the master (§39; unchanged from v0.31 to v0.32; decisions D-011, D-013). A ladder id re-run under a newer master contract is recorded as `F00n@v0.xx`. Each Forge closes one usable slice under the v0.31 Definition of Done (§34). Live status is in `project_state/CURRENT_STATE.json`; this table is a summary and loses to it.
 
-| Id | Slice | Exit gate (v0.31 §39) | Status (2026-10-06) | Legacy ids folded in |
+| Id | Slice | Exit gate (master §39) | Status (2026-10-06) | Legacy ids folded in |
 |---|---|---|---|---|
-| **F001** | Repository heartbeat: Flutter repo, responsive shell, Today / Timeline / Labs navigation, build-profile indicator, first host-supported build + runtime smoke | analyze/test PASS; one host build + runtime **receipt**; no new persistence | **DONE (v0.31), 2026-10-06**: web RUNTIME_TESTED + Linux regression, 13 receipt-backed gates (`evidence/`) | F001 |
+| **F001** | Repository heartbeat: Flutter repo, responsive shell, Today / Timeline / Labs navigation, build-profile indicator, first host-supported build + runtime smoke | analyze/test PASS; one host build + runtime **receipt**; no new persistence | DONE as `F001@v0.31` (14 receipt-backed gates); **re-certification `F001@v0.32` in progress** against the v0.32 kernel contract (exactly three primary destinations, console-error smoke, behavioral offline start) | F001 |
 | F002 | Local profile + persistence heartbeat: profile identity, repository port, one canonical record, save/read after restart, provenance + stable id | persistence integration test; migration version initialized; no plaintext-secret shortcut | **IMPLEMENTED pre-v0.31** (legacy FORGE 002: unit + Linux integration tested, web smoke). v0.31 exit gate **not yet verified**: no migration graph/receipt; XDG subdir differs (C-4) | FORGE 002 |
 | F003 | Timeline + correction lineage | timeline ordering + correction-history tests | Domain supports `supersedes`/tombstones; no UI | F006 |
 | F004 | Labs vertical slice | missing unit/range stays missing; source flag kept; no diagnosis | NOT_STARTED in Flutter (TS reference engine exists) | F008, F009 |

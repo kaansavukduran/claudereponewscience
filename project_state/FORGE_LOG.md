@@ -263,3 +263,17 @@ Not committed (build outputs are gitignored); identified by their receipts: `hum
 
 ## Next Recommended Forge
 **F002 — Local profile + persistence heartbeat (v0.31 exit-gate closure):** migration version and a migration receipt for vault log v1, the `human-health-os/` XDG subdirectory (conflict C-4) with a tested move of development data, persistence integration receipts on web and Linux, and a no-plaintext-secret review. No new record types. (Not started; requires an explicit `FORGE`.)
+
+---
+
+# PHASE 0 (v0.32 reconciliation), 2026-10-06 — INITIALIZATION_COMPLETE
+
+Trigger: the user attached the v0.32 master (`9a8c50ef…c47d`) and ordered its one-shot run (Phase 0 → F001 → stop, no F002). Kernel bootstrap rule 1 applies: an existing Flutter repository is repaired and used in place.
+
+- **Inventory:** branch `claude/code-capabilities-kz21fr`, clean at 254c534; `F001@v0.31` complete with 14 receipts; F015-L1 suspended. Toolchain: Flutter 3.47.6 / Dart 3.13.5; web (Chromium 141) and Linux desktop available; Android SDK absent; Windows/Apple hosts absent (`reports/toolchain/environment_v032_2026-10-06.txt`).
+- **Spec reading:** v0.32 diffed against v0.31: new EXECUTION KERNEL (lines 1–381) plus five sentences in §42–§44; everything else byte-identical. Stored in `docs/handoff/v0.32/` with SHA256SUMS.
+- **Reconciliation:** read-only multi-agent gap analysis (lenses: F001 contract, state/evidence, semantics/privacy, gates/commands; one adversarial skeptic per lens) → 40 confirmed (5 major, 35 minor, 0 blocker) and 6 refuted findings, kept in `reports/audit/v032_phase0_gap_analysis.json`. Majors: Timeline falsely says "No records yet" after a weight is saved; smoke ignores console errors; state cursor and authority pointers still on v0.31.
+- **Control files:** SOURCES (v0.32 row, lineage, conflicts C-8 primary destinations and C-9 literal commands), D-013, CURRENT_STATE schema 3 (cursor F001@v0.32 with AC-1…AC-14, history keyed by contract, verified gates reset for v0.32 receipts), CLAUDE.md (authority, kernel, commands incl. `flutter doctor -v` and the exact v0.32 format gate, F006, report contract), ROADMAP, KNOWN_GAPS (canonical ids, G-18…G-21), RISKS, ARCHITECTURE, PLATFORM_MATRIX, DEVELOPMENT_PLAN, TEST_STRATEGY, README.
+- **Self-audit:** `tools/validate_project_state.py` (see the commit's run); stale `F004` references removed from state and control files.
+
+Hard blocker for F001: none. Continuing into F001@v0.32 in the same run.

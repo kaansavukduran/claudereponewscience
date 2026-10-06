@@ -1,0 +1,50 @@
+# v0.32 environment report — 2026-10-06T21:58:30Z
+host: Ubuntu 24.04.5 LTS, kernel 6.18.44-fc-v70, x86_64, glibc 2.39, cpus 4, disk free 24G
+flutter 3.47.6 stable framework 5fc346839b5d engine 692136cb6582 | dart 3.13.5
+git: git version 2.43.0
+node: v22.22.0 pnpm: 10.28.0 python: Python 3.13.16
+java: openjdk version "21.0.12.1" 2026-08-18
+android sdk: unset; sdkmanager: missing; adb: missing
+linux desktop: clang 18.1.3, cmake 3.28.3, ninja 1.11.1, gtk3 3.24.41
+windows toolchain: none (Linux host)
+apple toolchain: none (Linux host)
+browser runtime: playwright chromium chromium-1194 
+
+## flutter doctor -v (CHROME_EXECUTABLE set; exit code recorded in its receipt during F001)
+  [✓] Flutter (Channel stable, 3.47.6, on Ubuntu 24.04.5 LTS 6.18.44-fc-v70, locale en_US) [41ms]
+      • Flutter version 3.47.6 on channel stable at /opt/toolchains/flutter
+      • Upstream repository https://github.com/flutter/flutter.git
+      • Framework revision 5fc346839b (6 days ago), 2026-09-30 15:02:49 -0700
+      • Engine revision 692136cb65
+      • Dart version 3.13.5
+      • DevTools version 2.60.0
+      • Feature flags: enable-web, enable-linux-desktop, enable-macos-desktop, enable-windows-desktop, enable-android, enable-ios, cli-animations, enable-native-assets, enable-record-use, enable-swift-package-manager, omit-legacy-version-file, enable-lldb-debugging, enable-uiscene-migration
+  
+  [✗] Android toolchain - develop for Android devices [17ms]
+      ✗ Unable to locate Android SDK.
+        Install Android Studio from: https://developer.android.com/studio/index.html
+        On first launch it will assist you in installing the Android SDK components.
+        (or visit https://flutter.dev/to/linux-android-setup for detailed instructions).
+        If the Android SDK has been installed to a custom location, please use
+        `flutter config --android-sdk` to update to that location.
+  
+  
+  [✓] Chrome - develop for the web [10ms]
+      • CHROME_EXECUTABLE = /opt/pw-browsers/chromium-1194/chrome-linux/chrome
+  
+  [✓] Linux toolchain - develop for Linux desktop [226ms]
+      • Ubuntu clang version 18.1.3 (1ubuntu1)
+      • cmake version 3.28.3
+      • ninja version 1.11.1
+      • pkg-config version 1.8.1
+      • GL_EXT_framebuffer_blit: no
+      • GL_EXT_texture_format_BGRA8888: no
+  
+  [✓] Connected device (2 available) [66ms]
+      • Linux (desktop) • linux  • linux-x64      • Ubuntu 24.04.5 LTS 6.18.44-fc-v70
+      • Chrome (web)    • chrome • web-javascript • Chromium 141.0.7390.37
+  
+  [✓] Network resources [743ms]
+      • All expected network resources are available.
+  
+  ! Doctor found issues in 1 category.

@@ -57,13 +57,13 @@ Dependency direction is `features → application/domain ports ← data adapters
 
 ## Platform adapters and the capability registry
 
-At startup a `CapabilityRegistry` reports what is **really** available on this runtime. Implemented ids: `local_storage` (available only when a file or browser adapter opened; always labelled "not encrypted" until F004), `health_platform` (Health Connect on Android, HealthKit on iOS, unsupported elsewhere; adapters planned F023/F024), `key_store` (planned F004/F030K) and `network` (not required). Planned ids: `file_system`, `notifications`, `background_work`.
+At startup a `CapabilityRegistry` reports what is **really** available on this runtime. Implemented ids: `local_storage` (available only when a file or browser adapter opened; always labelled "not encrypted" until F006), `health_platform` (Health Connect on Android, HealthKit on iOS, unsupported elsewhere; adapters planned F023/F024), `key_store` (planned F004/F030K) and `network` (not required). Planned ids: `file_system`, `notifications`, `background_work`.
 
 The UI shows unavailable integrations as unavailable. It never borrows another platform's capability.
 
 ## Persistence (see SECURITY_MODEL.md)
 
-The `HealthRepository` port has one log-backed implementation over three sinks: memory, file (`dart:io`, development desktop builds only) and browser `localStorage` (development web builds only). Production builds and portable mode stay memory-only until the encrypted vault exists. Encryption comes in a dedicated FORGE: a versioned vault header, a passphrase KDF and a wrapped data key. The portable vault (Windows ZIP, Linux tar.zst) will live in `UserData/`, encrypted, and is identified by a UUID, never by its path.
+The `HealthRepository` port has one log-backed implementation over three sinks: memory, file (`dart:io`, development desktop builds only) and browser `localStorage` (development web builds only). Staging and production builds and portable mode stay memory-only until the encrypted vault (ladder F006) exists. Encryption comes in a dedicated FORGE: a versioned vault header, a passphrase KDF and a wrapped data key. The portable vault (Windows ZIP, Linux tar.zst) will live in `UserData/`, encrypted, and is identified by a UUID, never by its path.
 
 ## What stays in TypeScript and why
 

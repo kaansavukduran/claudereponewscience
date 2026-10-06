@@ -11,8 +11,8 @@ Every claim moves up the ladder only with evidence: **IMPLEMENTED → STATICALLY
 | Cross-language contract | `flutter test test/contracts`: the Dart engines run `contracts/golden_vectors/*.json` | The same vectors in TS (`packages/domain/test`) and in Python (`tools/verify_contracts.py`) |
 | Widget | `flutter test test/widget`: shell, navigation, empty/error/missing states | — |
 | Integration | `xvfb-run flutter test integration_test -d linux` (real file IO, relaunch, moved folder) | API + client repository tests |
-| Build | `flutter build web --release`, plus `flutter build linux` when GTK is present (CI smoke), `apk`, `appbundle`, `ios`, `macos` and `windows` on their own hosts | `pnpm build` |
-| Runtime smoke | `node tools/flutter_web_smoke.mjs`: serve `build/web`, drive it with Playwright/Chromium (semantics enabled): starts, Today, Today → Timeline → Labs, banner, build identity, 0 external requests | Playwright suites for the Site and the client |
+| Build | `flutter build web --release --no-web-resources-cdn` (offline-capable; the plain CDN build fetches CanvasKit/fonts at start), plus `flutter build linux` when GTK is present (CI smoke), `apk`, `appbundle`, `ios`, `macos` and `windows` on their own hosts | `pnpm build` |
+| Runtime smoke | `node tools/flutter_web_smoke.mjs`: serve `build/web`, drive it with Playwright/Chromium (semantics enabled): starts, Today, Today → Timeline → Labs, banner, build identity, 0 external requests, 0 page errors, 0 console errors, 0 failed requests | Playwright suites for the Site and the client |
 | Linux runtime/packaging | `tools/linux/launch_smoke.sh`, `tools/linux/check_symbols.sh <bundle> <rootfs>`, install/remove per format and distro (F015-L1) | — |
 | Packaging | Portable ZIP and installer smoke on a clean Windows VM. DMG mount/launch on macOS. | Artifact publish check |
 | State self-audit | `python3 tools/validate_project_state.py` (state paths exist, PASS gates backed by receipts, hosts never over-claimed) | — |
