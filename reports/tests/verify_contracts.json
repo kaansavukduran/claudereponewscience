@@ -1,0 +1,42 @@
+[
+  {
+    "check": "core_derived_vectors",
+    "status": "PASS",
+    "detail": "19 vectors"
+  },
+  {
+    "check": "lab_interpretation_vectors",
+    "status": "PASS",
+    "detail": "19 vectors"
+  },
+  {
+    "check": "nutrition_vectors(scale)",
+    "status": "PASS",
+    "detail": "3 scale vectors"
+  },
+  {
+    "check": "sqlite_kernel_migrations",
+    "status": "PASS",
+    "detail": "1 migration(s), FK on"
+  },
+  {
+    "check": "postgres_runtime",
+    "status": "NOT_RUN",
+    "detail": "PostgreSQL DDL/RLS not executed in this repository yet (AT-821)"
+  },
+  {
+    "check": "golden_vector_id_uniqueness",
+    "status": "PASS",
+    "detail": "73 unique IDs"
+  },
+  {
+    "check": "v0.25_canonical_id_integrity",
+    "status": "PASS",
+    "detail": "18 new IDs"
+  },
+  {
+    "check": "release_outputs_present",
+    "status": "PASS",
+    "detail": "6 files"
+  }
+]

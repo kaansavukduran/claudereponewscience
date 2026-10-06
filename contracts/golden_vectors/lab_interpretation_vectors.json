@@ -1,0 +1,1359 @@
+{
+  "catalog_id": "lab_interpretation_vectors",
+  "engine": "LAB-INTERPRETATION-ENGINE-1",
+  "engine_version": "0.24.0",
+  "synthetic_only": true,
+  "provenance": "Synthetic thresholds and rules only; validates software semantics, not medical thresholds.",
+  "vectors": [
+    {
+      "vector_id": "GV-LAB-001",
+      "acceptance_tests": [
+        "AT-1064"
+      ],
+      "note": "within reference",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "WITHIN_REFERENCE",
+        "critical": "NO_MATCH",
+        "decision_matched": []
+      }
+    },
+    {
+      "vector_id": "GV-LAB-002",
+      "acceptance_tests": [
+        "AT-1065",
+        "AT-1067"
+      ],
+      "note": "below reference, not critical",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 3,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "BELOW_REFERENCE",
+        "critical": "NO_MATCH"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-003",
+      "acceptance_tests": [
+        "AT-1066",
+        "AT-1067"
+      ],
+      "note": "outside range but not critical",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 12,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "ABOVE_REFERENCE",
+        "critical": "NO_MATCH",
+        "decision_matched": [
+          "DL-SYN-1"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-LAB-004",
+      "acceptance_tests": [
+        "AT-1068"
+      ],
+      "note": "critical low matched",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 1.5,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "BELOW_REFERENCE",
+        "critical": "SOURCE_DEFINED_CRITICAL_LOW_MATCHED",
+        "external_receipt_confirmed": false
+      }
+    },
+    {
+      "vector_id": "GV-LAB-005",
+      "acceptance_tests": [
+        "AT-1069"
+      ],
+      "note": "critical threshold independent of range",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 25,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-WIDE",
+            "low": 4,
+            "high": 30,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "WITHIN_REFERENCE",
+        "critical": "SOURCE_DEFINED_CRITICAL_HIGH_MATCHED"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-006",
+      "acceptance_tests": [
+        "AT-1070",
+        "AT-1071"
+      ],
+      "note": "no critical rule → no invented threshold",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 50,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "ABOVE_REFERENCE",
+        "critical": "NO_ACTIVE_RULE",
+        "external_receipt_confirmed": false
+      }
+    },
+    {
+      "vector_id": "GV-LAB-007",
+      "acceptance_tests": [
+        "AT-1072",
+        "AT-1091",
+        "AT-1092"
+      ],
+      "note": "no reference, source flag preserved",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 12,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01",
+          "source_flag": "H"
+        },
+        "reference": [],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "NO_APPLICABLE_REFERENCE",
+        "reference": "NO_REFERENCE",
+        "flag_origins": [
+          "SOURCE_REPORTED",
+          "APP_RULE_MATCH"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-LAB-008",
+      "acceptance_tests": [
+        "AT-1073"
+      ],
+      "note": "unit mismatch before numeric comparison",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "other-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "UNIT_BLOCKED",
+        "reference": "UNIT_NOT_COMPARABLE"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-009",
+      "acceptance_tests": [
+        "AT-1074",
+        "AT-1075"
+      ],
+      "note": "profile gender label cannot satisfy source partition",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": [
+              "age_years",
+              "source_sex_variable"
+            ]
+          }
+        ],
+        "context": {
+          "age_years": 40,
+          "profile_gender_label": "female"
+        },
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "INSUFFICIENT_CONTEXT",
+        "reference": "INSUFFICIENT_REFERENCE_CONTEXT"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-010",
+      "acceptance_tests": [
+        "AT-1076"
+      ],
+      "note": "same method directly comparable",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6.2,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-06-01"
+        },
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "comparability": "DIRECTLY_COMPARABLE",
+        "trend_discontinuity": false
+      }
+    },
+    {
+      "vector_id": "GV-LAB-011",
+      "acceptance_tests": [
+        "AT-1077",
+        "AT-1078",
+        "AT-1086"
+      ],
+      "note": "method change without reviewed mapping",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M2",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": null,
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6.2,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-06-01"
+        },
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "comparability": "UNKNOWN_COMPARABILITY",
+        "trend_discontinuity": true,
+        "rcv": "BLOCKED_BY_COMPARABILITY"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-012",
+      "acceptance_tests": [
+        "AT-1079"
+      ],
+      "note": "different specimen not comparable",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6.2,
+          "unit": "syn-u",
+          "specimen": "plasma",
+          "method_id": "M1",
+          "observed_at": "2026-06-01"
+        },
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "comparability": "NOT_COMPARABLE",
+        "trend_discontinuity": true
+      }
+    },
+    {
+      "vector_id": "GV-LAB-013",
+      "acceptance_tests": [
+        "AT-1082",
+        "AT-1083"
+      ],
+      "note": "RCV within",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 10,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 9,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-06-01"
+        },
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "rcv": "WITHIN_RCV",
+        "rcv_percent": 14.926915287493259,
+        "observed_percent_change": 11.11111111111111,
+        "tolerance": 1e-09
+      }
+    },
+    {
+      "vector_id": "GV-LAB-014",
+      "acceptance_tests": [
+        "AT-1084",
+        "AT-1087"
+      ],
+      "note": "within reference but unusual personal delta",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 7,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 9,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-06-01"
+        },
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": [
+          9,
+          9.2,
+          8.8,
+          9.1,
+          8.9
+        ]
+      },
+      "expected": {
+        "reference": "WITHIN_REFERENCE",
+        "rcv": "EXCEEDS_RCV",
+        "baseline": "UNUSUAL_FOR_PERSON",
+        "robust_z": -13.489815189531903,
+        "tolerance": 1e-06
+      }
+    },
+    {
+      "vector_id": "GV-LAB-015",
+      "acceptance_tests": [
+        "AT-1085"
+      ],
+      "note": "negative CV refused",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 7,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 9,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-06-01"
+        },
+        "comparability_records": [],
+        "rcv": {
+          "cva": -2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "rcv": "INVALID_CV_INPUT"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-016",
+      "acceptance_tests": [
+        "AT-1093"
+      ],
+      "note": "conflicting interval sources",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 6,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          },
+          {
+            "interval_id": "RI-SYN-2",
+            "low": 4,
+            "high": 12,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-B",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "CONFLICTING_REFERENCE_SOURCES",
+        "reference": "CONFLICTING_REFERENCE_SOURCES"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-017",
+      "acceptance_tests": [
+        "AT-1094"
+      ],
+      "note": "stale critical pack cannot present fresh conclusion",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 1.5,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "STALE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "RULE_PACK_STALE",
+        "critical": "RULE_PACK_STALE"
+      }
+    },
+    {
+      "vector_id": "GV-LAB-018",
+      "acceptance_tests": [
+        "AT-1089"
+      ],
+      "note": "decision limit evaluated separately",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": 9,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "SUCCESS",
+        "reference": "WITHIN_REFERENCE",
+        "decision_matched": [
+          "DL-SYN-1"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-LAB-019",
+      "acceptance_tests": [
+        "AT-798"
+      ],
+      "note": "value not reported is not zero",
+      "input": {
+        "result": {
+          "analyte_key": "SYN-ANALYTE-X",
+          "value": null,
+          "unit": "syn-u",
+          "specimen": "serum",
+          "method_id": "M1",
+          "observed_at": "2026-09-01"
+        },
+        "reference": [
+          {
+            "interval_id": "RI-SYN-1",
+            "low": 4,
+            "high": 10,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "method_id": "M1",
+            "source": "SYNTHETIC-LAB-A",
+            "version": "1",
+            "required_context": []
+          }
+        ],
+        "context": {},
+        "decision_rules": [
+          {
+            "rule_id": "DL-SYN-1",
+            "label": "Synthetic decision limit",
+            "threshold": 8,
+            "direction": "AT_OR_ABOVE",
+            "unit": "syn-u",
+            "source": "SYNTHETIC-DECISION-PACK",
+            "version": "1"
+          }
+        ],
+        "critical_rules": [
+          {
+            "rule_id": "CR-SYN-1",
+            "low": 2,
+            "high": 20,
+            "unit": "syn-u",
+            "specimen": "serum",
+            "source": "SYNTHETIC-CRITICAL-PACK",
+            "version": "1",
+            "status": "ACTIVE"
+          }
+        ],
+        "prior": null,
+        "comparability_records": [],
+        "rcv": {
+          "cva": 2,
+          "cvi": 5,
+          "z": 1.96,
+          "source": "SYNTHETIC-BIOLOGICAL-VARIATION"
+        },
+        "baseline_points": []
+      },
+      "expected": {
+        "status": "VALUE_NOT_REPORTED",
+        "value": null
+      }
+    }
+  ]
+}

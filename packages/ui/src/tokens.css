@@ -1,0 +1,145 @@
+/* UI_DESIGN_TOKENS — semantic roles shared by Site Lab and production client (v0.19 parity).
+   Health meaning never relies on colour alone: every role also has a glyph + text label. */
+
+:root {
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 24px; --space-6: 32px;
+  --radius-s: 6px; --radius-m: 10px; --radius-l: 14px;
+  --font-ui: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --fs-display: 1.75rem; --fs-title: 1.25rem; --fs-heading: 1.0625rem; --fs-body: 0.9375rem; --fs-small: 0.8125rem; --fs-label: 0.75rem; --fs-metric: 1.625rem;
+  --control-h: 36px;
+
+  --surface: #f6f7f9; --surface-1: #ffffff; --surface-2: #eef1f5; --surface-3: #e3e8ef;
+  --border: #d5dbe3; --border-strong: #b7c1ce;
+  --text: #121821; --text-2: #4a5566; --text-3: #6b7686;
+  --accent: #2f5bd3; --accent-ink: #ffffff; --accent-soft: #e5ecfc;
+  --success: #1d7a52; --warning: #9a6200; --danger: #b3261e; --info: #2f5bd3; --disabled: #9aa4b2;
+  --focus: #6d4cff;
+  --protection: #0f7f74; --protection-soft: #dff3f0;
+  --burden: #b4541a; --burden-soft: #fbeadf;
+  --function: #6a4bc4; --function-soft: #ece6fb;
+  --confidence: #2f5bd3; --confidence-soft: #e5ecfc;
+  --synthetic: #8a5a00; --synthetic-soft: #fff3d6;
+  --shadow-1: 0 1px 2px rgba(16, 24, 40, 0.06), 0 1px 3px rgba(16, 24, 40, 0.08);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="clarity"]) {
+    --surface: #0b0f15; --surface-1: #121822; --surface-2: #19212d; --surface-3: #222c3a;
+    --border: #273243; --border-strong: #3a475b;
+    --text: #e8edf4; --text-2: #a9b4c4; --text-3: #8592a5;
+    --accent: #7aa2ff; --accent-ink: #0b0f15; --accent-soft: #1b2741;
+    --success: #4cc792; --warning: #f0b14a; --danger: #ff7b72; --info: #7aa2ff; --disabled: #5c6878;
+    --focus: #b39dff;
+    --protection: #3fd1bf; --protection-soft: #0f2a28;
+    --burden: #f59a5b; --burden-soft: #2f1d12;
+    --function: #b49cff; --function-soft: #231c3a;
+    --confidence: #7aa2ff; --confidence-soft: #1b2741;
+    --synthetic: #f3c35b; --synthetic-soft: #2c230e;
+    --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --surface: #0b0f15; --surface-1: #121822; --surface-2: #19212d; --surface-3: #222c3a;
+  --border: #273243; --border-strong: #3a475b;
+  --text: #e8edf4; --text-2: #a9b4c4; --text-3: #8592a5;
+  --accent: #7aa2ff; --accent-ink: #0b0f15; --accent-soft: #1b2741;
+  --success: #4cc792; --warning: #f0b14a; --danger: #ff7b72; --info: #7aa2ff; --disabled: #5c6878;
+  --focus: #b39dff;
+  --protection: #3fd1bf; --protection-soft: #0f2a28;
+  --burden: #f59a5b; --burden-soft: #2f1d12;
+  --function: #b49cff; --function-soft: #231c3a;
+  --confidence: #7aa2ff; --confidence-soft: #1b2741;
+  --synthetic: #f3c35b; --synthetic-soft: #2c230e;
+  --shadow-1: 0 1px 2px rgba(0, 0, 0, 0.4);
+  color-scheme: dark;
+}
+/* Aging-friendly / high-clarity preset: larger text + controls, stronger contrast. Never changes data. */
+:root[data-theme="clarity"] {
+  --fs-body: 1.0625rem; --fs-small: 0.9375rem; --fs-label: 0.875rem; --fs-metric: 1.875rem; --control-h: 44px;
+  --surface: #ffffff; --surface-1: #ffffff; --surface-2: #f2f2f2; --surface-3: #e6e6e6;
+  --border: #8a8a8a; --border-strong: #3d3d3d; --text: #000000; --text-2: #1f1f1f; --text-3: #333333;
+  --accent: #0033a0; --accent-soft: #e0e8ff; --protection: #005f56; --burden: #8c3a00; --function: #4b2a9e;
+  color-scheme: light;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--surface); color: var(--text);
+  font: var(--fs-body)/1.5 var(--font-ui); font-feature-settings: "tnum" 1;
+}
+button, input, select, textarea { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 4px; }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+/* ---------- primitives ---------- */
+.hh-card { background: var(--surface-1); border: 1px solid var(--border); border-radius: var(--radius-l); padding: var(--space-4); box-shadow: var(--shadow-1); min-width: 0; }
+.hh-card h3 { margin: 0 0 var(--space-2); font-size: var(--fs-heading); }
+.hh-muted { color: var(--text-2); }
+.hh-small { font-size: var(--fs-small); }
+.hh-label { font-size: var(--fs-label); text-transform: uppercase; letter-spacing: 0.06em; color: var(--text-3); font-weight: 600; }
+.hh-mono { font-family: var(--font-mono); }
+.hh-row { display: flex; gap: var(--space-2); align-items: center; flex-wrap: wrap; }
+.hh-grid { display: grid; gap: var(--space-3); grid-template-columns: repeat(auto-fill, minmax(min(100%, 260px), 1fr)); }
+.hh-btn { min-height: var(--control-h); padding: 0 var(--space-3); border-radius: var(--radius-m); border: 1px solid var(--border-strong); background: var(--surface-1); cursor: pointer; font-weight: 600; font-size: var(--fs-small); }
+.hh-btn:hover { background: var(--surface-2); }
+.hh-btn[aria-pressed="true"] { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.hh-btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.hh-btn.danger { color: var(--danger); border-color: var(--danger); }
+.hh-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.hh-input { min-height: var(--control-h); padding: 0 var(--space-2); border-radius: var(--radius-s); border: 1px solid var(--border-strong); background: var(--surface-1); width: 100%; }
+select.hh-input { padding-right: var(--space-5); }
+
+/* ---------- chips (glyph + text, never colour alone) ---------- */
+.hh-chip { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; border-radius: 999px; font-size: var(--fs-label); font-weight: 600; border: 1px solid currentColor; line-height: 1.5; white-space: nowrap; }
+.hh-chip[data-tone="ok"] { color: var(--success); }
+.hh-chip[data-tone="warn"] { color: var(--warning); }
+.hh-chip[data-tone="risk"] { color: var(--danger); }
+.hh-chip[data-tone="info"] { color: var(--info); }
+.hh-chip[data-tone="muted"] { color: var(--text-3); }
+.hh-chip[data-tone="synthetic"] { color: var(--synthetic); background: var(--synthetic-soft); }
+.hh-chip[data-tone="protection"] { color: var(--protection); }
+.hh-chip[data-tone="burden"] { color: var(--burden); }
+.hh-chip[data-tone="function"] { color: var(--function); }
+
+/* ---------- result card ---------- */
+.hh-result { display: flex; flex-direction: column; gap: var(--space-2); border-left: 4px solid var(--border-strong); }
+.hh-result[data-channel="PROTECTION"] { border-left-color: var(--protection); }
+.hh-result[data-channel="BURDEN"] { border-left-color: var(--burden); }
+.hh-result[data-channel="FUNCTION"] { border-left-color: var(--function); }
+.hh-result[data-channel="COVERAGE"] { border-left-color: var(--confidence); }
+.hh-result[data-class="VALIDATED_RISK"], .hh-result[data-class="POPULATION_BASELINE"], .hh-result[data-class="EXPERIMENTAL"] { border-left-style: dashed; }
+.hh-metric { font-family: var(--font-mono); font-size: var(--fs-metric); font-weight: 650; letter-spacing: -0.02em; }
+.hh-metric small { font-size: var(--fs-small); color: var(--text-2); font-weight: 500; margin-left: 4px; letter-spacing: 0; }
+.hh-missing { font-family: var(--font-ui); font-size: var(--fs-body); color: var(--text-2); font-weight: 600; border: 1px dashed var(--border-strong); border-radius: var(--radius-s); padding: 2px 8px; display: inline-block; max-width: 100%; overflow-wrap: anywhere; }
+.hh-bar { height: 8px; background: var(--surface-3); border-radius: 999px; overflow: hidden; }
+.hh-bar > span { display: block; height: 100%; border-radius: 999px; background: var(--text-3); }
+.hh-bar[data-channel="PROTECTION"] > span { background: var(--protection); }
+.hh-bar[data-channel="BURDEN"] > span { background: repeating-linear-gradient(45deg, var(--burden), var(--burden) 6px, color-mix(in srgb, var(--burden) 75%, transparent) 6px, color-mix(in srgb, var(--burden) 75%, transparent) 12px); }
+.hh-bar[data-channel="FUNCTION"] > span { background: var(--function); }
+.hh-bar[data-channel="COVERAGE"] > span { background: var(--confidence); }
+details.hh-how { border-top: 1px solid var(--border); padding-top: var(--space-2); }
+details.hh-how > summary { cursor: pointer; font-size: var(--fs-small); font-weight: 600; color: var(--accent); }
+.hh-kv { display: grid; grid-template-columns: max-content 1fr; gap: 2px var(--space-3); font-size: var(--fs-small); margin: var(--space-2) 0; }
+.hh-kv dt { color: var(--text-3); }
+.hh-kv dd { margin: 0; overflow-wrap: anywhere; }
+.hh-table { width: 100%; border-collapse: collapse; font-size: var(--fs-small); }
+.hh-table th, .hh-table td { text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.hh-table th { color: var(--text-3); font-weight: 600; }
+.hh-table td.num { font-family: var(--font-mono); text-align: right; }
+.hh-scroll-x { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.hh-banner { border: 1px solid var(--synthetic); background: var(--synthetic-soft); color: var(--text); border-radius: var(--radius-m); padding: var(--space-2) var(--space-3); font-size: var(--fs-small); }
+
+/* ---------- fields (NumField: unknown ≠ 0) ---------- */
+fieldset.group { border: 1px solid var(--border); border-radius: var(--radius-m); padding: var(--space-2) var(--space-3) var(--space-3); margin: 0 0 var(--space-3); min-width: 0; }
+fieldset.group > legend { font-weight: 650; font-size: var(--fs-small); padding: 0 4px; }
+.field { display: grid; grid-template-columns: 1fr 92px; gap: 4px var(--space-2); align-items: center; margin-top: var(--space-2); }
+.field label.name { font-size: var(--fs-small); font-weight: 550; }
+.field .unit { font-size: var(--fs-label); color: var(--text-3); }
+.field input[type="range"] { grid-column: 1 / -1; width: 100%; accent-color: var(--accent); }
+.field .unknown { grid-column: 1 / -1; font-size: var(--fs-label); color: var(--text-2); display: flex; gap: 6px; align-items: center; }
+.field[data-missing="true"] input[type="number"] { border-style: dashed; }

@@ -1,0 +1,370 @@
+YOU ARE THE IMPLEMENTING SOFTWARE ENGINEER FOR LONGEVITY APP.
+
+IMPORTANT: Assume you have ZERO memory of any previous conversation. Do not rely on ChatGPT memory, hidden prior context, or knowledge of a project named Human OS.
+
+The attached LONGEVITY_APP_DEVELOPER_HANDOFF package is the authoritative starting specification.
+
+MISSION
+Build the actual Longevity App described in the package as a production-quality cross-platform health/longevity product targeting Android, iOS and web, with a shared backend/data model.
+
+FIRST ACTION
+Read every file in the handoff package before making architecture decisions. Treat 00_READ_THIS_FIRST.md and 01_MASTER_PRODUCT_SPEC.md as primary authorities. Use domain files for detail.
+
+HUMAN OS
+You do not need prior knowledge of Human OS. Its complete required donor behavior is defined in 18_HUMAN_OS_DONOR_SPEC.md. Human OS is a methodology donor only. Do not import private or unrelated donor identity/state into Longevity App.
+
+CORE PRODUCT REQUIREMENTS
+The app must support, at minimum:
+- user accounts,
+- Today dashboard,
+- health timeline,
+- dated laboratory sessions and lab results,
+- longitudinal biomarker history,
+- conditions with confirmed/suspected/history distinction,
+- symptom events,
+- 1–10 daily psychological self-ratings,
+- food diary,
+- food-provider abstraction,
+- food nutrient matrix,
+- manual foods,
+- barcode/provider-ready packaged-food flow,
+- missing nutrient != zero,
+- immutable historical food snapshots,
+- medication/supplement plan vs actual intake separation,
+- vitals/body measurements,
+- sleep/activity records,
+- trends/insights,
+- export,
+- privacy/security fundamentals,
+- Android, iOS and web clients.
+
+DEVELOPMENT RULES
+1. Do not merely describe the implementation. Build it.
+2. Do not stop after scaffolding if further work can be executed.
+3. Use current stable tooling and verify versions at execution time.
+4. Keep canonical health data separate from derived/AI interpretations.
+5. Never silently convert missing data to zero.
+6. Never silently convert self-report into diagnosis.
+7. Never mark a planned action completed without an actual completion event.
+8. Preserve correction/history semantics.
+9. Protect API/server secrets.
+10. Design migrations and tests before declaring production readiness.
+11. Use professional defaults for noncritical missing details and record those decisions.
+12. If one platform cannot be built because the environment lacks required credentials/tooling, complete every independently executable part and report the exact blocker.
+13. Do not claim BUILT, INSTALLED, DEPLOYED or VALIDATED without evidence.
+
+EXPECTED EXECUTION ORDER
+A. Inspect specifications.
+B. Verify current tooling/provider documentation.
+C. Produce architecture and decision record.
+D. Create complete repository.
+E. Implement backend/database/auth.
+F. Implement mobile/web product flows.
+G. Implement food provider layer.
+H. Implement tests.
+I. Run and repair tests.
+J. Build Android APK/AAB.
+K. Build/test iOS if environment permits.
+L. Build web production output.
+M. Run acceptance tests from 15_ACCEPTANCE_TESTS.md.
+N. Produce final release package and report.
+
+FINAL DELIVERABLES
+Return:
+- complete source repository,
+- Android APK and AAB when build environment permits,
+- iOS/Xcode/TestFlight-ready project and build evidence when environment permits,
+- production web build,
+- backend source and API documentation,
+- database migrations,
+- environment template,
+- tests and test results,
+- build instructions,
+- deployment instructions,
+- exact list of remaining blockers.
+
+DO NOT ASK FOR INFORMATION THAT IS ALREADY DEFINED IN THE HANDOFF.
+For noncritical implementation choices, choose a sensible engineering default and document it.
+Only request user input when a genuinely product-defining choice cannot safely be inferred from the specification.
+
+Begin by reading the entire package, then execute the build as far as the environment allows.
+
+
+V0.5 EXECUTION RULES
+- Use 20_IMPLEMENTATION_PHASES_AND_MVP.md as the default build order.
+- Use 21_SCREEN_ROUTES_AND_USER_FLOWS.md to prevent isolated/unconnected screens.
+- Implement sync according to 22_SYNC_PROTOCOL_AND_CONFLICTS.md unless a documented superior design preserves every invariant.
+- Use 23_API_PAYLOAD_EXAMPLES.md as semantic API examples, not immutable literal payloads.
+- Record deviations from 24_ARCHITECTURE_DECISIONS.md as explicit ADR updates.
+- Use REQUIREMENTS_TRACEABILITY.json and 25_REQUIREMENTS_TRACEABILITY.md to prove feature coverage.
+- Use 26_RELEASE_GATES_AND_DEFINITION_OF_DONE.md when reporting status.
+- Use SYNTHETIC_TEST_FIXTURES.json for deterministic tests; never treat fixture values as real user health targets.
+- Work phase by phase but do not interpret “MVP” as permission to discard the final Android+iOS+Web scope.
+- When one platform/toolchain is blocked, continue every independent phase and return the exact platform blocker.
+
+
+V0.6 HEALTH GRAPH / MATH REQUIREMENTS
+- Treat narrow examples as members of the broader taxonomy in 29_HEALTH_DOMAIN_TAXONOMY.md.
+- Implement ENTER/SELECT/WRITE → STRUCTURE → STORE → CALCULATE → RESULT.
+- Add HealthFact extensibility without replacing specialized entities.
+- Implement Advanced Health Modules as optional complexity controls.
+- Keep validated clinical risk separate from app-defined scores.
+- Build 32_RESULTS_AND_LONGEVITY_DASHBOARD.md.
+- Do NOT estimate lifespan by arbitrary weighted addition/subtraction of domain scores.
+- Population life expectancy/HALE must include source/geography/year metadata.
+- Personalized lifespan requires an applicable validated/calibrated survival model; otherwise show baseline or clearly experimental output.
+- Cardiology/oncology calculators require eligibility checks in a model registry.
+- Do not create a universal validated cancer score.
+- Supplements, medicines, vaccines, creams and treatments alter lifespan only through an explicit applicable evidence/model path, never arbitrary `+years`.
+- Every ScoreResult is versioned and reproducible from input record IDs.
+
+
+V0.7 DETERMINISTIC OFFLINE PRODUCT REQUIREMENTS
+- The required product has NO generative-AI or LLM dependency.
+- Implement Comparison as a first-class tab/mode using 34_COMPARISON_LAB_AND_BODY_PROFILES.md.
+- Support arbitrary numbers of comparison profiles subject only to practical resource limits; do not hard-code 2 or 4.
+- Support scenario cloning and non-destructive comparison.
+- Implement safe Reset Settings to Defaults separately from health-data deletion.
+- Implement Daily Missions and training prescriptions through local versioned deterministic rules.
+- A planned prescription such as `Bench Press 3×10 @ 30 kg` is never a completed workout until completion events exist.
+- Implement offline education content/quiz packs and contextual deterministic education triggers.
+- Integrate Android Health Connect and Apple HealthKit behind provider adapters, with user permissions, provenance and deduplication.
+- All required calculations/comparison/missions/education must function offline after required local data/content is present.
+- Network may be used for sync and updates, but no core result can require an LLM endpoint.
+
+V0.8 LONGEVITY↔SHORTEVITY / HUMAN OS REQUIREMENTS
+- Treat Longevity and Shortevity as dual conceptual axes: protection/resilience versus risk/burden/function loss.
+- Shortevity is NOT a universal clinical metric and must never be directly converted to years lost without a validated survival model.
+- Implement Protection, Burden, Function, Trajectory and Coverage as separable result channels.
+- Implement cumulative exposure only with domain-specific units/formulas.
+- Implement the causal/evidence graph and preserve association vs causation.
+- Implement deterministic early-warning rules as pattern detectors, not diagnosis.
+- Integrate the Human OS methods in 43_HUMAN_OS_FULL_DONOR_TRANSFER.md receiver-natively.
+- Preserve state continuity, event continuity and decision continuity as distinct concepts.
+- Corrections must propagate to affected derived outputs without silently rewriting unrelated raw history.
+- Rule/model/default changes need effective dates and version history.
+- Daily orchestration must be recovery/capacity aware and must not automatically stack missed optional tasks.
+- Do not import private donor identity/data into the general-public product.
+- Do not claim the unseen standalone Human OS repository was inspected.
+
+
+V0.9 LIFE-COURSE / DIGITAL-TWIN REQUIREMENTS
+- Model the user as one longitudinal life course, not isolated feature silos.
+- Implement EpisodeOfCare linking for related diagnosis/treatment/lab/symptom/recovery records.
+- Support multiple biological-age models as versioned independent outputs; never average them into a fake universal age by default.
+- Treat function, pain, rehabilitation and quality of life as first-class healthspan data.
+- Model multimorbidity and medication/supplement interactions through typed graph/rule relationships.
+- Support environmental/exposome and optional social-context records with privacy minimization.
+- Keep canonical internal semantics independent from external standards; implement adapter architecture for current FHIR/clinical-code/platform mappings as appropriate.
+- Implement deterministic Digital Twin projections and non-destructive ScenarioPatch.
+- Distinguish mathematical scenario recalculation from evidence-supported intervention effect.
+- Implement personal baseline/anomaly and deterministic forecast with explicit method/version and insufficient-data behavior.
+- Implement a full portable export/restore bundle that preserves provenance, corrections, IDs and model/rule versions.
+- Follow 56_CONTINUOUS_FORGE_DEVELOPMENT_LOOP.md for future explicit Forge continuation; do not claim background autonomous development.
+
+
+V0.10 DATA-TRUST / GOVERNANCE REQUIREMENTS
+- Implement DataQualityProfile; health risk and data quality are different axes.
+- Preserve source numeric value, source unit and source precision.
+- Use a canonical machine-readable unit strategy compatible with UCUM; verify the current UCUM release/license at implementation time.
+- Never convert incompatible quantities or infer density/analyte conversion context.
+- Implement MeasurementDevice and MeasurementSession, including UNKNOWN calibration state.
+- No mathematical/clinical model enters production without Model Registry metadata, eligibility checks and golden fixtures.
+- Preserve retired model versions for historical interpretation while blocking unauthorized new use.
+- Implement RulePack governance, precedence and conflict behavior.
+- Benchmark results must identify population/dataset/version and applicability.
+- Support local-only profiles; cloud is not a requirement for deterministic core.
+- Stage ambiguous imports; use batch receipts, deduplication and rollback.
+- Implement versioned offline pack lifecycle with checksum and compatibility validation.
+- Support dense wearable time series without destroying raw-source provenance.
+- Use FHIR only through adapters; re-verify current FHIR release/implementation guide before production interoperability work.
+
+
+V0.11 PRODUCTION-SHELL REQUIREMENTS
+- Protect client cryptographic keys/tokens with current platform-native secure facilities; verify Android Keystore and Apple Keychain guidance at build time.
+- Do not treat app lock as server authorization.
+- Implement local reminder scheduling without equating notification delivery/open with completion.
+- Explicitly model timezone semantics for reminders.
+- Target WCAG 2.2 AA for web and equivalent semantic/mobile accessibility; test text scaling, screen reader, keyboard and reduced-motion flows.
+- Externalize localization; initial architecture must support Turkish and English without canonical-data changes.
+- Implement scoped clinician/user reports and controlled sharing without fabricating clinician certification.
+- Use privacy-minimized telemetry, transactional crash recovery, startup integrity checks, support bundles and safe-mode behavior.
+- Separate dev/test/staging/production secrets and data.
+- Record release provenance across source/build/backend/schema/model/rule/content versions.
+- Use OWASP MASVS/MASTG as a mobile security verification reference and re-check current standard at release time.
+- Block production release on unresolved high-risk authorization or secret-exposure defects.
+- Maintain a Claim Registry so product/marketing claims cannot exceed actual evidence or regulatory product scope.
+
+
+V0.12 IMPLEMENTATION-BLUEPRINT REQUIREMENTS
+- Use 78_REFERENCE_IMPLEMENTATION_BLUEPRINT.md as the preferred implementation starting architecture unless a documented equivalent is materially better.
+- Product/data semantics remain normative even if frameworks are changed.
+- Implement explicit screen-state machines from 79_SCREEN_STATE_MACHINE_SPEC.md.
+- Build migration tests from MIGRATION_FIXTURES.json and 80_DATABASE_MIGRATION_AND_INVARIANT_FIXTURES.md before claiming schema safety.
+- Use stable cursor pagination, idempotency and revision-conflict behavior from 81_CANONICAL_API_ENVELOPES_PAGINATION_AND_IDEMPOTENCY.md.
+- Create deterministic seeded synthetic datasets; never use private real-user health history as test fixtures.
+- Run failure-injection cases for timeout-after-commit, duplicate, stale revision, corrupt pack, interrupted import/migration and permission denial.
+- Measure performance against PERFORMANCE_BUDGETS.json using actual recorded reference environments; report misses honestly rather than changing the target post hoc.
+- Execute the end-to-end reference scenarios in 84_END_TO_END_REFERENCE_SCENARIOS.md.
+- Use the CI/test layers in 85_TEST_PYRAMID_CI_AND_RELEASE_MATRIX.md.
+- Follow 86_IMPLEMENTATION_AGENT_EXECUTION_PROTOCOL.md so READY work continues even when another platform is BLOCKED.
+- Mocks/stubs/screenshots do not satisfy production feature completion.
+
+
+V0.13 IMPLEMENTATION-CONTRACT REQUIREMENTS
+- Implement UI components from 87_COMPONENT_LIBRARY_AND_INTERACTION_CONTRACTS.md as behavioral contracts, not only visuals.
+- Enforce singular canonical entity ownership from 88_MODULE_CONTRACTS_AND_DEPENDENCY_GRAPH.md; projections/adapters must not become shadow sources of truth.
+- Bootstrap the repository according to 89_REPOSITORY_BOOTSTRAP_AND_WORKSPACE_LAYOUT.md and pass the P0A bootstrap gate before broad feature expansion.
+- Generate/validate OpenAPI/resource schemas and detect breaking contract changes.
+- Use the named synthetic fixture library and preserve reproducible seeds.
+- Build and execute disaster-recovery drills; do not claim backup/recoverability without restore evidence.
+- Build a deterministic sync chaos simulator covering timeout-after-commit, duplicates, stale revisions, tombstones, clock skew and competing corrections.
+- Use the stable error catalog; user errors must state saved/pending/staged/unknown state and safe recovery action.
+- Package final implementation using 95_RELEASE_ARTIFACT_LAYOUT_AND_HANDOFF_INDEX.md and never reference build artifacts that do not exist.
+
+
+V0.14 DOMAIN-COMPLETION / RELEASE-EVIDENCE REQUIREMENTS
+- Use 97_DOMAIN_API_AND_SCHEMA_CATALOG.md and DOMAIN_API_CATALOG.json to ensure every major domain has owned resources, authorization, validation, sync and error behavior.
+- Enforce 101_RESOURCE_OWNERSHIP_CRUD_AND_SYNC_MATRIX.md; projections and adapters must not directly own/mutate another domain's canonical health data.
+- Implement deterministic filter/sort/cursor/export behavior from 102_QUERY_FILTER_SORT_SEARCH_AND_EXPORT_CONTRACT.md.
+- Implement compact/medium/expanded responsive behavior from 98_RESPONSIVE_LAYOUT_BLUEPRINT.md without changing health-result semantics.
+- Implement the retention/deletion/tombstone semantics in 99_DATA_RETENTION_DELETION_AND_TOMBSTONE_MATRIX.md; settings reset/module hide are never health-data deletion.
+- Use typed idempotent domain events from 103_DOMAIN_EVENT_CATALOG_AND_INVALIDATION_RULES.md for cross-module projection/invalidation work.
+- Optional capability denial/outage must follow 104_PERMISSION_CAPABILITY_AND_DEGRADATION_MATRIX.md; never fabricate data or success.
+- Produce the structured production evidence defined in 100_PRODUCTION_ACCEPTANCE_DOSSIER.md and 105_RELEASE_EVIDENCE_SCHEMA_AND_SIGNOFF.md.
+- Do not call the multi-platform product PRODUCTION_READY while any release-required platform/gate remains FAIL, BLOCKED or NOT_RUN.
+
+
+V0.15 SEPARATE SITE ARTIFACT
+- `BUILD_HUMAN_HEALTH_OS_SITE.txt` is a separate delivery prompt for the interactive web laboratory / published Site.
+- Do not confuse that artifact with this production cross-platform app build instruction.
+- The production product and the Site must share semantic invariants but may have different deployment architectures.
+
+
+V0.16 STARTER-PACK REQUIREMENTS
+- Bootstrap with the bundled machine-readable starter catalogs before inventing new model/rule IDs.
+- Implement MP-CORE-DERIVED-1 using transparent formulas and golden fixtures.
+- Implement RP-CORE-INVARIANTS-1 as hard semantic guards.
+- Do not bundle or fake AHA PREVENT output until current AHA license/source-code access and implementation review are complete.
+- Implement Data Sources & Licenses UI from THIRD_PARTY_LICENSE_MATRIX.json.
+- Use starter_schemas/*.schema.json for fixture/API/type validation, but do not collapse the entire persistence architecture into JSON documents.
+- Bundle EDU-HEALTH-LITERACY-FOUNDATION-1 for offline learning.
+- Public/demo flows must use REF-SYNTHETIC-DEMO-1 by default.
+- Run license/fixture/dependency gates before activating downloaded model/rule/reference/content packs.
+
+
+V0.17 GOLDEN-VECTOR / DATABASE-KERNEL REQUIREMENTS
+- Port the reference CORE_DERIVED engine semantics to the production runtime and pass every golden_vectors/core_derived_vectors.json case.
+- Treat reference_code as executable specification, not mandatory production language.
+- Use database_blueprints/sqlite_reference.sql and postgres_reference.sql as kernel DDL blueprints; expand by owned modules without weakening invariants.
+- Enable SQLite foreign-key enforcement at runtime.
+- Implement migrations, not ad-hoc CREATE TABLE at every startup.
+- Preserve PRESENT-vs-missing LabResult semantics.
+- Preserve unique mutation idempotency.
+- Never seed invented health history into a real user profile.
+- Implement zero-knowledge onboarding/help from ONBOARDING_FLOW.json and help_content.
+- Generate Data Sources & Licenses from ATTRIBUTION_MANIFEST.json.
+- Use export_examples only as synthetic contract examples.
+- Implement stale/invalidation semantics: canonical commit first, then derived recalculation.
+- PostgreSQL runtime PASS may be claimed only after the DDL/migrations are executed in an actual PostgreSQL test environment.
+
+
+V0.18 MIGRATION / AUTHORIZATION / FHIR / REPO REQUIREMENTS
+- Build from repository_scaffold logical boundaries or an equivalent clearly documented workspace.
+- Run `python repository_scaffold/scripts/verify_contracts.py` before broad feature work; preserve its checks in CI.
+- Convert SQLite/PostgreSQL reference migrations into the chosen migration framework without weakening constraints.
+- Released migrations are append-only.
+- Production API authorization must derive identity from authenticated server state, not request owner IDs.
+- Use distinct PostgreSQL migration and runtime roles. Do not run normal API traffic as DB owner/superuser.
+- Implement/test PostgreSQL RLS as defense-in-depth and explicitly test pooled-connection user-context isolation.
+- Add cross-user integration tests for guessed resource IDs.
+- Implement FHIR through an adapter. Select/reverify the production FHIR release/profile/IG and run an appropriate validator before claiming PASS.
+- Do not treat FHIR support as permission to bundle third-party terminology.
+- Missing lab data must never become numeric zero during export.
+
+
+V0.19 OPENAPI / UI-CONTRACT / ROLLBACK REQUIREMENTS
+- Treat OPENAPI_STARTER.json as the initial machine API contract; expand it rather than inventing undocumented endpoints.
+- Keep endpoint authorization behavior synchronized with ENDPOINT_AUTHORIZATION_MATRIX.json.
+- Implement idempotency keys/mutation IDs on declared mutation endpoints.
+- Implement explicit revision conflict handling; do not silently last-write-win canonical historical health data.
+- Preserve stable API error codes and sanitized request IDs.
+- Run SQLite migration rollback drills in CI and create PostgreSQL equivalents when PostgreSQL infrastructure exists.
+- Implement UI tokens from UI_DESIGN_TOKENS.json and component semantic states from COMPONENT_STATE_MATRIX.json.
+- Add component snapshot/golden tests for READY/EMPTY/STALE/OFFLINE/ERROR/accessibility states.
+- Do not render missing values as zero or app composites as clinical probabilities.
+- Keep BUILD_DELIVERY_CHECKLIST.json machine-evaluable and never claim PRODUCTION_READY while mandatory groups are NOT_RUN/BLOCKED/FAIL.
+
+
+V0.20 HEALTH PLATFORM / NUTRITION REQUIREMENTS
+- Implement HealthKit and Health Connect strictly as adapters to canonical Human Health OS records.
+- Preserve provider record IDs/source app/device/time/unit/recording metadata for idempotent import.
+- Do not infer HealthKit read permission or “no health data” from an empty query.
+- Request only needed platform health data types and expose manual fallback.
+- Recheck current HealthKit/Health Connect SDK permissions, historical/background rules and store declarations before release.
+- Prevent write-back echo loops if platform write support is added.
+- Implement provider-overlap policies for steps, sleep and dense sensor series; never blindly sum all sources.
+- Port reference_code/nutrition_math_engine.py semantics and pass every nutrition golden vector.
+- Preserve MISSING nutrient semantics and immutable logged FoodSnapshot/RecipeVersion history.
+- Never convert volume to mass without density or an explicit measure mapping.
+- Keep OPENAPI_STARTER.json and DOMAIN_API_COVERAGE_MATRIX.json synchronized with implemented server resources.
+
+
+V0.21 DOCUMENT / ATTACHMENT REQUIREMENTS
+- Implement attachments as versioned source artifacts, not canonical health facts.
+- Use private object storage for cloud documents; authorize every metadata/download/preview action.
+- Validate byte size, hash and content/MIME before cloud parsing; quarantine untrusted files and integrate an appropriate malware/content scanner in production.
+- Keep security-state, extraction-state and review-state separate.
+- Prefer text-layer extraction first; optional local OCR can be used for scans. Generative AI is not required.
+- Any OCR/parser/AI output remains LabExtractionCandidate or another staged candidate until reviewed/committed.
+- Never guess missing units/reference ranges/analyte mapping.
+- Preserve exact AttachmentVersion provenance in every extraction receipt and created canonical record.
+- Implement EXIF/privacy-aware derivatives and strip unnecessary hidden metadata from shared previews by default.
+- Implement separate UX/actions for deleting source attachment vs deleting extracted canonical facts.
+- Expand OpenAPI/authorization tests for all v0.21 attachment operations.
+- Treat the synthetic TSV fixture as contract evidence only; do not claim arbitrary real-world PDF/OCR accuracy until corpus tests exist.
+
+
+V0.22 MEDICATION / SUPPLEMENT / SAFETY REQUIREMENTS
+- Separate marketed ProductConcept from normalized IngredientConcept.
+- Implement MedicationPlan/SupplementPlan separately from actual IntakeEvent.
+- Preserve product/ingredient snapshot/version for historical intake.
+- Use reviewed ingredient identity for duplicate stacking detection; ambiguous mappings must not trigger hard exact rules.
+- Do not sum incompatible chemical/elemental amount bases.
+- Implement RxNorm/RxNav as a drug-identity adapter, not a full interaction database.
+- Implement versioned DailyMed/openFDA label evidence adapters and DSLD/ODS supplement source adapters.
+- Raw label/fact-sheet text does not become ACTIVE interaction logic without curated/versioned rule review.
+- Implement InteractionAssessment with knowledge-pack version, rule/source provenance, applicability and limitations.
+- "No applicable rule found" must never be presented as guaranteed safe.
+- Do not prescribe, stop or change medication dose from this default engine.
+- Pass medication_safety_fixtures.json before enabling safety review.
+
+
+V0.23 PREVENTIVE CARE / VACCINATION / SCREENING REQUIREMENTS
+- Implement PreventiveServiceDefinition, PreventiveRule, PreventiveEvent and PreventiveAssessment separately.
+- Require explicit selected guideline jurisdiction; never infer it from GPS/IP and never silently fall back to U.S. rules.
+- Keep eligibility_state, recommendation_mode, due_state and assessment_status separate.
+- Unknown history must remain UNKNOWN_HISTORY unless the source rule explicitly defines handling.
+- Implement interval due logic, vaccine-series minimum intervals/validity and source-specific catch-up behavior.
+- Do not restart vaccine series or accept self-report generically without the active source rule.
+- Screening is not diagnosis; symptomatic/follow-up pathways can exit routine screening.
+- Use relevant anatomy/rule-specific inputs rather than gender identity as anatomy proxy.
+- Preserve native source grades such as USPSTF A/B/C/D/I.
+- Treat shared-decision and evidence-insufficient recommendations neutrally and do not invent overdue tasks.
+- Implement immutable source snapshots, guideline diff, pack staleness and PACK_CONFLICT.
+- CDC/USPSTF/WHO/Türkiye sources are adapters/candidates; no real national pack is ACTIVE by default in this handoff.
+- Pass preventive_care_fixtures.json before enabling production preventive assessments.
+
+V0.24 LAB INTERPRETATION + IDENTIFIER INTEGRITY REQUIREMENTS
+- Treat reference interval, clinical decision limit and critical/significant-risk rule as distinct objects.
+- Preserve the exact source reference interval/text and method/specimen context with historical LabResult records.
+- Never label a reference interval as a universal optimal target.
+- Do not generate a critical threshold without an active source/version/applicability rule.
+- A critical rule match must not claim a clinician/laboratory notification unless a real delivery receipt exists.
+- Mark method/specimen discontinuities in longitudinal trends and do not infer comparability from identical units alone.
+- Implement delta/RCV only with source-approved CVa/CVi/Z assumptions; never fabricate biological-variation values.
+- Keep personal baseline deviation separate from population reference status.
+- Preserve source-reported lab flags and label their origin separately from app calculations.
+- Pass the synthetic lab interpretation fixture suite before enabling interpretation UI.
+- Use canonical repaired AT/ADR/FM/phase identifiers from v0.24; legacy colliding identifiers are aliases only.
+- Fail static release audit on any new canonical identifier duplication.

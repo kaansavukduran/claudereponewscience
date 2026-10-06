@@ -1,0 +1,14 @@
+{
+  "name": "@hhos/domain",
+  "version": "0.25.0",
+  "private": true,
+  "type": "module",
+  "description": "Deterministic, offline, framework-neutral Human Health OS core (formulas, rules, engines).",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  }
+}

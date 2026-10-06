@@ -1,0 +1,13 @@
+{
+  "name": "@hhos/packs",
+  "version": "0.25.0",
+  "private": true,
+  "type": "module",
+  "description": "Offline packs: REF-SYNTHETIC-DEMO-1, EDU-HEALTH-LITERACY-FOUNDATION-1, synthetic rule packs, attribution manifest.",
+  "exports": { ".": "./src/index.ts" },
+  "dependencies": { "@hhos/domain": "workspace:*" },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  }
+}

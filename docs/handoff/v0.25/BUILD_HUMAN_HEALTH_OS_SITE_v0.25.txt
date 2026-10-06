@@ -1,0 +1,289 @@
+BUILD HUMAN HEALTH OS INTERACTIVE SITE / WEB APP LAB — v0.15
+
+MISSION
+Build a polished, functional, interactive web experience called a Human Health OS / Longevity ↔ Shortevity Lab from the supplied Developer Handoff.
+
+This is the separate web-laboratory output, similar in product form to an interactive "build laboratory": users manipulate parameters and the visualized system recalculates live.
+
+DO NOT build a static marketing landing page.
+DO NOT treat this prompt as the native Android/iOS production-app build request.
+DO NOT use generative AI as a required feature.
+DO NOT use real user health data as default demo content.
+
+READ FIRST
+1. Read the entire supplied Master Handoff.
+2. Read `107_INTERACTIVE_SITE_PROTOTYPE_AND_PUBLISHING_CONTRACT.md` as the authoritative Site-specific contract.
+3. Preserve all hard invariants from the Master Handoff, especially:
+   - missing != zero,
+   - plan != completion,
+   - self-report != diagnosis,
+   - app score != validated clinical risk,
+   - domain score != lifespan,
+   - Shortevity score != years lost,
+   - scenario != observed fact,
+   - deterministic/offline core,
+   - source/provenance and model-version transparency.
+
+PRIMARY EXPERIENCE
+Create an interactive scientific dashboard where a user can:
+- build/configure a synthetic human profile,
+- adjust body/lifestyle/health parameters,
+- toggle Advanced Health Modules,
+- see Longevity ↔ Shortevity outputs update live,
+- compare multiple profiles/scenarios,
+- inspect how each result was calculated,
+- reset the demo to defaults,
+- explore timeline/labs/wearable/mission/education examples.
+
+REQUIRED MAIN SURFACES
+A. PROFILE BUILDER
+- age
+- height
+- weight
+- waist/body composition where available
+- blood pressure
+- resting HR
+- sleep duration/quality
+- steps/activity/exercise
+- smoking/alcohol exposure
+- selected labs
+- conditions
+- medicines/supplements
+- prevention/vaccination settings
+- module toggles
+
+B. RESULTS
+Visually separate:
+- Protection / Resilience
+- Risk / Burden
+- Function / Capacity
+- Trajectory
+- Coverage / Confidence
+- validated-model outputs where actually implemented
+
+Never present an arbitrary app composite as mortality probability or personalized lifespan.
+
+C. COMPARE LAB
+- add as many stored profiles/scenarios as practical
+- clone profile
+- modify clone without source mutation
+- pin baseline
+- compare selected metrics
+- absolute/percentage delta only where mathematically meaningful
+- reset individual scenario
+- remove scenario
+
+D. ADVANCED MODULES
+At minimum demonstrate:
+- Cardiovascular
+- Oncology
+- Metabolic/Endocrine
+- Renal
+- Neurology/Cognition
+- Dermatology
+- Musculoskeletal/Function
+- Prevention
+- Environment/Exposome
+
+E. TIMELINE
+Use synthetic dated events.
+
+F. LABS
+Support dated values, units, trends, missingness, provenance, and synthetic reference metadata.
+
+G. WEARABLE DEMO
+Use generated local data for sleep, steps, HR, resting HR and exercise.
+Do not require a real private HealthKit/Health Connect connection for the public demo.
+
+H. DAILY MISSIONS
+Use deterministic demo rules.
+Clearly distinguish planned mission from completed health/exercise event.
+
+I. LEARN
+Provide short deterministic educational cards and tiny quizzes around concepts such as healthspan, risk, biological age, reference populations, personal baselines, and correlation vs causation.
+
+J. MODEL TRANSPARENCY
+Every score/result supports `How calculated?` showing:
+- result class
+- inputs
+- model/rule ID
+- version
+- missing inputs
+- coverage
+- limitations
+
+DEFAULT / RESET
+Include a visible `Reset Demo to Defaults` action.
+Reset the synthetic demo state, not the application code or model catalog.
+
+DEFAULT DATA
+Use clearly labeled synthetic fixtures only.
+Never imply synthetic demo values belong to the user.
+
+DETERMINISM
+For the same inputs + model/rule version, output must be identical.
+No random health score generation.
+
+STATE
+Prefer local client state/local persistence for the public lab.
+A backend is optional unless required by the selected publishing environment.
+The demo must remain usable without account creation.
+
+RESPONSIVE DESIGN
+Mobile:
+- stacked/card-oriented editor/results
+- compact navigation
+- compare profiles through horizontally scrollable/tabbed views
+
+Desktop:
+- persistent navigation
+- profile controls and live results side-by-side
+- wide comparison grid
+- rich chart/detail panes
+
+DESIGN QUALITY
+Aim for a premium scientific control-room aesthetic.
+Dense but calm.
+High legibility.
+No fake medical drama.
+Do not encode health meaning with color alone.
+Use responsive charts, tooltips/detail drawers, accessible controls and clear states.
+
+INTERACTION QUALITY
+Every visible slider/toggle/control must either:
+- change a real local state/result,
+- open a real settings/detail surface,
+- or be intentionally disabled with explanation.
+
+No decorative dead controls.
+
+ACCESSIBILITY
+Target WCAG 2.2 AA style compliance for the web experience:
+- keyboard operation
+- semantic labels
+- focus states
+- text scaling
+- reduced motion
+- chart text/table alternatives where practical
+- non-color-only meaning
+
+TESTS
+At minimum test:
+1. default synthetic profile loads,
+2. changing weight updates applicable deterministic derived metrics,
+3. source profile is unchanged when scenario clone changes,
+4. reset returns demo to defined defaults,
+5. missing inputs do not become zero,
+6. invalid/ineligible model shows an explicit state,
+7. compare works with 3+ profiles,
+8. mobile and desktop layout smoke tests,
+9. keyboard navigation of primary controls,
+10. deterministic repeatability.
+
+PUBLISHING / DELIVERY
+If the environment supports publishing a Site, publish/prepare the project as a Site.
+If not, return a normal deployable web application.
+Do not fake a published URL.
+
+Return:
+- complete source tree
+- exact run command
+- exact production build command
+- deployable build/publishable artifact
+- dependency lockfile
+- test results
+- known limitations
+- screenshots/preview only as supplemental evidence
+
+STOP CONDITION
+Do not stop at a wireframe, mockup, plan, static screenshot or prose description.
+Stop when a functional interactive web lab exists in the available environment, or when a specific environment blocker is proven and every independent implementation step has been completed.
+
+
+V0.16 SITE STARTER-PACK REQUIREMENTS
+- Bundle REF-SYNTHETIC-DEMO-1 as the default dataset.
+- Execute only transparent bundled CORE_DERIVED calculations by default.
+- Include EDU-HEALTH-LITERACY-FOUNDATION-1 in the Learn area.
+- Add `Data Sources & Licenses` surface sourced from the license matrix.
+- If PREVENT or another licensed clinical model is not actually activated, render a clearly labeled unavailable/demo-explanation state; NEVER invent a risk percentage.
+- No USDA/provider secret key may be embedded in browser source.
+- `Reset Demo to Defaults` restores starter synthetic profiles and pack selection.
+
+
+V0.17 SITE REQUIREMENTS
+- Use the same CORE_DERIVED golden vectors for browser calculation tests.
+- Add a zero-knowledge first-run tour explaining fact vs derived result vs validated risk vs app score.
+- Add contextual Help links for NOT_ELIGIBLE, coverage, provenance, scenario and reset.
+- Generate the Site's Data Sources & Licenses page from ATTRIBUTION_MANIFEST.json.
+- Use only synthetic export/report examples in the public demo.
+- Preserve Reset Demo to Defaults separately from Clear Local Demo Data.
+
+
+V0.18 SITE REQUIREMENTS
+- Keep the public Site synthetic-first and independent from private-account authorization.
+- The Site may display the synthetic FHIR export example as an educational interoperability preview, clearly labeled NOT production validated.
+- Do not require PostgreSQL, private RLS, provider secrets or user accounts for the static/demo Site core.
+- Preserve the shared CORE_DERIVED golden-vector contract and repository verification runner.
+
+
+V0.19 SITE REQUIREMENTS
+- Reuse UI_DESIGN_TOKENS.json and COMPONENT_STATE_MATRIX.json for the published Site Lab.
+- Site API use is optional; synthetic local demo must still work without backend.
+- If backend is added, use OPENAPI_STARTER.json semantics and do not bypass endpoint authorization for private account features.
+- Add explicit EMPTY/STALE/OFFLINE/NOT_ELIGIBLE states rather than placeholder zeros.
+- Keep Site Build Prompt as the fourth standalone release output.
+
+
+V0.20 SITE REQUIREMENTS
+- Add deterministic recipe/portion calculator demo using the same nutrition golden-vector semantics.
+- Site demo uses synthetic food/recipe data by default and must work without HealthKit/Health Connect.
+- Wearable/platform sections can explain adapter mappings using synthetic fixtures, but must not claim real device integration unless implemented.
+- Missing nutrient/provider data render UNKNOWN/MISSING, never zero.
+- Preserve Site as fourth standalone build target.
+
+
+V0.21 SITE DOCUMENT-DEMO REQUIREMENTS
+- Add a synthetic Document Lab demonstrating source file → staged candidates → user review → commit → Labs/Timeline.
+- Bundle only synthetic default document fixtures.
+- The demo must visibly distinguish Attachment, Extraction Candidate and Canonical Health Record.
+- Provide Accept / Reject / Edit & Accept candidate actions and partial commit.
+- Show UNKNOWN/UNMAPPED/missing-unit states instead of guessing.
+- No generative AI is required for the demo.
+- If optional local real-file selection is added later, disclose whether bytes stay in browser or leave the device; never put health document contents in a share URL.
+
+
+V0.22 SITE MEDICATION SAFETY LAB
+- Add a synthetic-only Medication & Supplement Safety Lab.
+- Demonstrate product → ingredient normalization, plan vs taken, duplicate ingredient, synthetic pair interaction and timing-separation rules.
+- Use fake products/ingredients for default safety demonstrations.
+- Always expose rule/source/knowledge-pack state and limitations.
+- Explain "no applicable rule found" ≠ "guaranteed safe".
+- Do not require a backend or third-party API secret for the synthetic demo.
+
+
+V0.23 SITE PREVENTIVE CARE LAB
+- Add a deterministic synthetic Preventive Care Lab.
+- Controls include jurisdiction, age, risk, relevant anatomy, history state, last completion, dose series and contraindication.
+- Demonstrate DUE_NOW, DUE_SOON, UP_TO_DATE, OVERDUE, UNKNOWN_HISTORY, SHARED_DECISION, EVIDENCE_INSUFFICIENT, AGAINST_ROUTINE, TOO_EARLY, SERIES_COMPLETE, PACK_CONFLICT.
+- Default demo uses synthetic services/rules only.
+- Explain eligibility vs recommendation mode vs due state.
+- Explain screening vs diagnosis and "more screening is not automatically better".
+- No real clinical guideline API or secret is required for the synthetic demo.
+
+V0.24 SYNTHETIC LAB INTERPRETATION LAB
+- Add an interactive synthetic laboratory interpretation section.
+- Controls: result value, reference low/high, synthetic critical limits, prior value, method A/B, specimen/context and synthetic CVa/CVi.
+- Show reference status, critical-rule status, method-comparability status, delta/RCV state and personal-baseline state as separate outputs.
+- Demonstrate that outside-reference != critical and within-reference != necessarily unchanged personal baseline.
+- Mark method changes as trend discontinuities when comparability is unknown.
+- Use only synthetic thresholds/rules by default. Do not bundle a real clinical threshold table merely for demonstration.
+- Explain reference interval != optimal target != decision limit.
+
+
+V0.25 CONNECTED SITE REQUIREMENTS
+- The Site Lab is implemented at apps/site and MUST stay connected to the production product through shared packages, not copies:
+  packages/domain (all calculations/engines), packages/packs (REF-SYNTHETIC-DEMO-1, EDU-HEALTH-LITERACY-FOUNDATION-1, synthetic rule packs, ATTRIBUTION_MANIFEST), packages/ui (tokens + result components + EN/TR strings).
+- Never fork a formula into Site code. If the Site needs a new calculation, add it to packages/domain with golden vectors; the production client and API then receive it in the same change.
+- The Site's Playwright suite (apps/site/e2e) must pass on desktop and mobile projects, including the ten required tests and no horizontal page scroll on every tab.
+- Static build (vite build, base './') remains deployable to any static host or as a published Site artifact; no backend, account or secret is required.
+- Keep the Site synthetic-first. Real user data belongs only to the production client (local-only or authenticated cloud).

@@ -1,0 +1,376 @@
+{
+  "catalog_id": "core_derived_vectors",
+  "pack": "MP-CORE-DERIVED-1",
+  "pack_version": "1.0.0",
+  "provenance": "Reconstructed for this repository from the v0.24 Master Handoff formulas (the v0.24 Developer Handoff ZIP with the original JSON was not available in this session). Expected values computed by independent Python arithmetic.",
+  "vectors": [
+    {
+      "vector_id": "GV-CORE-BMI-001",
+      "model_id": "DERIVED-BMI-1",
+      "version": "1",
+      "inputs": {
+        "weight_kg": 70,
+        "height_m": 1.75
+      },
+      "expected": {
+        "status": "OK",
+        "value": 22.857142857142858
+      },
+      "tolerance": 1e-09,
+      "note": "70 / 1.75²"
+    },
+    {
+      "vector_id": "GV-CORE-BMI-002",
+      "model_id": "DERIVED-BMI-1",
+      "version": "1",
+      "inputs": {
+        "weight_kg": 70,
+        "height_m": null
+      },
+      "expected": {
+        "status": "MISSING_INPUT",
+        "error_code": "MISSING_REQUIRED_INPUT"
+      },
+      "tolerance": 1e-09,
+      "note": "missing ≠ zero"
+    },
+    {
+      "vector_id": "GV-CORE-BMI-003",
+      "model_id": "DERIVED-BMI-1",
+      "version": "1",
+      "inputs": {
+        "weight_kg": 70,
+        "height_m": 0
+      },
+      "expected": {
+        "status": "INVALID_INPUT",
+        "error_code": "NON_POSITIVE_INPUT"
+      },
+      "tolerance": 1e-09,
+      "note": "invalid calculation ≠ fake zero"
+    },
+    {
+      "vector_id": "GV-CORE-WHTR-001",
+      "model_id": "DERIVED-WAIST_HEIGHT_RATIO-1",
+      "version": "1",
+      "inputs": {
+        "waist": 85,
+        "height": 170,
+        "waist_unit": "cm",
+        "height_unit": "cm"
+      },
+      "expected": {
+        "status": "OK",
+        "value": 0.5
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-WHTR-002",
+      "model_id": "DERIVED-WAIST_HEIGHT_RATIO-1",
+      "version": "1",
+      "inputs": {
+        "waist": 34,
+        "height": 170,
+        "waist_unit": "in",
+        "height_unit": "cm"
+      },
+      "expected": {
+        "status": "INVALID_INPUT",
+        "error_code": "UNIT_MISMATCH"
+      },
+      "tolerance": 1e-09,
+      "note": "never mix length units silently"
+    },
+    {
+      "vector_id": "GV-CORE-PACKYEARS-001",
+      "model_id": "DERIVED-PACK_YEARS-1",
+      "version": "1",
+      "inputs": {
+        "packs_per_day": 1.5,
+        "years_smoked": 20
+      },
+      "expected": {
+        "status": "OK",
+        "value": 30.0
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-PACKYEARS-002",
+      "model_id": "DERIVED-PACK_YEARS-1",
+      "version": "1",
+      "inputs": {
+        "packs_per_day": 1,
+        "years_smoked": null
+      },
+      "expected": {
+        "status": "MISSING_INPUT",
+        "error_code": "MISSING_REQUIRED_INPUT"
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-DELTA-001",
+      "model_id": "DERIVED-ABSOLUTE_DELTA-1",
+      "version": "1",
+      "inputs": {
+        "baseline": 120,
+        "comparison": 90
+      },
+      "expected": {
+        "status": "OK",
+        "value": -30.0
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-PCT-001",
+      "model_id": "DERIVED-PERCENT_CHANGE-1",
+      "version": "1",
+      "inputs": {
+        "baseline": 120,
+        "new": 90
+      },
+      "expected": {
+        "status": "OK",
+        "value": -25.0
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-PCT-002",
+      "model_id": "DERIVED-PERCENT_CHANGE-1",
+      "version": "1",
+      "inputs": {
+        "baseline": 0,
+        "new": 5
+      },
+      "expected": {
+        "status": "INVALID_INPUT",
+        "error_code": "ZERO_BASELINE"
+      },
+      "tolerance": 1e-09,
+      "note": "",
+      "acceptance_tests": [
+        "AT-807",
+        "AT-777"
+      ]
+    },
+    {
+      "vector_id": "GV-CORE-VOLUME-001",
+      "model_id": "DERIVED-TRAINING_VOLUME_LOAD-1",
+      "version": "1",
+      "inputs": {
+        "sets": [
+          {
+            "load_kg": 30,
+            "reps": 10,
+            "state": "COMPLETED"
+          },
+          {
+            "load_kg": 30,
+            "reps": 10,
+            "state": "COMPLETED"
+          },
+          {
+            "load_kg": 30,
+            "reps": 10,
+            "state": "PLANNED"
+          }
+        ]
+      },
+      "expected": {
+        "status": "OK",
+        "value": 600.0
+      },
+      "tolerance": 1e-09,
+      "note": "planned set excluded",
+      "acceptance_tests": [
+        "AT-809",
+        "AT-778"
+      ]
+    },
+    {
+      "vector_id": "GV-CORE-VOLUME-002",
+      "model_id": "DERIVED-TRAINING_VOLUME_LOAD-1",
+      "version": "1",
+      "inputs": {
+        "sets": [
+          {
+            "load_kg": 30,
+            "reps": 10,
+            "state": "PLANNED"
+          }
+        ]
+      },
+      "expected": {
+        "status": "MISSING_INPUT",
+        "error_code": "NO_COMPLETED_SETS"
+      },
+      "tolerance": 1e-09,
+      "note": "plan ≠ completion"
+    },
+    {
+      "vector_id": "GV-CORE-RMEAN-001",
+      "model_id": "DERIVED-ROLLING_MEAN-1",
+      "version": "1",
+      "inputs": {
+        "values": [
+          1,
+          2,
+          null,
+          4,
+          5
+        ],
+        "window": 4
+      },
+      "expected": {
+        "status": "OK",
+        "value": 3.6666666666666665
+      },
+      "tolerance": 1e-09,
+      "note": "missing excluded, not zero-filled"
+    },
+    {
+      "vector_id": "GV-CORE-RMEDIAN-001",
+      "model_id": "DERIVED-ROLLING_MEDIAN-1",
+      "version": "1",
+      "inputs": {
+        "values": [
+          5,
+          1,
+          null,
+          3,
+          9
+        ],
+        "window": 5
+      },
+      "expected": {
+        "status": "OK",
+        "value": 4.0
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-OLS-001",
+      "model_id": "DERIVED-TREND-SLOPE-OLS-1",
+      "version": "1",
+      "inputs": {
+        "points": [
+          {
+            "t": 0,
+            "v": 1
+          },
+          {
+            "t": 1,
+            "v": 3
+          },
+          {
+            "t": 2,
+            "v": 5
+          },
+          {
+            "t": 3,
+            "v": 7
+          }
+        ]
+      },
+      "expected": {
+        "status": "OK",
+        "value": 2.0
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-OLS-002",
+      "model_id": "DERIVED-TREND-SLOPE-OLS-1",
+      "version": "1",
+      "inputs": {
+        "points": [
+          {
+            "t": 0,
+            "v": 1
+          }
+        ]
+      },
+      "expected": {
+        "status": "MISSING_INPUT",
+        "error_code": "INSUFFICIENT_OBSERVATIONS"
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    },
+    {
+      "vector_id": "GV-CORE-MADZ-001",
+      "model_id": "DERIVED-ROBUST_DEVIATION-MAD-1",
+      "version": "1",
+      "inputs": {
+        "x": 10,
+        "series": [
+          4,
+          5,
+          5,
+          6,
+          7
+        ]
+      },
+      "expected": {
+        "status": "OK",
+        "value": 3.3724537973829762
+      },
+      "tolerance": 1e-09,
+      "note": "median 5, MAD 1"
+    },
+    {
+      "vector_id": "GV-CORE-MADZ-002",
+      "model_id": "DERIVED-ROBUST_DEVIATION-MAD-1",
+      "version": "1",
+      "inputs": {
+        "x": 6,
+        "series": [
+          5,
+          5,
+          5,
+          5,
+          5
+        ]
+      },
+      "expected": {
+        "status": "INVALID_INPUT",
+        "error_code": "ZERO_MAD"
+      },
+      "tolerance": 1e-09,
+      "note": "",
+      "acceptance_tests": [
+        "AT-808"
+      ]
+    },
+    {
+      "vector_id": "GV-CORE-MADZ-003",
+      "model_id": "DERIVED-ROBUST_DEVIATION-MAD-1",
+      "version": "1",
+      "inputs": {
+        "x": 6,
+        "series": [
+          5,
+          6,
+          7
+        ]
+      },
+      "expected": {
+        "status": "MISSING_INPUT",
+        "error_code": "INSUFFICIENT_OBSERVATIONS"
+      },
+      "tolerance": 1e-09,
+      "note": ""
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+node_modules/
+dist/
+coverage/
+*.db
+*.db-journal
+*.sqlite
+.env
+.env.*
+!.env.example
+test-results/
+playwright-report/
+reports/tests/*.tmp
+apps/client/android/
+apps/client/ios/
+.DS_Store
+__pycache__/

@@ -1,0 +1,790 @@
+{
+  "catalog_id": "preventive_vectors",
+  "pack": "RP-PREVENTIVE-SYNTHETIC-1",
+  "status": "SYNTHETIC_ONLY",
+  "rules": [
+    {
+      "rule_id": "PR-SYN-ALPHA-1",
+      "service_id": "SVC-SYN-VACCINE-ALPHA",
+      "service_label": "Synthetic Vaccine Alpha",
+      "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+      "pack_version": "1.0.0",
+      "pack_status": "ACTIVE",
+      "precedence": 10,
+      "jurisdiction": "SYN-LAND",
+      "source_snapshot_id": "SRC-SYN-2026-01",
+      "source_grade": null,
+      "mode": "ROUTINE",
+      "min_age": 18,
+      "max_age": null,
+      "requires_risk": null,
+      "requires_anatomy": null,
+      "interval_days": null,
+      "series": {
+        "doses": 3,
+        "min_interval_days": 28
+      }
+    },
+    {
+      "rule_id": "PR-SYN-BETA-1",
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "service_label": "Synthetic Screening Beta",
+      "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+      "pack_version": "1.0.0",
+      "pack_status": "ACTIVE",
+      "precedence": 10,
+      "jurisdiction": "SYN-LAND",
+      "source_snapshot_id": "SRC-SYN-2026-01",
+      "source_grade": "B",
+      "mode": "ROUTINE",
+      "min_age": 40,
+      "max_age": 75,
+      "requires_risk": null,
+      "requires_anatomy": "ANATOMY-SYN-1",
+      "interval_days": 730,
+      "series": null
+    },
+    {
+      "rule_id": "PR-SYN-GAMMA-1",
+      "service_id": "SVC-SYN-COUNSELING-GAMMA",
+      "service_label": "Synthetic Counseling Gamma",
+      "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+      "pack_version": "1.0.0",
+      "pack_status": "ACTIVE",
+      "precedence": 10,
+      "jurisdiction": "SYN-LAND",
+      "source_snapshot_id": "SRC-SYN-2026-01",
+      "source_grade": "C",
+      "mode": "SHARED_DECISION",
+      "min_age": 18,
+      "max_age": null,
+      "requires_risk": null,
+      "requires_anatomy": null,
+      "interval_days": null,
+      "series": null
+    },
+    {
+      "rule_id": "PR-SYN-DELTA-1",
+      "service_id": "SVC-SYN-TEST-DELTA",
+      "service_label": "Synthetic Test Delta",
+      "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+      "pack_version": "1.0.0",
+      "pack_status": "ACTIVE",
+      "precedence": 10,
+      "jurisdiction": "SYN-LAND",
+      "source_snapshot_id": "SRC-SYN-2026-01",
+      "source_grade": "I",
+      "mode": "EVIDENCE_INSUFFICIENT",
+      "min_age": 18,
+      "max_age": null,
+      "requires_risk": null,
+      "requires_anatomy": null,
+      "interval_days": null,
+      "series": null
+    },
+    {
+      "rule_id": "PR-SYN-EPS-1",
+      "service_id": "SVC-SYN-SCAN-EPSILON",
+      "service_label": "Synthetic Scan Epsilon",
+      "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+      "pack_version": "1.0.0",
+      "pack_status": "ACTIVE",
+      "precedence": 10,
+      "jurisdiction": "SYN-LAND",
+      "source_snapshot_id": "SRC-SYN-2026-01",
+      "source_grade": "D",
+      "mode": "AGAINST_ROUTINE",
+      "min_age": 18,
+      "max_age": null,
+      "requires_risk": null,
+      "requires_anatomy": null,
+      "interval_days": null,
+      "series": null
+    },
+    {
+      "rule_id": "PR-SYN-ZETA-1",
+      "service_id": "SVC-SYN-RISK-ZETA",
+      "service_label": "Synthetic Risk Check Zeta",
+      "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+      "pack_version": "1.0.0",
+      "pack_status": "ACTIVE",
+      "precedence": 10,
+      "jurisdiction": "SYN-LAND",
+      "source_snapshot_id": "SRC-SYN-2026-01",
+      "source_grade": null,
+      "mode": "ROUTINE",
+      "min_age": 18,
+      "max_age": null,
+      "requires_risk": "RISK-SYN-1",
+      "requires_anatomy": null,
+      "interval_days": 365,
+      "series": null
+    }
+  ],
+  "vectors": [
+    {
+      "vector_id": "GV-PREV-001",
+      "acceptance_tests": [
+        "AT-1023"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "eligibility_state": "ELIGIBLE",
+        "due_state": "DUE_NOW"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-002",
+      "acceptance_tests": [
+        "AT-1024"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [
+          "2026-03-01"
+        ],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "UP_TO_DATE",
+        "next_due_date": "2028-02-29"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-003",
+      "acceptance_tests": [
+        "AT-1025"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [
+          "2024-10-20"
+        ],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "DUE_SOON",
+        "next_due_date": "2026-10-20"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-004",
+      "acceptance_tests": [
+        "AT-1026"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [
+          "2024-01-10"
+        ],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "OVERDUE"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-005",
+      "acceptance_tests": [
+        "AT-1027"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "UNKNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "UNKNOWN_HISTORY"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-006",
+      "acceptance_tests": [
+        "AT-1028"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 30,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "eligibility_state": "NOT_ELIGIBLE",
+        "due_state": "NOT_APPLICABLE"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-007",
+      "acceptance_tests": [
+        "AT-1029"
+      ],
+      "service_id": "SVC-SYN-RISK-ZETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "eligibility_state": "NOT_ELIGIBLE"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-008",
+      "acceptance_tests": [
+        "AT-1030"
+      ],
+      "service_id": "SVC-SYN-RISK-ZETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [
+          "RISK-SYN-1"
+        ],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "eligibility_state": "ELIGIBLE",
+        "due_state": "DUE_NOW"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-009",
+      "acceptance_tests": [
+        "AT-1031"
+      ],
+      "service_id": "SVC-SYN-COUNSELING-GAMMA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "recommendation_mode": "SHARED_DECISION",
+        "due_state": "REVIEW_REQUIRED"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-010",
+      "acceptance_tests": [
+        "AT-1032"
+      ],
+      "service_id": "SVC-SYN-TEST-DELTA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "recommendation_mode": "EVIDENCE_INSUFFICIENT",
+        "due_state": "NOT_APPLICABLE"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-011",
+      "acceptance_tests": [
+        "AT-1033"
+      ],
+      "service_id": "SVC-SYN-SCAN-EPSILON",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "recommendation_mode": "AGAINST_ROUTINE",
+        "due_state": "NOT_APPLICABLE",
+        "assessment_status": "ASSESSED"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-012",
+      "acceptance_tests": [
+        "AT-1034"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": true,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "assessment_status": "BLOCKED_CONTRAINDICATION",
+        "due_state": "REVIEW_REQUIRED"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-013",
+      "acceptance_tests": [
+        "AT-1035"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "eligibility_state": "NOT_ELIGIBLE"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-014",
+      "acceptance_tests": [
+        "AT-1037"
+      ],
+      "service_id": "SVC-SYN-VACCINE-ALPHA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [
+          "2026-09-20"
+        ],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "TOO_EARLY",
+        "next_due_date": "2026-10-18"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-015",
+      "acceptance_tests": [
+        "AT-1038"
+      ],
+      "service_id": "SVC-SYN-VACCINE-ALPHA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [
+          "2026-08-01"
+        ],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "DUE_NOW"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-016",
+      "acceptance_tests": [
+        "AT-1039",
+        "AT-1040"
+      ],
+      "service_id": "SVC-SYN-VACCINE-ALPHA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [
+          "2026-01-01",
+          "2026-02-01",
+          "2026-03-01"
+        ],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "due_state": "SERIES_COMPLETE"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-017",
+      "acceptance_tests": [
+        "AT-1019"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "OTHER-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "eligibility_state": "NOT_APPLICABLE_JURISDICTION",
+        "assessment_status": "NOT_APPLICABLE_JURISDICTION"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-018",
+      "acceptance_tests": [
+        "AT-1020"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": null,
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": null,
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "assessment_status": "NO_ACTIVE_PACK"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-019",
+      "acceptance_tests": [
+        "AT-1043"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": [
+        {
+          "rule_id": "PR-SYN-ALPHA-1",
+          "service_id": "SVC-SYN-VACCINE-ALPHA",
+          "service_label": "Synthetic Vaccine Alpha",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": null,
+          "mode": "ROUTINE",
+          "min_age": 18,
+          "max_age": null,
+          "requires_risk": null,
+          "requires_anatomy": null,
+          "interval_days": null,
+          "series": {
+            "doses": 3,
+            "min_interval_days": 28
+          }
+        },
+        {
+          "rule_id": "PR-SYN-BETA-1",
+          "service_id": "SVC-SYN-SCREENING-BETA",
+          "service_label": "Synthetic Screening Beta",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": "B",
+          "mode": "ROUTINE",
+          "min_age": 40,
+          "max_age": 75,
+          "requires_risk": null,
+          "requires_anatomy": "ANATOMY-SYN-1",
+          "interval_days": 730,
+          "series": null
+        },
+        {
+          "rule_id": "PR-SYN-GAMMA-1",
+          "service_id": "SVC-SYN-COUNSELING-GAMMA",
+          "service_label": "Synthetic Counseling Gamma",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": "C",
+          "mode": "SHARED_DECISION",
+          "min_age": 18,
+          "max_age": null,
+          "requires_risk": null,
+          "requires_anatomy": null,
+          "interval_days": null,
+          "series": null
+        },
+        {
+          "rule_id": "PR-SYN-DELTA-1",
+          "service_id": "SVC-SYN-TEST-DELTA",
+          "service_label": "Synthetic Test Delta",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": "I",
+          "mode": "EVIDENCE_INSUFFICIENT",
+          "min_age": 18,
+          "max_age": null,
+          "requires_risk": null,
+          "requires_anatomy": null,
+          "interval_days": null,
+          "series": null
+        },
+        {
+          "rule_id": "PR-SYN-EPS-1",
+          "service_id": "SVC-SYN-SCAN-EPSILON",
+          "service_label": "Synthetic Scan Epsilon",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": "D",
+          "mode": "AGAINST_ROUTINE",
+          "min_age": 18,
+          "max_age": null,
+          "requires_risk": null,
+          "requires_anatomy": null,
+          "interval_days": null,
+          "series": null
+        },
+        {
+          "rule_id": "PR-SYN-ZETA-1",
+          "service_id": "SVC-SYN-RISK-ZETA",
+          "service_label": "Synthetic Risk Check Zeta",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": null,
+          "mode": "ROUTINE",
+          "min_age": 18,
+          "max_age": null,
+          "requires_risk": "RISK-SYN-1",
+          "requires_anatomy": null,
+          "interval_days": 365,
+          "series": null
+        },
+        {
+          "rule_id": "PR-SYN-BETA-ALT",
+          "service_id": "SVC-SYN-SCREENING-BETA",
+          "service_label": "Synthetic Screening Beta",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-ALT",
+          "pack_version": "1.0.0",
+          "pack_status": "ACTIVE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": "B",
+          "mode": "ROUTINE",
+          "min_age": 40,
+          "max_age": 75,
+          "requires_risk": null,
+          "requires_anatomy": "ANATOMY-SYN-1",
+          "interval_days": 365,
+          "series": null
+        }
+      ],
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "assessment_status": "PACK_CONFLICT"
+      }
+    },
+    {
+      "vector_id": "GV-PREV-020",
+      "acceptance_tests": [
+        "AT-1044"
+      ],
+      "service_id": "SVC-SYN-SCREENING-BETA",
+      "rules": [
+        {
+          "rule_id": "PR-SYN-BETA-1",
+          "service_id": "SVC-SYN-SCREENING-BETA",
+          "service_label": "Synthetic Screening Beta",
+          "pack_id": "RP-PREVENTIVE-SYNTHETIC-1",
+          "pack_version": "1.0.0",
+          "pack_status": "STALE",
+          "precedence": 10,
+          "jurisdiction": "SYN-LAND",
+          "source_snapshot_id": "SRC-SYN-2026-01",
+          "source_grade": "B",
+          "mode": "ROUTINE",
+          "min_age": 40,
+          "max_age": 75,
+          "requires_risk": null,
+          "requires_anatomy": "ANATOMY-SYN-1",
+          "interval_days": 730,
+          "series": null
+        }
+      ],
+      "input": {
+        "as_of": "2026-10-06",
+        "jurisdiction": "SYN-LAND",
+        "age_years": 50,
+        "risks": [],
+        "anatomy": [
+          "ANATOMY-SYN-1"
+        ],
+        "history": "KNOWN",
+        "completions": [],
+        "contraindicated": false,
+        "due_soon_window_days": 30
+      },
+      "expected": {
+        "assessment_status": "PACK_STALE"
+      }
+    }
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "name": "@hhos/api",
+  "version": "0.25.0",
+  "private": true,
+  "type": "module",
+  "description": "Human Health OS API: auth/ownership, SQLite persistence, idempotency, revision control. Formulas come from @hhos/domain.",
+  "dependencies": {
+    "@hhos/domain": "workspace:*",
+    "@hhos/packs": "workspace:*"
+  },
+  "scripts": {
+    "dev": "node --disable-warning=ExperimentalWarning src/server.ts",
+    "start": "node --disable-warning=ExperimentalWarning src/server.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run"
+  }
+}

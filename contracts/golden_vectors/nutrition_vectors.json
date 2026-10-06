@@ -1,0 +1,206 @@
+{
+  "catalog_id": "nutrition_vectors",
+  "engine": "NUTRITION-MATH-1",
+  "engine_version": "0.20.0",
+  "synthetic_only": true,
+  "vectors": [
+    {
+      "vector_id": "GV-NUT-001",
+      "kind": "scale",
+      "note": "12 × 150/100 = 18",
+      "food": {
+        "snapshot_id": "FS-SYN-OATS-v1",
+        "name": "Synthetic oats",
+        "basis": {
+          "amount": 100,
+          "unit": "g"
+        },
+        "nutrients": {
+          "protein_g": 12,
+          "fiber_g": 10,
+          "vitamin_b12_ug": null
+        },
+        "source": "SYNTHETIC"
+      },
+      "quantity": {
+        "amount": 150,
+        "unit": "g"
+      },
+      "expected": {
+        "ok": true,
+        "nutrients": {
+          "protein_g": 18.0,
+          "fiber_g": 15.0,
+          "vitamin_b12_ug": null
+        }
+      }
+    },
+    {
+      "vector_id": "GV-NUT-002",
+      "kind": "recipe",
+      "note": "multi-ingredient sum, per-serving, per-100g cooked",
+      "recipe": {
+        "recipe_id": "RC-SYN-1",
+        "version": 1,
+        "name": "Synthetic porridge",
+        "ingredients": [
+          {
+            "food": {
+              "snapshot_id": "FS-SYN-OATS-v1",
+              "name": "Synthetic oats",
+              "basis": {
+                "amount": 100,
+                "unit": "g"
+              },
+              "nutrients": {
+                "protein_g": 12,
+                "fiber_g": 10,
+                "vitamin_b12_ug": null
+              },
+              "source": "SYNTHETIC"
+            },
+            "quantity": {
+              "amount": 80,
+              "unit": "g"
+            }
+          },
+          {
+            "food": {
+              "snapshot_id": "FS-SYN-SOYMILK-v1",
+              "name": "Synthetic soy drink",
+              "basis": {
+                "amount": 100,
+                "unit": "g"
+              },
+              "nutrients": {
+                "protein_g": 3.3,
+                "fiber_g": 0.5,
+                "vitamin_b12_ug": 0.38
+              },
+              "source": "SYNTHETIC"
+            },
+            "quantity": {
+              "amount": 300,
+              "unit": "g"
+            }
+          }
+        ],
+        "serving_count": 2,
+        "final_cooked_mass_g": 400
+      },
+      "expected": {
+        "ok": true,
+        "totals_known": {
+          "protein_g": 19.5,
+          "fiber_g": 9.5,
+          "vitamin_b12_ug": 1.14
+        },
+        "missing_sources": {
+          "vitamin_b12_ug": 1
+        },
+        "per_serving": {
+          "protein_g": 9.75
+        },
+        "per_100g_cooked": {
+          "protein_g": 4.875
+        }
+      }
+    },
+    {
+      "vector_id": "GV-NUT-003",
+      "kind": "scale",
+      "note": "mL→g blocked without density (AT-412)",
+      "food": {
+        "snapshot_id": "FS-SYN-SOYMILK-v1",
+        "name": "Synthetic soy drink",
+        "basis": {
+          "amount": 100,
+          "unit": "g"
+        },
+        "nutrients": {
+          "protein_g": 3.3,
+          "fiber_g": 0.5,
+          "vitamin_b12_ug": 0.38
+        },
+        "source": "SYNTHETIC"
+      },
+      "quantity": {
+        "amount": 250,
+        "unit": "mL"
+      },
+      "expected": {
+        "ok": false,
+        "error": "VOLUME_TO_MASS_BLOCKED"
+      }
+    },
+    {
+      "vector_id": "GV-NUT-004",
+      "kind": "scale",
+      "note": "explicit density conversion",
+      "food": {
+        "snapshot_id": "FS-SYN-SOYMILK-v1d",
+        "name": "Synthetic soy drink",
+        "basis": {
+          "amount": 100,
+          "unit": "g"
+        },
+        "nutrients": {
+          "protein_g": 3.3,
+          "fiber_g": 0.5,
+          "vitamin_b12_ug": 0.38
+        },
+        "source": "SYNTHETIC",
+        "density_g_per_ml": 1.03
+      },
+      "quantity": {
+        "amount": 250,
+        "unit": "mL"
+      },
+      "expected": {
+        "ok": true,
+        "nutrients": {
+          "protein_g": 8.4975
+        }
+      }
+    },
+    {
+      "vector_id": "GV-NUT-005",
+      "kind": "recipe",
+      "note": "unknown cooked mass → no per-100g density",
+      "recipe": {
+        "recipe_id": "RC-SYN-2",
+        "version": 1,
+        "name": "No yield",
+        "ingredients": [
+          {
+            "food": {
+              "snapshot_id": "FS-SYN-OATS-v1",
+              "name": "Synthetic oats",
+              "basis": {
+                "amount": 100,
+                "unit": "g"
+              },
+              "nutrients": {
+                "protein_g": 12,
+                "fiber_g": 10,
+                "vitamin_b12_ug": null
+              },
+              "source": "SYNTHETIC"
+            },
+            "quantity": {
+              "amount": 100,
+              "unit": "g"
+            }
+          }
+        ],
+        "serving_count": null,
+        "final_cooked_mass_g": null
+      },
+      "expected": {
+        "ok": true,
+        "per_serving": null,
+        "per_100g_cooked": null
+      }
+    }
+  ]
+}

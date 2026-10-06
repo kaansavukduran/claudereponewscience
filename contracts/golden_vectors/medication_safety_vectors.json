@@ -1,0 +1,475 @@
+{
+  "catalog_id": "medication_safety_vectors",
+  "pack": {
+    "pack_id": "SYNTHETIC-SAFETY-PACK-1",
+    "version": "1.0.0",
+    "status": "SYNTHETIC_TEST_ONLY"
+  },
+  "products": [
+    {
+      "product_id": "PRD-SYN-A",
+      "name": "Synthetic Sunvita A",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-D",
+          "label": "Synthetic ingredient D",
+          "amount": 500,
+          "unit": "mcg",
+          "basis": "AS_LABELED",
+          "mapping": "REVIEWED"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-B",
+      "name": "Synthetic Multi B",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-D",
+          "label": "Synthetic ingredient D",
+          "amount": 1,
+          "unit": "mg",
+          "basis": "AS_LABELED",
+          "mapping": "REVIEWED"
+        },
+        {
+          "ingredient_id": "ING-SYN-M",
+          "label": "Synthetic mineral M",
+          "amount": 100,
+          "unit": "mg",
+          "basis": "ELEMENTAL",
+          "mapping": "REVIEWED"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-C",
+      "name": "Synthetic Mineral C",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-M",
+          "label": "Synthetic mineral M",
+          "amount": 500,
+          "unit": "mg",
+          "basis": "COMPOUND",
+          "mapping": "REVIEWED"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-P",
+      "name": "Synthetic Pill P",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-P",
+          "label": "Synthetic active P",
+          "amount": 10,
+          "unit": "mg",
+          "basis": "AS_LABELED",
+          "mapping": "REVIEWED"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-Q",
+      "name": "Synthetic Cream Q",
+      "route": "TOPICAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-Q",
+          "label": "Synthetic active Q",
+          "amount": 1,
+          "unit": "g",
+          "basis": "AS_LABELED",
+          "mapping": "REVIEWED"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-Q-ORAL",
+      "name": "Synthetic Tablet Q",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-Q",
+          "label": "Synthetic active Q",
+          "amount": 5,
+          "unit": "mg",
+          "basis": "AS_LABELED",
+          "mapping": "REVIEWED"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-AMB",
+      "name": "Synthetic Herbal Blend",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": true,
+      "ingredients": [
+        {
+          "ingredient_id": "ING-SYN-P?",
+          "label": "'P-like' extract",
+          "amount": null,
+          "unit": null,
+          "basis": "AS_LABELED",
+          "mapping": "AMBIGUOUS"
+        }
+      ]
+    },
+    {
+      "product_id": "PRD-SYN-UNK",
+      "name": "Synthetic Mystery Mix",
+      "route": "ORAL",
+      "label_version": "L1",
+      "composition_known": false,
+      "ingredients": []
+    }
+  ],
+  "rules": [
+    {
+      "rule_id": "IR-SYN-PAIR-PQ",
+      "version": "1",
+      "source": "SYNTHETIC-SAFETY-PACK-1",
+      "kind": "PAIR",
+      "participants": [
+        "ING-SYN-P",
+        "ING-SYN-Q"
+      ],
+      "route": "ORAL",
+      "action": "REVIEW_WITH_CLINICIAN",
+      "test_only": true
+    },
+    {
+      "rule_id": "IR-SYN-TIMING-MP",
+      "version": "1",
+      "source": "SYNTHETIC-SAFETY-PACK-1",
+      "kind": "TIMING_SEPARATION",
+      "participants": [
+        "ING-SYN-M",
+        "ING-SYN-P"
+      ],
+      "route": null,
+      "min_separation_minutes": 120,
+      "action": "SEPARATE_TIMING",
+      "test_only": true
+    },
+    {
+      "rule_id": "IR-SYN-COND-D",
+      "version": "1",
+      "source": "SYNTHETIC-SAFETY-PACK-1",
+      "kind": "CONDITION",
+      "participants": [
+        "ING-SYN-D"
+      ],
+      "route": null,
+      "condition": "COND-SYN-KIDNEY",
+      "action": "REVIEW_WITH_CLINICIAN",
+      "test_only": true
+    }
+  ],
+  "vectors": [
+    {
+      "vector_id": "GV-MED-001",
+      "acceptance_tests": [
+        "AT-984",
+        "AT-985",
+        "AT-986"
+      ],
+      "note": "500 mcg + 1 mg = 1.5 mg",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-A",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-B",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "SAME_ACTIVE_DIFFERENT_PRODUCT"
+        ],
+        "combined": {
+          "ING-SYN-D": {
+            "value": 1.5,
+            "unit": "mg"
+          }
+        }
+      }
+    },
+    {
+      "vector_id": "GV-MED-002",
+      "acceptance_tests": [
+        "AT-987"
+      ],
+      "note": "elemental vs compound never summed",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-B",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-C",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "SAME_ACTIVE_DIFFERENT_PRODUCT"
+        ],
+        "combined": {
+          "ING-SYN-M": null
+        },
+        "combined_reason": {
+          "ING-SYN-M": "BASIS_MISMATCH"
+        }
+      }
+    },
+    {
+      "vector_id": "GV-MED-003",
+      "acceptance_tests": [
+        "AT-1002"
+      ],
+      "note": "",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-P",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-Q-ORAL",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "SYNTHETIC_PAIR_INTERACTION"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-MED-004",
+      "acceptance_tests": [
+        "AT-983",
+        "AT-1003"
+      ],
+      "note": "route-specific rule not applicable to topical",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-P",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-Q",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "CLEAR_NO_MATCH_FOUND"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-MED-005",
+      "acceptance_tests": [
+        "AT-981",
+        "AT-1005"
+      ],
+      "note": "ambiguous mapping cannot trigger exact rule",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-AMB",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-Q-ORAL",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "UNKNOWN_INGREDIENT"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-MED-006",
+      "acceptance_tests": [
+        "AT-982",
+        "AT-1006"
+      ],
+      "note": "",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-UNK",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "INSUFFICIENT_CONTEXT"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-MED-007",
+      "acceptance_tests": [
+        "AT-999"
+      ],
+      "note": "",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-A",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "CLEAR_NO_MATCH_FOUND"
+        ],
+        "guaranteed_safe": false
+      }
+    },
+    {
+      "vector_id": "GV-MED-008",
+      "acceptance_tests": [
+        "AT-1004"
+      ],
+      "note": "plan vs taken preserved",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-A",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-B",
+          "kind": "TAKEN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "SAME_ACTIVE_DIFFERENT_PRODUCT"
+        ],
+        "exposure_basis": "MIXED"
+      }
+    },
+    {
+      "vector_id": "GV-MED-009",
+      "acceptance_tests": [],
+      "note": "60 min < 120 min synthetic separation",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-C",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        },
+        {
+          "entry_id": "E2",
+          "product_id": "PRD-SYN-P",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "09:00"
+        }
+      ],
+      "conditions": [],
+      "expected": {
+        "types": [
+          "TIMING_SEPARATION"
+        ]
+      }
+    },
+    {
+      "vector_id": "GV-MED-010",
+      "acceptance_tests": [],
+      "note": "",
+      "entries": [
+        {
+          "entry_id": "E1",
+          "product_id": "PRD-SYN-A",
+          "kind": "PLAN",
+          "servings_per_day": 1,
+          "time": "08:00"
+        }
+      ],
+      "conditions": [
+        "COND-SYN-KIDNEY"
+      ],
+      "expected": {
+        "types": [
+          "CONDITION_CONTEXT"
+        ]
+      }
+    }
+  ]
+}
