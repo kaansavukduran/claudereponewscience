@@ -30,6 +30,11 @@
     <display_length compare="ge">320</display_length>
   </requires>
   <releases>
+    <release version="0.1.0~staging2" date="2026-10-06" type="development">
+      <description>
+        <p>Starts on Ubuntu 22.04 and other GLib 2.64+ systems (staging1 needed GLib 2.80).</p>
+      </description>
+    </release>
     <release version="0.1.0~staging1" date="2026-10-06" type="development">
       <description>
         <p>First Linux packages: weight entry, honest storage labels, no network.</p>
