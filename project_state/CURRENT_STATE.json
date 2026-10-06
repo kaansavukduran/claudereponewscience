@@ -1,0 +1,39 @@
+{
+  "schema": 1,
+  "updated": "2026-10-06",
+  "project": "Human OS / Human Health OS / Longevity App",
+  "phase": "FORGE_CYCLE",
+  "initialization": "INITIALIZATION_COMPLETE",
+  "authoritative_sources": {
+    "semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
+    "process": "docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md",
+    "candidate": "docs/handoff/v0.27-candidate/",
+    "missing": ["v0.25 (user lineage)", "v0.26 baseline sha256 687335de…3369", "v0.27 patch zip ffd50fd4…488a + repository_bootstrap_overlay", "v0.24 developer handoff zip"]
+  },
+  "architecture_decision": "ADR-IMPL-002 (project_state/DECISIONS.md)",
+  "toolchain": { "flutter": "3.47.6", "dart": "3.13.5", "flutter_path": "/opt/toolchains/flutter", "node": "22.22.0", "pnpm": "10.28.0", "python": "3.13" },
+  "last_forge": "FORGE 001",
+  "next_forge": "FORGE 002 — local heartbeat (profile + one canonical record, save/restart/read back)",
+  "forges": {
+    "F001": { "title": "Flutter bootstrap + responsive shell", "status": "RUNTIME_TESTED", "evidence": ["project_state/FORGE_LOG.md#forge-001", "reports/runtime/flutter_web_smoke.json", "reports/artifacts/forge-001.json"] }
+  },
+  "targets": {
+    "web": { "status": "RUNTIME_TESTED", "evidence": "reports/runtime/flutter_web_smoke.json" },
+    "linux": { "status": "RUNTIME_TESTED (launch only)", "evidence": "reports/runtime/flutter-linux-today.png" },
+    "android": { "status": "BLOCKED_ENVIRONMENT", "reason": "no Android SDK; dl.google.com/maven.google.com 403" },
+    "ios": { "status": "BLOCKED_BY_HOST_OS" },
+    "macos": { "status": "BLOCKED_BY_HOST_OS" },
+    "windows_portable": { "status": "BLOCKED_BY_HOST_OS" },
+    "windows_installer": { "status": "BLOCKED_BY_HOST_OS" },
+    "build_lab": { "status": "RUNTIME_TESTED", "evidence": "docs/RELEASE_STATUS.md (Playwright 25/26 incl. 1 skipped)" }
+  },
+  "domains": {
+    "shell": "RUNTIME_TESTED",
+    "persistence": "NOT_STARTED",
+    "encryption_vault": "NOT_STARTED",
+    "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
+    "labs": "NOT_STARTED in Flutter (TS reference engine exists)",
+    "sync": "NOT_STARTED (TS reference API exists, dev auth only)"
+  },
+  "git": { "branch": "claude/code-capabilities-kz21fr", "push": "BLOCKED (403: no GitHub access for Claude)" }
+}

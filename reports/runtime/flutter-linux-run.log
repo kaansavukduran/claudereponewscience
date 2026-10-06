@@ -1,0 +1,7 @@
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(org.humanhealthos.human_health_os:7402): Atk-CRITICAL **: 20:47:56.784: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+
+** (org.humanhealthos.human_health_os:7402): CRITICAL **: 20:47:57.232: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed

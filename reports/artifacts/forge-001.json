@@ -1,0 +1,62 @@
+{
+  "forge": "FORGE 001",
+  "recorded_at": "2026-10-06",
+  "source_revision_base": "a8ad9d664165b85e2119ed169515d150529b0691",
+  "note": "Source revision is the parent commit; the FORGE 001 commit itself contains this file. Archives are not committed (build/ is gitignored); hashes identify the exact bytes produced in this container.",
+  "toolchain": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "host": "Linux x86_64"
+  },
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "0a15f1af680f475fed82615a41bbda89615e0b239691dd0608ba038c293a5280",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "artifacts": [
+    {
+      "target": "web",
+      "profile": "development",
+      "command": "flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=<rev>",
+      "archive": "/tmp/hhos-web-f001.tgz (deterministic tar of build/web)",
+      "sha256": "4e3d2c460e217d9aa578df89785659de305289c1b9b171bafd813a0e3b0f5463",
+      "main_dart_js_sha256": "08e2dc50dbd327912145802858c12af760b579cfa25872c8707de4401a7acad7",
+      "signing": "n/a",
+      "status": "COMPILED + RUNTIME_TESTED (Playwright, 18/18 checks)"
+    },
+    {
+      "target": "linux-x64",
+      "profile": "development",
+      "command": "flutter build linux --release --dart-define=APP_ENV=development",
+      "archive": "/tmp/hhos-linux-f001.tgz (bundle)",
+      "sha256": "8c7314c283ded7b5258f1f4d97df62f91d6d001ba1066f9b8998be7f24581a3c",
+      "executable_sha256": "e097cd0828912654350e36ac26ad5b2af31edd4a3604c5b2afa50e249eaf0359",
+      "signing": "none",
+      "status": "COMPILED + RUNTIME_TESTED (starts under Xvfb, shows Today; navigation not automated)"
+    }
+  ],
+  "not_built": [
+    {
+      "target": "android-apk/aab",
+      "status": "BLOCKED_ENVIRONMENT",
+      "reason": "no Android SDK; dl.google.com / maven.google.com return 403 under the network policy"
+    },
+    {
+      "target": "ios",
+      "status": "BLOCKED_BY_HOST_OS",
+      "reason": "requires macOS + Xcode"
+    },
+    {
+      "target": "macos",
+      "status": "BLOCKED_BY_HOST_OS",
+      "reason": "requires macOS + Xcode"
+    },
+    {
+      "target": "windows-portable/installer",
+      "status": "BLOCKED_BY_HOST_OS",
+      "reason": "requires Windows + Visual Studio C++ workload"
+    }
+  ],
+  "attestation": "NOT_GENERATED",
+  "sbom": "NOT_GENERATED (no third-party runtime packages beyond the Flutter SDK in this FORGE)"
+}

@@ -4,7 +4,7 @@ Every claim moves up the ladder only with evidence: **IMPLEMENTED → STATICALLY
 
 ## Layers
 
-| Layer | Flutter app (`app/`) | TypeScript reference + Build Lab (`packages/*`, `apps/site`, `services/api`) |
+| Layer | Flutter app (`human_health_os/`) | TypeScript reference + Build Lab (`packages/*`, `apps/site`, `services/api`) |
 |---|---|---|
 | Static | `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze` | `pnpm typecheck` |
 | Unit (pure domain) | `flutter test test/domain` (no Flutter bindings needed) | `pnpm test` (vitest) |
@@ -21,7 +21,7 @@ Every claim moves up the ladder only with evidence: **IMPLEMENTED → STATICALLY
 
 - TypeScript `@hhos/domain`: `pnpm --filter @hhos/domain test`
 - Python independent port: `python3 tools/verify_contracts.py`
-- Dart `app/lib/src/domain`: `flutter test test/contracts` (from FORGE 003)
+- Dart `human_health_os/lib/src/domain`: `flutter test test/contracts` (from FORGE 003)
 
 A formula change is one PR that touches the vectors and every implementation together. Widening a tolerance without a recorded model/version decision is forbidden.
 

@@ -1,0 +1,95 @@
+{
+  "build": "/home/user/claudereponewscience/human_health_os/build/web",
+  "results": [
+    {
+      "name": "desktop-en: app starts and shows Today",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: Labs principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: navigates to Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no external network requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no page errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: app starts and shows Today",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: Labs principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: navigates to Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no external network requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no page errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: app starts and shows Bugün",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: Labs principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: navigates to Lab",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no external network requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no page errors",
+      "status": "PASS",
+      "detail": ""
+    }
+  ]
+}

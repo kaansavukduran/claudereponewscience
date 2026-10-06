@@ -1,4 +1,6 @@
-# Release status — v0.25 (evidence-linked)
+# Release status: TypeScript reference + Build Lab (repo milestone R1, evidence-linked)
+
+> Scope: this file covers the TypeScript workspace only. The Flutter product status is in `project_state/CURRENT_STATE.json` and `project_state/FORGE_LOG.md`. The "v0.25" label used earlier in this repo is repo-local and is **not** the user's own v0.25 handoff (see `project_state/SOURCES.md`).
 
 Checked on 2026-10-06 in a Linux cloud container: Node 22.22.0, pnpm 10.28.0, Python 3.13, Chromium (Playwright 1.56.1).
 Each row is labelled **PASS** (the command was run and its output is cited), **BLOCKED** (the exact blocker is named) or **NOT_RUN**.

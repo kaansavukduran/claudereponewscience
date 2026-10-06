@@ -1,6 +1,12 @@
-# Human Health OS / Longevity App
+# Human OS / Human Health OS / Longevity App
 
-This monorepo turns the v0.24 handoff into working code. Three targets share one deterministic core:
+Start with `CLAUDE.md` and `project_state/CURRENT_STATE.json`.
+
+**Product:** `human_health_os/` is one Flutter app for Android, iOS, Web/PWA, Windows (portable and installer) and macOS. See ADR-IMPL-002 in `project_state/DECISIONS.md` and `docs/ARCHITECTURE.md`. Development runs in bounded FORGE cycles, logged in `project_state/FORGE_LOG.md`.
+
+The TypeScript workspace below came before the Flutter app. It is now the **reference oracle** (`packages/domain` + golden vectors) and the **Build Lab** (`apps/site`, synthetic only). `apps/client` is a frozen prototype.
+
+TypeScript workspace targets:
 
 | Target | Path | What it is |
 |---|---|---|

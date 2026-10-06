@@ -2,6 +2,20 @@
 
 Also called **Human Health OS** or **Longevity App** in earlier handoffs. All three names refer to the same product.
 
+## Kısa anlatım (TR, kullanıcının kendi tarifi)
+
+Human OS, insanın sağlık verilerini tek yerde toplayan bir "kişisel sağlık işletim sistemi". Laboratuvar sonuçları, kilo ve vücut ölçümleri, uyku, spor, beslenme, ilaçlar, takviyeler, aşılar, hastalıklar, semptomlar, psikolojik durum, wearable verileri ve sağlık geçmişi ayrı uygulamalara dağılmıyor, aynı sistemde birleşiyor.
+
+Amaç sadece veri depolamak değil. Sistem bu verileri zaman içinde takip eder, değişimleri gösterir, karşılaştırır, açıklar ve gerektiğinde günlük görevler ya da takip planları oluşturur.
+
+**Longevity** sağlıklı yaşamı destekleyen faktörleri gösterir. **Shortevity** ise riskleri, hastalık yükünü, zararlı alışkanlıkları ve olumsuz trendleri ayrı ayrı gösterir.
+
+Hedef platformlar Android, iPhone, Web, Windows ve Mac. Windows'ta iki sürüm olacak: Rufus gibi ZIP'i açıp doğrudan EXE'den çalışan portable sürüm ve normal `Setup.exe` kurulumu.
+
+Ayrı bir **Build Lab** da var. Orada sentetik insanlar oluşturup yaş, kilo, uyku, laboratuvar, beslenme ve spor değerlerini değiştirerek sistemin nasıl tepki verdiğini deneyebilirsin.
+
+Özetle Human OS şunları tek çatı altında birleştiriyor: fitness uygulaması, lab takibi, ilaç takibi, sağlık zaman çizelgesi, koruyucu bakım, longevity modelleri, kişisel sağlık arşivi ve dijital ikiz mantığı.
+
 ## What it is
 
 Human OS is a local-first, offline-capable, deterministic personal health operating system. "Operating system" here means one system that represents a person's health and life state over time. It does not mean a kernel.
