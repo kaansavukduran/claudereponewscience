@@ -1,0 +1,52 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F001-1009",
+  "kind": "TEST",
+  "forge_id": "F001@v0.32",
+  "source_revision": "3648371a8ff06210289b9a05e530c024c32ad36c",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "pnpm test",
+  "cwd": ".",
+  "started_at": "2026-10-06T22:39:07.906Z",
+  "finished_at": "2026-10-06T22:39:13.260Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v70 x86_64",
+  "summary": "apps/client test:       Tests  5 passed (5)",
+  "log_sha256": "2e604ddb44453cedbf6c9ba7430cb22b8c28627811821512fe7ff88cca5e7ab8",
+  "log_lines": 44,
+  "log_tail": [
+    "services/api test:    Start at  22:39:11",
+    "services/api test:    Duration  815ms (transform 65%, tests 19%, import 15%, worker 1%)",
+    "services/api test: Done",
+    "apps/client test$ vitest run",
+    "apps/client test:  RUN  v5.0.3 /home/user/claudereponewscience/apps/client",
+    "apps/client test: (node:19990) ExperimentalWarning: SQLite is an experimental feature and might change at any time",
+    "apps/client test: (Use `node --trace-warnings ...` to show where the warning was created)",
+    "apps/client test:  Test Files  1 passed (1)",
+    "apps/client test:       Tests  5 passed (5)",
+    "apps/client test:    Start at  22:39:12",
+    "apps/client test:    Duration  868ms (transform 69%, tests 15%, import 15%, worker 1%)",
+    "apps/client test: Done"
+  ],
+  "lockfile_sha256": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "packages",
+    "apps",
+    "services",
+    "pnpm-lock.yaml"
+  ]
+}

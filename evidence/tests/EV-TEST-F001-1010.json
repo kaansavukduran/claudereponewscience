@@ -1,0 +1,40 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F001-1010",
+  "kind": "TEST",
+  "forge_id": "F001@v0.32",
+  "source_revision": "3648371a8ff06210289b9a05e530c024c32ad36c",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "python3 tools/evidence/check_f001_scope.py 254c534",
+  "cwd": ".",
+  "started_at": "2026-10-06T22:39:13.449Z",
+  "finished_at": "2026-10-06T22:39:13.507Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v70 x86_64",
+  "summary": "PASS scope: since 254c534: domain, data tests, integration test and lockfile unchanged; lib/src/data edits = 2 comment/notice-text lines",
+  "log_sha256": "0ef9c5f30a99c466016129ad408ceed4c601c67bf4f7a3eff027b6d6614f1932",
+  "log_lines": 2,
+  "log_tail": [
+    "PASS platform: lib/main.dart; folders android ios web windows macos linux; pubspec.lock committed",
+    "PASS scope: since 254c534: domain, data tests, integration test and lockfile unchanged; lib/src/data edits = 2 comment/notice-text lines"
+  ],
+  "lockfile_sha256": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/evidence/check_f001_scope.py"
+  ]
+}
