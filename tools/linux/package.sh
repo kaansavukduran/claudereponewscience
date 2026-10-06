@@ -49,8 +49,9 @@ if command -v dpkg-deb >/dev/null; then
   ln -s ../lib/human-health-os/human_health_os "$R/usr/bin/human-health-os"
   install_desktop_files "$R" /usr
   install -m644 "$P/deb/copyright" "$R/usr/share/doc/human-health-os/copyright"
-  printf 'human-health-os (%s) unstable; urgency=low\n\n  * Staging preview from %s (FORGE F030L-1).\n\n -- Human OS project <noreply@humanhealthos.invalid>  %s\n' \
-    "$VERSION" "$REV" "$(date -u -R -d "@$EPOCH")" | gzip -9n > "$R/usr/share/doc/human-health-os/changelog.Debian.gz"
+  # Native package: the changelog is changelog.gz (lintian).
+  printf 'human-health-os (%s) unstable; urgency=low\n\n  * Staging preview from %s.\n\n -- Human OS project <noreply@humanhealthos.invalid>  %s\n' \
+    "$VERSION" "${REV:0:12}" "$(date -u -R -d "@$EPOCH")" | gzip -9n > "$R/usr/share/doc/human-health-os/changelog.gz"
   SIZE=$(du -sk --exclude=DEBIAN "$R" | cut -f1)
   sed -e "s/@VERSION@/$VERSION/" -e "s/@INSTALLED_SIZE@/$SIZE/" "$P/deb/control.in" > "$R/DEBIAN/control"
   find "$R" -type d -exec chmod 755 {} +
@@ -85,7 +86,8 @@ if [ -n "${APPIMAGETOOL:-}" ] && [ -x "$APPIMAGETOOL" ]; then
   install -m644 "$P/icons/$ID.svg" "$A/$ID.svg"
   ln -s "$ID.svg" "$A/.DirIcon"
   RT=(); [ -n "${APPIMAGE_RUNTIME:-}" ] && RT=(--runtime-file "$APPIMAGE_RUNTIME")
-  ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGETOOL" --no-appstream "${RT[@]}" "$A" \
+  # mksquashfs refuses SOURCE_DATE_EPOCH together with appimagetool's own flags.
+  env -u SOURCE_DATE_EPOCH ARCH=x86_64 APPIMAGE_EXTRACT_AND_RUN=1 "$APPIMAGETOOL" --no-appstream "${RT[@]}" "$A" \
     "$OUT/HumanHealthOS-${VERSION//\~/-}-x86_64.AppImage" > "$WORK/appimagetool.log" 2>&1 \
     || { cat "$WORK/appimagetool.log" >&2; exit 1; }
   note "AppImage PRODUCED"
