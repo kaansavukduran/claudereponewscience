@@ -1,0 +1,5 @@
+TASK: turn Human Health OS from specification into its first real Flutter repository.
+
+Use installed Flutter toolchain. Create the six-platform app, overlay supplied lib/test, run pub get/analyze/test, run/build one supported target, fix the first decisive failure, and record exact PASS/FAIL/NOT_RUN. Stop at a working shell before persistence. Then expand: local storage ports → encrypted repository → canonical health records → import/export → health modules → native adapters → remote sync.
+
+Never claim compilation or platform artifacts without actual evidence.

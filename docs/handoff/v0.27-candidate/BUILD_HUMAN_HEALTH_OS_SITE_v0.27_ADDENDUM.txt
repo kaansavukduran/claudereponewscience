@@ -1,0 +1,3 @@
+V0.27 WEB ADDENDUM
+
+Create real Flutter repository → overlay → analyze/test → build Web → runtime smoke Today→Labs. Keep private Web App separate from synthetic Site Lab. Do not embed production server master secrets. Public release includes dependency/SBOM/license/provenance evidence.
