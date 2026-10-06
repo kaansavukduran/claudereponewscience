@@ -57,3 +57,21 @@ The user shared the v0.28 Forge report. Its Linux design is adopted on top of D-
 - **Data on Linux:** `XDG_DATA_HOME` (vault), `XDG_CONFIG_HOME` (settings) and `XDG_CACHE_HOME` (disposable cache). Keys use a Secret Service/keyring adapter. If no keyring exists, **writing a plaintext key is forbidden**; the passphrase-only vault path is used instead. Portable Linux uses the same encrypted vault rules as portable Windows.
 
 **Correction this repo adds (evidence-based).** The report cites Flutter's support matrix (Debian 10–13, Ubuntu 20.04–24.04). Upstream support does not make *our* binary run there. The bundle built in FORGE 001 on Ubuntu 24.04 needs `GLIBC_2.34` (measured with `objdump -T`). Debian 10 (glibc 2.28), Debian 11 and Ubuntu 20.04 (glibc 2.31) would fail to start the native `.deb`, `tar.zst` or AppImage builds. To cover them, the release builder must run on the oldest targeted glibc (for example a Debian 10 or 11 build container), or those versions are dropped from the native-package matrix. Flatpak is unaffected because its runtime ships its own glibc. Until that builder exists, the native-package floor is glibc 2.34: Fedora ≥ 35/Nobara, Ubuntu ≥ 22.04, Debian ≥ 12.
+
+## D-010: Staging previews never persist unencrypted; provisional Linux app id (2026-10-06, F030L-1)
+
+Only `development` builds (run from source) may keep the unencrypted development log. `staging` joins `production` as memory-only until the encrypted vault, so no distributed artifact writes plaintext health data (v0.28 portable/installed rules). Linux GTK application id, desktop file and AppStream id were set to the provisional `org.humanhealthos.HumanHealthOS`; superseded by D-012. The runner is compiled with `GLIB_VERSION_MIN_REQUIRED/MAX_ALLOWED = 2.64` so a GLib 2.80 build host does not raise the runtime floor (found on Ubuntu 22.04).
+
+## D-011: Adopt the v0.31 master as process authority (2026-10-06)
+
+The user supplied `HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.31_CLAUDE_CODE_WEB_ONE_SHOT.md` and ordered its one-shot contract (Phase 0 + F001, then stop). Consequences:
+- **Forge ids:** the v0.31 vertical-slice ladder (F001–F017, §39) is canonical. Legacy roadmap ids are mapped in `docs/ROADMAP.md`. The interrupted legacy F030L-1 becomes **F015-L1** (Linux part of desktop distribution).
+- **State machine:** `project_state/CURRENT_STATE.json` (schema 2) carries `development_state`, `active_forge`, `suspended_forges`, `verified_gates`, `known_blockers`, `baseline` and `next_recommended_forge` (§31). Repository reality outranks the state file.
+- **Evidence receipts:** gates run through `tools/evidence/run_gate.py`, which writes machine-generated JSON receipts to `evidence/{tests,builds,runtime}/` (real timestamps, exit codes, tool versions, source revision, dirty flag, log digest). No PASS without a receipt (§33, §34). Raw logs stay out of git.
+- **Definition of Done:** v0.31 §34 applies to every Forge.
+- Repository reality wins where v0.31 assumes a fresh repository (conflicts C-1…C-7 in `SOURCES.md`).
+
+## D-012: Linux identifiers follow the v0.31 packaging contract (2026-10-06, applied later)
+
+`com.humanos.HumanHealthOS` (app id), `HumanHealthOS-x86_64.AppImage`, the appendix-218 tarball layout and the `human-health-os/` XDG subdirectory are the target names. They are applied in F015-L1 (packaging) and F002 (XDG path), not in F001, so F001 does not widen into packaging or persistence.
+

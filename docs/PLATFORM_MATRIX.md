@@ -29,3 +29,21 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 | Durable local storage (target) | yes | yes | can be evicted, so export is the durable path | yes | yes | yes (`$XDG_DATA_HOME/HumanHealthOS`) |
 | Durable local storage (F002, dev builds only, **unencrypted**) | no (memory + notice) | no (memory + notice) | `localStorage` | `%LOCALAPPDATA%` (not compiled here) | Application Support (not compiled here) | XDG data dir (tested) |
 | Background work | WorkManager | limited BGTasks | none | none | limited | none |
+
+## Cross-platform parity (v0.31 §38), implementation reality on 2026-10-06
+
+States: REQUIRED (target), SUPPORTED, PARTIAL, UNSUPPORTED_BY_PLATFORM, BLOCKED_ENVIRONMENT, NOT_IMPLEMENTED, NOT_TESTED.
+
+| Capability | Android | iOS | Web | Windows | macOS | Linux |
+|---|---|---|---|---|---|---|
+| Shell + navigation | NOT_TESTED (BLOCKED_ENVIRONMENT) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (runtime smoke) | NOT_TESTED (BLOCKED_BY_HOST_OS) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (launch + integration test, Ubuntu 24.04) |
+| Core local records | NOT_IMPLEMENTED (memory only) | NOT_IMPLEMENTED (memory only) | PARTIAL (dev builds, unencrypted localStorage) | PARTIAL (dev builds, unencrypted; not compiled here) | PARTIAL (dev builds, unencrypted; not compiled here) | PARTIAL (dev builds, unencrypted, tested) |
+| Timeline | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
+| Labs | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
+| Offline deterministic core | REQUIRED | REQUIRED | SUPPORTED (0 network requests in smoke) | REQUIRED | REQUIRED | SUPPORTED (no network code; architecture test) |
+| Health Connect | NOT_IMPLEMENTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
+| HealthKit | UNSUPPORTED_BY_PLATFORM | NOT_IMPLEMENTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_IMPLEMENTED (conditional) | UNSUPPORTED_BY_PLATFORM |
+| Encrypted / portable vault | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED (portable mode memory-only) |
+| Native notifications | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
+| PWA install | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_TESTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
+

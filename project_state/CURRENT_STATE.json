@@ -1,22 +1,103 @@
 {
-  "schema": 1,
-  "updated": "2026-10-06",
+  "schema_version": "2",
   "project": "Human OS / Human Health OS / Longevity App",
-  "phase": "FORGE_CYCLE",
-  "initialization": "INITIALIZATION_COMPLETE",
-  "authoritative_sources": {
-    "semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
-    "process": "docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md",
-    "candidate": [
-      "docs/handoff/v0.27-candidate/",
-      "docs/handoff/v0.28-candidate/ (Linux distribution layer; ZIP with docs 216–226 not supplied)"
+  "product_version": "0.1.0+1 (candidate, not a release)",
+  "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
+  "development_state": "FORGE_PLANNING",
+  "initialization": "INITIALIZATION_COMPLETE (Phase 0 first run 2026-10-06; reconciled to v0.31 2026-10-06)",
+  "active_forge": {
+    "forge_id": "F001",
+    "ladder": "v0.31 §39",
+    "goal": "Repository heartbeat re-verified under v0.31: shell, Today/Timeline/Labs, build identity, one host build + runtime receipt",
+    "status": "SPECIFIED",
+    "baseline_commit": "d1df671de4ad861166a0f2f97d5198ccac79cd61",
+    "started_at": "2026-10-06T21:40:46Z",
+    "scope": [
+      "evidence receipt runner + state validator",
+      "build identity in the app (Flutter/Dart/schema)",
+      "Today -> Timeline -> Labs tests and web smoke",
+      "gates: pub get, format, analyze, test, web build, web smoke"
     ],
-    "missing": [
-      "v0.25 (user lineage)",
-      "v0.26 baseline sha256 687335de…3369",
-      "v0.27 patch zip ffd50fd4…488a + repository_bootstrap_overlay",
-      "v0.24 developer handoff zip"
-    ]
+    "acceptance_criteria": [
+      "AC-1 human_health_os/ is a flutter-created project with android, ios, web, windows, macos and linux folders",
+      "AC-2 flutter pub get exits 0 (receipt)",
+      "AC-3 dart format --output=none --set-exit-if-changed . exits 0 in human_health_os (receipt)",
+      "AC-4 flutter analyze reports no issues (receipt)",
+      "AC-5 flutter test passes and covers: shell at phone and desktop widths (rail >= 840 dp, bar below), Today shown at start, Today -> Timeline -> Labs on phone and desktop, non-production profile visible, build identity (version, source revision, profile, Flutter, Dart, record schema) visible, no network client in lib/ (receipt)",
+      "AC-6 flutter build web --release --no-web-resources-cdn exits 0; build receipt with artifact SHA-256, lock digest, toolchain, source revision, profile",
+      "AC-7 web runtime smoke in Chromium: app starts, Today shown, Today -> Timeline -> Labs, build banner and Flutter version visible, 0 external requests, 0 page errors (receipt)",
+      "AC-8 F001 adds no persistence: no changes under lib/src/data/ or lib/src/domain/",
+      "AC-9 every PASS above has a JSON receipt under evidence/; tools/validate_project_state.py passes"
+    ],
+    "completed_steps": [
+      "Phase 0 v0.31 reconciliation"
+    ],
+    "last_verified_gate": null,
+    "next_action": "implement tools/evidence/run_gate.py",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
+  "suspended_forges": [
+    {
+      "forge_id": "F015-L1",
+      "legacy_id": "F030L-1",
+      "status": "IN_PROGRESS_RECOVERABLE",
+      "last_commit": "d1df671",
+      "record": "reports/artifacts/forge-f030l-1.json",
+      "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
+    }
+  ],
+  "last_completed_forge": "F002 (legacy FORGE 002, pre-v0.31 ids; v0.31 F002 exit gate not verified)",
+  "baseline": {
+    "git_commit": "d1df671de4ad861166a0f2f97d5198ccac79cd61",
+    "working_tree": "clean at Phase 0 start",
+    "master_spec": "docs/handoff/v0.31/HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.31_CLAUDE_CODE_WEB_ONE_SHOT.md",
+    "master_spec_sha256": "7f999e0f1d09376e76c54436b5629f6e7e27284df01cb7b1da3626bf0223864c",
+    "v026_baseline_sha256_required": "687335dedb86d654f77a13ca069c2c61688b93e0f7e437bb379e1d3c3b0b3369",
+    "v026_baseline_present": false
+  },
+  "verified_gates": [],
+  "known_blockers": [
+    {
+      "id": "B-1",
+      "what": "GitHub push returns 403 (Claude has no access to the repository)",
+      "effect": "work exists only in this container + git bundle",
+      "fix": "connect GitHub at https://claude.ai/connect-github"
+    },
+    {
+      "id": "B-2",
+      "what": "Android SDK absent; dl.google.com denied by egress policy",
+      "effect": "Android BLOCKED_ENVIRONMENT"
+    },
+    {
+      "id": "B-3",
+      "what": "Linux host only",
+      "effect": "iOS, macOS, Windows BLOCKED_BY_HOST_OS"
+    },
+    {
+      "id": "B-4",
+      "what": "Flathub, Debian and Fedora mirrors denied; Docker daemon absent",
+      "effect": "Flatpak build and Debian/Fedora/Nobara install smoke NOT_RUN"
+    },
+    {
+      "id": "B-5",
+      "what": "v0.26 baseline bytes absent",
+      "effect": "release state stays CANDIDATE_UNMERGED"
+    }
+  ],
+  "next_recommended_forge": null,
+  "updated_at": "2026-10-06T21:40:46Z",
+  "authoritative_sources": {
+    "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
+    "process_master": "docs/handoff/v0.31/ (D-011)",
+    "process_digest_legacy": "docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md",
+    "candidates": [
+      "docs/handoff/v0.27-candidate/",
+      "docs/handoff/v0.28-candidate/"
+    ],
+    "conflicts": "project_state/SOURCES.md#conflicts-between-v031-and-repository-reality-recorded-not-silently-resolved"
   },
   "architecture_decision": "ADR-IMPL-002 (project_state/DECISIONS.md)",
   "toolchain": {
@@ -27,30 +108,7 @@
     "pnpm": "10.28.0",
     "python": "3.13"
   },
-  "last_forge": "FORGE 002",
-  "next_forge": "FORGE F030L-1 — Linux distribution, first real packages (tar.zst, deb, rpm; Flatpak/AppImage only if their builders install), per docs/handoff/v0.28-candidate/BUILD_LINUX_DESKTOP_DISTRIBUTION_v0.28.txt",
-  "forges": {
-    "F001": {
-      "title": "Flutter bootstrap + responsive shell",
-      "status": "RUNTIME_TESTED",
-      "evidence": [
-        "project_state/FORGE_LOG.md#forge-001",
-        "reports/runtime/flutter_web_smoke.json",
-        "reports/artifacts/forge-001.json"
-      ]
-    },
-    "F002": {
-      "title": "Local heartbeat: canonical record, append-only vault log, weight entry",
-      "status": "RUNTIME_TESTED (web: Playwright 26/26; Linux: integration_test + launch on Ubuntu 24.04 X11)",
-      "source_revision": "3243163d0808c396b69ceb039671b5272941f355",
-      "evidence": [
-        "project_state/FORGE_LOG.md#forge-002-local-heartbeat-profile--one-canonical-record-save--restart--read-back",
-        "reports/artifacts/forge-002.json",
-        "reports/runtime/flutter_web_smoke.json",
-        "reports/runtime/flutter-linux-run.log"
-      ]
-    }
-  },
+  "environment_report": "reports/toolchain/environment_v031_2026-10-06.txt",
   "targets": {
     "web": {
       "status": "RUNTIME_TESTED",
@@ -59,9 +117,9 @@
     "linux": {
       "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch + integration_test)",
       "product_surface": true,
-      "packaged": "NOT_RUN (tar.zst, deb, rpm, AppImage, Flatpak)",
+      "packaged": "F015-L1 IN_PROGRESS_RECOVERABLE: tar.zst, deb, rpm, AppImage built (UNSIGNED); Ubuntu 24.04 install/launch PASS; Ubuntu 22.04 FAIL (libGLESv2 dependency); Flatpak NOT_BUILT; see reports/artifacts/forge-f030l-1.json",
       "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12); older distros need an older-glibc builder (D-009)",
-      "distro_tests": "NOT_RUN (Fedora, Nobara KDE/GNOME, Debian 12/13, Ubuntu 22.04; Wayland)",
+      "distro_tests": "Ubuntu 24.04 (host) PASS for deb/tar.zst/AppImage on X11 + Weston Wayland; Ubuntu 22.04 FAIL (open defect); Fedora 44 static rpm checks only; Debian 12/13, Nobara 44, GNOME/KDE Wayland NOT_RUN",
       "evidence": [
         "reports/runtime/flutter-linux-run.log",
         "reports/runtime/flutter-linux-today.png"
@@ -97,19 +155,42 @@
     "sync": "NOT_STARTED (TS reference API exists, dev auth only)",
     "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED (body.weight only)"
   },
-  "git": {
-    "branch": "claude/code-capabilities-kz21fr",
-    "push": "BLOCKED (403: no GitHub access for Claude)"
-  },
   "storage_policy": {
     "production": "memory only",
     "portable": "memory only until encrypted vault (F004); nothing written beside the executable",
     "development_desktop": "unencrypted JSON-lines log in XDG data dir / Application Support / LOCALAPPDATA",
     "development_web": "unencrypted localStorage (may be evicted)",
-    "android_ios": "memory only (path adapter planned)"
+    "android_ios": "memory only (path adapter planned)",
+    "staging": "memory only until F006 encrypted vault (D-010)"
+  },
+  "forge_history_legacy_ids": {
+    "F001": {
+      "title": "Flutter bootstrap + responsive shell",
+      "status": "RUNTIME_TESTED",
+      "evidence": [
+        "project_state/FORGE_LOG.md#forge-001",
+        "reports/runtime/flutter_web_smoke.json",
+        "reports/artifacts/forge-001.json"
+      ]
+    },
+    "F002": {
+      "title": "Local heartbeat: canonical record, append-only vault log, weight entry",
+      "status": "RUNTIME_TESTED (web: Playwright 26/26; Linux: integration_test + launch on Ubuntu 24.04 X11)",
+      "source_revision": "3243163d0808c396b69ceb039671b5272941f355",
+      "evidence": [
+        "project_state/FORGE_LOG.md#forge-002-local-heartbeat-profile--one-canonical-record-save--restart--read-back",
+        "reports/artifacts/forge-002.json",
+        "reports/runtime/flutter_web_smoke.json",
+        "reports/runtime/flutter-linux-run.log"
+      ]
+    }
   },
   "audit": {
     "F001_honesty_lens": "findings fixed in F002",
     "F001_code_and_completeness_lenses": "did not complete; not rerun"
+  },
+  "git": {
+    "branch": "claude/code-capabilities-kz21fr",
+    "push": "BLOCKED (403: no GitHub access for Claude)"
   }
 }

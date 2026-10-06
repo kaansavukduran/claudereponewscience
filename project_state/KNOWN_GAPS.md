@@ -12,9 +12,12 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-06 | PostgreSQL/RLS never executed | OPEN | SYNC stage |
 | G-07 | Composites, compare and missions lack numeric golden vectors (semantic tests only) | OPEN | before F017/F018/F020 |
 | G-08 | Packs (lessons, synthetic profiles, catalog) are TS literals, not shared JSON | OPEN | F021/F036 |
-| G-09 | v0.26 baseline, v0.27 overlay and the v0.28 ZIP (docs 216–226) not supplied | OPEN | user |
+| G-09 | v0.26 baseline and the v0.27 overlay file contents not supplied (docs 216–226 now available inside the v0.31 master) | PARTIAL | user |
 | G-10 | No SessionStart hook to reinstall Flutter in fresh cloud containers | OPEN | soon (small) |
 | G-11 | CI workflow (`.github/workflows/ci.yml`) never run | PARTIAL | Flutter jobs defined in F001 (web, Linux, Android, Windows, macOS/iOS). Never executed: GitHub access for Claude is blocked (push 403). |
-| G-12 | Linux distribution channels (Flatpak, AppImage, tar.zst, deb, rpm) not packaged; distro matrix NOT_RUN | OPEN | F030L (D-009) |
-| G-13 | Linux keyring (Secret Service) adapter | OPEN | F030K, with or after F004 |
+| G-12 | Linux distribution channels | PARTIAL | F015-L1: tar.zst/deb/rpm/AppImage built and partly smoke-tested; Flatpak not built; Ubuntu 22.04 defect open; Debian/Fedora/Nobara install smoke NOT_RUN |
+| G-13 | Linux keyring (Secret Service) adapter | OPEN | F006 (v0.31 ladder) |
 | G-14 | UI copy partly EN-only (capability details, storage notices) | OPEN | ARB move (R-12) |
+| G-15 | No migration graph / migration receipts (v0.31 §35) for the vault log v1 | OPEN | F002 exit gate |
+| G-16 | No backup/restore drill (v0.31 §36) | OPEN | F005 |
+| G-17 | No centralized log redaction (v0.31 §37) | OPEN | F006 |

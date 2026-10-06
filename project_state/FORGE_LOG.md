@@ -158,3 +158,25 @@ F002 **RUNTIME_TESTED** on web and Linux (Ubuntu 24.04, X11). G-02 PARTIAL (encr
 
 ## Next recommended FORGE
 **FORGE F030L-1: Linux distribution, first real packages** (roadmap item F030L, pulled forward; FORGE numbers follow roadmap ids, so F003 stays the Dart engines) per `docs/handoff/v0.28-candidate/BUILD_LINUX_DESKTOP_DISTRIBUTION_v0.28.txt`, because the user asked to develop along v0.28 and the release bundle is now real. Scope: install only real tools (zstd, rpm, desktop-file-utils, appstream, lintian); produce `HumanHealthOS-Linux-x86_64-Portable.tar.zst`, `.deb` and `.rpm` with desktop entry, AppStream metainfo and icon; validate each with its own tool; install/launch smoke in real Fedora, Debian and Ubuntu containers only if container images can actually be pulled; record path, arch, SHA-256, format, source revision, toolchain, lock digest, SBOM and signing state per artifact. Flatpak and AppImage only if their builders can be installed; Nobara, Wayland and every distro not actually run stay NOT_RUN. Portable mode stays memory-only (F004). Then F004 (encrypted vault, which unblocks portable persistence) and F003 (Dart engines against the golden vectors).
+
+---
+
+# FORGE F030L-1 → F015-L1: Linux distribution, first real packages — INTERRUPTED (IN_PROGRESS_RECOVERABLE)
+
+Interrupted by the user's v0.31 one-shot directive before its report was finished. Evidence and the exact resume point are in `reports/artifacts/forge-f030l-1.json` and `reports/linux/` (commits e4c64e3, 66572f9, 9ac285b, d1df671). Summary: tar.zst, deb, rpm and AppImage were built for real from a staging release bundle (UNSIGNED, hashed). On Ubuntu 24.04 the deb installs, launches and uninstalls cleanly (user data kept), the tarball and the AppImage (FUSE and extract-and-run) launch, and the app renders on Weston (Wayland). Two real defects surfaced on an Ubuntu 22.04 userland: (1) a GLib 2.80 symbol leaked into the runner → **fixed** (GLib API cap, symbol gate); (2) the engine `dlopen`s `libGLESv2.so.2`, which no package declares → **open**. Fedora 44: static rpm checks only. Debian, Nobara, GNOME/KDE Wayland, Flatpak: NOT_RUN (BLOCKED_ENVIRONMENT). Not a PASS for any distro other than Ubuntu 24.04.
+
+---
+
+# PHASE 0 (v0.31 reconciliation), 2026-10-06 — INITIALIZATION_COMPLETE
+
+Router (v0.31 §42): canonical state existed → an unfinished Forge existed (F030L-1) → it was checkpointed as `IN_PROGRESS_RECOVERABLE`, not resumed, because the user's current command scopes this run to Phase 0 + F001.
+
+- **Inventory:** branch `claude/code-capabilities-kz21fr`, clean tree at d1df671; real Flutter project `human_health_os/` with android, ios, web, windows, macos and linux folders; toolchain and egress report in `reports/toolchain/environment_v031_2026-10-06.txt` (Flutter 3.47.6 / Dart 3.13.5, Linux desktop and web available; Android SDK absent and `dl.google.com` denied; Apple and Windows hosts absent).
+- **Sources:** v0.31 master stored in `docs/handoff/v0.31/` (SHA `7f999e0f…864c`) and classified CANDIDATE / process authority (D-011). v0.26 baseline still absent → release state CANDIDATE_UNMERGED. Seven conflicts with repository reality recorded in `SOURCES.md` (C-1…C-7), none resolved silently.
+- **State machine:** `CURRENT_STATE.json` migrated to schema 2 (development_state, active_forge, suspended_forges, verified_gates, known_blockers, baseline with spec hash).
+- **Roadmap:** v0.31 ladder F001–F017 is canonical; legacy ids mapped.
+- **Control files:** CLAUDE.md (source authority, full v0.31 invariant list, resume rules, receipts), TEST_STRATEGY (receipts), PLATFORM_MATRIX (v0.31 parity matrix with implementation reality), RISKS R-14…R-17, KNOWN_GAPS G-15…G-17, DECISIONS D-010…D-012.
+- **Self-audit:** new `tools/validate_project_state.py`. First run FAILED on a real inconsistency (state cited a not-yet-existing file in a non-planned field) → validator taught to skip planned-work fields → PASS. Negative fixture (fake PASS receipt, gate without receipt, iOS "COMPILED") → all three rejected.
+- **F001 acceptance criteria** (objective, receipt-backed): AC-1…AC-9 in `CURRENT_STATE.json → active_forge.acceptance_criteria`.
+
+Hard blocker for F001: none. Continuing into F001 in the same run, per the v0.31 one-shot contract.

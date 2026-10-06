@@ -1,6 +1,8 @@
 # CLAUDE.md: Human OS (Human Health OS / Longevity App)
 
-You are the technical lead of this repository. Read `project_state/CURRENT_STATE.json` first, then `docs/ARCHITECTURE.md` and `docs/ROADMAP.md`. The product summary is in `docs/HUMAN_OS_OVERVIEW.md`, and the user's normative rules are in `docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md`.
+You are the technical lead of this repository. Read `project_state/CURRENT_STATE.json` first (canonical cursor: `development_state`, `active_forge`, `suspended_forges`, `verified_gates`), then `docs/ROADMAP.md` and `docs/ARCHITECTURE.md`. The product summary is in `docs/HUMAN_OS_OVERVIEW.md`.
+
+**Source authority:** verified repository code > a hash-verified CURRENT handoff (none present; v0.26 baseline missing) > the v0.31 master `docs/handoff/v0.31/HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.31_CLAUDE_CODE_WEB_ONE_SHOT.md` (process and plan, D-011) > candidate addenda > history. Product semantics: `docs/handoff/v0.24/`. Conflicts are listed in `project_state/SOURCES.md`; never resolve them silently.
 
 ## What lives where
 
@@ -12,8 +14,11 @@ You are the technical lead of this repository. Read `project_state/CURRENT_STATE
 | `apps/site` | **Human OS Build Lab.** Synthetic-only teaching and simulation lab (React). It is not a product surface. |
 | `services/api` | Reference sync/API candidate (Node + SQLite). Dev auth only. |
 | `apps/client` | React/Capacitor prototype client. Superseded by `human_health_os/` once parity exists. Do not extend it. |
-| `docs/handoff/` | Specs as received (`v0.24` is authoritative; `v0.27-candidate` is a candidate) plus repo-local material. See `project_state/SOURCES.md`. |
-| `project_state/` | Canonical development state: current state, FORGE log, decisions, risks, gaps. |
+| `docs/handoff/` | Specs as received (`v0.24` product semantics; `v0.27`/`v0.28` candidates; `v0.31` master) plus repo-local material. See `project_state/SOURCES.md`. |
+| `project_state/` | Canonical development state: current state, FORGE log, decisions, risks, gaps, sources. |
+| `evidence/` | Machine-written JSON receipts (`tests/`, `builds/`, `runtime/`) from `tools/evidence/run_gate.py`. No PASS without a receipt. |
+| `reports/` | Earlier evidence (screenshots, logs, artifact records) kept for history. |
+| `packaging/linux/`, `tools/linux/` | Linux packaging inputs and scripts (F015-L1). |
 
 ## Commands
 
@@ -29,13 +34,15 @@ pnpm install && pnpm typecheck && pnpm test && python3 tools/verify_contracts.py
 
 ## Invariants (never break)
 
-planned ≠ completed · missing ≠ zero · unknown ≠ false · model/scenario ≠ observation · reference interval ≠ optimal target ≠ decision limit · out-of-range ≠ critical · self-report ≠ diagnosis · prescription/reminder ≠ intake · no interaction found ≠ safe · unknown history ≠ zero history · same name ≠ same measurand. Corrections create new records. History is never rewritten silently. Every computed result carries its model or rule ID and version, inputs, missing inputs and limitations. Build Lab synthetic data never mixes with real profiles. The core never requires an LLM or the network.
+planned ≠ completed · prescribed ≠ taken · reminder ≠ completion · missing ≠ zero · unknown ≠ false · source text ≠ normalized interpretation · association ≠ causation · risk estimate ≠ diagnosis · screening ≠ diagnosis · scenario ≠ observation · model output ≠ observed fact · reference interval ≠ optimal target · reference interval ≠ clinical decision limit · outside reference ≠ critical · self-report ≠ diagnosis · no interaction found ≠ safe · unknown history ≠ zero history · same display name ≠ same measurand (v0.31 §2). Corrections create new records. History is never rewritten silently. Every computed result carries its model or rule ID and version, inputs, missing inputs and limitations. Build Lab synthetic data never mixes with real profiles. The core never requires an LLM or the network.
 
-## FORGE workflow
+## FORGE workflow (v0.31 §22, §31–§34)
 
-`FORGE` runs **one** bounded increment: orient → select gap → specify → implement → test → fix the first failure → retest → regression → audit → package → stop. `FORGE: <scope>` uses that scope if it is coherent.
+`FORGE` runs **one** bounded increment of the v0.31 ladder (F001–F017, `docs/ROADMAP.md`): orient → select gap → specify → implement → test → fix the first failure → retest → regression → audit → package → update state → stop. `FORGE xN` = up to N sequential Forges, each closed on its own.
 
-Write the report in the format in the digest (§36). Append it to `project_state/FORGE_LOG.md` and update `CURRENT_STATE.json`. Recommend exactly one next FORGE.
+On start or resume: read the state file, compare it with `git status`, resume from the first unverified action, never mark an interrupted Forge complete because code exists. Repository reality beats the state file; record the discrepancy.
+
+Run gates through `python3 tools/evidence/run_gate.py --id <EV-…> --kind TEST|BUILD|RUNTIME --forge <F…> -- <command>`. Evidence goes stale when source, lockfile, profile or config change. Done = v0.31 §34. Report format = v0.31 §24, appended to `project_state/FORGE_LOG.md`. Recommend exactly one next Forge.
 
 ## Honesty and safety
 

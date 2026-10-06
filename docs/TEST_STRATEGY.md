@@ -6,14 +6,16 @@ Every claim moves up the ladder only with evidence: **IMPLEMENTED → STATICALLY
 
 | Layer | Flutter app (`human_health_os/`) | TypeScript reference + Build Lab (`packages/*`, `apps/site`, `services/api`) |
 |---|---|---|
-| Static | `dart format --output=none --set-exit-if-changed lib test`, `flutter analyze` | `pnpm typecheck` |
+| Static | `dart format --output=none --set-exit-if-changed .`, `flutter analyze` | `pnpm typecheck` |
 | Unit (pure domain) | `flutter test test/domain` (no Flutter bindings needed) | `pnpm test` (vitest) |
 | Cross-language contract | `flutter test test/contracts`: the Dart engines run `contracts/golden_vectors/*.json` | The same vectors in TS (`packages/domain/test`) and in Python (`tools/verify_contracts.py`) |
 | Widget | `flutter test test/widget`: shell, navigation, empty/error/missing states | — |
-| Integration | `integration_test/` (device or desktop), later | API + client repository tests |
+| Integration | `xvfb-run flutter test integration_test -d linux` (real file IO, relaunch, moved folder) | API + client repository tests |
 | Build | `flutter build web --release`, plus `flutter build linux` when GTK is present (CI smoke), `apk`, `appbundle`, `ios`, `macos` and `windows` on their own hosts | `pnpm build` |
-| Runtime smoke | Serve `build/web` and drive it with Playwright/Chromium (semantics enabled): the app starts, shows Today, and navigates to Labs | Playwright suites for the Site and the client |
+| Runtime smoke | `node tools/flutter_web_smoke.mjs`: serve `build/web`, drive it with Playwright/Chromium (semantics enabled): starts, Today, Today → Timeline → Labs, banner, build identity, 0 external requests | Playwright suites for the Site and the client |
+| Linux runtime/packaging | `tools/linux/launch_smoke.sh`, `tools/linux/check_symbols.sh <bundle> <rootfs>`, install/remove per format and distro (F015-L1) | — |
 | Packaging | Portable ZIP and installer smoke on a clean Windows VM. DMG mount/launch on macOS. | Artifact publish check |
+| State self-audit | `python3 tools/validate_project_state.py` (state paths exist, PASS gates backed by receipts, hosts never over-claimed) | — |
 
 ## Golden vectors are the bridge
 
@@ -21,7 +23,7 @@ Every claim moves up the ladder only with evidence: **IMPLEMENTED → STATICALLY
 
 - TypeScript `@hhos/domain`: `pnpm --filter @hhos/domain test`
 - Python independent port: `python3 tools/verify_contracts.py`
-- Dart `human_health_os/lib/src/domain`: `flutter test test/contracts` (from FORGE 003)
+- Dart `human_health_os/lib/src/domain`: `flutter test test/contracts` (from v0.31 F011)
 
 A formula change is one PR that touches the vectors and every implementation together. Widening a tolerance without a recorded model/version decision is forbidden.
 
@@ -35,6 +37,8 @@ Missing input → explicit missing state, never 0. Invalid input → error code,
 - Widget tests use `tester.view.physicalSize` to cover a 390×844 phone, an 820×1180 tablet and a 1440×900 desktop.
 - Web runtime smoke builds with `--no-web-resources-cdn` (sandboxed hosts can block the CanvasKit CDN) and enables semantics, so Playwright can find text.
 
-## Evidence
+## Evidence (v0.31 §33)
 
-Each FORGE writes the exact commands and their PASS/FAIL into `project_state/FORGE_LOG.md`. Machine-readable outputs go to `reports/tests/`. Toolchain reports go to `reports/toolchain/`.
+Every gate runs through `python3 tools/evidence/run_gate.py`, which executes the command and writes a JSON receipt to `evidence/tests/`, `evidence/builds/` or `evidence/runtime/`: evidence id, kind, Forge, source revision, dirty flag, exact command, cwd, start/finish time, exit code, PASS/FAIL derived from the exit code, Flutter/Dart versions, log SHA-256 and a short log tail. Build receipts add artifact paths, sizes and SHA-256 plus the lockfile digest. Raw logs stay out of git.
+
+A PASS is valid only for the source revision in its receipt; a change to source, lockfile, build profile or config makes it stale (§33.5). `project_state/CURRENT_STATE.json → verified_gates` lists only receipts, and `tools/validate_project_state.py` rejects anything else. Older prose evidence stays in `reports/`. Toolchain reports go to `reports/toolchain/`.
