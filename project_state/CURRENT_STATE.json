@@ -116,6 +116,13 @@
       "criterion": "AC-1, AC-8",
       "source_revision": "879455b9a623d49c0c45863b44220fcd279412af",
       "result": "PASS"
+    },
+    {
+      "gate": "project state self-audit (validate_project_state.py)",
+      "evidence_id": "EV-TEST-F001-0016",
+      "criterion": "AC-9",
+      "source_revision": "6f1f61965d46da328f2be9599b19c767f6536e25",
+      "result": "PASS"
     }
   ],
   "known_blockers": [
@@ -315,7 +322,8 @@
         "EV-RUNTIME-F001-0002",
         "EV-TEST-F001-0012",
         "EV-TEST-F001-0014",
-        "EV-TEST-F001-0015"
+        "EV-TEST-F001-0015",
+        "EV-TEST-F001-0016"
       ],
       "app_revision": "9e86ed07bb020609e998496fdeba3ec24842de8c"
     }

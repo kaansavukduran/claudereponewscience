@@ -220,7 +220,7 @@ No new storage, network or dependency. Receipts contain commands, versions and l
 | `python3 tools/verify_contracts.py` (regression) | EV-TEST-F001-0012 | PASS |
 | `pnpm test` (regression: 73 + 14 + 4 + 13 + 5) | EV-TEST-F001-0014 | PASS |
 | `python3 tools/evidence/check_f001_scope.py d1df671` | EV-TEST-F001-0015 | PASS |
-| `python3 tools/validate_project_state.py` | EV-TEST-F001-0016 | see final commit |
+| `python3 tools/validate_project_state.py` | EV-TEST-F001-0016 | PASS (on 6f1f619) |
 | Earlier receipts 0001–0005 (dbe9b54) | — | PASS but stale after the repair; 0013 (`pnpm -s test`) exit 0 with an empty log, not counted |
 
 ## Builds Actually Executed
