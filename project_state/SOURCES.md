@@ -12,6 +12,7 @@
 | docs/handoff/v0.27-candidate/BUILD_HUMAN_HEALTH_OS_SITE_v0.27_ADDENDUM.txt | v0.27 | ADDENDUM | 1d1cee2cefb1 | Private Web App ≠ synthetic Site Lab. |
 | docs/handoff/v0.27-candidate/BUILD_WINDOWS_PORTABLE_DESKTOP_v0.27_ADDENDUM.txt | v0.27 | ADDENDUM | 1fb81a6cfb2a | Real Windows host only. |
 | docs/handoff/v0.27-candidate/LONGEVITY_APP_v0.27_CANDIDATE_PATCH_SHA256.txt | v0.27 | CANDIDATE (checksum only) | 08a251fec2bb | The patch ZIP (`ffd50fd4…488a`) and its `repository_bootstrap_overlay/` were **never supplied**. |
+| docs/handoff/v0.28-candidate/* (master addendum, 4 build prompts, `BUILD_LINUX_DESKTOP_DISTRIBUTION_v0.28.txt`, checksum) | v0.28 candidate (Linux first-class) | **CANDIDATE** (adopted as engineering guidance; D-009) | patch ZIP `9e314c1bc822…a600` | Prompts and addendum received. The ZIP with docs 216–226 (Linux contracts, fixtures, packaging scaffolds) was **not supplied**. It still depends on the unavailable v0.26 baseline. |
 | docs/handoff/claude-code-init/MASTER_INIT_PROMPT_DIGEST.md | 2026-10-06 | **AUTHORITATIVE_CURRENT** (process rules, digest of the user's master prompt) | — | The user's newest instruction is to develop in FORGE cycles. |
 | docs/handoff/v0.25/* | "v0.25" | **REPO_LOCAL_CANDIDATE** | — | Written by an earlier Claude session, **not** by the user. The label collides with the user's own v0.25. |
 | docs/PARITY.md, docs/RELEASE_STATUS.md, docs/adr/ADR-IMPL-001 | repo-local | REPO_LOCAL_CANDIDATE / HISTORICAL | — | ADR-IMPL-001 client decision superseded by ADR-IMPL-002. |
@@ -19,7 +20,7 @@
 
 ## Lineage
 
-v0.24 (have) → v0.25 (user's, **missing**) → v0.26 (user's, **missing**, SHA `687335de…3369`) → v0.27 candidate patch (have the prompts and addendum, **missing** the ZIP and overlay).
+v0.24 (have) → v0.25 (user's, **missing**) → v0.26 (user's, **missing**, SHA `687335de…3369`) → v0.27 candidate patch (have the prompts and addendum, **missing** the ZIP and overlay) → v0.28 candidate patch (Linux; prompts and addendum received, ZIP `9e314c1b…a600` with docs 216–226 missing).
 
 Repo-local work, in a separate namespace: R1 = "v0.25 connected TS implementation" (commits 368af38, 247f971).
 

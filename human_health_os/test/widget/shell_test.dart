@@ -2,7 +2,9 @@
 // destinations change, non-production profile visible, Today shown, navigation to Labs.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:human_health_os/src/app/bootstrap.dart';
 import 'package:human_health_os/src/app/human_os_app.dart';
+import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/config/app_config.dart';
 import 'package:human_health_os/src/core/capabilities.dart';
 import 'package:human_health_os/src/navigation/destinations.dart';
@@ -27,12 +29,10 @@ Future<void> pumpApp(
     tester.platformDispatcher.localesTestValue = [locale];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);
   }
-  await tester.pumpWidget(
-    HumanOsApp(
-      config: config,
-      registry: CapabilityRegistry.forPlatform(platform),
-    ),
-  );
+  final repo = inMemoryRepository();
+  await repo.open();
+  final services = await servicesFor(config, platform, repo);
+  await tester.pumpWidget(HumanOsApp(services: services));
   await tester.pumpAndSettle();
 }
 
@@ -141,7 +141,12 @@ void main() {
       if (d.plannedForge != null) {
         // Honest empty state: names the FORGE that builds it, shows no fake data.
         expect(find.text('Planned in ${d.plannedForge}'), findsOneWidget);
-        expect(find.text('No records yet'), findsOneWidget);
+        if (d.id == DestinationId.today) {
+          // Today's built part is the weight card; its empty state is specific.
+          expect(find.byKey(const ValueKey('weight-empty')), findsOneWidget);
+        } else {
+          expect(find.text('No records yet'), findsOneWidget);
+        }
       }
     }
   });
@@ -150,6 +155,35 @@ void main() {
     await pumpApp(tester, size: phone);
     expect(find.byKey(const ValueKey('build-profile-banner')), findsOneWidget);
     expect(find.textContaining('DEVELOPMENT BUILD'), findsOneWidget);
+  });
+
+  testWidgets('staging build shows its banner with the clinical disclaimer', (
+    tester,
+  ) async {
+    await pumpApp(
+      tester,
+      size: phone,
+      config: const AppConfig(
+        profile: BuildProfile.staging,
+        version: '0.1.0+1',
+        sourceRevision: 'x',
+      ),
+    );
+    expect(find.textContaining('STAGING BUILD'), findsOneWidget);
+    expect(find.textContaining('not for clinical decisions'), findsOneWidget);
+  });
+
+  testWidgets('This build card shows the source revision', (tester) async {
+    await pumpApp(
+      tester,
+      size: desktop,
+      config: const AppConfig(
+        profile: BuildProfile.development,
+        version: '0.1.0+1',
+        sourceRevision: '0123456789abcdef0123',
+      ),
+    );
+    expect(find.text('0123456789ab'), findsOneWidget);
   });
 
   testWidgets('production build hides the banner', (tester) async {
@@ -165,15 +199,20 @@ void main() {
     expect(find.byKey(const ValueKey('build-profile-banner')), findsNothing);
   });
 
-  testWidgets('Today states nothing is stored and network is not required', (
-    tester,
-  ) async {
-    await pumpApp(tester, size: desktop);
-    expect(find.textContaining('Nothing is stored yet'), findsOneWidget);
-    expect(find.text('Not required'), findsOneWidget);
-    // No capability is claimed as available before its adapter exists.
-    expect(find.text('Available'), findsNothing);
-  });
+  testWidgets(
+    'Today states no weight yet, memory-only storage, network not required',
+    (tester) async {
+      await pumpApp(tester, size: desktop);
+      expect(find.byKey(const ValueKey('weight-empty')), findsOneWidget);
+      expect(
+        find.textContaining('Not saved: kept only until the app closes'),
+        findsOneWidget,
+      );
+      expect(find.text('Not required'), findsOneWidget);
+      // No capability is claimed as available before its adapter exists.
+      expect(find.text('Available'), findsNothing);
+    },
+  );
 
   testWidgets('web registry never claims HealthKit/Health Connect', (
     tester,
@@ -195,8 +234,8 @@ void main() {
     (tester) async {
       final handle = tester.ensureSemantics();
       await pumpApp(tester, size: desktop);
-      final node = tester.getSemantics(find.text('Your data'));
-      expect(node.label, 'Your data');
+      final node = tester.getSemantics(find.text('Body weight'));
+      expect(node.label, 'Body weight');
       expect(node.flagsCollection.isHeader, isTrue);
       handle.dispose();
     },

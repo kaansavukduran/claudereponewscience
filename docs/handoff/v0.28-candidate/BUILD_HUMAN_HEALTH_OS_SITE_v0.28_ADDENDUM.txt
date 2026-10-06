@@ -1,0 +1,7 @@
+V0.27 WEB ADDENDUM
+
+Create real Flutter repository → overlay → analyze/test → build Web → runtime smoke Today→Labs. Keep private Web App separate from synthetic Site Lab. Do not embed production server master secrets. Public release includes dependency/SBOM/license/provenance evidence.
+
+
+V0.28 PLATFORM DISCLOSURE
+The Site/Web UI can show Linux as a product target, but must distinguish planned, built, and distro-tested artifacts. Do not claim "all Linux distributions supported" without current distro/session evidence.

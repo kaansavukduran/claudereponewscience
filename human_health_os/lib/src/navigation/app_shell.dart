@@ -4,8 +4,7 @@ library;
 
 import 'package:flutter/material.dart';
 
-import '../config/app_config.dart';
-import '../core/capabilities.dart';
+import '../app/app_services.dart';
 import '../features/common/planned_destination_screen.dart';
 import '../features/today/today_screen.dart';
 import '../l10n/strings.dart';
@@ -27,10 +26,9 @@ const List<DestinationId> kCompactPrimary = [
 ];
 
 class AppShell extends StatefulWidget {
-  const AppShell({super.key, required this.config, required this.registry});
+  const AppShell({super.key, required this.services});
 
-  final AppConfig config;
-  final CapabilityRegistry registry;
+  final AppServices services;
 
   @override
   State<AppShell> createState() => _AppShellState();
@@ -43,7 +41,7 @@ class _AppShellState extends State<AppShell> {
 
   Widget _screenFor(DestinationId id) {
     if (id == DestinationId.today) {
-      return TodayScreen(config: widget.config, registry: widget.registry);
+      return TodayScreen(services: widget.services);
     }
     return PlannedDestinationScreen(destination: destinationById(id));
   }
@@ -62,13 +60,13 @@ class _AppShellState extends State<AppShell> {
       appBar: AppBar(
         title: Text(s.appTitle),
         centerTitle: false,
-        bottom: widget.config.isProduction
+        bottom: widget.services.config.isProduction
             ? null
             : PreferredSize(
                 preferredSize: const Size.fromHeight(kBuildBannerHeight),
                 child: SizedBox(
                   height: kBuildBannerHeight,
-                  child: BuildProfileBanner(config: widget.config),
+                  child: BuildProfileBanner(config: widget.services.config),
                 ),
               ),
       ),

@@ -2,7 +2,7 @@
 
 Start with `CLAUDE.md` and `project_state/CURRENT_STATE.json`.
 
-**Product:** `human_health_os/` is one Flutter app for Android, iOS, Web/PWA, Windows (portable and installer) and macOS. See ADR-IMPL-002 in `project_state/DECISIONS.md` and `docs/ARCHITECTURE.md`. Development runs in bounded FORGE cycles, logged in `project_state/FORGE_LOG.md`.
+**Product:** `human_health_os/` is one Flutter app for Android, iOS, Web/PWA, Windows (portable and installer), macOS and Linux (Fedora/Nobara and Ubuntu/Debian families). See ADR-IMPL-002 in `project_state/DECISIONS.md` and `docs/ARCHITECTURE.md`. Development runs in bounded FORGE cycles, logged in `project_state/FORGE_LOG.md`.
 
 The TypeScript workspace below came before the Flutter app. It is now the **reference oracle** (`packages/domain` + golden vectors) and the **Build Lab** (`apps/site`, synthetic only). `apps/client` is a frozen prototype.
 
@@ -11,7 +11,7 @@ TypeScript workspace targets:
 | Target | Path | What it is |
 |---|---|---|
 | Interactive Site Lab | `apps/site` | Synthetic-first web laboratory: profile builder, Longevity ↔ Shortevity channels, Compare Lab, lab-interpretation and method-comparison lab, Preventive Care Lab, Safety Lab, nutrition math, Daily Missions, timeline and wearables, Learn (EN/TR), Data Sources & Licenses |
-| Production client | `apps/client` | The real app (web now; Android and iOS via Capacitor shells): local-only (IndexedDB) or cloud account, Today, Body, Labs, Results, Compare, Settings (reset ≠ delete) |
+| Prototype client (frozen) | `apps/client` | Earlier React prototype (web; Capacitor shells were never built here, so Android/iOS stay BLOCKED). Superseded by `human_health_os/`; do not extend |
 | API | `services/api` | `/v1` HTTP API on SQLite: owner authorization, Idempotency-Key, If-Match revisions, stable error envelope, append-only migrations |
 | Shared core | `packages/domain` | Every formula, rule and engine. Nothing is re-implemented in a UI or the server |
 | Shared packs | `packages/packs` | REF-SYNTHETIC-DEMO-1, EDU-HEALTH-LITERACY-FOUNDATION-1, synthetic rule packs, attribution manifest |
@@ -46,4 +46,4 @@ missing ≠ zero · plan ≠ completion · self-report ≠ diagnosis · app scor
 - `docs/handoff/v0.24/`: the authoritative Master Handoff and build prompts as received.
 - `docs/handoff/v0.25/`: build prompts extended with the connected-targets requirements, plus the v0.25 addendum (FR-456…463, AT-1109…1118).
 - `docs/adr/`: implementation decisions, including the deviation from the Flutter preference.
-- `docs/forge/CURRENT.md`: the current Forge checkpoint and the next increments.
+- `project_state/CURRENT_STATE.json` and `project_state/FORGE_LOG.md`: the current Forge checkpoint, evidence and the next increment.

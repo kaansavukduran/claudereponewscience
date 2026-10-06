@@ -32,7 +32,8 @@ jobs:
       - run: pnpm --filter @hhos/client e2e
 
   flutter-linux-web:
-    runs-on: ubuntu-latest
+    # Ubuntu 22.04 keeps the Linux glibc floor at 2.35 or lower for Fedora/Nobara, Debian 12, Ubuntu 22.04+ (D-008).
+    runs-on: ubuntu-22.04
     defaults:
       run:
         working-directory: human_health_os

@@ -1,0 +1,31 @@
+BUILD HUMAN HEALTH OS FROM VERIFIED v0.26 + v0.27 CANDIDATE PATCH
+
+Required baseline SHA-256: 687335dedb86d654f77a13ca069c2c61688b93e0f7e437bb379e1d3c3b0b3369
+STOP if it differs.
+
+1. `flutter doctor -v`
+2. `flutter create --empty --platforms=android,ios,web,windows,macos,linux human_health_os`
+3. Overlay candidate `lib/` and `test/`.
+4. Keep tool-generated platform folders and SDK constraints.
+5. `flutter pub get`
+6. `flutter analyze`
+7. `flutter test`
+8. Run/build one supported target.
+9. Fix first decisive failure and rerun.
+10. Only after shell checkpoint expand local encrypted storage → canonical records → import/export → domain engines → native health adapters → remote sync.
+
+Preserve v0.26 health/safety/domain contracts. This patch extends, never replaces, v0.26.
+
+Commit `pubspec.lock`. Generate dependency inventory, license report and SPDX/CycloneDX SBOM for public release. Record artifact hash, source revision, lockfile hash, Flutter/Dart versions, host/runner, profile and command.
+
+Never embed server master secrets in client builds. Report every target independently PASS/FAIL/NOT_RUN. Never claim an artifact exists unless it actually exists.
+
+
+V0.28 LINUX DISTRIBUTION ADDENDUM
+- Treat Linux as a first-class desktop target in the shared Flutter codebase.
+- Required Linux release strategy: Flatpak + AppImage when validated + portable tar.zst fallback + DEB + RPM.
+- Debian/Ubuntu are upstream-supported Flutter target families according to the checked support matrix; Fedora/Nobara require Human OS runtime evidence.
+- Nobara and Fedora have independent smoke receipts.
+- Installed data follows XDG-compatible paths; portable data uses encrypted portable vault semantics.
+- GNOME/KDE Wayland are first-class test sessions; X11 is tested where supported.
+- Execute BUILD_LINUX_DESKTOP_DISTRIBUTION_v0.28.txt after the first Flutter Linux release bundle is real.

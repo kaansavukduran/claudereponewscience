@@ -21,49 +21,49 @@ Decision: `project_state/DECISIONS.md` → **ADR-IMPL-002** (2026-10-06), which 
  │        ▲                      │
  │  platform adapters ───────────┼── Health Connect · HealthKit · Keychain/Keystore/DPAPI
  └───────────────────────────────┘    · file picker · notifications · browser storage · updater
-      Android · iOS · Web/PWA · Windows (portable + installer) · macOS · (Linux CI smoke)
+      Android · iOS · Web/PWA · Windows (portable + installer) · macOS · Linux (D-008)
 ```
 
 ## Flutter app layout (`human_health_os/`)
 
+**Current (after FORGE 002):**
+
 ```
 lib/
-  main.dart                      # bootstraps AppConfig + capability registry, runs HumanOsApp
+  main.dart                      # bootstrap(AppConfig, platform) → HumanOsApp(services)
   src/
-    app/                         # HumanOsApp, theme, build profile
-    config/                      # AppConfig (APP_ENV via --dart-define; no secrets)
+    app/                         # HumanOsApp, AppServices, bootstrap (storage choice + fallback)
+    config/                      # AppConfig (APP_ENV, APP_VERSION, SOURCE_REVISION; no secrets)
+    core/                        # capability registry, Clock, IdGenerator (UUID v4)
+    domain/                      # PURE DART
+      records/                   # HealthRecord envelope, validation, currentRecords()
+      profile/                   # Profile (self / realOther / synthetic / scenario)
+      ports/                     # HealthRepository, StorageDescription
+    application/                 # HeartbeatService (weight entry, parseDecimal)
+    data/local/                  # vault_log (JSON lines), LogRepository, storage_io / storage_web
+    features/today/ common/      # Today (weight card), honest planned-destination screen
     navigation/                  # destinations + responsive shell (rail ≥ 840 dp, bar below)
-    core/                        # Clock, IdGenerator, Result types, capability registry
-    domain/                      # PURE DART: records, engines, ports (HealthRepository, SecretStore…)
-      profile/ observations/ labs/ medications/ nutrition/ activity/ sleep/
-      conditions/ prevention/ pathways/ scoring/ comparison/
-    data/
-      local/ import/ export/ adapters/
-    features/                    # one folder per destination (screen + view model)
-      today/ timeline/ labs/ medications/ nutrition/ activity/
-      conditions/ preventive/ compare/ learn/
-    presentation/
-      theme/ widgets/            # shared widgets: MetricValue (missing ≠ 0), ResultCard, state views
+    presentation/                # theme roles, StatusChip, build banner
+    l10n/                        # EN/TR string table
 test/
-  domain/ contracts/ widget/
-integration_test/
-tool/                            # web_smoke.mjs, release helpers
+  architecture/ data/ domain/ unit/ widget/
+integration_test/                # Linux desktop: real file IO, relaunch, moved folder
+../tools/flutter_web_smoke.mjs   # Playwright smoke of build/web (run from repo root)
 ```
 
-Dependency direction is `features → application/domain ports ← data adapters`. Domain never imports Flutter, `dart:io`, `dart:html`, storage or HTTP packages. A test enforces this.
+**Target (planned, not built):** `domain/{observations,labs,medications,nutrition,activity,sleep,conditions,prevention,pathways,scoring,comparison}`, `data/{import,export,adapters}`, one `features/` folder per destination, `test/contracts` (golden vectors, F003) and release helpers.
+
+Dependency direction is `features → application/domain ports ← data adapters`. Domain never imports Flutter, `dart:io`, `dart:html`, `dart:ui`, `dart:js_interop`, storage or HTTP packages. `test/architecture/imports_test.dart` enforces this on import/export/part directives in either quote style, fails if `lib/src/domain` disappears, and has its own negative fixtures.
 
 ## Platform adapters and the capability registry
 
-At startup a `CapabilityRegistry` reports what is **really** available on this runtime:
-- `healthPlatform`: Health Connect on Android, HealthKit on iOS, none elsewhere
-- `secureKeyStore`: Keystore, Keychain or DPAPI, or a passphrase only
-- `fileSystem`, `notifications`, `backgroundWork`, `persistentStorage` (browser storage may be evicted)
+At startup a `CapabilityRegistry` reports what is **really** available on this runtime. Implemented ids: `local_storage` (available only when a file or browser adapter opened; always labelled "not encrypted" until F004), `health_platform` (Health Connect on Android, HealthKit on iOS, unsupported elsewhere; adapters planned F023/F024), `key_store` (planned F004/F030K) and `network` (not required). Planned ids: `file_system`, `notifications`, `background_work`.
 
 The UI shows unavailable integrations as unavailable. It never borrows another platform's capability.
 
 ## Persistence (see SECURITY_MODEL.md)
 
-The `HealthRepository` port keeps an in-memory adapter for tests. From FORGE 002 there is a file-backed vault adapter. Encryption comes in a dedicated FORGE: a versioned vault header, a passphrase KDF and a wrapped data key. The portable Windows vault lives in `UserData/` and is identified by a UUID, never by its path.
+The `HealthRepository` port has one log-backed implementation over three sinks: memory, file (`dart:io`, development desktop builds only) and browser `localStorage` (development web builds only). Production builds and portable mode stay memory-only until the encrypted vault exists. Encryption comes in a dedicated FORGE: a versioned vault header, a passphrase KDF and a wrapped data key. The portable vault (Windows ZIP, Linux tar.zst) will live in `UserData/`, encrypted, and is identified by a UUID, never by its path.
 
 ## What stays in TypeScript and why
 

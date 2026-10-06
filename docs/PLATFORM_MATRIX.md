@@ -4,8 +4,8 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 
 | Target | Host needed | This container | Blocker | Distribution artifacts (eventual) |
 |---|---|---|---|---|
-| Web / PWA (private app) | any | **AVAILABLE** (Chromium at `/opt/pw-browsers/chromium-1194`) | — | static `build/web`, installable PWA |
-| Linux desktop (CI smoke only) | Linux + GTK3 dev | MISSING `libgtk-3-dev` | install GTK3 dev packages | bundle |
+| Web / PWA (private app) | any | **RUNTIME_TESTED** (F002): Playwright smoke 26/26 on Chromium 1194 incl. save → reload → persisted | PWA install NOT_RUN | static `build/web`, installable PWA |
+| **Linux desktop** (product surface, D-008/D-009) | Linux + GTK3 dev | **RUNTIME_TESTED** (F002) on Ubuntu 24.04 under Xvfb (X11): `integration_test` saves, relaunches and survives a moved data folder | Not PACKAGED. Wayland, Fedora/Nobara, Debian, Ubuntu 22.04: NOT_RUN. | Flatpak (primary), `x86_64.AppImage`, `Portable.tar.zst`, `.deb`, `.rpm`. ARM64 planned. |
 | Android | Android SDK + Google Maven | **BLOCKED_ENVIRONMENT** | no Android SDK; network policy returns 403 for `dl.google.com` / `maven.google.com` | APK, AAB |
 | iOS | macOS + Xcode | **BLOCKED_BY_HOST_OS** | Linux host | IPA / TestFlight |
 | macOS | macOS + Xcode | **BLOCKED_BY_HOST_OS** | Linux host | `.app`, DMG/PKG (Developer ID + notarization) |
@@ -18,13 +18,14 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 - **Android:** allow `dl.google.com`, `maven.google.com` and `services.gradle.org` in the environment network policy and install an Android SDK (cmdline-tools). Or build in GitHub Actions on `ubuntu-latest`.
 - **iOS and macOS:** a GitHub Actions `macos-latest` runner, or a Mac.
 - **Windows:** a GitHub Actions `windows-latest` runner, or a Windows PC. Run `flutter build windows`, then package the ZIP and the installer.
-- **Linux smoke:** `apt-get install libgtk-3-dev` (environment change; optional).
+- **Linux:** builds here. Cross-distro launch tests (Fedora/Nobara, Debian 12, Ubuntu 22.04) need containers/VMs in CI. Compatibility floor is GLIBC 2.34 + GTK 3 (see DECISIONS D-008).
 
 ## Capability differences that must stay visible in the UI
 
-| Capability | Android | iOS | Web | Windows | macOS |
-|---|---|---|---|---|---|
-| Health platform | Health Connect | HealthKit | — | — | (HealthKit not on macOS for this app) |
-| Key storage | Keystore | Keychain | WebCrypto non-extractable + passphrase | DPAPI (optional) + passphrase | Keychain |
-| Durable local storage | yes | yes | can be evicted, so export is the durable path | yes | yes |
-| Background work | WorkManager | limited BGTasks | none | none | limited |
+| Capability | Android | iOS | Web | Windows | macOS | Linux |
+|---|---|---|---|---|---|---|
+| Health platform | Health Connect | HealthKit | — | — | (HealthKit not on macOS for this app) | — |
+| Key storage | Keystore | Keychain | WebCrypto non-extractable + passphrase | DPAPI (optional) + passphrase | Keychain | Secret Service/libsecret (optional) + passphrase |
+| Durable local storage (target) | yes | yes | can be evicted, so export is the durable path | yes | yes | yes (`$XDG_DATA_HOME/HumanHealthOS`) |
+| Durable local storage (F002, dev builds only, **unencrypted**) | no (memory + notice) | no (memory + notice) | `localStorage` | `%LOCALAPPDATA%` (not compiled here) | Application Support (not compiled here) | XDG data dir (tested) |
+| Background work | WorkManager | limited BGTasks | none | none | limited | none |

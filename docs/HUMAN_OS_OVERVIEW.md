@@ -49,7 +49,7 @@ Lifespan and healthspan figures appear only as **MODELLED** results from a named
 
 Spelling: the canonical term is **Shortevity** (v0.24 handoff). "Shortgevity" in later prose is an alias with the same meaning.
 
-## Five product surfaces, one core
+## Product surfaces, one core (five from the master prompt + Linux, added by the user)
 
 | Surface | Distribution | Platform-only adapters |
 |---|---|---|
@@ -58,6 +58,7 @@ Spelling: the canonical term is **Shortevity** (v0.24 handoff). "Shortgevity" in
 | Web / installable web app | Static web build, optionally a PWA | Browser storage and export. This surface has no HealthKit, no Health Connect, no OS keychain and no native background work, and it says so. |
 | Windows | Portable ZIP (`HumanHealthOS.exe` + DLLs + `data/` + `UserData/` vault) and `HumanHealthOS-Setup-x64.exe` | Encrypted portable vault, file picking, notifications, updater |
 | macOS | `HumanHealthOS.app` in a DMG or PKG | Keychain, sandboxed app-support storage (never inside the `.app`) |
+| Linux (Fedora/Nobara, Ubuntu/Debian) | Portable tar.gz, AppImage, .deb, .rpm, Flatpak | XDG data directory or portable `UserData/`, optional Secret Service |
 
 The **Human OS Build Lab** is an auxiliary synthetic laboratory and teaching surface, not a sixth platform. It holds synthetic humans A, B, C… with adjustable parameters and side-by-side results. It never mixes synthetic subjects with a real person's data.
 

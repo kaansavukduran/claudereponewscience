@@ -41,7 +41,8 @@ class Destination {
   final String purposeEn;
   final String purposeTr;
 
-  /// FORGE that delivers the first real content; null when already built.
+  /// FORGE that delivers the area's stated purpose; null only when that
+  /// purpose is fully built.
   final String? plannedForge;
 
   /// One invariant this area must respect, shown so the empty state still teaches.
@@ -63,7 +64,7 @@ const List<Destination> destinations = [
     selectedIcon: Icons.wb_sunny,
     purposeEn: 'Your day at a glance: check-ins, missions and what changed.',
     purposeTr: 'Günün bir bakışta: kontroller, görevler ve neyin değiştiği.',
-    plannedForge: null,
+    plannedForge: 'FORGE 020',
     principleEn: 'A mission is a plan. Only a logged completion counts.',
     principleTr: 'Görev bir plandır. Yalnız kaydedilen tamamlanma sayılır.',
   ),

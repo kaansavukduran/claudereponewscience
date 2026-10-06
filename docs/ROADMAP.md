@@ -31,6 +31,8 @@ Each line is one bounded FORGE. A stage starts only after the stage it depends o
 - F027 – Accounts with a real identity provider. F028 – Encrypted sync with idempotency, revisions and conflicts (semantics from `services/api`). F029 – Backup and recovery.
 
 ## DESKTOP
+- F030L – Linux distribution (D-008/D-009): Flatpak (primary), AppImage (portable, FUSE fallback documented), `Portable.tar.zst`, `.deb`, `.rpm`. Builder on the glibc floor. Launch smoke on Ubuntu 22.04/24.04, Debian 12/13, Fedora 44, Nobara 44 (KDE and GNOME), on Wayland and X11. Each one is reported separately.
+- F030K – Linux keyring adapter (Secret Service), with no plaintext-key fallback, and XDG config/cache split. Lands together with or after F004 (encrypted vault).
 - F030 – Windows build plus portable ZIP (`portable_mode.json`, `UserData/` vault). F031 – Windows installer (data survives uninstall). F032 – macOS app plus DMG (Application Support storage). F033 – Signed update metadata.
 
 ## WEB

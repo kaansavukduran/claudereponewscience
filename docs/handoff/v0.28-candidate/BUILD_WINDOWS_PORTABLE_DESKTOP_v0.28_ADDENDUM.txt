@@ -1,0 +1,7 @@
+V0.27 WINDOWS ADDENDUM
+
+On an actual Windows build host: flutter doctor -v → flutter pub get → flutter analyze → flutter test → flutter build windows. Only then package portable ZIP and Setup EXE, apply encrypted-vault contract, perform clean-machine/offline smoke, sign production bytes, hash final artifacts and generate SBOM/license/provenance evidence. Do not handcraft a fake EXE from the specification bundle.
+
+
+V0.28 CROSS-DESKTOP PARITY
+Windows and Linux portable modes share vault identity/encryption/update semantics, but their packaging is platform-specific. Do not reuse Windows DLL/installer assumptions on Linux.

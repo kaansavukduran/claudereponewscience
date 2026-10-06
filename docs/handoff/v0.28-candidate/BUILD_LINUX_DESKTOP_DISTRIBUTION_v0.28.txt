@@ -1,0 +1,85 @@
+BUILD HUMAN HEALTH OS — LINUX CROSS-DISTRIBUTION DESKTOP v0.28 CANDIDATE
+
+GOAL
+Build the same Human Health OS Flutter desktop client for Linux with explicit compatibility across Debian/Ubuntu and Human-OS-tested Fedora/Nobara targets, plus broad distro-neutral channels.
+
+DO NOT CREATE A SEPARATE LINUX HEALTH MODEL.
+Shared domain/data/rule semantics remain identical across Android/iOS/Web/Windows/macOS/Linux.
+
+FIRST BUILD
+1. Verify Flutter Linux toolchain with `flutter doctor -v`.
+2. Run `flutter analyze` and `flutter test`.
+3. Run `flutter build linux --release`.
+4. Inspect the actual bundle directory and run `ldd` against the executable.
+5. Do not package until the release bundle launches successfully on the build host.
+
+REQUIRED PACKAGE CHANNELS
+A. Flatpak, primary cross-distro installed channel.
+B. AppImage, portable single-file-style channel if FUSE/runtime compatibility passes.
+C. Portable `.tar.zst` release-bundle fallback.
+D. `.deb` for Debian/Ubuntu family.
+E. `.rpm` for Fedora/Nobara family.
+
+OPTIONAL
+- Snap
+- Flathub publication
+- apt repository
+- RPM repository
+- arm64/aarch64 package set when build/runtime evidence exists.
+
+DISTRO GATES
+At minimum test:
+- Ubuntu 22.04 LTS x86_64
+- Ubuntu 24.04 LTS x86_64
+- Debian 12 x86_64
+- Debian 13 x86_64
+- Fedora 44 x86_64
+- Nobara 44 Official/KDE x86_64
+
+Do not infer Nobara PASS from Fedora PASS.
+Do not call Fedora/Nobara upstream-Flutter-supported unless current Flutter documentation explicitly says so.
+
+BROAD COMPATIBILITY
+After required gates, test representative Mint/Pop!_OS/Arch/Endeavour/Manjaro/openSUSE systems as resources permit.
+Use Flatpak/AppImage rather than building a bespoke native package for every derivative.
+
+PORTABLE SECURITY
+Portable Linux persistent health data must be encrypted.
+Do not store plaintext health DB beside AppImage/executable.
+A Linux desktop keyring can be convenience unlock, not the only portable recovery path.
+
+INSTALLED DATA
+Use XDG-compatible data/config/cache locations and an audited secure-storage adapter.
+If keyring/Secret Service is unavailable, do not silently persist plaintext keys.
+
+FLATPAK
+Use least privilege and portals for user-selected file import/export where possible.
+Do not request full host filesystem access just to simplify implementation.
+
+APPIMAGE
+Record FUSE requirements and test them.
+If FUSE prevents launch, ship/point to Flatpak/native package/portable tar fallback rather than claiming universal AppImage support.
+
+SESSIONS
+Test Wayland GNOME and Wayland KDE. Test X11 where supported.
+Do not force X11 just because a plugin has a Wayland defect.
+
+UPDATES
+Package manager/channel owns binary updates for Flatpak/DEB/RPM/Snap installs.
+Portable direct artifacts use the verified Human OS portable update protocol.
+
+DELIVER REAL EVIDENCE
+For every produced package record:
+- file path
+- architecture
+- SHA-256
+- package format
+- source revision
+- Flutter/Dart version
+- dependency lock digest
+- SBOM state
+- signing state
+- exact distro/session smoke results.
+
+Never mark a package PASS because another package format or related distro passed.
+If Flutter/tooling is unavailable, report NOT_RUN/BLOCKED_ENVIRONMENT instead of inventing artifacts.

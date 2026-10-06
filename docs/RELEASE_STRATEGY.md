@@ -20,7 +20,7 @@ development → internal → beta → production. Every build records:
 | Target | Host | Command | Artifact | Signing |
 |---|---|---|---|---|
 | Web (private app) | Linux | `flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=…` | `human_health_os/build/web/` | n/a, HTTPS hosting |
-| Linux (CI smoke only) | Linux + GTK3 dev libs | `flutter build linux` | bundle | none |
+| Linux (product, D-008) | Ubuntu 22.04 builder (glibc floor) + GTK3 dev | `flutter build linux --release`, then package | `HumanHealthOS-Linux-x64-Portable.tar.gz`, `.AppImage`, `.deb`, `.rpm`, Flatpak | GPG-signed repo metadata / detached signatures |
 | Android | Linux/macOS + Android SDK, reaching Google Maven | `flutter build apk` and `flutter build appbundle` | APK, AAB | Upload key in protected CI secrets |
 | iOS | macOS + Xcode | `flutter build ipa` | IPA | Apple distribution certificate |
 | macOS | macOS + Xcode | `flutter build macos`, then create a DMG/PKG | `.app`, DMG | Developer ID + notarization + stapling |

@@ -51,4 +51,9 @@ class AppConfig {
   final String sourceRevision;
 
   bool get isProduction => profile == BuildProfile.production;
+
+  /// First 12 characters of the git revision, shown in "This build".
+  String get shortRevision => sourceRevision.length > 12
+      ? sourceRevision.substring(0, 12)
+      : sourceRevision;
 }

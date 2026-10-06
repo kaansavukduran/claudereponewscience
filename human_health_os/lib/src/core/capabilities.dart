@@ -7,6 +7,8 @@ library;
 
 import 'package:flutter/foundation.dart';
 
+import '../domain/ports/health_repository.dart';
+
 enum HostPlatform { android, ios, web, windows, macos, linux, other }
 
 enum CapabilityStatus {
@@ -61,8 +63,12 @@ class CapabilityRegistry {
     required this.capabilities,
   });
 
-  /// FORGE 001: no adapter exists yet, so nothing is `available`.
-  factory CapabilityRegistry.forPlatform(HostPlatform platform) {
+  /// Only real adapters are reported as `available`. [storage] describes the
+  /// repository actually opened at startup (null before it exists).
+  factory CapabilityRegistry.forPlatform(
+    HostPlatform platform, {
+    StorageDescription? storage,
+  }) {
     final healthPlatform = switch (platform) {
       HostPlatform.android => const Capability(
         id: 'health_platform',
@@ -80,7 +86,7 @@ class CapabilityRegistry {
         id: 'health_platform',
         label: 'Health platform',
         status: CapabilityStatus.unsupportedOnPlatform,
-        detail: 'No HealthKit or Health Connect on this platform. Manual entry and file import are the paths.',
+        detail: 'No HealthKit or Health Connect on this platform. Manual entry works now; file import is planned (FORGE 025).',
       ),
     };
     final keyStore = switch (platform) {
@@ -97,24 +103,30 @@ class CapabilityRegistry {
         detail: 'Encrypted vault with passphrase + platform key store planned (FORGE 004).',
       ),
     };
-    final storage = switch (platform) {
-      HostPlatform.web => const Capability(
+    final storageCap = switch (storage?.durability) {
+      StorageDurability.localFile => const Capability(
         id: 'local_storage',
         label: 'Local health records',
-        status: CapabilityStatus.notImplemented,
-        detail: 'Browser storage can be evicted; export will be the durable path. Planned FORGE 002.',
+        status: CapabilityStatus.available,
+        detail: 'Saved in a file on this device. Not encrypted yet (development build); encryption arrives in FORGE 004.',
       ),
-      _ => const Capability(
+      StorageDurability.browserStorage => const Capability(
+        id: 'local_storage',
+        label: 'Local health records',
+        status: CapabilityStatus.available,
+        detail: 'Saved in this browser. The browser may clear it; not encrypted yet (development build).',
+      ),
+      StorageDurability.memoryOnly || null => const Capability(
         id: 'local_storage',
         label: 'Local health records',
         status: CapabilityStatus.notImplemented,
-        detail: 'Local vault planned (FORGE 002, encrypted in FORGE 004).',
+        detail: 'Not saved on this platform yet: entries last only until the app closes.',
       ),
     };
     return CapabilityRegistry(
       platform: platform,
       capabilities: [
-        storage,
+        storageCap,
         keyStore,
         healthPlatform,
         const Capability(

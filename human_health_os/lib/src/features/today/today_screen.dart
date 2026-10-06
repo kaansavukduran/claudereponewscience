@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 
-import '../../config/app_config.dart';
+import '../../app/app_services.dart';
 import '../../core/capabilities.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
+import 'weight_card.dart';
 
 class TodayScreen extends StatelessWidget {
-  const TodayScreen({super.key, required this.config, required this.registry});
+  const TodayScreen({super.key, required this.services});
 
-  final AppConfig config;
-  final CapabilityRegistry registry;
+  final AppServices services;
 
   @override
   Widget build(BuildContext context) {
@@ -27,26 +27,31 @@ class TodayScreen extends StatelessWidget {
         ),
         const SizedBox(height: 8),
         Text(s.todayIntro, style: text.bodyLarge),
-        const SizedBox(height: 16),
-        _Section(
-          title: s.yourData,
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Icon(Icons.inventory_2_outlined, size: 20),
-              const SizedBox(width: 8),
-              Expanded(child: Text(s.yourDataEmpty, style: text.bodyMedium)),
-            ],
-          ),
+        const SizedBox(height: 8),
+        Wrap(
+          key: const ValueKey('today-planned'),
+          spacing: 8,
+          runSpacing: 4,
+          crossAxisAlignment: WrapCrossAlignment.center,
+          children: [
+            Text(s.checkInsAndMissions, style: text.bodyMedium),
+            StatusChip(
+              label: s.plannedIn(today.plannedForge!),
+              tone: StatusTone.muted,
+            ),
+          ],
         ),
+        const SizedBox(height: 16),
+        WeightCard(services: services),
         const SizedBox(height: 12),
         _Section(
           title: s.thisBuild,
           child: Column(
             children: [
-              _KeyValue(s.profile, config.profile.name.toUpperCase()),
-              _KeyValue(s.version, config.version),
-              _KeyValue(s.platform, registry.platform.name),
+              _KeyValue(s.profile, services.config.profile.name.toUpperCase()),
+              _KeyValue(s.version, services.config.version),
+              _KeyValue(s.platform, services.registry.platform.name),
+              _KeyValue(s.sourceRevision, services.config.shortRevision),
             ],
           ),
         ),
@@ -55,7 +60,7 @@ class TodayScreen extends StatelessWidget {
           title: s.capabilities,
           child: Column(
             children: [
-              for (final c in registry.capabilities)
+              for (final c in services.registry.capabilities)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 6),
                   child: Row(
