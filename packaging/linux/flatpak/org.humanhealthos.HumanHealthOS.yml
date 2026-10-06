@@ -1,0 +1,36 @@
+# Flatpak manifest (least privilege, v0.28 FLATPAK). Repackages the prebuilt
+# Flutter release bundle; build with:
+#   flatpak-builder --user --install build-dir packaging/linux/flatpak/org.humanhealthos.HumanHealthOS.yml
+# Requires org.freedesktop.Platform//24.08 from Flathub.
+app-id: org.humanhealthos.HumanHealthOS
+runtime: org.freedesktop.Platform
+runtime-version: '24.08'
+sdk: org.freedesktop.Sdk
+command: human-health-os
+finish-args:
+  - --socket=wayland
+  - --socket=fallback-x11
+  - --share=ipc
+  - --device=dri
+  # No --share=network: the core is offline.
+  # No --filesystem=*: import/export will use the file chooser portal.
+modules:
+  - name: human-health-os
+    buildsystem: simple
+    build-commands:
+      - mkdir -p /app/lib/human-health-os /app/bin
+      - cp -a bundle/. /app/lib/human-health-os/
+      - ln -s ../lib/human-health-os/human_health_os /app/bin/human-health-os
+      - install -Dm644 org.humanhealthos.HumanHealthOS.desktop /app/share/applications/org.humanhealthos.HumanHealthOS.desktop
+      - install -Dm644 org.humanhealthos.HumanHealthOS.metainfo.xml /app/share/metainfo/org.humanhealthos.HumanHealthOS.metainfo.xml
+      - install -Dm644 org.humanhealthos.HumanHealthOS.svg /app/share/icons/hicolor/scalable/apps/org.humanhealthos.HumanHealthOS.svg
+    sources:
+      - type: dir
+        path: ../../../human_health_os/build/linux/x64/release/bundle
+        dest: bundle
+      - type: file
+        path: ../org.humanhealthos.HumanHealthOS.desktop
+      - type: file
+        path: ../org.humanhealthos.HumanHealthOS.metainfo.xml
+      - type: file
+        path: ../icons/org.humanhealthos.HumanHealthOS.svg

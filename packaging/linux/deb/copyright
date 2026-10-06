@@ -1,0 +1,14 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: human-health-os
+Source: https://github.com/kaansavukduran/claudereponewscience
+
+Files: *
+Copyright: 2026 Human OS project
+License: LicenseRef-proprietary
+ No licence has been chosen yet; all rights reserved by the author.
+
+Files: usr/lib/human-health-os/lib/libflutter_linux_gtk.so usr/lib/human-health-os/data/icudtl.dat
+Copyright: 2013 The Flutter Authors; Unicode, Inc. and others
+License: BSD-3-Clause and Unicode-DFS-2016
+ Flutter engine (BSD-3-Clause) and ICU data (Unicode licence). Full texts:
+ /usr/lib/human-health-os/data/flutter_assets/NOTICES.Z

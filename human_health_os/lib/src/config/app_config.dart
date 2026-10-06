@@ -52,6 +52,12 @@ class AppConfig {
 
   bool get isProduction => profile == BuildProfile.production;
 
+  /// Only development builds (run from source by developers) may keep an
+  /// unencrypted vault. Staging previews and production packages stay
+  /// memory-only until the encrypted vault (FORGE 004), so no distributed
+  /// artifact ever writes plaintext health data (v0.28 / D-009 / D-010).
+  bool get mayPersistUnencrypted => profile == BuildProfile.development;
+
   /// First 12 characters of the git revision, shown in "This build".
   String get shortRevision => sourceRevision.length > 12
       ? sourceRevision.substring(0, 12)

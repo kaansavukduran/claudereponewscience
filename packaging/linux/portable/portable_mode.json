@@ -1,0 +1,5 @@
+{
+  "schema": 1,
+  "mode": "portable",
+  "storage": "encrypted vault in UserData/ beside the executable (FORGE 004). Until then nothing is written; entries last until the app closes."
+}

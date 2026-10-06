@@ -1,5 +1,5 @@
-// Storage policy (D-009): portable and production builds never write a
-// plaintext vault; development installs use the XDG/LOCALAPPDATA location.
+// Storage policy (D-009/D-010): portable, staging and production builds never
+// write a plaintext vault; development installs use the XDG/LOCALAPPDATA location.
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
@@ -9,6 +9,11 @@ import 'package:human_health_os/src/domain/ports/health_repository.dart';
 
 const dev = AppConfig(
   profile: BuildProfile.development,
+  version: 't',
+  sourceRevision: 't',
+);
+const staging = AppConfig(
+  profile: BuildProfile.staging,
   version: 't',
   sourceRevision: 't',
 );
@@ -51,6 +56,21 @@ void main() {
       StorageDurability.memoryOnly,
     );
     expect(choice.notice, contains('Production builds'));
+  });
+
+  test('staging (packaged previews): nothing written to XDG either', () async {
+    final choice = await createPlatformRepository(
+      staging,
+      env: {'XDG_DATA_HOME': '${tmp.path}/data', 'HOME': tmp.path},
+      executablePath: '${tmp.path}/bin/human_health_os',
+    );
+    expect(
+      choice.repository.description.durability,
+      StorageDurability.memoryOnly,
+    );
+    expect(choice.notice, contains('Staging builds'));
+    await choice.repository.open();
+    expect(Directory('${tmp.path}/data').existsSync(), isFalse);
   });
 
   test('development install on Linux uses the XDG data directory', () async {

@@ -1,0 +1,37 @@
+# Repackages a prebuilt Flutter release bundle; nothing is compiled here.
+%global debug_package %{nil}
+%global __os_install_post %{nil}
+%global __provides_exclude_from ^/usr/lib64/human-health-os/.*$
+%global __requires_exclude ^(libflutter_linux_gtk\\.so|libapp\\.so).*$
+
+Name:           human-health-os
+Version:        @VERSION@
+Release:        1
+Summary:        Human OS personal health timeline (staging preview)
+License:        LicenseRef-proprietary
+URL:            https://github.com/kaansavukduran/claudereponewscience
+ExclusiveArch:  x86_64
+Requires:       libEGL.so.1()(64bit)
+Requires:       hicolor-icon-theme
+
+%description
+Offline-first personal health record built with Flutter. This staging
+preview records body weight by hand and keeps entries only until the app
+closes: the encrypted vault is not built yet, so nothing is written to disk.
+Not for clinical decisions. No network access.
+
+%install
+mkdir -p %{buildroot}
+cp -a @STAGE@/. %{buildroot}/
+
+%files
+/usr/bin/human-health-os
+/usr/lib64/human-health-os
+/usr/share/applications/org.humanhealthos.HumanHealthOS.desktop
+/usr/share/metainfo/org.humanhealthos.HumanHealthOS.metainfo.xml
+/usr/share/icons/hicolor/scalable/apps/org.humanhealthos.HumanHealthOS.svg
+/usr/share/icons/hicolor/256x256/apps/org.humanhealthos.HumanHealthOS.png
+
+%changelog
+* Tue Oct 06 2026 Human OS project <noreply@humanhealthos.invalid> - @VERSION@-1
+- First Linux package (FORGE F030L-1), staging preview.

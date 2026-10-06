@@ -1,0 +1,4 @@
+#!/bin/sh
+# AppImage entry point. The bundle resolves lib/ and data/ from its own path.
+HERE="$(dirname "$(readlink -f "$0")")"
+exec "$HERE/usr/lib/human-health-os/human_health_os" "$@"

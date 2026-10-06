@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>org.humanhealthos.HumanHealthOS</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+  <name>Human OS</name>
+  <summary>Offline-first personal health timeline</summary>
+  <description>
+    <p>
+      Human OS keeps health records on one timeline with their source. This is a
+      staging preview: it records body weight by hand, keeps entries only until the
+      app closes (the encrypted vault is not built yet) and is not for clinical decisions.
+    </p>
+    <p>
+      It never sends data over the network and never stores a missing value as zero.
+    </p>
+  </description>
+  <url type="homepage">https://github.com/kaansavukduran/claudereponewscience</url>
+  <launchable type="desktop-id">org.humanhealthos.HumanHealthOS.desktop</launchable>
+  <developer id="org.humanhealthos">
+    <name>Human OS project</name>
+  </developer>
+  <content_rating type="oars-1.1"/>
+  <supports>
+    <control>pointing</control>
+    <control>keyboard</control>
+    <control>touch</control>
+  </supports>
+  <requires>
+    <display_length compare="ge">320</display_length>
+  </requires>
+  <releases>
+    <release version="0.1.0~staging1" date="2026-10-06" type="development">
+      <description>
+        <p>First Linux packages: weight entry, honest storage labels, no network.</p>
+      </description>
+    </release>
+  </releases>
+</component>

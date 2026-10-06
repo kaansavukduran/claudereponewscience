@@ -88,10 +88,11 @@ Future<StorageChoice> createPlatformRepository(
   Map<String, String>? env,
   String? executablePath,
 }) async {
-  if (config.isProduction) {
+  if (!config.mayPersistUnencrypted) {
     return StorageChoice(
       inMemoryRepository(),
-      notice: 'Production builds do not save unencrypted health data. Saving turns on with the encrypted vault (FORGE 004).',
+      notice:
+          '${config.isProduction ? 'Production' : 'Staging'} builds do not save unencrypted health data. Saving turns on with the encrypted vault (FORGE 004); entries last until the app closes.',
     );
   }
   // v0.28 / D-009: portable data must be encrypted. Never write a plaintext

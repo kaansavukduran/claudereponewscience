@@ -1,0 +1,15 @@
+[Desktop Entry]
+Type=Application
+Version=1.5
+Name=Human OS
+GenericName=Personal health record
+GenericName[tr]=Kişisel sağlık kaydı
+Comment=Offline-first personal health timeline (staging preview, not for clinical decisions)
+Comment[tr]=Çevrimdışı öncelikli kişisel sağlık zaman çizelgesi (staging önizleme, klinik karar için değil)
+Exec=human-health-os
+Icon=org.humanhealthos.HumanHealthOS
+Terminal=false
+Categories=Utility;
+Keywords=health;weight;labs;timeline;sağlık;
+StartupWMClass=org.humanhealthos.HumanHealthOS
+StartupNotify=true
