@@ -400,3 +400,42 @@ No secrets, keys or real health data added. The development vault stays unencryp
 
 ## Next recommended Forge
 **F003@v0.32 — timeline + correction lineage** (MVP batch, D-014).
+
+---
+
+# FORGE F003@v0.32 — timeline + correction lineage, 2026-10-07 — F003_COMPLETE
+
+**Goal** timeline projection; edits create lineage, never destructive rewrites; delete differs from correction and from entered-in-error (master §39). **Baseline** 0157f96 → implementation 8d64c5e (clean tree for all gates). MVP batch D-014, Forge 2 of 5.
+
+## Semantics implemented
+| Action | Record written | Effect |
+|---|---|---|
+| Correct | new version, `amend_reason: correction`, same observation time | newest version counts; older versions stay in history |
+| Entered in error | marker (`notApplicable`, no value) | target voided; a mistaken correction lets the previous version count again; target stays in history as withdrawn |
+| Delete | marker with `deleted_at` (tombstone) | every version leaves current views; history view keeps it; a later (stale) correction cannot resurrect it |
+| Two live corrections of one version (sync/import) | — | conflict: both shown, Today shows "Versions disagree", never resolved by timestamp (v0.24 FR-166) |
+
+Record schema 2 adds `amend_reason`; schema 1 records keep their exact JSON and a bare `supersedes_id` still means correction. An F002 build refuses a vault with schema 2 records (`RECORD_SCHEMA_NEWER`).
+
+## Acceptance → evidence
+AC-1 ordering, AC-2 correction history, AC-3 entered in error, AC-4 delete/no resurrection, AC-5 conflict, AC-6 schema rules: `test/domain/timeline_test.dart` (13), `test/data/lineage_store_test.dart` · AC-7 store integrity and AC-8 use cases: `lineage_store_test` · AC-9 UI: `test/widget/f003_timeline_test.dart` (6, EN/TR, 320 dp at 2×) · AC-10 fixture `v1_f003_schema2`: `vault_compat_test` · AC-11 EV-TEST-F003-0006 (Linux integration), EV-RUNTIME-F003-0001 (smoke: saved weight on the Timeline) · AC-12 regression receipts + mutations.
+
+## Tests / Builds / Runtime (receipts on 8d64c5e)
+- `flutter test` 138 PASS (EV-TEST-F003-0004); integration 3 PASS (EV-TEST-F003-0006); tooling 16, contracts, `pnpm test` PASS; format/analyze clean.
+- Web COMPILED (EV-BUILD-F003-0001); smoke 44/44 RUNTIME_TESTED (EV-RUNTIME-F003-0001).
+- Linux COMPILED (EV-BUILD-F003-0002, UNSIGNED); launch RUNTIME_TESTED on the schema-2 fixture vault (EV-RUNTIME-F003-0002): Today shows 80 kg (the 8 kg correction withdrawn), the deleted 79 kg is absent, the schema 1 record 81.5 kg is listed (`reports/runtime/linux-f003/f003-linux-x11.png`).
+
+## Failures found and repairs
+1. Expected contract breaks (record schema v2, Timeline no longer a placeholder) → F001/F002 tests updated to the new contract.
+2. Determinism test compared records containing lists (identity equality) → compared string signatures.
+3. A first "older build refuses" fixture test only restated constants → removed rather than kept as weak evidence; the real refusal is covered by `RECORD_SCHEMA_NEWER` tests.
+4. Mutation T4 first produced a compile error (not a behavioural result) → redone as a behavioural mutation.
+
+## Mutations (each caught)
+T1 entered-in-error no longer voids the correction · T2 deletion ignored · T3 conflict picked by timestamp · T4 orphan amendment accepted · T5 older version can be amended · T6 schema 1 JSON gains `amend_reason`.
+
+## Known limitations
+No erasure (hard delete) workflow; observation time cannot be corrected; no derived outputs exist yet to invalidate; Timeline actions correct body weight only (labs arrive in F004).
+
+## Next recommended Forge
+**F004@v0.32 — labs vertical slice** (MVP batch, D-014).

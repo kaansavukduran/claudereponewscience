@@ -3,57 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "TESTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F003",
-    "contract": "v0.32",
-    "run_id": "F003@v0.32",
-    "goal": "Timeline projection and correction lineage: corrections add versions, entered-in-error and delete are different, conflicts are surfaced (master §39 F003)",
-    "status": "TESTING",
-    "baseline_commit": "0157f96",
-    "started_at": "2026-10-07T08:15:00Z",
-    "scope": [
-      "record schema 2 with amend_reason (correction, entered_in_error, deleted); schema 1 read unchanged",
-      "timeline projection (buildTimeline) with deterministic ordering",
-      "store referential integrity for amendments, checked before writing",
-      "use cases: correct, mark entered in error, delete (current version only)",
-      "Timeline screen with versions and the three actions; Today conflict display",
-      "schema-2 fixture, integration and smoke coverage"
-    ],
-    "out_of_scope": [
-      "hard delete / erasure workflow (retention)",
-      "editing observation time",
-      "derived-output invalidation (no derived outputs exist yet)",
-      "lab results on the timeline (F004)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Ordering: newest observation first, then newest entry, then id; independent of read order (rotations and reversal give the same timeline)",
-      "AC-2 Correction history: a chain is one entry; the newest version counts; every version stays; a correction to 'not measured' stays missing; a schema 1 supersedes without reason is a correction",
-      "AC-3 Entered in error: voids its target; on a correction the previous version counts again; on an original the entry leaves current views and stays in the history view",
-      "AC-4 Delete: tombstones the whole fact (all versions) with a deletion time; hidden from current views, shown in the history view; a later correction cannot resurrect it; schema 1 self-deleted records are deleted",
-      "AC-5 Conflict: two live corrections of one version are shown as a conflict with both versions; Today shows 'Versions disagree' instead of a number; marking one side entered in error resolves it",
-      "AC-6 Record schema 2 rules: amendment needs a target; schema 2 supersedes needs a reason; markers carry no value; only deletions carry deleted_at; schema 1 JSON keeps its exact shape",
-      "AC-7 Store integrity: amendments of missing records, markers, or another profile/kind are refused before writing (file unchanged); on replay they are skipped with a warning",
-      "AC-8 Use cases: correct / entered in error / delete append exactly one record each (append-only), only on the current version (TARGET_NOT_CURRENT / TARGET_NOT_FOUND), and survive a restart",
-      "AC-9 Timeline UI: entries newest first with state and source; correct flow; entered-in-error and delete confirmations explain the difference; history toggle; EN/TR; 320 dp at 2x text without overflow",
-      "AC-10 Fixture v1_f003_schema2 (mixed schema 1 and 2) equals the writer's bytes and replays into the expected lineage",
-      "AC-11 Linux integration (real IO): correction + withdrawal survive a relaunch; web smoke: saved weight listed on the Timeline after reload",
-      "AC-12 Regression: F001/F002 gates pass; mutations T1-T6 each fail the intended test"
-    ],
-    "completed_steps": [
-      "SPECIFY: AC-1..AC-12",
-      "IMPLEMENT: AmendReason + schema 2, timeline.dart, VaultState.check, HeartbeatService correct/amend/timeline, TimelineScreen + detail sheet, Today conflict, EN/TR strings, Timeline destination built",
-      "TEST: timeline_test (13), lineage_store_test, f003_timeline_test (6), vault_compat fixture tests, integration F003 test, smoke Timeline checks; 138 unit/widget + 3 integration pass locally",
-      "MUTATION: T1-T6 caught (T4 redone as a behavioural mutation after a compile-only variant)"
-    ],
-    "last_verified_gate": null,
-    "next_action": "commit, then run gates with --forge F003@v0.32",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -64,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F002@v0.32 (2026-10-07, source revision e16c73b2391c)",
+  "last_completed_forge": "F003@v0.32 (2026-10-07, source revision 8d64c5e29e94)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -77,86 +29,86 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F002-0001",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-TEST-F003-0001",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F002-0002",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-TEST-F003-0002",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F002-0003",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-TEST-F003-0003",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
-      "gate": "flutter test (111 tests: vault_compat, no_plaintext_secret, f002_persistence, storage_policy, repository_contract, F001 suite)",
-      "evidence_id": "EV-TEST-F002-0004",
-      "criterion": "AC-1..AC-9",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "gate": "flutter test (138: timeline, lineage store, F003 timeline UI, fixtures, F001/F002 suites)",
+      "evidence_id": "EV-TEST-F003-0004",
+      "criterion": "AC-1..AC-10",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "evidence tooling unit tests (16)",
-      "evidence_id": "EV-TEST-F002-0005",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-TEST-F003-0005",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development)",
-      "evidence_id": "EV-BUILD-F002-0001",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-BUILD-F003-0001",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
-      "gate": "web runtime smoke (Chromium 141; weight save -> reload in localStorage; 0 console errors)",
-      "evidence_id": "EV-RUNTIME-F002-0001",
+      "gate": "web runtime smoke incl. saved weight listed on the Timeline after reload",
+      "evidence_id": "EV-RUNTIME-F003-0001",
       "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
-      "gate": "integration_test on Linux (save/relaunch; legacy folder move through the real adapter)",
-      "evidence_id": "EV-TEST-F002-0006",
-      "criterion": "AC-10",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "gate": "integration_test on Linux (F002 + correction/withdrawal survive relaunch)",
+      "evidence_id": "EV-TEST-F003-0006",
+      "criterion": "AC-11",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development)",
-      "evidence_id": "EV-BUILD-F002-0002",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-BUILD-F003-0002",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
-      "gate": "Linux launch with a pre-F002 vault in HumanHealthOS/: moved to human-health-os/, bytes unchanged, note + records shown",
-      "evidence_id": "EV-RUNTIME-F002-0002",
-      "criterion": "AC-7",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "gate": "Linux launch on the schema-2 fixture vault: 80 kg current (8 kg withdrawn), deleted 79 kg hidden",
+      "evidence_id": "EV-RUNTIME-F003-0002",
+      "criterion": "AC-3, AC-4",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "golden-vector contract check",
-      "evidence_id": "EV-TEST-F002-0007",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-TEST-F003-0007",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F002-0008",
-      "criterion": "AC-11",
-      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "evidence_id": "EV-TEST-F003-0008",
+      "criterion": "AC-12",
+      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
       "result": "PASS"
     }
   ],
@@ -188,8 +140,13 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": null,
-  "updated_at": "2026-10-07T08:50:00Z",
+  "next_recommended_forge": {
+    "forge_id": "F004",
+    "contract": "v0.32",
+    "run_id": "F004@v0.32",
+    "why": "master §39 ladder: labs vertical slice (manual LabResult as printed, missing unit/range stays missing, source flag preserved, no diagnosis, timeline integration) (MVP batch D-014)"
+  },
+  "updated_at": "2026-10-07T09:20:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -215,20 +172,20 @@
     "web": {
       "status": "RUNTIME_TESTED",
       "evidence": [
-        "EV-BUILD-F002-0001",
-        "EV-RUNTIME-F002-0001"
+        "EV-BUILD-F003-0001",
+        "EV-RUNTIME-F003-0001"
       ],
       "note": "development profile, offline build (--no-web-resources-cdn); Chromium 141 headless; PWA install NOT_TESTED"
     },
     "linux": {
-      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch with legacy-vault move + integration_test; EV-BUILD-F002-0002, EV-RUNTIME-F002-0002, EV-TEST-F002-0006)",
+      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch on a schema-2 vault + integration_test; EV-BUILD-F003-0002, EV-RUNTIME-F003-0002, EV-TEST-F003-0006)",
       "product_surface": true,
       "packaged": "F015-L1 IN_PROGRESS_RECOVERABLE: tar.zst, deb, rpm, AppImage built (UNSIGNED); Ubuntu 24.04 install/launch PASS; Ubuntu 22.04 FAIL (libGLESv2 dependency); Flatpak NOT_BUILT; see reports/artifacts/forge-f030l-1.json",
       "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12); older distros need an older-glibc builder (D-009)",
       "distro_tests": "Ubuntu 24.04 (host) PASS for deb/tar.zst/AppImage on X11 + Weston Wayland; Ubuntu 22.04 FAIL (open defect); Fedora 44 static rpm checks only; Debian 12/13, Nobara 44, GNOME/KDE Wayland NOT_RUN",
       "evidence": [
-        "reports/runtime/linux-f002/f002-linux-x11.log",
-        "reports/runtime/linux-f002/f002-linux-x11.png"
+        "reports/runtime/linux-f003/f003-linux-x11.log",
+        "reports/runtime/linux-f003/f003-linux-x11.png"
       ]
     },
     "android": {
@@ -259,7 +216,8 @@
     "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
     "labs": "NOT_STARTED in Flutter (TS reference engine exists)",
     "sync": "NOT_STARTED (TS reference API exists, dev auth only)",
-    "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED (body.weight only)"
+    "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED + RUNTIME_TESTED (body.weight; record schema 2 with amend_reason)",
+    "timeline": "RUNTIME_TESTED (F003@v0.32): projection with correction / entered-in-error / delete / conflict semantics; Timeline screen; record schema 2"
   },
   "storage_policy": {
     "production": "memory only",
@@ -807,6 +765,195 @@
         }
       ],
       "note": "No production migration exists (format 1 is the baseline); the migration machinery is tested with synthetic M002/M003 steps. Vault on-disk upgrade waits for F005 checkpoints (D-014)."
+    },
+    "F003@v0.32": {
+      "forge_id": "F003",
+      "contract": "v0.32",
+      "run_id": "F003@v0.32",
+      "goal": "Timeline projection and correction lineage: corrections add versions, entered-in-error and delete are different, conflicts are surfaced (master §39 F003)",
+      "status": "DONE",
+      "baseline_commit": "0157f96",
+      "started_at": "2026-10-07T08:15:00Z",
+      "scope": [
+        "record schema 2 with amend_reason (correction, entered_in_error, deleted); schema 1 read unchanged",
+        "timeline projection (buildTimeline) with deterministic ordering",
+        "store referential integrity for amendments, checked before writing",
+        "use cases: correct, mark entered in error, delete (current version only)",
+        "Timeline screen with versions and the three actions; Today conflict display",
+        "schema-2 fixture, integration and smoke coverage"
+      ],
+      "out_of_scope": [
+        "hard delete / erasure workflow (retention)",
+        "editing observation time",
+        "derived-output invalidation (no derived outputs exist yet)",
+        "lab results on the timeline (F004)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Ordering: newest observation first, then newest entry, then id; independent of read order (rotations and reversal give the same timeline)",
+        "AC-2 Correction history: a chain is one entry; the newest version counts; every version stays; a correction to 'not measured' stays missing; a schema 1 supersedes without reason is a correction",
+        "AC-3 Entered in error: voids its target; on a correction the previous version counts again; on an original the entry leaves current views and stays in the history view",
+        "AC-4 Delete: tombstones the whole fact (all versions) with a deletion time; hidden from current views, shown in the history view; a later correction cannot resurrect it; schema 1 self-deleted records are deleted",
+        "AC-5 Conflict: two live corrections of one version are shown as a conflict with both versions; Today shows 'Versions disagree' instead of a number; marking one side entered in error resolves it",
+        "AC-6 Record schema 2 rules: amendment needs a target; schema 2 supersedes needs a reason; markers carry no value; only deletions carry deleted_at; schema 1 JSON keeps its exact shape",
+        "AC-7 Store integrity: amendments of missing records, markers, or another profile/kind are refused before writing (file unchanged); on replay they are skipped with a warning",
+        "AC-8 Use cases: correct / entered in error / delete append exactly one record each (append-only), only on the current version (TARGET_NOT_CURRENT / TARGET_NOT_FOUND), and survive a restart",
+        "AC-9 Timeline UI: entries newest first with state and source; correct flow; entered-in-error and delete confirmations explain the difference; history toggle; EN/TR; 320 dp at 2x text without overflow",
+        "AC-10 Fixture v1_f003_schema2 (mixed schema 1 and 2) equals the writer's bytes and replays into the expected lineage",
+        "AC-11 Linux integration (real IO): correction + withdrawal survive a relaunch; web smoke: saved weight listed on the Timeline after reload",
+        "AC-12 Regression: F001/F002 gates pass; mutations T1-T6 each fail the intended test"
+      ],
+      "completed_steps": [
+        "SPECIFY: AC-1..AC-12",
+        "IMPLEMENT: AmendReason + schema 2, timeline.dart, VaultState.check, HeartbeatService correct/amend/timeline, TimelineScreen + detail sheet, Today conflict, EN/TR strings, Timeline destination built",
+        "TEST: timeline_test (13), lineage_store_test, f003_timeline_test (6), vault_compat fixture tests, integration F003 test, smoke Timeline checks; 138 unit/widget + 3 integration pass locally",
+        "MUTATION: T1-T6 caught (T4 redone as a behavioural mutation after a compile-only variant)",
+        "GATES: 12 receipts on clean tree 8d64c5e, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F003-0008",
+      "next_action": null,
+      "files_touched": [
+        "docs/ARCHITECTURE.md",
+        "docs/ROADMAP.md",
+        "human_health_os/integration_test/heartbeat_test.dart",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/data/local/log_repository.dart",
+        "human_health_os/lib/src/data/local/vault_log.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/domain/records/timeline.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/navigation/app_shell.dart",
+        "human_health_os/lib/src/navigation/destinations.dart",
+        "human_health_os/test/data/lineage_store_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/domain/timeline_test.dart",
+        "human_health_os/test/fixtures/vault/README.md",
+        "human_health_os/test/fixtures/vault/v1_f003_schema2.hhoslog.jsonl",
+        "human_health_os/test/widget/f001_contract_test.dart",
+        "human_health_os/test/widget/f003_timeline_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "reports/runtime/flutter-web-desktop-en-timeline-records.png",
+        "reports/runtime/flutter-web-desktop-en-timeline.png",
+        "reports/runtime/flutter-web-desktop-en-today.png",
+        "reports/runtime/flutter-web-desktop-en-weight.png",
+        "reports/runtime/flutter-web-phone-en-labs.png",
+        "reports/runtime/flutter-web-phone-en-timeline-records.png",
+        "reports/runtime/flutter-web-phone-en-timeline.png",
+        "reports/runtime/flutter-web-phone-en-today.png",
+        "reports/runtime/flutter-web-phone-en-weight.png",
+        "reports/runtime/flutter-web-phone-tr-labs.png",
+        "reports/runtime/flutter-web-phone-tr-timeline.png",
+        "reports/runtime/flutter-web-phone-tr-today.png",
+        "reports/runtime/flutter_web_smoke.json",
+        "tools/flutter_web_smoke.mjs"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F003-0001",
+        "EV-TEST-F003-0002",
+        "EV-TEST-F003-0003",
+        "EV-TEST-F003-0004",
+        "EV-TEST-F003-0005",
+        "EV-BUILD-F003-0001",
+        "EV-RUNTIME-F003-0001",
+        "EV-TEST-F003-0006",
+        "EV-BUILD-F003-0002",
+        "EV-RUNTIME-F003-0002",
+        "EV-TEST-F003-0007",
+        "EV-TEST-F003-0008"
+      ],
+      "blocker": null,
+      "result": "F003_COMPLETE",
+      "finished_at": "2026-10-07T09:20:00Z",
+      "app_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F003-0001",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F003-0002",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F003-0003",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test (138: timeline, lineage store, F003 timeline UI, fixtures, F001/F002 suites)",
+          "evidence_id": "EV-TEST-F003-0004",
+          "criterion": "AC-1..AC-10",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "evidence tooling unit tests (16)",
+          "evidence_id": "EV-TEST-F003-0005",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development)",
+          "evidence_id": "EV-BUILD-F003-0001",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "web runtime smoke incl. saved weight listed on the Timeline after reload",
+          "evidence_id": "EV-RUNTIME-F003-0001",
+          "criterion": "AC-11",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "integration_test on Linux (F002 + correction/withdrawal survive relaunch)",
+          "evidence_id": "EV-TEST-F003-0006",
+          "criterion": "AC-11",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development)",
+          "evidence_id": "EV-BUILD-F003-0002",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux launch on the schema-2 fixture vault: 80 kg current (8 kg withdrawn), deleted 79 kg hidden",
+          "evidence_id": "EV-RUNTIME-F003-0002",
+          "criterion": "AC-3, AC-4",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "golden-vector contract check",
+          "evidence_id": "EV-TEST-F003-0007",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F003-0008",
+          "criterion": "AC-12",
+          "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        }
+      ]
     }
   },
   "forge_history_legacy_ids": {

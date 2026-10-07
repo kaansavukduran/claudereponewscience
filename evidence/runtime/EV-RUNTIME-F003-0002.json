@@ -1,0 +1,88 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-F003-0002",
+  "kind": "RUNTIME",
+  "forge_id": "F003@v0.32",
+  "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env HOME=/tmp/claude-0/f003/linux/home LANG=C.UTF-8 xvfb-run -a -s '-screen 0 1280x900x24' tools/linux/launch_smoke.sh f003-linux-x11 reports/runtime/linux-f003 /tmp/claude-0/f003/linux/home -- human_health_os/build/linux/x64/release/bundle/human_health_os",
+  "argv": [
+    "env",
+    "HOME=/tmp/claude-0/f003/linux/home",
+    "LANG=C.UTF-8",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x900x24",
+    "tools/linux/launch_smoke.sh",
+    "f003-linux-x11",
+    "reports/runtime/linux-f003",
+    "/tmp/claude-0/f003/linux/home",
+    "--",
+    "human_health_os/build/linux/x64/release/bundle/human_health_os"
+  ],
+  "cwd": ".",
+  "started_at": "2026-10-07T08:19:15.067Z",
+  "finished_at": "2026-10-07T08:19:27.403Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v77 x86_64",
+  "summary": "# result: PASS",
+  "log_sha256": "6b86a9cbfda59a4809cc17c12a219f666e2d6dd0b121dd23b900e3af65cef6f0",
+  "log_lines": 16,
+  "log_tail": [
+    "libEGL warning: DRI3 error: Could not get DRI3 device",
+    "libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering",
+    "",
+    "(org.humanhealthos.HumanHealthOS:14869): Atk-CRITICAL **: 08:19:15.366: atk_socket_embed: assertion 'plug_id != NULL' failed",
+    "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+    "",
+    "** (org.humanhealthos.HumanHealthOS:14869): CRITICAL **: 08:19:16.001: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed",
+    "# liveness: alive after 12 s",
+    "# screenshot: f003-linux-x11.png",
+    "# app files under watched dir: unchanged",
+    "# mesa shader cache files (driver, not app data): 90",
+    "# result: PASS"
+  ],
+  "lockfile_sha256": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/linux/launch_smoke.sh"
+  ],
+  "target": "linux",
+  "arch": "x86_64",
+  "profile": "development",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f003/f003-linux-x11.log",
+      "type": "file",
+      "bytes": 970,
+      "sha256": "6b86a9cbfda59a4809cc17c12a219f666e2d6dd0b121dd23b900e3af65cef6f0"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f003/f003-linux-x11.png",
+      "type": "file",
+      "bytes": 86489,
+      "sha256": "5eb2638a9adae11fb734635f1c3ed2c857fa21012806e9b9b157ff05a6e1bc3a"
+    },
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/linux/x64/release/bundle/lib/libapp.so",
+      "type": "file",
+      "bytes": 5964680,
+      "sha256": "fbba9856a53a774721464880c708e2e728d327dfa173843f5a3e0eb7301f8dd1"
+    }
+  ]
+}
