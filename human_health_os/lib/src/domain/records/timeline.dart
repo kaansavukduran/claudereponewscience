@@ -75,14 +75,30 @@ bool isAmendMarker(HealthRecord r) => r.amendReason?.isMarker ?? false;
 /// calendar day the start of that day in the device's time zone, so a lab
 /// dated D sorts after every instant shown on an earlier local day (review
 /// finding: UTC midnight misordered evening entries west of UTC).
-DateTime orderingInstant(HealthRecord r) {
+///
+/// [localMidnight] gives the UTC instant of a local calendar day's start;
+/// it defaults to the device's time zone and is replaceable in tests.
+DateTime orderingInstant(
+  HealthRecord r, {
+  DateTime Function(int year, int month, int day) localMidnight =
+      deviceLocalMidnight,
+}) {
   if (!r.observedDateOnly) return r.observedAt;
   final d = r.observedAt;
-  return DateTime(d.year, d.month, d.day).toUtc();
+  return localMidnight(d.year, d.month, d.day);
 }
 
-int _newestFirst(HealthRecord a, HealthRecord b) {
-  final t = orderingInstant(b).compareTo(orderingInstant(a));
+DateTime deviceLocalMidnight(int y, int m, int d) => DateTime(y, m, d).toUtc();
+
+int _newestFirst(
+  HealthRecord a,
+  HealthRecord b, [
+  DateTime Function(int, int, int) localMidnight = deviceLocalMidnight,
+]) {
+  final t = orderingInstant(
+    b,
+    localMidnight: localMidnight,
+  ).compareTo(orderingInstant(a, localMidnight: localMidnight));
   if (t != 0) return t;
   final r = b.recordedAt.compareTo(a.recordedAt);
   return r != 0 ? r : a.id.compareTo(b.id);
@@ -94,7 +110,11 @@ int _newestFirst(HealthRecord a, HealthRecord b) {
 List<TimelineEntry> buildTimeline(
   Iterable<HealthRecord> records, {
   bool includeHidden = false,
+  DateTime Function(int year, int month, int day) localMidnight =
+      deviceLocalMidnight,
 }) {
+  int newestFirst(HealthRecord a, HealthRecord b) =>
+      _newestFirst(a, b, localMidnight);
   final byId = {for (final r in records) r.id: r};
   final voided = <String>{
     for (final r in byId.values)
@@ -166,7 +186,7 @@ List<TimelineEntry> buildTimeline(
     final heads = [
       for (final v in live)
         if ((successors[v.id] ?? const []).isEmpty) v,
-    ]..sort(_newestFirst);
+    ]..sort(newestFirst);
     HealthRecord? deletion;
     for (final v in versions) {
       deletion ??= deletions[v.id];
@@ -194,7 +214,7 @@ List<TimelineEntry> buildTimeline(
     if (entry.isLive || includeHidden) entries.add(entry);
   }
   entries.sort((a, b) {
-    final c = _newestFirst(a.shown, b.shown);
+    final c = newestFirst(a.shown, b.shown);
     return c != 0 ? c : a.rootId.compareTo(b.rootId);
   });
   return entries;

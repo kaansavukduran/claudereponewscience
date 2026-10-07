@@ -41,6 +41,7 @@ void main() {
       StorageDurability.memoryOnly,
     );
     expect(choice.reason, StorageReason.portablePolicy);
+    expect(choice.files, isNull, reason: 'no plaintext backups beside the app');
     await choice.repository.open();
     expect(Directory('${appDir.path}/UserData').existsSync(), isFalse);
   });
@@ -90,6 +91,7 @@ void main() {
     );
     expect(choice.reason, StorageReason.saving);
     expect(choice.notes, isEmpty);
+    expect(choice.files, isNotNull, reason: 'development may write files');
   });
 
   group(
@@ -159,6 +161,7 @@ void main() {
         for (final config in [staging, prod]) {
           final choice = await open(config);
           expect(choice.reason, StorageReason.profilePolicy);
+          expect(choice.files, isNull, reason: 'no backup or export files');
           expect(oldVault.readAsStringSync(), 'OLD VAULT BYTES\n');
           expect(
             Directory('${data.path}/human-health-os').existsSync(),
@@ -179,6 +182,7 @@ void main() {
         executablePath: '${tmp.path}/bin/human_health_os',
       );
       expect(choice.reason, StorageReason.dataDirInvalid);
+      expect(choice.files, isNull);
       expect(choice.detail, 'HHOS_DATA_DIR');
       expect(
         choice.repository.description.durability,

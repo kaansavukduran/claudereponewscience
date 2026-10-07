@@ -70,4 +70,35 @@ void main() {
     expect(d['records'], isEmpty);
     expect(d['record_count'], 0);
   });
+
+  test('withdrawals and deletions are exported with the history (review '
+      'finding: no test covered them)', () {
+    final f3 = parseVaultLog(
+      File('test/fixtures/vault/v1_f003_schema2.hhoslog.jsonl')
+          .readAsStringSync(),
+    );
+    final d = jsonDecode(
+      exportRecordsJson(
+        profile: f3.profiles.values.single,
+        records: f3.records.values,
+        exportedAt: at,
+        appVersion: 'x',
+      ),
+    ) as Map<String, Object?>;
+    String id(int n) => '00000000-0000-4000-8000-0000000000c$n';
+    final ids = [
+      for (final r in (d['records']! as List).cast<Map<String, Object?>>())
+        r['id'],
+    ];
+    expect(ids, containsAll([id(3), id(5)]), reason: 'both markers exported');
+    expect(ids.length, f3.records.length);
+    final timeline = (d['timeline']! as List).cast<Map<String, Object?>>();
+    final deleted = timeline.singleWhere((e) => e['root_id'] == id(4));
+    expect(deleted['status'], 'deleted');
+    expect(deleted['deletion_id'], id(5));
+    expect(deleted['current_ids'], [id(4)], reason: 'the version it had');
+    final restored = timeline.singleWhere((e) => e['root_id'] == id(1));
+    expect(restored['withdrawn_ids'], [id(2)]);
+    expect(restored['current_ids'], [id(1)]);
+  });
 }

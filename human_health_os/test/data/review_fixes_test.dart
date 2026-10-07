@@ -138,6 +138,26 @@ void main() {
       expect(vault.readAsStringSync(), newer);
     });
 
+    test('a readable vault whose records are all skipped still counts as '
+        'holding records (review finding)', () async {
+      final (_, me) = await seeded();
+      final lines = vault.readAsLinesSync();
+      // Damage the profile line: every record then fails UNKNOWN_PROFILE.
+      final i = lines.indexWhere((l) => l.contains('"op":"profile.put"'));
+      lines[i] = '{"op":"profile.put","data":{broken';
+      vault.writeAsStringSync('${lines.join('\n')}\n');
+      final again = repo();
+      await again.open();
+      expect(await again.records(me), isEmpty, reason: 'all skipped on replay');
+      final before = vault.readAsStringSync();
+      final files = FileDataFiles(dataDir: tmp, vault: vault);
+      await expectLater(
+        files.restore(stageRestore(bundle()), now: DateTime.utc(2026, 10, 7)),
+        backupError('RESTORE_TARGET_HAS_RECORDS'),
+      );
+      expect(vault.readAsStringSync(), before);
+    });
+
     test(
       'a vault with a damaged header but stored records is refused',
       () async {

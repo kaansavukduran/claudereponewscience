@@ -129,11 +129,20 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     check(`${label}: storage honesty label shown`, await page.getByText(/Saved in this browser \(it may be cleared\) · not encrypted/).first().isVisible().catch(() => false));
     await page.screenshot({ path: join(out, `flutter-web-${label}-weight.png`) });
     // F003: the saved weight is on the Timeline after the reload.
-    await navItem(timelineLabel).click().catch(() => {});
-    await heading(timelineLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+    // The Timeline must really be open: Today shows the same value, so a
+    // failed click must fail the check (review finding).
+    let onTimelineScreen = true;
+    try {
+      await navItem(timelineLabel).click({ timeout: 10_000 });
+      await heading(timelineLabel).waitFor({ timeout: 15_000 });
+      await page.getByText(timelineText).first().waitFor({ timeout: 15_000 });
+      onTimelineScreen = !(await heading(todayLabel).isVisible().catch(() => false));
+    } catch {
+      onTimelineScreen = false;
+    }
     const onTimeline = page.getByText('78.4 kg').first();
     await onTimeline.waitFor({ timeout: 15_000 }).catch(() => {});
-    check(`${label}: saved weight listed on the Timeline`, await onTimeline.isVisible().catch(() => false));
+    check(`${label}: saved weight listed on the Timeline`, onTimelineScreen && (await onTimeline.isVisible().catch(() => false)));
     check(`${label}: Timeline does not say "No records yet"`, !(await page.getByText('No records yet').first().isVisible().catch(() => false)));
     await page.screenshot({ path: join(out, `flutter-web-${label}-timeline-records.png`) });
     // F004: a lab result typed as printed survives a reload, with its flag

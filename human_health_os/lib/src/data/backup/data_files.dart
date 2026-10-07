@@ -142,9 +142,12 @@ class MemoryDataFiles implements DataFiles {
 /// replaced; the adapter keeps it instead of deleting it.
 void refuseIfHasRecords(String? liveVaultText) {
   if (liveVaultText == null || liveVaultText.trim().isEmpty) return;
-  int records;
+  // Record lines count even when replay skips them (e.g. a damaged profile
+  // line makes every record UNKNOWN_PROFILE): they are still someone's data.
+  var records = _recordLines(liveVaultText);
   try {
-    records = parseLiveRecordCount(liveVaultText);
+    final parsed = parseLiveRecordCount(liveVaultText);
+    if (parsed > records) records = parsed;
   } on VaultFormatError catch (e) {
     if (e.code == 'VAULT_NEWER' || e.code == 'RECORD_SCHEMA_NEWER') {
       throw const BackupError(
@@ -152,9 +155,8 @@ void refuseIfHasRecords(String? liveVaultText) {
         'The data on this device was written by a newer Human OS',
       );
     }
-    records = _recordLines(liveVaultText);
   } catch (_) {
-    records = _recordLines(liveVaultText);
+    // Unparseable: the raw record-line count above decides.
   }
   if (records > 0) {
     throw BackupError(

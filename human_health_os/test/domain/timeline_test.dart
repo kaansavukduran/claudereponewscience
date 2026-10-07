@@ -326,20 +326,33 @@ void main() {
       lab: const LabDetails(analyteLabel: 'X'),
     );
 
-    test('a lab dated D sorts above an entry made the evening before in the '
-        'device time zone (meaningful west of UTC; gate runs with '
-        'TZ=America/New_York)', () {
-      final evening = rec('w', day: 1).copyObservedAt(
-        DateTime(2026, 10, 6, 21).toUtc(), // local 21:00 on the 6th
-      );
-      final lab = labOn('l', 2026, 10, 7);
-      expect(buildTimeline([evening, lab]).map((e) => e.rootId), [
-        'l',
-        'w',
-      ], reason: 'offset ${DateTime(2026, 10, 6).timeZoneOffset}');
-      expect(orderingInstant(lab), DateTime(2026, 10, 7).toUtc());
-      expect(orderingInstant(evening), evening.observedAt);
-    });
+    // Host-independent: the local day start is injected for a zone five
+    // hours west of UTC and one three hours east (review finding: the test
+    // passed without the fix on a UTC host).
+    DateTime Function(int, int, int) zone(int hours) =>
+        (y, m, d) => DateTime.utc(y, m, d).subtract(Duration(hours: hours));
+
+    for (final hours in [-5, 3]) {
+      test('a lab dated D sorts above an entry made at 21:00 local the day '
+          'before (UTC${hours >= 0 ? '+' : ''}$hours)', () {
+        // 21:00 local on Oct 6 in that zone, as a UTC instant.
+        final evening = rec('w', day: 1).copyObservedAt(
+          DateTime.utc(2026, 10, 6, 21).subtract(Duration(hours: hours)),
+        );
+        final lab = labOn('l', 2026, 10, 7);
+        expect(
+          buildTimeline([
+            evening,
+            lab,
+          ], localMidnight: zone(hours)).map((e) => e.rootId),
+          ['l', 'w'],
+        );
+        expect(
+          orderingInstant(lab, localMidnight: zone(hours)),
+          DateTime.utc(2026, 10, 7).subtract(Duration(hours: hours)),
+        );
+      });
+    }
   });
 }
 

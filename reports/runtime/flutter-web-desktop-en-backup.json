@@ -2,10 +2,10 @@
   "manifest": {
     "format": "hhos-backup",
     "format_version": 1,
-    "created_at": "2026-10-07T13:04:22.989Z",
+    "created_at": "2026-10-07T13:32:11.553Z",
     "source_app_version": "0.1.0+1",
     "source_revision": "local",
-    "vault_id": "a8c7c836-7c6f-4b20-9762-f11bf95aa508",
+    "vault_id": "2dbd22dd-22d6-4e56-8b48-2cc6ceca5df6",
     "vault_format_version": 1,
     "record_schema_versions": [
       3
@@ -13,10 +13,10 @@
     "profile_count": 1,
     "record_count": 2,
     "skipped_entries": 0,
-    "payload_sha256": "15a7669d1afb9c15b82301b8d8891a122e22444a810f9a1e5b60529b5d944259",
+    "payload_sha256": "1bc1716dc6061e774f594072d04ea31acaefb0ceab8a12da26ef632eb98a5dfa",
     "payload_bytes": 1343,
     "encryption": "none-dev-only",
     "attachments": []
   },
-  "payload": "{\"format\":\"hhos-vault-log\",\"format_version\":1,\"vault_id\":\"a8c7c836-7c6f-4b20-9762-f11bf95aa508\",\"created_at\":\"2026-10-07T13:03:56.265Z\",\"encryption\":\"none-dev-only\"}\n{\"op\":\"profile.put\",\"data\":{\"schema_version\":1,\"id\":\"7b5935fa-33e0-4371-9c22-bd0774c1e532\",\"type\":\"self\",\"created_at\":\"2026-10-07T13:03:56.266Z\",\"display_name\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"2adf8884-ce75-4019-bf6d-eead69b732b9\",\"profile_id\":\"7b5935fa-33e0-4371-9c22-bd0774c1e532\",\"kind\":\"body.weight\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":78.4,\"unit\":\"kg\"},\"original_text\":\"78,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-07T13:03:59.480Z\",\"recorded_at\":\"2026-10-07T13:03:59.480Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"6e32748b-008e-417c-98ef-72a107b2b4db\",\"profile_id\":\"7b5935fa-33e0-4371-9c22-bd0774c1e532\",\"kind\":\"lab.result\",\"state\":\"reported\",\"value_status\":\"present\",\"quantity\":{\"value\":5.4,\"unit\":\"%\"},\"original_text\":\"5,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-07T00:00:00.000Z\",\"recorded_at\":\"2026-10-07T13:04:13.058Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":{\"analyte_label\":\"HbA1c\",\"specimen\":null,\"laboratory\":null,\"source_flag\":\"H\",\"reference_text\":\"4.0 - 6.0\"}}}\n"
+  "payload": "{\"format\":\"hhos-vault-log\",\"format_version\":1,\"vault_id\":\"2dbd22dd-22d6-4e56-8b48-2cc6ceca5df6\",\"created_at\":\"2026-10-07T13:31:45.220Z\",\"encryption\":\"none-dev-only\"}\n{\"op\":\"profile.put\",\"data\":{\"schema_version\":1,\"id\":\"58a261ec-4ae4-4051-b753-aa0b156566b6\",\"type\":\"self\",\"created_at\":\"2026-10-07T13:31:45.221Z\",\"display_name\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"6d8b0446-7057-4718-8a5d-b40c2c7b485f\",\"profile_id\":\"58a261ec-4ae4-4051-b753-aa0b156566b6\",\"kind\":\"body.weight\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":78.4,\"unit\":\"kg\"},\"original_text\":\"78,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-07T13:31:48.470Z\",\"recorded_at\":\"2026-10-07T13:31:48.470Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"6c94e06d-7ff0-4190-a7db-f3b6c3a68452\",\"profile_id\":\"58a261ec-4ae4-4051-b753-aa0b156566b6\",\"kind\":\"lab.result\",\"state\":\"reported\",\"value_status\":\"present\",\"quantity\":{\"value\":5.4,\"unit\":\"%\"},\"original_text\":\"5,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-07T00:00:00.000Z\",\"recorded_at\":\"2026-10-07T13:32:01.859Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":{\"analyte_label\":\"HbA1c\",\"specimen\":null,\"laboratory\":null,\"source_flag\":\"H\",\"reference_text\":\"4.0 - 6.0\"}}}\n"
 }

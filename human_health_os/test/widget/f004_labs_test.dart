@@ -21,11 +21,15 @@ const dev = AppConfig(
 
 /// Words that would mean the app judged a result. The lab's own flag and
 /// range are verbatim source text and are checked separately.
+/// Unicode-aware word boundaries: `\b` is ASCII-only in Dart, so it never
+/// matched after a final "ı" (review finding: "Tanı", "Sağlıklı" slipped
+/// through).
 final RegExp interpretive = RegExp(
-  r'\b(normal|abnormal|healthy|unhealthy|deficien\w*|diagnos\w*|disease|'
-  r'too high|too low|elevated|risk)\b|'
-  r'\b(anormal|sağlıklı|sağlıksız|eksikliği|teşhis|tanı|hastalık|yüksek|düşük|riskli)\b',
+  r'(?<!\p{L})(normal|abnormal|healthy|unhealthy|deficien\p{L}*|diagnos\p{L}*|'
+  r'disease|too high|too low|elevated|risk|anormal|sağlıklı|sağlıksız|'
+  r'eksikliği|teşhis|tanı|hastalık|yüksek|düşük|riskli)(?!\p{L})',
   caseSensitive: false,
+  unicode: true,
 );
 
 Future<void> settle(WidgetTester tester) async {
@@ -106,10 +110,11 @@ Future<void> tapKey(WidgetTester tester, String key) async {
 /// range or judge it. (The screen's fixed invariant text, e.g. "Out of range
 /// ≠ critical", is outside the rows and is checked with [interpretive].)
 final RegExp judged = RegExp(
-  r'\b(high|low|above|below|outside|within|in range|out of range|elevated|'
-  r'raised|optimal|good|bad|critical|ok)\b|'
-  r'(yüksek|düşük|üstünde|altında|aralık dışı|aralıkta|iyi|kötü|kritik|optimal)',
+  r'(?<!\p{L})(high|low|above|below|outside|within|in range|out of range|'
+  r'elevated|raised|optimal|good|bad|critical|ok|yüksek|düşük|üstünde|altında|'
+  r'aralık dışı|aralıkta|iyi|kötü|kritik)(?!\p{L})',
   caseSensitive: false,
+  unicode: true,
 );
 
 /// Texts inside every widget whose key starts with [prefix].
@@ -137,6 +142,35 @@ List<String> screenTexts(WidgetTester tester) => [
 ];
 
 void main() {
+  test('the wording scans catch what they claim to (EN and TR)', () {
+    for (final t in [
+      'Sağlıklı',
+      'Tanı: x',
+      'tanı değildir',
+      'Normal',
+      'Hastalık',
+    ]) {
+      expect(interpretive.hasMatch(t), isTrue, reason: t);
+    }
+    for (final t in [
+      'Laboratuvar işareti: H',
+      'Lab flag: H',
+      'Abnormalities',
+    ]) {
+      expect(interpretive.hasMatch(t), isFalse, reason: t);
+    }
+    for (final t in ['Yüksek', 'iyi', 'outside range', 'Kritik!']) {
+      expect(judged.hasMatch(t), isTrue, reason: t);
+    }
+    for (final t in [
+      'Laboratuvarın yazdığı aralık: < 130',
+      'kişiyi',
+      'Lab flag: H',
+    ]) {
+      expect(judged.hasMatch(t), isFalse, reason: t);
+    }
+  });
+
   testWidgets('a result typed from a report is listed exactly as printed', (
     tester,
   ) async {
