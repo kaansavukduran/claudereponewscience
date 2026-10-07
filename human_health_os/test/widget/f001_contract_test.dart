@@ -160,11 +160,17 @@ void main() {
     tester.view.physicalSize = desktop;
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
-    // Staging is memory-only, so the real storage policy runs without disk IO.
-    final services = await tester.runAsync(
-      () => bootstrap(staging, HostPlatform.linux),
+    // Staging starts at the vault gate (F006); the real storage policy only
+    // reads, and choosing memory only writes nothing.
+    final startup = await tester.runAsync(
+      () => startApp(staging, HostPlatform.linux),
     );
-    await tester.pumpWidget(HumanOsApp(services: services!));
+    await tester.pumpWidget(HumanOsApp.start(startup!));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('gate-memory-only')));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
     await go(tester, rail(), 'Labs');
@@ -217,20 +223,32 @@ void main() {
     }
   });
 
-  testWidgets('staging storage on a desktop says "Saving off", not '
-      '"Not built yet"', (tester) async {
+  testWidgets('staging on a desktop kept in memory only says "Saving off" '
+      'and why, not "Not built yet"', (tester) async {
     tester.view.physicalSize = const Size(1440, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
-    final services = await tester.runAsync(
-      () => bootstrap(staging, HostPlatform.linux),
+    final startup = await tester.runAsync(
+      () => startApp(staging, HostPlatform.linux),
     );
-    await tester.pumpWidget(HumanOsApp(services: services!));
+    await tester.pumpWidget(HumanOsApp.start(startup!));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('gate-memory-only')));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
     await tester.pumpAndSettle();
     expect(find.text('Saving off'), findsOneWidget);
     expect(
-      find.textContaining('This STAGING build does not save'),
+      find.textContaining('keep this session in memory only'),
       findsOneWidget,
+    );
+  });
+
+  test('builds with an encrypted vault never start without the gate', () async {
+    await expectLater(
+      bootstrap(staging, HostPlatform.linux),
+      throwsA(isA<StateError>()),
     );
   });
 
@@ -349,12 +367,15 @@ void main() {
   testWidgets('a failed startup shows an explanation, not a blank window '
       '(UX-8)', (tester) async {
     await tester.pumpWidget(
-      const StartupErrorApp(error: 'StateError: example'),
+      StartupErrorApp(error: StateError('vault at /home/kaan: 73.4 kg')),
     );
     await tester.pumpAndSettle();
     expect(find.text('Human OS could not start'), findsOneWidget);
     expect(find.textContaining('Nothing was changed on disk'), findsOneWidget);
-    expect(find.text('StateError: example'), findsOneWidget);
+    // F006 (§37): the error type is shown, never its message.
+    expect(find.text('StateError'), findsOneWidget);
+    expect(find.textContaining('73.4'), findsNothing);
+    expect(find.textContaining('/home/kaan'), findsNothing);
   });
 }
 

@@ -4,17 +4,19 @@
 library;
 
 import '../core/ids.dart';
+import '../domain/errors.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/profile/profile.dart';
 import '../domain/records/health_record.dart';
 
-class InputError implements Exception {
+class InputError implements Exception, CodedError {
   const InputError(this.code);
 
   /// Stable code; the UI maps it to localized text.
   /// `EMPTY` · `NOT_A_NUMBER` · `OUT_OF_RANGE` · `FUTURE_TIME` ·
   /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT` · `LAB_ANALYTE_EMPTY` ·
   /// `DATE_INVALID` · `AMBIGUOUS_SEPARATOR`
+  @override
   final String code;
 
   @override

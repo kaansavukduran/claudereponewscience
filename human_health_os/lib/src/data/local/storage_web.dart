@@ -42,7 +42,13 @@ class _BrowserLogSink implements LogSink {
   }
 }
 
-Future<StorageChoice> createPlatformRepository(AppConfig config) async {
+/// [env] and [executablePath] exist for the native adapter's signature;
+/// a browser has neither.
+Future<StorageChoice> createPlatformRepository(
+  AppConfig config, {
+  Map<String, String>? env,
+  String? executablePath,
+}) async {
   final gated = profileGate(config);
   if (gated != null) return gated;
   _Storage? storage;

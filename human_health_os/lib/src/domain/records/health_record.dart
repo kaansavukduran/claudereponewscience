@@ -9,6 +9,7 @@
 /// - the original source representation is kept next to the normalized value.
 library;
 
+import '../errors.dart';
 import 'lab_details.dart';
 import 'timeline.dart';
 
@@ -143,8 +144,11 @@ class Provenance {
 
 /// Data written by a newer app version. It is never guessed at or
 /// downgraded (master §35.3); the store that holds it refuses to open.
-class SchemaTooNewError implements Exception {
+class SchemaTooNewError implements Exception, CodedError {
   const SchemaTooNewError(this.what, this.version, this.supported);
+
+  @override
+  String get code => 'SCHEMA_TOO_NEW';
 
   final String what;
   final int version;
@@ -155,10 +159,11 @@ class SchemaTooNewError implements Exception {
       'SchemaTooNewError: $what schema $version is newer than this app ($supported)';
 }
 
-class RecordValidationError implements Exception {
+class RecordValidationError implements Exception, CodedError {
   const RecordValidationError(this.code, this.message);
 
   /// Stable machine code (e.g. `PRESENT_REQUIRES_QUANTITY`).
+  @override
   final String code;
   final String message;
 

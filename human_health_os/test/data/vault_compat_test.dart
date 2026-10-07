@@ -5,8 +5,10 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:human_health_os/src/data/local/encrypted_vault.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/data/local/storage_io.dart';
+import 'package:human_health_os/src/data/local/vault_envelope.dart';
 import 'package:human_health_os/src/data/local/vault_log.dart';
 import 'package:human_health_os/src/data/local/vault_migrations.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
@@ -465,5 +467,62 @@ void main() {
         expect(state.records[id(0)]!.toJson().containsKey('lab'), isFalse);
       },
     );
+  });
+
+  group('fixture enc_v1_f006 (encrypted envelope v1, F006)', () {
+    // Synthetic secrets published in test/fixtures/vault/README.md.
+    const passphrase = 'fixture passphrase F006 (synthetic)';
+    const recoveryKey = 'K7QM-2XRA-PLMN-B3DE-ZZ4H-QW5T-RT6Y-HJ7U';
+    final file = File('test/fixtures/vault/enc_v1_f006.hhosvault');
+    final plain = File('test/fixtures/vault/v1_f004_schema3.hhoslog.jsonl')
+        .readAsStringSync();
+
+    test('opens with its passphrase and with its recovery key to exactly '
+        'the schema-3 log it sealed', () async {
+      final text = file.readAsStringSync();
+      for (final (secret, kind) in [
+        (passphrase, KeyKind.passphrase),
+        (recoveryKey.toLowerCase(), KeyKind.recovery),
+      ]) {
+        final raw = MemoryLogSink()..text = text;
+        final sink = await EncryptedLogSink.unlock(
+          raw,
+          secret,
+          kind: kind,
+          derive: deriveInline,
+        );
+        expect((await sink.read()), plain, reason: kind.name);
+      }
+    });
+
+    test('the vault behind it reads the same records as the plaintext '
+        'fixture, without warnings, and the file is not changed', () async {
+      final raw = MemoryLogSink()..text = file.readAsStringSync();
+      final opened = await EncryptedVault(
+        raw: raw,
+        location: 'fixture',
+      ).unlock(passphrase);
+      expect(opened.report.warnings, isEmpty);
+      final expected = parseVaultLog(plain);
+      expect(opened.repository.description.vaultId, expected.header.vaultId);
+      expect(opened.repository.description.encrypted, isTrue);
+      final ids = [
+        for (final p in await opened.repository.profiles())
+          for (final r in await opened.repository.records(p.id)) r.id,
+      ];
+      expect(ids, expected.order);
+      expect(raw.text, file.readAsStringSync());
+    });
+
+    test('its keys use the production Argon2id cost', () {
+      final header = jsonDecode(file.readAsLinesSync().first) as Map;
+      for (final slot in header['keys'] as List) {
+        final kdf = (slot as Map)['kdf'] as Map;
+        expect(
+          [kdf['memory_kib'], kdf['iterations'], kdf['parallelism']],
+          [19456, 2, 1],
+        );
+      }
+    });
   });
 }

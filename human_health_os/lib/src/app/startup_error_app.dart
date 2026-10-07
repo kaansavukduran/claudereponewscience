@@ -5,6 +5,7 @@ library;
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
+import '../core/redact.dart';
 import '../l10n/strings.dart';
 
 class StartupErrorApp extends StatelessWidget {
@@ -39,7 +40,8 @@ class StartupErrorApp extends StatelessWidget {
                   const SizedBox(height: 12),
                   Text(s.startupFailedBody, style: text.bodyLarge),
                   const SizedBox(height: 12),
-                  SelectableText('$error', style: text.bodySmall),
+                  // Type and code only: a message may quote data (§37).
+                  SelectableText(describeError(error), style: text.bodySmall),
                 ],
               ),
             ),

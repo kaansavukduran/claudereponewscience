@@ -4,12 +4,17 @@ import '../../app/app_services.dart';
 import '../../application/export.dart';
 import '../../data/backup/backup_bundle.dart';
 import '../../data/backup/data_files.dart';
+import '../../data/crypto/recovery_key.dart' show RecoveryKeyFormatError;
+import '../../data/local/vault_envelope.dart' show KeyKind;
 import '../../l10n/strings.dart';
 import '../../presentation/widgets/status_chip.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
-/// Your data (ladder F005): create a backup, export the records, check a
-/// saved backup and restore one through the staged restore gate.
+/// Your data (ladder F005, F006): create a backup, export the records, check
+/// a saved backup and restore one through the staged restore gate. An
+/// encrypted vault's backups stay encrypted; restoring one needs the
+/// backup's own passphrase or recovery key, and export (plaintext) is not
+/// offered for it.
 class YourDataCard extends StatefulWidget {
   const YourDataCard({super.key, required this.services});
 
@@ -58,6 +63,9 @@ class _YourDataCardState extends State<YourDataCard> {
     } on BackupError catch (e) {
       _message = s.backupError(e.code, e.message);
       _messageIsError = true;
+    } on RecoveryKeyFormatError {
+      _message = s.recoveryKeyFormat;
+      _messageIsError = true;
     } catch (_) {
       _message = s.inputError('SAVE_FAILED');
       _messageIsError = true;
@@ -67,14 +75,8 @@ class _YourDataCardState extends State<YourDataCard> {
   }
 
   Future<String> _backup(S s) async {
-    final text = await _s.readVaultText!();
     final now = DateTime.now().toUtc();
-    final bundle = createBackupBundle(
-      vaultLogText: text ?? '',
-      appVersion: _s.config.version,
-      sourceRevision: _s.config.sourceRevision,
-      createdAt: now,
-    );
+    final bundle = await _s.makeBackup!(now);
     final where = await _files!.save(
       DataFileKind.backup,
       backupFileName(_s.storage.vaultId, now),
@@ -102,8 +104,67 @@ class _YourDataCardState extends State<YourDataCard> {
   Future<String> _check(SavedFile f, S s) async {
     final staged = stageRestore(await _files!.read(f));
     final m = staged.manifest;
-    return s.backupChecked(m.recordCount, m.profileCount, fmtWhen(m.createdAt));
+    return staged.encrypted
+        ? s.backupCheckedEncrypted(m.recordCount, fmtWhen(m.createdAt))
+        : s.backupChecked(m.recordCount, m.profileCount, fmtWhen(m.createdAt));
   }
+
+  /// Asks for the passphrase (or recovery key) an encrypted backup was made
+  /// with. Null when cancelled.
+  Future<(String, KeyKind)?> _askBackupKey(S s) =>
+      showDialog<(String, KeyKind)>(
+        context: context,
+        builder: (c) {
+          final field = TextEditingController();
+          var recovery = false;
+          return StatefulBuilder(
+            builder: (c, setDialog) => AlertDialog(
+              title: Text(s.openBackupTitle),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(s.openBackupExplain),
+                  const SizedBox(height: 12),
+                  TextField(
+                    key: const ValueKey('backup-secret'),
+                    controller: field,
+                    obscureText: !recovery,
+                    enableSuggestions: false,
+                    autocorrect: false,
+                    decoration: InputDecoration(
+                      labelText: recovery ? s.recoveryKeyLabel : s.passphrase,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  CheckboxListTile(
+                    key: const ValueKey('backup-use-recovery'),
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: recovery,
+                    onChanged: (v) => setDialog(() => recovery = v ?? false),
+                    title: Text(s.useRecoveryKeyInstead),
+                  ),
+                ],
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.of(c).pop(),
+                  child: Text(s.cancel),
+                ),
+                FilledButton(
+                  key: const ValueKey('confirm-open-backup'),
+                  onPressed: () => Navigator.of(c).pop((
+                    field.text,
+                    recovery ? KeyKind.recovery : KeyKind.passphrase,
+                  )),
+                  child: Text(s.restoreBackup),
+                ),
+              ],
+            ),
+          );
+        },
+      );
 
   Future<void> _restore(SavedFile f, S s) async {
     final ok = await showDialog<bool>(
@@ -125,13 +186,35 @@ class _YourDataCardState extends State<YourDataCard> {
       ),
     );
     if (ok != true) return;
+    StagedRestore? staged;
+    (String, KeyKind)? key;
+    try {
+      staged = stageRestore(await _files!.read(f));
+    } on BackupError {
+      staged = null; // _run below reports it
+    }
+    if (staged != null && staged.needsKey) {
+      if (!mounted) return;
+      key = await _askBackupKey(s);
+      if (key == null) return;
+    }
     await _run((s) async {
-      final staged = stageRestore(await _files!.read(f));
-      final out = await _files!.restore(staged, now: DateTime.now().toUtc());
+      var st = staged ?? stageRestore(await _files!.read(f));
+      if (key != null) {
+        st = await unlockStagedRestore(
+          st,
+          key.$1,
+          kind: key.$2,
+          derive: _s.deriveKey,
+        );
+      }
+      final out = await _files!.restore(st, now: DateTime.now().toUtc());
       // This session's memory belongs to the replaced file: no more writes.
       _s.lockStorage?.call('RESTART_REQUIRED');
       _s.restartRequired?.value = true;
-      return s.restored(out.records, out.keptPrevious);
+      return st.encrypted
+          ? s.restoredEncrypted(out.records, out.keptPrevious)
+          : s.restored(out.records, out.keptPrevious);
     }, s);
   }
 
@@ -140,7 +223,8 @@ class _YourDataCardState extends State<YourDataCard> {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
     final files = _files;
-    final canWrite = files != null && _s.readVaultText != null && !_restored;
+    final canWrite = files != null && _s.makeBackup != null && !_restored;
+    final encrypted = _s.storage.encrypted;
     return Card(
       semanticContainer: false,
       key: const ValueKey('your-data-card'),
@@ -161,7 +245,9 @@ class _YourDataCardState extends State<YourDataCard> {
                 style: text.bodyMedium,
               )
             else ...[
-              StatusChip(label: s.dataUnencrypted, tone: StatusTone.warn),
+              encrypted
+                  ? StatusChip(label: s.dataEncrypted, tone: StatusTone.ok)
+                  : StatusChip(label: s.dataUnencrypted, tone: StatusTone.warn),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,
@@ -175,16 +261,25 @@ class _YourDataCardState extends State<YourDataCard> {
                     icon: const Icon(Icons.backup_outlined),
                     label: Text(s.createBackup),
                   ),
-                  OutlinedButton.icon(
-                    key: const ValueKey('export-json'),
-                    onPressed: _busy || !canWrite
-                        ? null
-                        : () => _run(_export, s),
-                    icon: const Icon(Icons.file_download_outlined),
-                    label: Text(s.exportJson),
-                  ),
+                  if (!encrypted)
+                    OutlinedButton.icon(
+                      key: const ValueKey('export-json'),
+                      onPressed: _busy || !canWrite
+                          ? null
+                          : () => _run(_export, s),
+                      icon: const Icon(Icons.file_download_outlined),
+                      label: Text(s.exportJson),
+                    ),
                 ],
               ),
+              if (encrypted) ...[
+                const SizedBox(height: 8),
+                Text(
+                  s.exportNotForEncrypted,
+                  key: const ValueKey('export-not-for-encrypted'),
+                  style: text.bodySmall,
+                ),
+              ],
               if (_restored && _message == null) ...[
                 const SizedBox(height: 8),
                 Text(

@@ -8,12 +8,17 @@ import '../../domain/profile/profile.dart';
 import '../../domain/records/health_record.dart';
 import 'vault_log.dart';
 
+/// The `encryption` value of a log header kept inside the encrypted envelope
+/// (vault_envelope.dart).
+const String encryptionEnvelopeV1 = 'hhos-vault-enc-v1';
+
 /// Where the log text lives.
 abstract interface class LogSink {
   /// Whole log text, or null when no vault exists yet.
   Future<String?> read();
 
-  /// Creates a new log with exactly [text] (the header line).
+  /// Creates the log with exactly [text] plus a final newline, replacing
+  /// anything stored, in one atomic step where the medium allows it.
   Future<void> create(String text);
 
   /// Appends one line durably.
@@ -29,6 +34,7 @@ class LogRepository implements HealthRepository {
     IdGenerator? ids,
     this.migrations = vaultMigrations,
     this.targetVersion = vaultFormatVersion,
+    this.encrypted = false,
   }) : _ids = ids ?? UuidV4Generator();
 
   final LogSink sink;
@@ -41,6 +47,10 @@ class LogRepository implements HealthRepository {
   /// synthetic graph; the app uses the production one.
   final List<VaultMigration> migrations;
   final int targetVersion;
+
+  /// True when [sink] seals what it stores (the encrypted vault). Set by
+  /// whoever wires the sink, never read from the stored header.
+  final bool encrypted;
   VaultState? _state;
   bool _readOnly = false;
   String? _lockedCode;
@@ -86,7 +96,7 @@ class LogRepository implements HealthRepository {
   @override
   StorageDescription get description => StorageDescription(
     durability: durability,
-    encrypted: false,
+    encrypted: encrypted,
     location: location,
     vaultId: _state?.header.vaultId ?? '',
   );
@@ -99,6 +109,7 @@ class LogRepository implements HealthRepository {
         vaultId: _ids.newId(),
         createdAt: clock.nowUtc(),
         formatVersion: targetVersion,
+        encryption: encrypted ? encryptionEnvelopeV1 : encryptionNoneDevOnly,
       );
       await sink.create(header.encode());
       _state = VaultState(header);

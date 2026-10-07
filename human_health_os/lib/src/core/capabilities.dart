@@ -151,10 +151,16 @@ Capability _storageCapability(
       storage.durability != StorageDurability.memoryOnly &&
       (reason == null || reason == StorageReason.saving);
   if (saving) {
+    if (storage.encrypted) {
+      return cap(
+        CapabilityStatus.available,
+        'Saved in an encrypted vault on this device (Argon2id + ChaCha20-Poly1305). It opens only with your passphrase or recovery key.',
+      );
+    }
     return storage.durability == StorageDurability.localFile
         ? cap(
             CapabilityStatus.available,
-            'Saved in a file on this device. Not encrypted yet (development build); encryption arrives in Forge F006.',
+            'Saved in a file on this device. Not encrypted (development build only).',
           )
         : cap(
             CapabilityStatus.available,
@@ -164,11 +170,11 @@ Capability _storageCapability(
   return switch (reason) {
     StorageReason.profilePolicy => cap(
       CapabilityStatus.off,
-      'Not saved in this build: staging and production builds save only to the encrypted vault (Forge F006).',
+      'Not saved in this browser build: health data are never stored unencrypted, and encrypted browser storage is not built yet.',
     ),
-    StorageReason.portablePolicy => cap(
+    StorageReason.sessionOnly => cap(
       CapabilityStatus.off,
-      'Not saved in portable mode until the encrypted vault (Forge F006). Nothing is written next to the app.',
+      'Not saved in this session: you chose memory only. The encrypted vault, if any, is untouched.',
     ),
     StorageReason.dataDirInvalid => cap(
       CapabilityStatus.off,

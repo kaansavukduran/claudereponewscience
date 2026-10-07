@@ -1,6 +1,14 @@
 # Security and privacy model
 
-Status: **SPECIFIED** (plan). Nothing in this file is implemented unless `project_state/CURRENT_STATE.json` says so with evidence.
+Status: **SPECIFIED** (plan), with the parts listed under "Implemented" built and tested. Nothing else in this file is implemented unless `project_state/CURRENT_STATE.json` says so with evidence.
+
+## Implemented (F006@v0.32, D-016)
+
+- **Encrypted vault** on desktop (Linux tested; Windows and macOS compile the same pure-Dart code but are not built here): envelope `hhos-vault-enc` v1, Argon2id (19 MiB, 2 passes, 1 lane) wrapping a random 256-bit data key under the passphrase and under a 160-bit recovery key, ChaCha20-Poly1305 per log line with the vault id and sequence number as associated data. Staging, production and portable builds persist only this way; development builds keep a labelled plaintext log.
+- **Key states:** no vault (create, or memory only) · locked · wrong passphrase · recovery (recovery key + new passphrase) · key lost (explained: nobody can decrypt it; never opened, reset or deleted; a new vault keeps the old file aside) · unreadable (newer or damaged; untouched).
+- **Backups** of an encrypted vault are the envelope byte for byte; restore requires the backup's own key and checks the content before switching.
+- **Logging** goes through `core/redact.dart` only (type + code, safe fields); Flutter and platform errors are routed there.
+- **Not built:** OS key stores as a convenience unlock (G-13), encrypted browser storage (G-32), passphrase change and data-key rotation (G-33), export for encrypted vaults (G-34), rollback detection (G-35), app lock (G-36).
 
 ## Assets
 

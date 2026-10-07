@@ -244,12 +244,12 @@ void main() {
     tester.view.physicalSize = const Size(1280, 2600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
-    final s = await tester.runAsync(
-      () => bootstrap(staging, HostPlatform.linux),
+    final startup = await tester.runAsync(
+      () => startApp(staging, HostPlatform.linux),
     );
-    await tester.pumpWidget(HumanOsApp(services: s!));
+    await tester.pumpWidget(HumanOsApp.start(startup!));
     await settle(tester);
-    expect(s.dataFiles, isNull);
+    await tapKey(tester, 'gate-memory-only');
     expect(find.byKey(const ValueKey('data-not-available')), findsOneWidget);
     expect(find.byKey(const ValueKey('create-backup')), findsNothing);
   });

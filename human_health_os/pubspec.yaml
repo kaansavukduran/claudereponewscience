@@ -14,6 +14,8 @@ dependencies:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
+  # D-016: Argon2id + ChaCha20-Poly1305 for the encrypted vault (F006).
+  pointycastle: 4.0.0
 
 dev_dependencies:
   flutter_test:

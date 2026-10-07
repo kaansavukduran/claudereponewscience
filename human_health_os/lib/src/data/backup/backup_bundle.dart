@@ -5,32 +5,49 @@
 /// ids, provenance, correction lineage, tombstones and even entries the app
 /// skipped, so a restore gives back exactly what was saved.
 ///
+/// An encrypted vault (F006) is backed up the same way: the payload is its
+/// envelope, byte for byte, so the backup is exactly as encrypted as the
+/// vault and opens only with the passphrase or recovery key the vault had
+/// when the backup was made.
+///
 /// Pure Dart (no IO): writing and reading files is the adapter's job.
 library;
 
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
 
+import '../../domain/errors.dart';
+import '../crypto/vault_crypto.dart' show CryptoFailure;
+import '../local/vault_envelope.dart';
 import '../local/vault_log.dart';
 
 const String backupFormat = 'hhos-backup';
 const int backupFormatVersion = 1;
 
 /// Unencrypted bundles are only written by development builds, like the
-/// vault itself. The encrypted envelope arrives with the key work (F006).
+/// development log itself.
 const String backupEncryptionNone = 'none-dev-only';
+
+/// The payload is an encrypted vault envelope (`hhos-vault-enc` v1).
+const String backupEncryptionEnvelope = encryptionEnvelopeV1;
 
 String sha256Hex(String text) => sha256.convert(utf8.encode(text)).toString();
 
 /// Why a bundle cannot be restored. Nothing is written when this is thrown.
-class BackupError implements Exception {
+class BackupError implements Exception, CodedError {
   const BackupError(this.code, this.message);
 
   /// `BACKUP_UNREADABLE` · `NOT_A_BACKUP` · `BACKUP_NEWER` ·
   /// `BACKUP_ENCRYPTED_UNSUPPORTED` · `DIGEST_MISMATCH` ·
   /// `VAULT_INCOMPATIBLE` · `VAULT_ID_MISMATCH` · `COUNT_MISMATCH` ·
-  /// `RESTORE_TARGET_HAS_RECORDS` · `RESTORE_VERIFY_FAILED`
+  /// `BACKUP_KEY_WRONG` (the passphrase or recovery key does not open this
+  /// backup) · `BACKUP_KEY_NEEDED` · `BACKUP_KIND_MISMATCH` (an encrypted
+  /// backup for a plaintext vault or the reverse) ·
+  /// `RESTORE_TARGET_HAS_RECORDS` · `RESTORE_TARGET_NEWER` ·
+  /// `RESTORE_VERIFY_FAILED`
+  @override
   final String code;
   final String message;
 
@@ -77,6 +94,8 @@ class BackupManifest {
   final int payloadBytes;
   final String encryption;
 
+  bool get encrypted => encryption == backupEncryptionEnvelope;
+
   Map<String, Object?> toJson() => {
     'format': backupFormat,
     'format_version': formatVersion,
@@ -115,6 +134,33 @@ class BackupManifest {
   );
 }
 
+BackupManifest _manifestFor(
+  VaultState state, {
+  required String payload,
+  required String encryption,
+  required String appVersion,
+  required String sourceRevision,
+  required DateTime createdAt,
+}) => BackupManifest(
+  createdAt: createdAt.toUtc(),
+  sourceAppVersion: appVersion,
+  sourceRevision: sourceRevision,
+  vaultId: state.header.vaultId,
+  vaultFormatVersion: state.header.formatVersion,
+  recordSchemaVersions: ({
+    for (final r in state.records.values) r.schemaVersion,
+  }.toList()..sort()),
+  profileCount: state.profiles.length,
+  recordCount: state.records.length,
+  skippedEntries: state.warnings.length,
+  payloadSha256: sha256Hex(payload),
+  payloadBytes: utf8.encode(payload).length,
+  encryption: encryption,
+);
+
+String _bundle(BackupManifest manifest, String payload) =>
+    '${const JsonEncoder.withIndent('  ').convert({'manifest': manifest.toJson(), 'payload': payload})}\n';
+
 /// Builds a bundle from the exact vault log text. Deterministic: the same
 /// log, versions and [createdAt] give the same bytes.
 String createBackupBundle({
@@ -122,36 +168,100 @@ String createBackupBundle({
   required String appVersion,
   required String sourceRevision,
   required DateTime createdAt,
-}) {
-  final state = parseVaultLog(vaultLogText);
-  final manifest = BackupManifest(
-    createdAt: createdAt.toUtc(),
-    sourceAppVersion: appVersion,
+}) => _bundle(
+  _manifestFor(
+    parseVaultLog(vaultLogText),
+    payload: vaultLogText,
+    encryption: backupEncryptionNone,
+    appVersion: appVersion,
     sourceRevision: sourceRevision,
-    vaultId: state.header.vaultId,
-    vaultFormatVersion: state.header.formatVersion,
-    recordSchemaVersions: ({
-      for (final r in state.records.values) r.schemaVersion,
-    }.toList()..sort()),
-    profileCount: state.profiles.length,
-    recordCount: state.records.length,
-    skippedEntries: state.warnings.length,
-    payloadSha256: sha256Hex(vaultLogText),
-    payloadBytes: utf8.encode(vaultLogText).length,
-  );
-  return '${const JsonEncoder.withIndent('  ').convert({'manifest': manifest.toJson(), 'payload': vaultLogText})}\n';
-}
+    createdAt: createdAt,
+  ),
+  vaultLogText,
+);
+
+/// Builds a bundle of an encrypted vault: the payload is [envelopeText]
+/// byte for byte; the manifest counts come from [innerLogText], the same
+/// envelope opened with the vault's key. The counts are the only things
+/// about the content the manifest reveals.
+String createEncryptedBackupBundle({
+  required String envelopeText,
+  required String innerLogText,
+  required String appVersion,
+  required String sourceRevision,
+  required DateTime createdAt,
+}) => _bundle(
+  _manifestFor(
+    parseVaultLog(innerLogText),
+    payload: envelopeText,
+    encryption: backupEncryptionEnvelope,
+    appVersion: appVersion,
+    sourceRevision: sourceRevision,
+    createdAt: createdAt,
+  ),
+  envelopeText,
+);
 
 /// A bundle that passed every check of the restore gate up to "restore
 /// into a staged destination" (§36.3): the payload is parsed in memory.
 class StagedRestore {
-  const StagedRestore(this.manifest, this.payload, this.state);
+  const StagedRestore(
+    this.manifest,
+    this.payload,
+    this.state, {
+    this.envelope,
+    this.dataKey,
+  });
 
   final BackupManifest manifest;
 
-  /// The vault log text to write, exactly as backed up.
+  /// The stored text to write, exactly as backed up.
   final String payload;
-  final VaultState state;
+
+  /// The content, parsed in memory; null for an encrypted backup until it
+  /// is opened with [unlockStagedRestore].
+  final VaultState? state;
+
+  /// The envelope header of an encrypted backup.
+  final EnvelopeHeader? envelope;
+  final Uint8List? dataKey;
+
+  bool get encrypted => envelope != null;
+
+  /// An encrypted backup whose key has not been checked yet.
+  bool get needsKey => state == null;
+
+  /// The last check before the switch: [written], read back from the
+  /// staged copy, is byte-identical to the payload and still opens to the
+  /// counted records. Throws `RESTORE_VERIFY_FAILED`.
+  void verifyWritten(String written) {
+    final st = state;
+    if (st == null) {
+      throw const BackupError(
+        'BACKUP_KEY_NEEDED',
+        'An encrypted backup must be opened with its key first',
+      );
+    }
+    var ok =
+        sha256Hex(written) == manifest.payloadSha256 &&
+        utf8.encode(written).length == manifest.payloadBytes;
+    if (ok) {
+      try {
+        final log = encrypted
+            ? openEnvelopeText(written, dataKey!, envelope!.vaultId).inner
+            : written;
+        ok = parseVaultLog(log).records.length == st.records.length;
+      } catch (_) {
+        ok = false;
+      }
+    }
+    if (!ok) {
+      throw const BackupError(
+        'RESTORE_VERIFY_FAILED',
+        'The restored copy did not read back identically; nothing was changed',
+      );
+    }
+  }
 }
 
 /// The restore gate up to the staged copy: read → check the format and
@@ -182,10 +292,10 @@ StagedRestore stageRestore(String bundleText) {
   } catch (_) {
     throw const BackupError('BACKUP_UNREADABLE', 'The manifest is incomplete');
   }
-  if (manifest.encryption != backupEncryptionNone) {
+  if (manifest.encryption != backupEncryptionNone && !manifest.encrypted) {
     throw BackupError(
       'BACKUP_ENCRYPTED_UNSUPPORTED',
-      'This app cannot decrypt "${manifest.encryption}" backups yet',
+      'This app cannot decrypt "${manifest.encryption}" backups',
     );
   }
   if (sha256Hex(payload) != manifest.payloadSha256 ||
@@ -195,12 +305,38 @@ StagedRestore stageRestore(String bundleText) {
       'The backup content does not match its checksum',
     );
   }
+  if (manifest.encrypted) {
+    final EnvelopeHeader header;
+    try {
+      if (detectStoredVault(payload) != StoredVaultKind.encrypted) {
+        throw const VaultEnvelopeError('ENVELOPE_UNREADABLE');
+      }
+      header = EnvelopeHeader.parse(
+        payload.split('\n').firstWhere((l) => l.trim().isNotEmpty),
+      );
+    } on VaultEnvelopeError catch (e) {
+      throw BackupError('VAULT_INCOMPATIBLE', e.code);
+    }
+    if (header.vaultId != manifest.vaultId) {
+      throw const BackupError(
+        'VAULT_ID_MISMATCH',
+        'The manifest names a different vault',
+      );
+    }
+    // The content is checked once the backup's key opens it.
+    return StagedRestore(manifest, payload, null, envelope: header);
+  }
   final VaultState state;
   try {
     state = parseVaultLog(payload);
   } on VaultFormatError catch (e) {
     throw BackupError('VAULT_INCOMPATIBLE', e.code);
   }
+  _checkContent(state, manifest);
+  return StagedRestore(manifest, payload, state);
+}
+
+void _checkContent(VaultState state, BackupManifest manifest) {
   if (state.header.vaultId != manifest.vaultId) {
     throw const BackupError(
       'VAULT_ID_MISMATCH',
@@ -215,7 +351,51 @@ StagedRestore stageRestore(String bundleText) {
       'The backup content does not match its manifest counts',
     );
   }
-  return StagedRestore(manifest, payload, state);
+}
+
+/// Opens an encrypted backup with its own passphrase or recovery key (the
+/// ones the vault had when the backup was made) and checks its content:
+/// "backup created" is not "backup restorable" (§36.4). Writes nothing.
+/// Throws `BACKUP_KEY_WRONG`, `RECOVERY_KEY_FORMAT` (as
+/// RecoveryKeyFormatError), `VAULT_INCOMPATIBLE`, `VAULT_ID_MISMATCH` or
+/// `COUNT_MISMATCH`.
+Future<StagedRestore> unlockStagedRestore(
+  StagedRestore staged,
+  String secret, {
+  required KeyKind kind,
+  KeyDeriver derive = deriveInline,
+}) async {
+  final header = staged.envelope;
+  if (header == null || !staged.needsKey) return staged;
+  final slot = header.slot(kind);
+  if (slot == null) {
+    throw const BackupError('BACKUP_KEY_WRONG', 'The backup has no such key');
+  }
+  final Uint8List key;
+  try {
+    key = await slot.unwrap(secret, header.vaultId, derive);
+  } on CryptoFailure {
+    throw const BackupError(
+      'BACKUP_KEY_WRONG',
+      'This passphrase or recovery key does not open the backup',
+    );
+  }
+  final VaultState state;
+  try {
+    state = parseVaultLog(
+      openEnvelopeText(staged.payload, key, header.vaultId).inner,
+    );
+  } on VaultFormatError catch (e) {
+    throw BackupError('VAULT_INCOMPATIBLE', e.code);
+  }
+  _checkContent(state, staged.manifest);
+  return StagedRestore(
+    staged.manifest,
+    staged.payload,
+    state,
+    envelope: header,
+    dataKey: key,
+  );
 }
 
 /// Records in a live vault log (throws if it cannot be read).

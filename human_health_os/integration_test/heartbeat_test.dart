@@ -13,11 +13,14 @@ import 'package:human_health_os/src/config/app_config.dart';
 import 'package:human_health_os/src/core/capabilities.dart';
 import 'package:human_health_os/src/data/backup/backup_bundle.dart';
 import 'package:human_health_os/src/data/backup/data_files.dart';
+import 'package:human_health_os/src/data/crypto/vault_crypto.dart';
+import 'package:human_health_os/src/data/local/encrypted_vault.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/data/local/storage_io.dart';
 import 'package:human_health_os/src/data/local/vault_log.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
+import 'package:human_health_os/src/navigation/app_shell.dart';
 import 'package:integration_test/integration_test.dart';
 
 const dev = AppConfig(
@@ -25,6 +28,40 @@ const dev = AppConfig(
   version: 'it',
   sourceRevision: 'it',
 );
+const prod = AppConfig(
+  profile: BuildProfile.production,
+  version: 'it',
+  sourceRevision: 'it',
+);
+
+/// Pumps real frames until [finder] shows up: key derivation runs in a
+/// real isolate here, so settling the UI alone does not wait for it.
+Future<void> waitFor(
+  WidgetTester tester,
+  Finder finder, {
+  Duration timeout = const Duration(seconds: 20),
+}) async {
+  final end = DateTime.now().add(timeout);
+  while (finder.evaluate().isEmpty) {
+    if (DateTime.now().isAfter(end)) {
+      final shown = [
+        for (final e in find.byType(Text).evaluate())
+          (e.widget as Text).data ?? '',
+      ];
+      throw StateError('timed out waiting for $finder; on screen: $shown');
+    }
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+  await tester.pumpAndSettle();
+}
+
+Future<void> tapKey(WidgetTester tester, String key) async {
+  final f = find.byKey(ValueKey(key));
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.tap(f);
+  await tester.pump();
+}
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -280,12 +317,7 @@ void main() {
     );
     final vault = File('${data.path}/human-health-os/$vaultFileName');
     final original = vault.readAsStringSync();
-    final bundle = createBackupBundle(
-      vaultLogText: (await s1.readVaultText!())!,
-      appVersion: 'it',
-      sourceRevision: 'it',
-      createdAt: DateTime.utc(2026, 10, 7, 12),
-    );
+    final bundle = await s1.makeBackup!(DateTime.utc(2026, 10, 7, 12));
     await s1.dataFiles!.save(
       DataFileKind.backup,
       'drill.hhosbackup.json',
@@ -317,4 +349,153 @@ void main() {
     expect(find.text('82.5 kg'), findsWidgets);
     data.deleteSync(recursive: true);
   });
+
+  testWidgets('F006: a production build starts at the vault gate, creates '
+      'the encrypted vault (production key cost, in an isolate), and after a '
+      'relaunch refuses a wrong passphrase and opens with the right one', (
+    tester,
+  ) async {
+    if (!Platform.isLinux) return;
+    final data = Directory.systemTemp.createTempSync('hhos-it-f006-');
+    final env = {'HHOS_DATA_DIR': data.path, 'HOME': data.path};
+    const pass = 'Mavi-Kedi 7 Ağaç Lamba!';
+
+    Future<void> launch() async {
+      final startup = await startApp(prod, HostPlatform.linux, env: env);
+      expect(startup.gate, isNotNull, reason: 'never the shell first');
+      await tester.pumpWidget(HumanOsApp.start(startup));
+      await tester.pumpAndSettle();
+    }
+
+    await launch();
+    expect(find.byKey(const ValueKey('vault-gate-create')), findsOneWidget);
+    expect(data.listSync(), isEmpty, reason: 'nothing written before create');
+    await tester.enterText(find.byKey(const ValueKey('gate-passphrase')), pass);
+    await tester.enterText(
+      find.byKey(const ValueKey('gate-passphrase-confirm')),
+      pass,
+    );
+    await tapKey(tester, 'gate-continue');
+    await tester.pumpAndSettle();
+    final key = tester
+        .widget<SelectableText>(find.byKey(const ValueKey('gate-recovery-key')))
+        .data!;
+    await tapKey(tester, 'gate-key-written');
+    await tester.pumpAndSettle();
+    await tapKey(tester, 'gate-create-vault');
+    await waitFor(tester, find.byKey(const ValueKey('screen-today')));
+
+    final services = tester.widget<AppShell>(find.byType(AppShell)).services;
+    expect(services.storage.encrypted, isTrue);
+    await services.heartbeat.recordWeightKg(
+      profileId: services.self.id,
+      input: '74,2',
+    );
+    await services.heartbeat.recordLab(
+      profileId: services.self.id,
+      input: const LabInput(
+        analyte: 'Açlık kan şekeri',
+        value: '92,4',
+        notReported: false,
+        unit: 'mg/dL',
+        sampleDate: '2026-10-03',
+        laboratory: 'Örnek Laboratuvarı',
+      ),
+    );
+
+    final file = File('${data.path}/vault.hhosvault');
+    expect(data.listSync().map((e) => e.path.split('/').last).toList(), [
+      'vault.hhosvault',
+    ], reason: 'only the encrypted vault, no plaintext log or copy');
+    final stored = file.readAsStringSync();
+    for (final s in [
+      pass,
+      key,
+      'Açlık',
+      'Örnek',
+      '74,2',
+      '92,4',
+      'lab.result',
+    ]) {
+      expect(stored, isNot(contains(s)), reason: s);
+    }
+    final header = jsonDecode(stored.split('\n').first) as Map;
+    expect(
+      ((header['keys'] as List).first as Map)['kdf'],
+      containsPair('memory_kib', 19456),
+    );
+
+    await tester.pumpWidget(const SizedBox());
+    await launch(); // relaunch
+    expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('gate-passphrase')),
+      'not the passphrase',
+    );
+    await tapKey(tester, 'gate-unlock');
+    await waitFor(tester, find.byKey(const ValueKey('gate-error')));
+
+    expect(
+      file.readAsStringSync(),
+      stored,
+      reason: 'a failed unlock writes nothing',
+    );
+    await tester.enterText(find.byKey(const ValueKey('gate-passphrase')), pass);
+    await tapKey(tester, 'gate-unlock');
+    await waitFor(tester, find.byKey(const ValueKey('screen-today')));
+    expect(find.text('74.2 kg'), findsWidgets);
+    data.deleteSync(recursive: true);
+  });
+
+  testWidgets('F006 on real files: recovery replaces the passphrase; key loss '
+      'keeps the locked vault aside; a portable vault lives in UserData/ and '
+      'keeps its identity when the folder moves', (tester) async {
+    if (!Platform.isLinux) return;
+    final root = Directory.systemTemp.createTempSync('hhos-it-f006b-');
+    final app = Directory('${root.path}/HumanOS')..createSync();
+    File('${app.path}/portable_mode.json').writeAsStringSync('{}');
+    final exe = '${app.path}/human_health_os';
+
+    Future<EncryptedVault> vaultAt(String exePath) async =>
+        (await createPlatformRepository(prod, executablePath: exePath)).vault!;
+
+    final v = await vaultAt(exe);
+    expect(v.location, '${app.path}/UserData/vault.hhosvault');
+    final key = newRecoveryKeyForIt();
+    final created = await v.create(
+      passphrase: 'first long passphrase',
+      recoveryKey: key,
+    );
+    final svc = HeartbeatService(created.repository);
+    final me = (await svc.ensureSelfProfile()).id;
+    await svc.recordWeightKg(profileId: me, input: '70');
+    final vaultId = created.repository.description.vaultId;
+
+    // The folder moves to another place (another USB port, another PC).
+    Directory('${root.path}/Moved').createSync();
+    final movedApp = app.renameSync('${root.path}/Moved/HumanOS');
+    final moved = await vaultAt('${movedApp.path}/human_health_os');
+    final recovered = await moved.recover(
+      recoveryKey: key.toLowerCase().replaceAll('-', ' '),
+      newPassphrase: 'second long passphrase',
+    );
+    expect(recovered.repository.description.vaultId, vaultId);
+    expect((await recovered.repository.records(me)).length, 1);
+    await expectLater(
+      moved.unlock('first long passphrase'),
+      throwsA(isA<CryptoFailure>()),
+    );
+
+    // Both secrets lost: the vault is kept aside, never deleted.
+    final file = File('${movedApp.path}/UserData/vault.hhosvault');
+    final bytes = file.readAsBytesSync();
+    final kept = await moved.setAside();
+    expect(File(kept).readAsBytesSync(), bytes);
+    expect(file.existsSync(), isFalse);
+    expect((await moved.inspect()).access, VaultAccess.create);
+    root.deleteSync(recursive: true);
+  });
 }
+
+/// A fixed, synthetic recovery key: integration runs stay reproducible.
+String newRecoveryKeyForIt() => 'K7QM-2XRA-PLMN-B3DE-ZZ4H-QW5T-RT6Y-HJ7U';

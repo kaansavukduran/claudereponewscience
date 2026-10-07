@@ -25,9 +25,10 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 | Capability | Android | iOS | Web | Windows | macOS | Linux |
 |---|---|---|---|---|---|---|
 | Health platform | Health Connect | HealthKit | — | — | (HealthKit not on macOS for this app) | — |
-| Key storage | Keystore | Keychain | WebCrypto non-extractable + passphrase | DPAPI (optional) + passphrase | Keychain | Secret Service/libsecret (optional) + passphrase |
+| Key storage | Keystore (planned) | Keychain (planned) | WebCrypto non-extractable + passphrase (planned, G-32) | passphrase + recovery key (F006, not compiled here); DPAPI convenience planned (G-13) | passphrase + recovery key (F006, not compiled here); Keychain convenience planned | passphrase + recovery key (F006, tested); Secret Service convenience planned (G-13) |
 | Durable local storage (target) | yes | yes | can be evicted, so export is the durable path | yes | yes | yes (`$XDG_DATA_HOME/human-health-os`, C-4) |
 | Durable local storage (F002, dev builds only, **unencrypted**) | no (memory + notice) | no (memory + notice) | `localStorage` | `%LOCALAPPDATA%` (not compiled here) | Application Support (not compiled here) | `$XDG_DATA_HOME/human-health-os/` (tested; the pre-F002 `HumanHealthOS/` folder is moved by rename on first start) |
+| Durable local storage (F006, staging/production/portable, **encrypted**) | no (memory + notice) | no (memory + notice) | no: memory only (G-32) | `%LOCALAPPDATA%` or `UserData\` beside the EXE (not compiled here) | Application Support (not compiled here) | `$XDG_DATA_HOME/human-health-os/vault.hhosvault` or `UserData/` beside the binary (tested) |
 | Background work | WorkManager | limited BGTasks | none | none | limited | none |
 
 ## Cross-platform parity (v0.31 §38), implementation reality on 2026-10-06
@@ -43,7 +44,7 @@ States: REQUIRED (target), SUPPORTED, PARTIAL, UNSUPPORTED_BY_PLATFORM, BLOCKED_
 | Offline deterministic core | REQUIRED | REQUIRED | SUPPORTED (0 network requests in smoke) | REQUIRED | REQUIRED | SUPPORTED (no network code; architecture test) |
 | Health Connect | NOT_IMPLEMENTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
 | HealthKit | UNSUPPORTED_BY_PLATFORM | NOT_IMPLEMENTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_IMPLEMENTED (conditional) | UNSUPPORTED_BY_PLATFORM |
-| Encrypted / portable vault | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED (portable mode memory-only) |
+| Encrypted / portable vault | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED (G-32) | IMPLEMENTED (not compiled here) | IMPLEMENTED (not compiled here) | INTEGRATION_TESTED + RUNTIME_TESTED (F006) |
 | Native notifications | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
 | PWA install | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_TESTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
 

@@ -3,6 +3,7 @@
 /// download (web), and memory (tests). Pure Dart.
 library;
 
+import '../local/vault_envelope.dart' show OpenedEnvelope;
 import '../local/vault_log.dart' show VaultFormatError;
 import 'backup_bundle.dart';
 
@@ -35,6 +36,67 @@ class RestoreOutcome {
 
   /// Where the vault that was replaced was kept (never deleted).
   final String? keptPrevious;
+}
+
+/// The kind of vault a restore may replace, and how its live content is
+/// read for the "never replace records" check.
+class RestoreTarget {
+  /// A development log in plaintext.
+  const RestoreTarget.plaintext() : _open = null;
+
+  /// An encrypted vault, read with the key of the unlocked session.
+  const RestoreTarget.encrypted(OpenedEnvelope Function(String raw) open)
+    : _open = open;
+
+  final OpenedEnvelope Function(String raw)? _open;
+
+  bool get encrypted => _open != null;
+
+  /// Throws `BACKUP_KIND_MISMATCH` unless [staged] is the same kind of
+  /// vault: a plaintext backup never lands in an encrypted vault's place
+  /// (it would store health data unencrypted), and the reverse cannot be
+  /// read by a development build.
+  void checkKind(StagedRestore staged) {
+    if (staged.encrypted != encrypted) {
+      throw const BackupError(
+        'BACKUP_KIND_MISMATCH',
+        'This backup is not the same kind (encrypted or not) as this vault',
+      );
+    }
+    if (staged.needsKey) {
+      throw const BackupError(
+        'BACKUP_KEY_NEEDED',
+        'An encrypted backup must be opened with its key first',
+      );
+    }
+  }
+
+  /// Throws when restoring would replace records in [liveRaw] (see
+  /// [refuseIfHasRecords]). For an encrypted vault, entries that cannot be
+  /// read or are missing may be records: the restore is refused then too.
+  void refuseIfHolds(String? liveRaw) {
+    final open = _open;
+    if (open == null || liveRaw == null || liveRaw.trim().isEmpty) {
+      refuseIfHasRecords(liveRaw);
+      return;
+    }
+    final OpenedEnvelope opened;
+    try {
+      opened = open(liveRaw);
+    } catch (_) {
+      throw const BackupError(
+        'RESTORE_TARGET_HAS_RECORDS',
+        'The vault on this device cannot be read with this session\'s key; it is not replaced',
+      );
+    }
+    if (opened.unknown > 0) {
+      throw BackupError(
+        'RESTORE_TARGET_HAS_RECORDS',
+        'This device holds ${opened.unknown} entries that cannot be read; restoring would replace them',
+      );
+    }
+    refuseIfHasRecords(opened.inner);
+  }
 }
 
 abstract interface class DataFiles {
@@ -83,7 +145,12 @@ int newestBackupFirst(SavedFile a, SavedFile b) {
 /// Memory adapter for tests: keeps files in a map and restores into a
 /// replaceable text slot.
 class MemoryDataFiles implements DataFiles {
-  MemoryDataFiles({this.vaultText});
+  MemoryDataFiles({
+    this.vaultText,
+    this.target = const RestoreTarget.plaintext(),
+  });
+
+  final RestoreTarget target;
 
   final Map<String, String> files = {};
   final Map<String, DateTime> times = {};
@@ -123,11 +190,13 @@ class MemoryDataFiles implements DataFiles {
     StagedRestore staged, {
     required DateTime now,
   }) async {
-    refuseIfHasRecords(vaultText);
+    target.checkKind(staged);
+    target.refuseIfHolds(vaultText);
+    staged.verifyWritten(staged.payload);
     kept = vaultText;
     vaultText = staged.payload;
     return RestoreOutcome(
-      records: staged.state.records.length,
+      records: staged.state!.records.length,
       location: 'memory',
       keptPrevious: kept == null ? null : 'memory:before-restore',
     );

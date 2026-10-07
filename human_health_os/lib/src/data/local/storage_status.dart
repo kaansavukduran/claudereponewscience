@@ -6,7 +6,9 @@ import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/ports/storage_status.dart';
 import '../backup/data_files.dart';
+import 'encrypted_vault.dart';
 import 'log_repository.dart';
+import 'vault_envelope.dart' show KeyDeriver, deriveInline;
 
 export '../../domain/ports/storage_status.dart';
 
@@ -17,12 +19,24 @@ class StorageChoice {
     this.detail,
     this.notes = const [],
     this.files,
+    this.vault,
+    this.derive = deriveInline,
   });
 
+  /// The store to use. While [vault] is set this is only the memory store a
+  /// session falls back to when the user declines to open the vault.
   final HealthRepository repository;
 
-  /// Where backups and exports go; null when this build may not write
-  /// unencrypted files (staging, production, portable) or has no place.
+  /// Staging, production and portable builds (F006): the encrypted vault
+  /// that must be created or unlocked before anything is saved.
+  final EncryptedVault? vault;
+
+  /// How keys are derived on this platform (an isolate on native).
+  final KeyDeriver derive;
+
+  /// Where development backups and exports go; null when this build may not
+  /// write unencrypted files or has no place. Encrypted vaults get theirs
+  /// when opened ([OpenedVault.files]).
   final DataFiles? files;
   final StorageReason reason;
 
@@ -31,8 +45,9 @@ class StorageChoice {
   final List<StorageNote> notes;
 }
 
-/// The profile gate: staging and production never persist unencrypted data.
-/// Returns null when this build may save (development).
+/// The browser's profile gate: only development builds save there, because
+/// encrypted browser storage is not built (gap G-32). Returns null when
+/// this build may save.
 StorageChoice? profileGate(AppConfig config) => config.mayPersistUnencrypted
     ? null
     : StorageChoice(inMemoryRepository(), reason: StorageReason.profilePolicy);

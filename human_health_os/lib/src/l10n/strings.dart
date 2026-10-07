@@ -142,12 +142,16 @@ class S {
   }) => switch (reason) {
     null || StorageReason.saving => null,
     StorageReason.profilePolicy => _t(
-      'This $profile build does not save unencrypted health data. Saving starts with the encrypted vault (Forge F006); entries last until the app closes.',
-      'Bu $profile derlemesi şifresiz sağlık verisi kaydetmez. Kayıt, şifreli kasa ile başlar (Forge F006); girişler uygulama kapanana kadar kalır.',
+      'This $profile browser build does not save health data: it never stores them unencrypted, and encrypted browser storage is not built yet. Entries last until the page closes.',
+      'Bu $profile tarayıcı derlemesi sağlık verisi kaydetmez: onları asla şifresiz saklamaz ve şifreli tarayıcı depolaması henüz yapılmadı. Girişler sayfa kapanana kadar kalır.',
     ),
-    StorageReason.portablePolicy => _t(
-      'Portable mode saves only to an encrypted vault, which arrives in Forge F006. Nothing is written next to the app; entries last until it closes.',
-      'Taşınabilir mod yalnız şifreli kasaya kaydeder; bu Forge F006 ile gelir. Uygulamanın yanına hiçbir şey yazılmaz; girişler uygulama kapanana kadar kalır.',
+    StorageReason.sessionOnly when detail == 'LOCKED_VAULT_KEPT' => _t(
+      'Your encrypted vault stays locked and untouched. This session is kept in memory only; entries last until the app closes.',
+      'Şifreli kasan kilitli ve dokunulmamış olarak kalıyor. Bu oturum yalnız bellekte tutuluyor; girişler uygulama kapanana kadar kalır.',
+    ),
+    StorageReason.sessionOnly => _t(
+      'You chose to keep this session in memory only. Nothing is saved; entries last until the app closes.',
+      'Bu oturumu yalnız bellekte tutmayı seçtin. Hiçbir şey kaydedilmez; girişler uygulama kapanana kadar kalır.',
     ),
     StorageReason.platformNotBuilt => _t(
       'Saving on this platform is not built yet. Entries are kept only until the app closes.',
@@ -162,7 +166,9 @@ class S {
       'Bu tarayıcı yerel depolamayı engelliyor. Girişler yalnız sayfa kapanana kadar tutulur.',
     ),
     StorageReason.vaultUnreadable
-        when detail == 'VAULT_NEWER' || detail == 'RECORD_SCHEMA_NEWER' =>
+        when detail == 'VAULT_NEWER' ||
+            detail == 'RECORD_SCHEMA_NEWER' ||
+            detail == 'ENVELOPE_NEWER' =>
       _t(
         'Your saved data was written by a newer version of Human OS, so this version does not open it. Nothing was changed on disk; update the app to see it. New entries are kept in memory only.',
         'Kayıtlı verilerin Human OS\'un daha yeni bir sürümüyle yazılmış; bu sürüm onları açmaz. Diskte hiçbir şey değiştirilmedi; görmek için uygulamayı güncelle. Yeni girişler yalnız bellekte tutulur.',
@@ -204,6 +210,10 @@ class S {
     LoadWarningKind.entryInvalid => _t(
       'Saved entry ${w.line} breaks a record rule (${w.code}) and was skipped. The file was not changed.',
       'Kayıtlı giriş ${w.line} bir kayıt kuralını çiğniyor (${w.code}) ve atlandı. Dosya değiştirilmedi.',
+    ),
+    LoadWarningKind.entryMissing => _t(
+      'Saved entry ${w.line} is missing from the encrypted vault: it was removed from the file. Nothing replaces it; the other entries are intact.',
+      'Kayıtlı giriş ${w.line} şifreli kasada yok: dosyadan çıkarılmış. Yerine hiçbir şey konmadı; diğer girişler sağlam.',
     ),
   };
 
@@ -384,8 +394,16 @@ class S {
 
   // Your data (F005): backups and exports.
   String get dataNotAvailable => _t(
-    'Backups and exports are written only by development builds until the encrypted vault arrives (Forge F006).',
-    'Yedekler ve dışa aktarımlar, şifreli kasa gelene kadar (Forge F006) yalnız geliştirme derlemelerinde yazılır.',
+    'Backups are made from saved data. Nothing is saved in this session, so there is nothing to back up or export.',
+    'Yedekler kayıtlı verilerden yapılır. Bu oturumda hiçbir şey kaydedilmiyor; yedeklenecek ya da dışa aktarılacak bir şey yok.',
+  );
+  String get dataEncrypted => _t(
+    'Backups are encrypted like the vault: each opens only with the passphrase or recovery key the vault had when it was made.',
+    'Yedekler kasa gibi şifrelidir: her biri yalnız, yapıldığı anda kasanın sahip olduğu parola ya da kurtarma anahtarıyla açılır.',
+  );
+  String get exportNotForEncrypted => _t(
+    'Export writes an unencrypted file, so it is not offered for the encrypted vault yet.',
+    'Dışa aktarma şifresiz bir dosya yazar; bu yüzden şifreli kasa için henüz sunulmuyor.',
   );
   String get dataUnencrypted => _t(
     'Backups and exports are not encrypted yet (development build). Keep the files private.',
@@ -408,6 +426,30 @@ class S {
     'Checked: $records records and $profiles profiles, checksum matches. Made $made.',
     'Kontrol edildi: $records kayıt ve $profiles profil, sağlama toplamı eşleşiyor. Oluşturma: $made.',
   );
+  String backupCheckedEncrypted(int records, String made) => _t(
+    'Checked: checksum matches; encrypted; $records records according to its description. The content itself is verified when you restore it with its passphrase or recovery key. Made $made.',
+    'Kontrol edildi: sağlama toplamı eşleşiyor; şifreli; tanımına göre $records kayıt. İçeriğin kendisi, yedek parolası ya da kurtarma anahtarıyla geri yüklenirken doğrulanır. Oluşturma: $made.',
+  );
+  String get openBackupTitle => _t('Open this backup', 'Bu yedeği aç');
+  String get openBackupExplain => _t(
+    'Enter the passphrase this vault had when the backup was made, or its recovery key. The backup is opened and checked in memory before anything is written.',
+    'Yedek yapıldığında bu kasanın parolası neyse onu ya da kurtarma anahtarını gir. Yedek, hiçbir şey yazılmadan önce bellekte açılır ve kontrol edilir.',
+  );
+  String get useRecoveryKeyInstead => _t(
+    'Use the recovery key instead',
+    'Bunun yerine kurtarma anahtarını kullan',
+  );
+  String restoredEncrypted(int n, String? keptAt) =>
+      _t(
+        'Restored $n records. Close and reopen Human OS, then unlock it with the backup\'s passphrase or recovery key.',
+        '$n kayıt geri yüklendi. Human OS\'u kapatıp yeniden aç, sonra yedeğin parolası ya da kurtarma anahtarıyla kilidini aç.',
+      ) +
+      (keptAt == null
+          ? ''
+          : _t(
+              ' The previous vault file was kept at $keptAt.',
+              ' Önceki kasa dosyası şurada saklandı: $keptAt.',
+            ));
   String get restartToUse => _t(
     'Restored data is waiting: close and reopen Human OS to use it. Saving, backups and exports are paused until then.',
     'Geri yüklenen veriler bekliyor: kullanmak için Human OS\'u kapatıp yeniden aç. O zamana kadar kayıt, yedek ve dışa aktarma durduruldu.',
@@ -439,8 +481,16 @@ class S {
       'Bu yedek daha yeni bir Human OS ile yapılmış. Kullanmak için uygulamayı güncelle.',
     ),
     'BACKUP_ENCRYPTED_UNSUPPORTED' => _t(
-      'This backup is encrypted; this version cannot open encrypted backups yet.',
-      'Bu yedek şifreli; bu sürüm şifreli yedekleri henüz açamaz.',
+      'This backup uses an encryption this version cannot open. Nothing was changed.',
+      'Bu yedek, bu sürümün açamadığı bir şifreleme kullanıyor. Hiçbir şey değişmedi.',
+    ),
+    'BACKUP_KEY_WRONG' => _t(
+      'This passphrase or recovery key does not open the backup. Nothing was changed.',
+      'Bu parola ya da kurtarma anahtarı yedeği açmıyor. Hiçbir şey değişmedi.',
+    ),
+    'BACKUP_KIND_MISMATCH' => _t(
+      'This backup and this vault are not the same kind (encrypted or not), so it cannot be restored here. Nothing was changed.',
+      'Bu yedek ile bu kasa aynı türde değil (şifreli ya da değil); bu yüzden burada geri yüklenemez. Hiçbir şey değişmedi.',
     ),
     'RESTORE_TARGET_NEWER' => _t(
       'The data on this device was written by a newer Human OS. Restoring would hide it, so it was not done.',
@@ -468,9 +518,123 @@ class S {
     ),
   };
 
+  // The vault gate (F006): create, unlock, recover; key lost; unreadable.
+  String get gateCreateTitle =>
+      _t('Protect your health data', 'Sağlık verilerini koru');
+  String get gateCreateBody => _t(
+    'Human OS keeps your records in an encrypted vault on this device. Choose a passphrase: it is needed every time the app starts, and nobody can reset it for you.',
+    'Human OS kayıtlarını bu cihazda şifreli bir kasada tutar. Bir parola seç: uygulama her açıldığında gerekir ve kimse onu senin yerine sıfırlayamaz.',
+  );
+  String get passphrase => _t('Passphrase', 'Parola');
+  String get passphraseRepeat =>
+      _t('Repeat the passphrase', 'Parolayı tekrar yaz');
+  String passphraseHint(int n) => _t(
+    'At least $n characters. A few unrelated words are easy to remember and hard to guess.',
+    'En az $n karakter. Birbiriyle ilgisiz birkaç kelime hem kolay hatırlanır hem zor tahmin edilir.',
+  );
+  String passphraseTooShort(int n) =>
+      _t('Use at least $n characters.', 'En az $n karakter kullan.');
+  String get passphrasesDiffer =>
+      _t('The two passphrases differ.', 'İki parola birbirini tutmuyor.');
+  String get showPassphrase => _t('Show passphrase', 'Parolayı göster');
+  String get gateContinue => _t('Continue', 'Devam');
+  String get gateBack => _t('Back', 'Geri');
+  String get gateMemoryOnly => _t(
+    'Not now: keep this session in memory only',
+    'Şimdi değil: bu oturumu yalnız bellekte tut',
+  );
+  String get recoveryKeyTitle => _t('Your recovery key', 'Kurtarma anahtarın');
+  String get recoveryKeyBody => _t(
+    'If you forget the passphrase, this key is the only other way into the vault. Write it down and keep it somewhere safe, away from this device. It is shown only now. Anyone who has it can open your vault.',
+    'Parolayı unutursan kasaya girmenin tek diğer yolu bu anahtardır. Bir yere yaz ve bu cihazdan uzakta, güvenli bir yerde sakla. Yalnız şimdi gösteriliyor. Ona sahip olan herkes kasanı açabilir.',
+  );
+  String get recoveryKeySaved => _t(
+    'I have written down the recovery key',
+    'Kurtarma anahtarını bir yere yazdım',
+  );
+  String get createVault =>
+      _t('Create the encrypted vault', 'Şifreli kasayı oluştur');
+  String get derivingKey => _t(
+    'Working on the key. This takes a moment.',
+    'Anahtar hazırlanıyor. Bu biraz sürer.',
+  );
+  String get unlockTitle => _t('Unlock your vault', 'Kasanın kilidini aç');
+  String get unlockBody => _t(
+    'Enter the passphrase of the encrypted vault on this device.',
+    'Bu cihazdaki şifreli kasanın parolasını gir.',
+  );
+  String get unlock => _t('Unlock', 'Kilidi aç');
+  String get wrongPassphrase => _t(
+    'This passphrase did not open the vault. Check it and try again, or use the recovery key.',
+    'Bu parola kasayı açmadı. Kontrol edip tekrar dene ya da kurtarma anahtarını kullan.',
+  );
+  String get useRecoveryKey => _t(
+    'Forgot the passphrase? Use the recovery key',
+    'Parolayı mı unuttun? Kurtarma anahtarını kullan',
+  );
+  String get recoverTitle =>
+      _t('Recover with the recovery key', 'Kurtarma anahtarıyla kurtar');
+  String get recoverBody => _t(
+    'Enter the recovery key you wrote down when the vault was created, and choose a new passphrase. The old passphrase will no longer open this vault.',
+    'Kasa oluşturulurken yazdığın kurtarma anahtarını gir ve yeni bir parola seç. Eski parola artık bu kasayı açmayacak.',
+  );
+  String get recoveryKeyLabel => _t('Recovery key', 'Kurtarma anahtarı');
+  String get newPassphrase => _t('New passphrase', 'Yeni parola');
+  String get newPassphraseRepeat =>
+      _t('Repeat the new passphrase', 'Yeni parolayı tekrar yaz');
+  String get recoverButton =>
+      _t('Open and set the new passphrase', 'Aç ve yeni parolayı kaydet');
+  String get wrongRecoveryKey => _t(
+    'This recovery key did not open the vault.',
+    'Bu kurtarma anahtarı kasayı açmadı.',
+  );
+  String get recoveryKeyFormat => _t(
+    'A recovery key has 32 letters and digits (A–Z and 2–7), written in groups of four.',
+    'Bir kurtarma anahtarında 32 harf ve rakam (A–Z ve 2–7) vardır; dörderli gruplar hâlinde yazılır.',
+  );
+  String get lostBoth => _t('I have lost both', 'İkisini de kaybettim');
+  String get keyLostTitle => _t(
+    'Without the passphrase or the recovery key',
+    'Parola ya da kurtarma anahtarı olmadan',
+  );
+  String get keyLostBody => _t(
+    'The vault on this device is encrypted. Without its passphrase or recovery key nobody can open it: not you, not Human OS, not its developers. Human OS will not open it, reset it or delete it. A backup helps only if you know that backup\'s passphrase or recovery key.',
+    'Bu cihazdaki kasa şifreli. Parolası ya da kurtarma anahtarı olmadan onu kimse açamaz: ne sen, ne Human OS, ne de geliştiricileri. Human OS onu açmaz, sıfırlamaz, silmez. Bir yedek ancak o yedeğin parolasını ya da kurtarma anahtarını biliyorsan işe yarar.',
+  );
+  String get backToUnlock => _t('Back to unlock', 'Kilit açmaya dön');
+  String get startNewVault => _t(
+    'Keep the locked vault and start a new one',
+    'Kilitli kasayı sakla ve yeni bir kasa başlat',
+  );
+  String get startNewTitle =>
+      _t('Start a new vault?', 'Yeni bir kasa başlatılsın mı?');
+  String get startNewBody => _t(
+    'The current vault file is kept on this device under a new name. Nothing is deleted. A new, empty vault is created next.',
+    'Mevcut kasa dosyası bu cihazda yeni bir adla saklanır. Hiçbir şey silinmez. Ardından yeni, boş bir kasa oluşturulur.',
+  );
+  String vaultKeptAt(String path) => _t(
+    'The previous vault was kept as $path.',
+    'Önceki kasa şu adla saklandı: $path.',
+  );
+  String get unreadableTitle =>
+      _t('The saved vault cannot be opened', 'Kayıtlı kasa açılamıyor');
+  String unreadableBody(String code) => code == 'ENVELOPE_NEWER'
+      ? _t(
+          'It was written by a newer version of Human OS. Update the app to open it. The file was not changed.',
+          'Human OS\'un daha yeni bir sürümüyle yazılmış. Açmak için uygulamayı güncelle. Dosya değiştirilmedi.',
+        )
+      : _t(
+          'The vault file is damaged or not a Human OS vault ($code). It was not changed.',
+          'Kasa dosyası hasarlı ya da bir Human OS kasası değil ($code). Dosya değiştirilmedi.',
+        );
+  String gateFailed(String code) => _t(
+    'Something went wrong ($code). Nothing was changed.',
+    'Bir şey ters gitti ($code). Hiçbir şey değiştirilmedi.',
+  );
+
   String storageLabel(String durability, bool encrypted) {
     final enc = encrypted
-        ? ''
+        ? _t(' · encrypted', ' · şifreli')
         : _t(' · not encrypted (development)', ' · şifresiz (geliştirme)');
     return switch (durability) {
       'localFile' => _t('Saved on this device', 'Bu cihazda saklanıyor') + enc,

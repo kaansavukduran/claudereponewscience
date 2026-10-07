@@ -5,11 +5,14 @@
 /// first real schema change has a tested route (gap G-15).
 library;
 
+import '../../domain/errors.dart';
+
 /// The vault cannot be opened safely. It is never overwritten.
-class VaultFormatError implements Exception {
+class VaultFormatError implements Exception, CodedError {
   const VaultFormatError(this.code, this.message);
 
   /// Stable code the UI shows (e.g. `VAULT_NEWER`).
+  @override
   final String code;
   final String message;
 

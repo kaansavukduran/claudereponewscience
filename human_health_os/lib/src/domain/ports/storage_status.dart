@@ -9,12 +9,14 @@ enum StorageReason {
   /// A persistent adapter is in use.
   saving,
 
-  /// Staging and production builds never save unencrypted health data
-  /// (D-010); saving starts with the encrypted vault (F006).
+  /// A web build other than development: it never saves unencrypted health
+  /// data (D-010), and encrypted browser storage is not built (gap G-32).
   profilePolicy,
 
-  /// Portable mode saves only to an encrypted vault (D-009, F006).
-  portablePolicy,
+  /// The user chose to keep this session in memory only instead of creating
+  /// or unlocking the encrypted vault (F006). [detail] `LOCKED_VAULT_KEPT`
+  /// when an encrypted vault exists and stays untouched.
+  sessionOnly,
 
   /// This platform has no storage adapter yet (Android, iOS).
   platformNotBuilt,

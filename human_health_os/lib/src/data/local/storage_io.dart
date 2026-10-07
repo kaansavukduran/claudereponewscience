@@ -1,13 +1,19 @@
-/// Native (dart:io) storage: file vault on desktop. Mobile adapters need
-/// platform paths (path_provider) and land with their Forge; until then mobile
-/// falls back to memory with a visible notice.
+/// Native (dart:io) storage on desktop: the encrypted vault for staging,
+/// production and portable builds (F006), the plaintext log for development
+/// installs. Mobile adapters need platform paths (path_provider) and land
+/// with their Forge; until then mobile falls back to memory with a notice.
 library;
 
 import 'dart:io';
+import 'dart:isolate';
+import 'dart:typed_data';
 
 import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
+import '../backup/data_files.dart' show RestoreTarget, fileStamp;
 import '../backup/data_files_io.dart';
+import '../crypto/vault_crypto.dart';
+import 'encrypted_vault.dart';
 import 'log_repository.dart';
 import 'storage_status.dart';
 import 'vault_log.dart' show decodeLogBytes;
@@ -45,6 +51,18 @@ class FileLogSink implements LogSink {
 }
 
 const String vaultFileName = 'vault.hhoslog.jsonl';
+
+/// The encrypted vault's file. Staging (and a mislabelled build, which
+/// falls back to staging) never opens the production vault.
+String encryptedVaultFileName(BuildProfile profile) =>
+    profile == BuildProfile.production
+    ? 'vault.hhosvault'
+    : 'vault-${profile.name}.hhosvault';
+
+/// Argon2id in a background isolate, so the UI keeps drawing while a key is
+/// derived (about 0.25 s).
+Future<Uint8List> deriveInIsolate(String secret, KdfParams params) =>
+    Isolate.run(() => deriveKey(secret, params));
 
 /// XDG data subfolder on Linux (appendix 221, conflict C-4).
 const String linuxDataFolder = 'human-health-os';
@@ -173,16 +191,7 @@ Future<StorageChoice> createPlatformRepository(
   Map<String, String>? env,
   String? executablePath,
 }) async {
-  final gated = profileGate(config);
-  if (gated != null) return gated;
-  // v0.28 / D-009: portable data must be encrypted. Never write a plaintext
-  // vault next to the executable, not even in development builds.
-  if (isPortableMode(executablePath: executablePath)) {
-    return StorageChoice(
-      inMemoryRepository(),
-      reason: StorageReason.portablePolicy,
-    );
-  }
+  final portable = isPortableMode(executablePath: executablePath);
   final resolved = resolveDataDirectory(
     env: env,
     executablePath: executablePath,
@@ -199,6 +208,34 @@ Future<StorageChoice> createPlatformRepository(
     return StorageChoice(
       inMemoryRepository(),
       reason: StorageReason.platformNotBuilt,
+    );
+  }
+  // D-009/D-010/F006: staging, production and portable builds keep health
+  // data only in the encrypted vault; nothing is written before the user
+  // creates or unlocks it, and nothing plaintext ever lands next to the app.
+  if (!config.mayPersistUnencrypted || portable) {
+    final file = File(
+      '${dir.path}${Platform.pathSeparator}${encryptedVaultFileName(config.profile)}',
+    );
+    final dataDir = dir;
+    return StorageChoice(
+      inMemoryRepository(),
+      derive: deriveInIsolate,
+      vault: EncryptedVault(
+        raw: FileLogSink(file),
+        location: file.path,
+        derive: deriveInIsolate,
+        setAsideStore: (now) async {
+          final kept = '${file.path}.locked-${fileStamp(now)}';
+          await file.rename(kept);
+          return kept;
+        },
+        filesFor: (sink) => FileDataFiles(
+          dataDir: dataDir,
+          vault: file,
+          target: RestoreTarget.encrypted(sink.open),
+        ),
+      ),
     );
   }
   final notes = <StorageNote>[];

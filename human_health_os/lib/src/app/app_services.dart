@@ -7,6 +7,7 @@ import 'package:flutter/foundation.dart';
 import '../application/heartbeat_service.dart';
 import '../config/app_config.dart';
 import '../data/backup/data_files.dart';
+import '../data/local/vault_envelope.dart' show KeyDeriver, deriveInline;
 import '../core/capabilities.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
@@ -24,9 +25,10 @@ class AppServices {
     this.storageNotes = const [],
     this.loadWarnings = const [],
     this.dataFiles,
-    this.readVaultText,
+    this.makeBackup,
     this.lockStorage,
     this.restartRequired,
+    this.deriveKey = deriveInline,
   });
 
   final AppConfig config;
@@ -52,8 +54,12 @@ class AppServices {
   /// Backups and exports (F005); null when this build may not write them.
   final DataFiles? dataFiles;
 
-  /// The exact vault log text, for a backup; null for a memory-only store.
-  final Future<String?> Function()? readVaultText;
+  /// A backup bundle of the stored vault as it is now (plaintext log or
+  /// encrypted envelope, byte for byte); null for a memory-only store.
+  final Future<String> Function(DateTime now)? makeBackup;
+
+  /// Opens encrypted backups (Argon2id; an isolate on native).
+  final KeyDeriver deriveKey;
 
   /// Stops all writes in this session with a code (after a restore).
   final void Function(String code)? lockStorage;

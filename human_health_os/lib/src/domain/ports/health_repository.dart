@@ -3,6 +3,7 @@
 /// browser.
 library;
 
+import '../errors.dart';
 import '../profile/profile.dart';
 import '../records/health_record.dart';
 
@@ -28,7 +29,8 @@ class StorageDescription {
 
   final StorageDurability durability;
 
-  /// No store is encrypted yet; the encrypted vault arrives in ladder F006.
+  /// True for the encrypted vault (F006); development logs and memory
+  /// stores are not encrypted.
   final bool encrypted;
 
   /// Human-readable location (path or "browser storage"). No health data.
@@ -49,6 +51,10 @@ enum LoadWarningKind {
 
   /// An entry is readable but breaks a record rule ([LoadWarning.code]).
   entryInvalid,
+
+  /// An encrypted vault lacks an entry between two readable ones: it was
+  /// removed from the file (F006). Nothing replaces it.
+  entryMissing,
 }
 
 /// A recoverable problem found while opening a store. The UI must show it.
@@ -112,10 +118,11 @@ class LoadReport {
 }
 
 /// A write was refused without touching the store.
-class StorageWriteRefused implements Exception {
+class StorageWriteRefused implements Exception, CodedError {
   const StorageWriteRefused(this.code);
 
   /// Stable code, e.g. `VAULT_READ_ONLY`.
+  @override
   final String code;
 
   @override

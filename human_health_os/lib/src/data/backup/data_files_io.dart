@@ -9,10 +9,17 @@ import 'backup_bundle.dart';
 import 'data_files.dart';
 
 class FileDataFiles implements DataFiles {
-  FileDataFiles({required this.dataDir, required this.vault});
+  FileDataFiles({
+    required this.dataDir,
+    required this.vault,
+    this.target = const RestoreTarget.plaintext(),
+  });
 
   final Directory dataDir;
   final File vault;
+
+  /// The kind of vault [vault] is (development log or encrypted envelope).
+  final RestoreTarget target;
 
   String get _sep => Platform.pathSeparator;
   Directory _dir(DataFileKind kind) => Directory(
@@ -62,22 +69,20 @@ class FileDataFiles implements DataFiles {
     StagedRestore staged, {
     required DateTime now,
   }) async {
+    target.checkKind(staged);
     final live = await vault.exists()
         ? decodeLogBytes(await vault.readAsBytes())
         : null;
-    refuseIfHasRecords(live);
+    target.refuseIfHolds(live);
     await vault.parent.create(recursive: true);
     // Staged destination: written and verified before anything is switched.
     final restoring = File('${vault.path}.restoring');
     await restoring.writeAsString(staged.payload, flush: true);
-    final written = await restoring.readAsString();
-    if (sha256Hex(written) != staged.manifest.payloadSha256 ||
-        parseLiveRecordCount(written) != staged.manifest.recordCount) {
+    try {
+      staged.verifyWritten(await restoring.readAsString());
+    } catch (_) {
       await restoring.delete();
-      throw const BackupError(
-        'RESTORE_VERIFY_FAILED',
-        'The restored copy did not read back identically; nothing was changed',
-      );
+      rethrow;
     }
     String? kept;
     if (await vault.exists()) {

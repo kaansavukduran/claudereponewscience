@@ -104,3 +104,22 @@ The user wrote (Turkish): "I don't know what main is … you think and do it, de
 - **Transitive:** `typed_data` only (Dart team).
 - **Alternatives:** hand-written SHA-256 (rejected: unreviewed code for an integrity primitive), `pointycastle`/`cryptography` (larger; to be reviewed in F006 for encryption and key derivation, where `crypto` is not enough).
 - **Lockfile:** `human_health_os/pubspec.lock` is committed with the change.
+
+## D-016: Dependency review — `pointycastle`, and the vault cryptography (F006, 2026-10-07; D-007 procedure)
+
+- **Package:** `pointycastle` 4.0.0, pinned exactly (pub.dev, verified publisher `bouncycastle.org`, repository `github.com/bcgit/pc-dart`, latest release 2025-02-19, checked 2026-10-07). Transitive: `convert` 3.1.2 (dart.dev); `collection` was already present.
+- **Purpose:** Argon2id key derivation and ChaCha20-Poly1305 authenticated encryption for the encrypted vault and its backups. No other part of the library is used.
+- **License:** MIT (The Legion of the Bouncy Castle), OSI approved.
+- **Maintenance:** port of Bouncy Castle; pub points 140/160; about 3.9 M downloads in 30 days; null-safe, Dart 3; no native code, no network use.
+- **Correctness evidence, kept in the test suite** (`test/data/vault_crypto_test.dart`): RFC 8439 §2.8.2 (seal and open), RFC 9106 §5.3 (Argon2id), and two vectors computed with the Argon2 reference C implementation (argon2-cffi 23, independent of pointycastle) for the app's exact parameters and UTF-8 encoding, one with Turkish letters.
+- **Platforms:** native (Dart VM/AOT) on Android, iOS, Linux, macOS and Windows. **Not usable under dart2js**, measured 2026-10-07 in V8 (Node 22): `Poly1305` throws "full width integer not supported on this platform", and Argon2id at the vault cost takes 7.4 s (0.25 s native). pub.dev's `platform:web` tag does not hold for this use. Web builds other than development therefore keep data in memory (G-32). Routes for later: dart2wasm (64-bit integers; pointycastle declares wasm support since 3.8.0), or WebCrypto (AES-GCM, PBKDF2) behind the same envelope with another `aead` value.
+- **Parameters:** Argon2id v1.3, m = 19 MiB, t = 2, p = 1 (OWASP Password Storage Cheat Sheet minimum), a 16-byte random salt per wrapped key, stored next to it; parameters read from a file are refused outside fixed limits. ChaCha20-Poly1305, 256-bit key, 96-bit random nonce per sealed line (`Random.secure()`), 128-bit tag. Key derivation runs in an isolate on native builds.
+- **Alternatives:** `cryptography` (more moving parts, platform plugins with native code); libsodium through FFI (a native build per platform, no web); AES-256-GCM in pure Dart (measured about 23 times slower than ChaCha20 natively; the candidate for WebCrypto interop later). OS key stores (Keychain, Keystore, DPAPI, Secret Service) may only ever be a convenience unlock (master §11) and are not built (G-13).
+- **Design decisions taken with it:**
+  1. Envelope `hhos-vault-enc` v1 seals each line of the unchanged logical log (vault format 1), so replay rules, migrations and fixtures stay the same; associated data binds every sealed line to its vault id and sequence number.
+  2. A random 256-bit data key; a passphrase slot and a recovery slot wrap it; no key is ever stored unwrapped; the recovery key (160 random bits) is shown once and must be confirmed before the vault exists.
+  3. Setting a new passphrase (after a recovery) rewrites only line 1, atomically; sealed lines stay byte for byte. Copies made earlier still open with the old passphrase (G-33).
+  4. Development builds keep the labelled plaintext log. Staging, production and portable desktop builds persist only through the encrypted vault, and write nothing before it is created; staging and production use different files (`vault-staging.hhosvault`, `vault.hhosvault`), so a mislabelled build never opens production data.
+  5. A failed unlock writes nothing and never opens a plaintext store. "Start a new vault" (key lost, or a damaged file) renames the old file; nothing is deleted. A vault written by a newer app is never set aside.
+  6. Encrypted backups carry the envelope byte for byte; restoring one asks for the backup's own passphrase or recovery key and checks the content before anything is written; plaintext and encrypted backups never cross. Export (plaintext JSON) is not offered for encrypted vaults (G-34).
+- **Lockfile:** `human_health_os/pubspec.lock` is committed with the change.

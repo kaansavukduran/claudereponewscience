@@ -7,9 +7,10 @@
 /// cannot be used are skipped in memory and reported, and the file is left
 /// as it is.
 ///
-/// The log is NOT encrypted (`encryption: none-dev-only`); only development
-/// builds write it. The encrypted vault (ladder F006) replaces the payload
-/// with an encrypted envelope.
+/// Stored as is, this log is NOT encrypted (`encryption: none-dev-only`);
+/// only development builds write it that way. Every other build stores it
+/// inside the encrypted envelope (vault_envelope.dart, ladder F006), which
+/// seals each line and gives back exactly this text when opened.
 library;
 
 import 'dart:convert';
@@ -24,6 +25,14 @@ export 'vault_migrations.dart'
 
 const String vaultFormat = 'hhos-vault-log';
 const String encryptionNoneDevOnly = 'none-dev-only';
+
+/// Stand-ins the envelope reader puts where a sealed line could not be used
+/// (vault_envelope.dart). None is JSON, so replay reports each: a complete
+/// line that does not authenticate is unreadable wherever it is; only a
+/// cut-off last line counts as an interrupted save.
+const String unreadableEntryMarker = '\u0000unreadable entry';
+const String missingEntryMarker = '\u0000missing entry';
+const String tornEntryMarker = '\u0000torn entry';
 
 class VaultHeader {
   const VaultHeader({
@@ -239,7 +248,11 @@ VaultState parseVaultLog(
     } catch (_) {
       state.warnings.add(
         LoadWarning(
-          isLast
+          lines[i] == missingEntryMarker
+              ? LoadWarningKind.entryMissing
+              : lines[i] == unreadableEntryMarker
+              ? LoadWarningKind.entryUnreadable
+              : isLast
               ? LoadWarningKind.lastEntryIncomplete
               : LoadWarningKind.entryUnreadable,
           line: i + 1,
