@@ -1,0 +1,42 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F005-0019",
+  "kind": "TEST",
+  "forge_id": "F005@v0.32",
+  "source_revision": "99b997e0d08eaa9234df968e546aea28558dd325",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "python3 tools/validate_project_state.py",
+  "argv": [
+    "python3",
+    "tools/validate_project_state.py"
+  ],
+  "cwd": ".",
+  "started_at": "2026-10-07T18:12:29.488Z",
+  "finished_at": "2026-10-07T18:12:29.612Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "UNAVAILABLE",
+    "dart": "UNAVAILABLE",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v77 x86_64",
+  "summary": null,
+  "log_sha256": "7eadf86a58a40922d05fe5709da84bd7917ec2115fb9f3ac90dd0e846cacaf10",
+  "log_lines": 1,
+  "log_tail": [
+    "PASS: project state consistent (115 receipts, 13 verified gates)"
+  ],
+  "lockfile_sha256": "8031c1427448fcff49c237e64767b728bb4cdbadb06854e17eb2cf045cc94e33",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "8031c1427448fcff49c237e64767b728bb4cdbadb06854e17eb2cf045cc94e33",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "project_state",
+    "tools/validate_project_state.py"
+  ]
+}
