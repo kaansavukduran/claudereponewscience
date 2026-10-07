@@ -439,3 +439,34 @@ No erasure (hard delete) workflow; observation time cannot be corrected; no deri
 
 ## Next recommended Forge
 **F004@v0.32 — labs vertical slice** (MVP batch, D-014).
+
+---
+
+# FORGE F004@v0.32 — labs vertical slice, 2026-10-07 — F004_COMPLETE
+
+**Goal** manual LabResult entry with source label/value/unit/date/specimen; range metadata kept distinct from app interpretation; timeline integration. Exit: missing unit/range remains missing; source flag preserved; no diagnosis generated (master §39). **Baseline** e50873b → implementation e8ea064 (clean tree for all gates). MVP batch D-014, Forge 3 of 5.
+
+## What a lab result is
+A `lab.result` record (record schema 3) holding source text only: value as typed (`original_text`, e.g. "5,4"), printed unit (null when none), sample day (UTC midnight, shown without a time-zone shift) and `LabDetails` (printed name, specimen, laboratory, the lab's flag, the printed range; each null when not printed). State REPORTED, provenance manual. The app holds no thresholds and compares nothing; the screen says so. Interpretation (reference state, decision/critical rules, RCV, baseline) stays in the TS oracle until F011 (G-27).
+
+## Acceptance → evidence
+AC-1 schema rules, AC-2 missing stays missing, AC-3 flag/range verbatim, AC-4 no diagnosis (single stored record; JSON and EN/TR screen + row scans), AC-5 entry and errors, AC-6 timeline integration: `test/data/lab_result_test.dart`, `test/widget/f004_labs_test.dart` (EV-TEST-F004-0004) · AC-7 fixture `v1_f004_schema3` (`vault_compat_test`) + Linux launch on it (EV-RUNTIME-F004-0002) · AC-8 EV-TEST-F004-0006 · AC-9 EV-RUNTIME-F004-0001 (smoke 54/54) · AC-10 regression receipts + mutations.
+
+## Tests / Builds / Runtime (receipts on e8ea064)
+- `flutter test` 157 PASS; integration 4 PASS; tooling 16, contracts, `pnpm test` PASS; format/analyze clean.
+- Web COMPILED (EV-BUILD-F004-0001: tree `7870db2b…fe84`, main.dart.js `5f41353d…7ca2`); smoke 54/54 RUNTIME_TESTED: in Chromium a result typed as printed is on screen with "Lab flag: H", survives a reload, no normal/abnormal wording.
+- Linux COMPILED (EV-BUILD-F004-0002: bundle `76afbcf5…f6f0`, UNSIGNED); launch RUNTIME_TESTED on the schema-3 fixture vault (`reports/runtime/linux-f004/f004-linux-x11.png`).
+
+## Failures found and repairs
+1. **Product bug:** versions with equal entry times were ordered by id instead of lineage (a correction could appear older than what it corrects). Found by `lab_result_test`; fixed with a lineage-depth sort in `timeline.dart`; regression test in `timeline_test.dart`.
+2. Expected contract breaks (record schema v3, Labs no longer a placeholder) → tests updated; NaN weight kept its `OUT_OF_PLAUSIBLE_RANGE` code (finite check made lab-specific).
+3. Test drivers: widget tests needed lazy-list scrolling and focus release; the web smoke typed too fast and, on the phone layout, clicked fields that were off screen (Flutter hit-tests by position) so text landed in other fields — the app showed exactly what it received. Fixed in the smoke: wait after focus, scroll each field into view by wheel over the list padding, require on-screen bounding boxes.
+
+## Mutations (each caught)
+L1 missing unit stored as empty text · L2 lab flag dropped · L3 row compares value with range ("outside range") · L4 result stored as OBSERVED by the app · L5 schema 1/2 records gain a `lab` key · L6 Labs lists superseded versions.
+
+## Known limitations
+G-26 censored/qualitative values · G-27 interpretation (F011) · G-28 method, report time, structured ranges · no document import/OCR.
+
+## Next recommended Forge
+**F005@v0.32 — export + backup + staged restore** (MVP batch, D-014).

@@ -3,56 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "TESTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F004",
-    "contract": "v0.32",
-    "run_id": "F004@v0.32",
-    "goal": "Labs vertical slice: manual LabResult entry as printed; range metadata kept as source text, distinct from (absent) app interpretation; timeline integration (master §39 F004)",
-    "status": "TESTING",
-    "baseline_commit": "e50873b",
-    "started_at": "2026-10-07T09:30:00Z",
-    "scope": [
-      "record schema 3: kind lab.result with LabDetails; Quantity.unit nullable for lab results only",
-      "LabInput, parseSampleDate, recordLab, correctLab, labTimeline",
-      "Labs screen (form + current results), Timeline shows lab entries (date only), entered in error / delete from the Timeline",
-      "schema-3 fixture, Linux integration, web smoke lab step",
-      "bug found: versions with equal entry times were ordered by id, not lineage (fixed in timeline.dart, regression test)"
-    ],
-    "out_of_scope": [
-      "interpretation (F011)",
-      "censored/qualitative values (G-26)",
-      "method/structured ranges (G-28)",
-      "document import/OCR"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Record schema 3: lab.result requires LabDetails with a non-empty printed name; LabDetails only on lab results; only lab results may lack a unit; finite values; no plausibility range; markers carry no lab details; schema 1/2 JSON keeps its shape",
-      "AC-2 Missing stays missing: an empty unit, flag or range is null in memory and in the stored JSON; 'the report gives no value' is NOT_REPORTED without a quantity, never 0",
-      "AC-3 Source flag preserved: the printed flag is stored verbatim and shown labelled as the lab's ('Lab flag: H'); the printed range is shown as the lab's range",
-      "AC-4 No diagnosis generated: recording a result stores exactly one record and no derived or labelled data; no screen text on Labs or the Timeline interprets a result (EN/TR scans of whole screens and of result rows)",
-      "AC-5 Entry: printed name, numeric value (comma or dot, kept as typed), unit, sample date YYYY-MM-DD (invalid dates refused; future beyond one day refused), specimen, laboratory; errors localized",
-      "AC-6 Timeline integration: lab results appear on the Timeline (printed name, date without time shift); a correction on Labs is a new version and the old one stays in the Timeline history; entered in error / delete work on lab results",
-      "AC-7 Fixture v1_f004_schema3 (schemas 1-3 mixed) equals the writer's bytes and replays with every printed field",
-      "AC-8 Linux integration (real IO): a lab result with a missing unit survives a relaunch byte-identically and shows '(unit not given)' and the lab flag",
-      "AC-9 Web smoke: a result typed in the browser is on screen as printed with the lab flag, survives a reload, no normal/abnormal wording",
-      "AC-10 Regression: F001-F003 gates pass; mutations L1-L6 each fail the intended test"
-    ],
-    "completed_steps": [
-      "SPECIFY: AC-1..AC-10",
-      "IMPLEMENT: LabDetails, schema 3, RecordKind.labResult, nullable lab unit, service lab use cases, LabsScreen, Timeline lab display, EN/TR strings",
-      "REPAIR: versions with equal entry times sorted by id instead of lineage (found by lab_result_test) -> lineage depth sort + regression test",
-      "TEST: lab_result_test, f004_labs_test (7), fixture v1_f004_schema3, integration F004, smoke lab step (54/54 locally); 156 unit/widget + 4 integration pass",
-      "REPAIR (test driver): smoke typed too fast and clicked off-screen fields on the phone layout -> wait, scroll fields into view by wheel over the list padding, require on-screen bounding boxes",
-      "MUTATION: L1-L6 caught"
-    ],
-    "last_verified_gate": null,
-    "next_action": "commit, then run gates with --forge F004@v0.32",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -63,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F003@v0.32 (2026-10-07, source revision 8d64c5e29e94)",
+  "last_completed_forge": "F004@v0.32 (2026-10-07, source revision e8ea0645497d)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -76,86 +29,86 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F003-0001",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-TEST-F004-0001",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F003-0002",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-TEST-F004-0002",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F003-0003",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-TEST-F004-0003",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
-      "gate": "flutter test (138: timeline, lineage store, F003 timeline UI, fixtures, F001/F002 suites)",
-      "evidence_id": "EV-TEST-F003-0004",
-      "criterion": "AC-1..AC-10",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "gate": "flutter test (157: lab_result, f004_labs incl. EN/TR interpretation scans, fixtures, F001-F003 suites)",
+      "evidence_id": "EV-TEST-F004-0004",
+      "criterion": "AC-1..AC-7",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "evidence tooling unit tests (16)",
-      "evidence_id": "EV-TEST-F003-0005",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-TEST-F004-0005",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development)",
-      "evidence_id": "EV-BUILD-F003-0001",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-BUILD-F004-0001",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
-      "gate": "web runtime smoke incl. saved weight listed on the Timeline after reload",
-      "evidence_id": "EV-RUNTIME-F003-0001",
-      "criterion": "AC-11",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "gate": "web runtime smoke incl. a lab result typed in the browser, on screen as printed, surviving a reload",
+      "evidence_id": "EV-RUNTIME-F004-0001",
+      "criterion": "AC-9",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
-      "gate": "integration_test on Linux (F002 + correction/withdrawal survive relaunch)",
-      "evidence_id": "EV-TEST-F003-0006",
-      "criterion": "AC-11",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "gate": "integration_test on Linux (F002, F003, lab result with missing unit across a relaunch)",
+      "evidence_id": "EV-TEST-F004-0006",
+      "criterion": "AC-8",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development)",
-      "evidence_id": "EV-BUILD-F003-0002",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-BUILD-F004-0002",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
-      "gate": "Linux launch on the schema-2 fixture vault: 80 kg current (8 kg withdrawn), deleted 79 kg hidden",
-      "evidence_id": "EV-RUNTIME-F003-0002",
-      "criterion": "AC-3, AC-4",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "gate": "Linux launch on the schema-3 fixture vault: opens without an unreadable notice, 78 kg shown",
+      "evidence_id": "EV-RUNTIME-F004-0002",
+      "criterion": "AC-7",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "golden-vector contract check",
-      "evidence_id": "EV-TEST-F003-0007",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-TEST-F004-0007",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F003-0008",
-      "criterion": "AC-12",
-      "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+      "evidence_id": "EV-TEST-F004-0008",
+      "criterion": "AC-10",
+      "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
       "result": "PASS"
     }
   ],
@@ -187,8 +140,13 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": null,
-  "updated_at": "2026-10-07T10:30:00Z",
+  "next_recommended_forge": {
+    "forge_id": "F005",
+    "contract": "v0.32",
+    "run_id": "F005@v0.32",
+    "why": "master §39 ladder: deterministic export, backup bundle with manifest + checksums, staged restore with a restore drill (backup -> delete test vault -> restore -> same records) (MVP batch D-014)"
+  },
+  "updated_at": "2026-10-07T10:50:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -214,20 +172,20 @@
     "web": {
       "status": "RUNTIME_TESTED",
       "evidence": [
-        "EV-BUILD-F003-0001",
-        "EV-RUNTIME-F003-0001"
+        "EV-BUILD-F004-0001",
+        "EV-RUNTIME-F004-0001"
       ],
       "note": "development profile, offline build (--no-web-resources-cdn); Chromium 141 headless; PWA install NOT_TESTED"
     },
     "linux": {
-      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch on a schema-2 vault + integration_test; EV-BUILD-F003-0002, EV-RUNTIME-F003-0002, EV-TEST-F003-0006)",
+      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch on a schema-3 vault + integration_test; EV-BUILD-F004-0002, EV-RUNTIME-F004-0002, EV-TEST-F004-0006)",
       "product_surface": true,
       "packaged": "F015-L1 IN_PROGRESS_RECOVERABLE: tar.zst, deb, rpm, AppImage built (UNSIGNED); Ubuntu 24.04 install/launch PASS; Ubuntu 22.04 FAIL (libGLESv2 dependency); Flatpak NOT_BUILT; see reports/artifacts/forge-f030l-1.json",
       "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12); older distros need an older-glibc builder (D-009)",
       "distro_tests": "Ubuntu 24.04 (host) PASS for deb/tar.zst/AppImage on X11 + Weston Wayland; Ubuntu 22.04 FAIL (open defect); Fedora 44 static rpm checks only; Debian 12/13, Nobara 44, GNOME/KDE Wayland NOT_RUN",
       "evidence": [
-        "reports/runtime/linux-f003/f003-linux-x11.log",
-        "reports/runtime/linux-f003/f003-linux-x11.png"
+        "reports/runtime/linux-f004/f004-linux-x11.log",
+        "reports/runtime/linux-f004/f004-linux-x11.png"
       ]
     },
     "android": {
@@ -256,9 +214,9 @@
     "persistence": "RUNTIME_TESTED for development builds (web localStorage, Linux file vault); vault format 1 with compatibility metadata, migration graph (synthetic steps tested), replay validation; unencrypted; staging, production and portable memory-only until F006",
     "encryption_vault": "NOT_STARTED",
     "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
-    "labs": "NOT_STARTED in Flutter (TS reference engine exists)",
+    "labs": "RUNTIME_TESTED (F004@v0.32): manual lab results as printed (record schema 3), Labs screen, timeline integration, no interpretation; interpretation engine in Flutter NOT_STARTED (F011)",
     "sync": "NOT_STARTED (TS reference API exists, dev auth only)",
-    "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED + RUNTIME_TESTED (body.weight; record schema 2 with amend_reason)",
+    "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED + RUNTIME_TESTED (body.weight, lab.result; record schema 3)",
     "timeline": "RUNTIME_TESTED (F003@v0.32): projection with correction / entered-in-error / delete / conflict semantics; Timeline screen; record schema 2"
   },
   "storage_policy": {
@@ -993,6 +951,197 @@
           "evidence_id": "EV-TEST-F003-0008",
           "criterion": "AC-12",
           "source_revision": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
+          "result": "PASS"
+        }
+      ]
+    },
+    "F004@v0.32": {
+      "forge_id": "F004",
+      "contract": "v0.32",
+      "run_id": "F004@v0.32",
+      "goal": "Labs vertical slice: manual LabResult entry as printed; range metadata kept as source text, distinct from (absent) app interpretation; timeline integration (master §39 F004)",
+      "status": "DONE",
+      "baseline_commit": "e50873b",
+      "started_at": "2026-10-07T09:30:00Z",
+      "scope": [
+        "record schema 3: kind lab.result with LabDetails; Quantity.unit nullable for lab results only",
+        "LabInput, parseSampleDate, recordLab, correctLab, labTimeline",
+        "Labs screen (form + current results), Timeline shows lab entries (date only), entered in error / delete from the Timeline",
+        "schema-3 fixture, Linux integration, web smoke lab step",
+        "bug found: versions with equal entry times were ordered by id, not lineage (fixed in timeline.dart, regression test)"
+      ],
+      "out_of_scope": [
+        "interpretation (F011)",
+        "censored/qualitative values (G-26)",
+        "method/structured ranges (G-28)",
+        "document import/OCR"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Record schema 3: lab.result requires LabDetails with a non-empty printed name; LabDetails only on lab results; only lab results may lack a unit; finite values; no plausibility range; markers carry no lab details; schema 1/2 JSON keeps its shape",
+        "AC-2 Missing stays missing: an empty unit, flag or range is null in memory and in the stored JSON; 'the report gives no value' is NOT_REPORTED without a quantity, never 0",
+        "AC-3 Source flag preserved: the printed flag is stored verbatim and shown labelled as the lab's ('Lab flag: H'); the printed range is shown as the lab's range",
+        "AC-4 No diagnosis generated: recording a result stores exactly one record and no derived or labelled data; no screen text on Labs or the Timeline interprets a result (EN/TR scans of whole screens and of result rows)",
+        "AC-5 Entry: printed name, numeric value (comma or dot, kept as typed), unit, sample date YYYY-MM-DD (invalid dates refused; future beyond one day refused), specimen, laboratory; errors localized",
+        "AC-6 Timeline integration: lab results appear on the Timeline (printed name, date without time shift); a correction on Labs is a new version and the old one stays in the Timeline history; entered in error / delete work on lab results",
+        "AC-7 Fixture v1_f004_schema3 (schemas 1-3 mixed) equals the writer's bytes and replays with every printed field",
+        "AC-8 Linux integration (real IO): a lab result with a missing unit survives a relaunch byte-identically and shows '(unit not given)' and the lab flag",
+        "AC-9 Web smoke: a result typed in the browser is on screen as printed with the lab flag, survives a reload, no normal/abnormal wording",
+        "AC-10 Regression: F001-F003 gates pass; mutations L1-L6 each fail the intended test"
+      ],
+      "completed_steps": [
+        "SPECIFY: AC-1..AC-10",
+        "IMPLEMENT: LabDetails, schema 3, RecordKind.labResult, nullable lab unit, service lab use cases, LabsScreen, Timeline lab display, EN/TR strings",
+        "REPAIR: versions with equal entry times sorted by id instead of lineage (found by lab_result_test) -> lineage depth sort + regression test",
+        "TEST: lab_result_test, f004_labs_test (7), fixture v1_f004_schema3, integration F004, smoke lab step (54/54 locally); 156 unit/widget + 4 integration pass",
+        "REPAIR (test driver): smoke typed too fast and clicked off-screen fields on the phone layout -> wait, scroll fields into view by wheel over the list padding, require on-screen bounding boxes",
+        "MUTATION: L1-L6 caught",
+        "GATES: 12 receipts on clean tree e8ea064, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F004-0008",
+      "next_action": null,
+      "files_touched": [
+        "docs/ARCHITECTURE.md",
+        "docs/ROADMAP.md",
+        "human_health_os/integration_test/heartbeat_test.dart",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/domain/records/lab_details.dart",
+        "human_health_os/lib/src/domain/records/timeline.dart",
+        "human_health_os/lib/src/features/labs/labs_screen.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/navigation/app_shell.dart",
+        "human_health_os/lib/src/navigation/destinations.dart",
+        "human_health_os/test/data/lab_result_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/domain/timeline_test.dart",
+        "human_health_os/test/fixtures/vault/README.md",
+        "human_health_os/test/fixtures/vault/v1_f004_schema3.hhoslog.jsonl",
+        "human_health_os/test/widget/f004_labs_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "project_state/KNOWN_GAPS.md",
+        "reports/runtime/flutter-web-desktop-en-labs-result.png",
+        "reports/runtime/flutter-web-desktop-en-labs.png",
+        "reports/runtime/flutter-web-desktop-en-timeline-records.png",
+        "reports/runtime/flutter-web-desktop-en-today.png",
+        "reports/runtime/flutter-web-desktop-en-weight.png",
+        "reports/runtime/flutter-web-phone-en-labs-result.png",
+        "reports/runtime/flutter-web-phone-en-labs.png",
+        "reports/runtime/flutter-web-phone-en-timeline-records.png",
+        "reports/runtime/flutter-web-phone-en-timeline.png",
+        "reports/runtime/flutter-web-phone-en-today.png",
+        "reports/runtime/flutter-web-phone-en-weight.png",
+        "reports/runtime/flutter-web-phone-tr-labs.png",
+        "reports/runtime/flutter-web-phone-tr-timeline.png",
+        "reports/runtime/flutter-web-phone-tr-today.png",
+        "reports/runtime/flutter_web_smoke.json",
+        "tools/flutter_web_smoke.mjs"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F004-0001",
+        "EV-TEST-F004-0002",
+        "EV-TEST-F004-0003",
+        "EV-TEST-F004-0004",
+        "EV-TEST-F004-0005",
+        "EV-BUILD-F004-0001",
+        "EV-RUNTIME-F004-0001",
+        "EV-TEST-F004-0006",
+        "EV-BUILD-F004-0002",
+        "EV-RUNTIME-F004-0002",
+        "EV-TEST-F004-0007",
+        "EV-TEST-F004-0008"
+      ],
+      "blocker": null,
+      "result": "F004_COMPLETE",
+      "finished_at": "2026-10-07T10:50:00Z",
+      "app_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F004-0001",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F004-0002",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F004-0003",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test (157: lab_result, f004_labs incl. EN/TR interpretation scans, fixtures, F001-F003 suites)",
+          "evidence_id": "EV-TEST-F004-0004",
+          "criterion": "AC-1..AC-7",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "evidence tooling unit tests (16)",
+          "evidence_id": "EV-TEST-F004-0005",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development)",
+          "evidence_id": "EV-BUILD-F004-0001",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "web runtime smoke incl. a lab result typed in the browser, on screen as printed, surviving a reload",
+          "evidence_id": "EV-RUNTIME-F004-0001",
+          "criterion": "AC-9",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "integration_test on Linux (F002, F003, lab result with missing unit across a relaunch)",
+          "evidence_id": "EV-TEST-F004-0006",
+          "criterion": "AC-8",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development)",
+          "evidence_id": "EV-BUILD-F004-0002",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux launch on the schema-3 fixture vault: opens without an unreadable notice, 78 kg shown",
+          "evidence_id": "EV-RUNTIME-F004-0002",
+          "criterion": "AC-7",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "golden-vector contract check",
+          "evidence_id": "EV-TEST-F004-0007",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F004-0008",
+          "criterion": "AC-10",
+          "source_revision": "e8ea0645497d9c58485d20c1516429297c4bfad2",
           "result": "PASS"
         }
       ]
