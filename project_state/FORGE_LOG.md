@@ -277,3 +277,78 @@ Trigger: the user attached the v0.32 master (`9a8c50ef…c47d`) and ordered its 
 - **Self-audit:** `tools/validate_project_state.py` (see the commit's run); stale `F004` references removed from state and control files.
 
 Hard blocker for F001: none. Continuing into F001@v0.32 in the same run.
+
+---
+
+# HUMAN OS FORGE F001@v0.32 — repository heartbeat (v0.32 contract), 2026-10-06 → 2026-10-07 — F001_COMPLETE
+
+## Repository / Workspace State
+Branch `claude/code-capabilities-kz21fr`; baseline 254c534 (clean). Implementation 3648371, audit repairs c803756; all closing gates ran on a clean tree at c803756. Pushed to origin (B-1 resolved).
+
+## Toolchain Detected
+Flutter 3.47.6 / Dart 3.13.5, Chromium 141 (Playwright), Node 22.22.0, pnpm 10.28.0, Python 3.13, Ubuntu 24.04 x86_64 with GTK3 + Xvfb. Android SDK absent (BLOCKED_ENVIRONMENT); Windows/Apple hosts absent (BLOCKED_BY_HOST_OS). `flutter doctor -v` is an informational gate (EV-TEST-F001-1001) and is not counted as a verified gate.
+
+## Implemented
+- Primary navigation exactly Today, Timeline, Labs; the seven placeholders form a secondary "Planned" group in the rail and in the More sheet (C-8), 48 dp targets, the open screen marked.
+- Honest Timeline empty state (it pointed at a "No records yet" screen while records existed).
+- Banner: disclaimer first, full profile line, never ellipsized; build identity from `FlutterVersion`; fail-closed `APP_ENV`; `APP_VERSION` default `unknown`.
+- Storage capability "Saving off" (cause-neutral) for memory-only web/desktop; `SAVE_FAILED` message on unexpected storage errors; startup error screen; `<noscript>` notice; web title/manifest "Human OS".
+- Evidence tooling: receipt schema 2 (covers, §33.2 build identity, both lockfiles, argv + shell-quoted command, covers checked before the run); validator: stale covers incl. untracked files, dirty receipts, build identity.
+- Tests: `test/widget/f001_contract_test.dart` (v0.32 checks 1–8 incl. behavioral offline bootstrap, UX-2/4/5/6/7/8), network-guard self-test.
+
+## Tests Actually Executed (receipts on c803756)
+| Gate | Receipt | Result |
+|---|---|---|
+| `flutter pub get` | EV-TEST-F001-1011 | PASS |
+| `dart format --set-exit-if-changed .` (0 changed) | EV-TEST-F001-1012 | PASS |
+| `flutter analyze` | EV-TEST-F001-1013 | PASS (no issues) |
+| `flutter test` (81) | EV-TEST-F001-1014 | PASS |
+| evidence tooling unit tests (16) | EV-TEST-F001-1015 | PASS |
+| `flutter test integration_test -d linux` (Xvfb) | EV-TEST-F001-1016 | PASS |
+| `python3 tools/verify_contracts.py` | EV-TEST-F001-1017 | PASS |
+| `pnpm test` | EV-TEST-F001-1018 | PASS |
+| `check_f001_scope.py 254c534` | EV-TEST-F001-1019 | PASS |
+| Earlier 1001–1010 (3648371) | — | PASS, now stale (audit repairs changed covered paths) |
+
+## Build Commands Actually Executed
+| Platform | Receipt | Result |
+|---|---|---|
+| Web, `flutter build web` exactly as the kernel writes it | EV-BUILD-F001-1001 (3648371) | COMPILED; references the gstatic CDN (C-9), not used for runtime |
+| Web, offline `--no-web-resources-cdn`, development | EV-BUILD-F001-1011 | COMPILED: tree `93beb517…3c6a` (39 files), main.dart.js `f7f23052…de5b` |
+| Linux x64 release, development | EV-BUILD-F001-1012 | COMPILED: bundle `6c8e184e…8edd`, libapp.so `724a0782…5cf2`, UNSIGNED |
+| Android / iOS / macOS / Windows | — | BLOCKED_ENVIRONMENT / BLOCKED_BY_HOST_OS |
+
+## Runtime Verification
+- Web: EV-RUNTIME-F001-1011, 42/42 checks (desktop-en, phone-en, phone-tr; Today → Timeline → Labs; banner; identity; weight save → reload; 0 console errors, 0 failed requests, 0 external requests). RUNTIME_TESTED.
+- Linux: EV-RUNTIME-F001-1012, alive at 12 s under Xvfb X11, screenshot `reports/runtime/linux-f001v032/f001v032-linux-x11.png`, log echoed into the receipt; the development build wrote only its XDG vault. RUNTIME_TESTED.
+
+## Failures Found
+1. Planned rail group overflowed by 112 px at 1024×700 (IntrinsicHeight wrapper).
+2. Final audit: Linux launch receipt had an empty log (EH-1); banner ellipsized the profile name (UX-1); 55 px overflow in Today key/value rows at 320 dp and 2× text; unexpected save errors left no message; bootstrap failure had no screen; covers checked after the run; untracked files did not make evidence stale.
+
+## Repairs Applied
+1 → `NavigationRail(scrollable: true)`. 2 → each fixed in c803756 (see Implemented); every fix has a test.
+
+## Regression Results
+Mutations M1 (Medications primary), M2 (HttpClient in bootstrap), M3 (Timeline empty text removed), M4 (old banner order) each failed the intended test and were reverted. All 13 gates re-run after the repairs: PASS.
+
+## Security / Privacy Audit
+No secrets, keys or real health data in the diff. The network guard covers `package:http|dio|web|web_socket_channel`, `HttpClient`, `WebSocket`, `Socket.connect`, XHR, `EventSource`, JS `fetch`, `Image.network`. Fail-closed `APP_ENV` only removes configurations that persisted (D-013 note). Staging, production and portable stay memory-only.
+
+## Evidence State
+Shell RUNTIME_TESTED on web and Linux; persistence unchanged (development only, unencrypted). `verified_gates` = the 13 receipts above.
+
+## Known Limitations
+G-22…G-25 (domain comment, storage reason codes, web loading indicator, two-line planned labels); PWA install NOT_TESTED; Linux X11 only; CI never ran on GitHub; release state CANDIDATE_UNMERGED.
+
+## Canonical State Update
+`development_state` READY; `active_forge` null; `forge_history["F001@v0.32"]` DONE; `next_recommended_forge` F002@v0.32.
+
+## Artifacts Produced
+Receipts `evidence/*/EV-*-F001-1011…1019.json`; `reports/runtime/flutter_web_smoke_c8037566dd0b.json`; screenshots `reports/runtime/flutter-web-*.png`, `reports/runtime/linux-f001v032/`. Build outputs are gitignored and identified by receipt hashes.
+
+## Next Recommended Forge
+**F002@v0.32 — local profile + persistence heartbeat:** migration version and graph (G-15), replay validation and honest weight display (G-18), data-directory rules and the `human-health-os/` XDG move (G-19, C-4), storage reason codes (G-23, G-14 for storage text), domain comment (G-22), no-plaintext-secret test.
+
+## Final Status
+F001_COMPLETE.
