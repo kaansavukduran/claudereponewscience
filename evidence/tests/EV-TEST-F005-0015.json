@@ -1,0 +1,64 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F005-0015",
+  "kind": "TEST",
+  "forge_id": "F005@v0.32",
+  "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env LANG=C.UTF-8 timeout 900 xvfb-run -a -s '-screen 0 1280x1024x24' flutter test integration_test -d linux",
+  "argv": [
+    "env",
+    "LANG=C.UTF-8",
+    "timeout",
+    "900",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x1024x24",
+    "flutter",
+    "test",
+    "integration_test",
+    "-d",
+    "linux"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-10-07T18:03:31.179Z",
+  "finished_at": "2026-10-07T18:03:53.614Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v77 x86_64",
+  "summary": "00:05 +5: All tests passed!",
+  "log_sha256": "afb4bb86e78672d304159ff15ae4082cc96417702ecd15cbad6385fcf4e5e6c8",
+  "log_lines": 14,
+  "log_tail": [
+    "  /",
+    "\ud83d\udcce",
+    "00:00 +0: loading /home/user/claudereponewscience/human_health_os/integration_test/heartbeat_test.dart",
+    "Building Linux application...                                   ",
+    "\u2713 Built build/linux/x64/debug/bundle/human_health_os",
+    "00:00 +0: save weight \u2192 relaunch on the same file vault \u2192 same record",
+    "00:02 +1: F002: a pre-F002 Linux vault in HumanHealthOS/ moves to human-health-os/ and opens with the same vault, profile and record",
+    "00:03 +2: F003: a correction and a withdrawal survive a relaunch on the real file vault (append-only)",
+    "00:03 +3: F004: a lab result keeps every printed field across a relaunch on the real file vault",
+    "00:04 +4: F005 restore drill: backup -> lose the vault -> fresh start -> restore -> relaunch shows the same records",
+    "00:05 +5: (tearDownAll)",
+    "00:05 +5: All tests passed!"
+  ],
+  "lockfile_sha256": "8031c1427448fcff49c237e64767b728bb4cdbadb06854e17eb2cf045cc94e33",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "8031c1427448fcff49c237e64767b728bb4cdbadb06854e17eb2cf045cc94e33",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

@@ -470,3 +470,63 @@ G-26 censored/qualitative values · G-27 interpretation (F011) · G-28 method, r
 
 ## Next recommended Forge
 **F005@v0.32 — export + backup + staged restore** (MVP batch, D-014).
+
+---
+
+# FORGE F005@v0.32 — export + backup + staged restore, 2026-10-07 — F005_COMPLETE
+
+**Goal** deterministic export of the canonical records; backup with manifest and checksums; staged restore. Exit: backup → delete test vault → restore → same records; checksums/manifest verified (master §39 F005, §36). **Baseline** b976d12 → implementation 5be93b6, review fixes e2b1439, 0622e9d, c878b1b (all closing gates on clean c878b1b). MVP batch D-014, Forge 4 of 5. Dependency review D-015 (`crypto`).
+
+## What was built
+- Backup bundle: manifest (§36.2) + the vault log byte for byte; deterministic.
+- Restore gate (§36.3): format, encryption, digest, schema compatibility, identity, counts → staged copy beside the vault, read back and verified → old vault kept as `.before-restore-<time>` → switch. Refused when the live vault holds records (parsed or not), or was written by a newer app. After a restore the session refuses writes until a restart (state kept in AppServices).
+- Deterministic export (records as stored + timeline projection).
+- Adapters: desktop files (`backups/`, `exports/` beside the development vault), browser download (local Blob), memory. Staging/production/portable/invalid data folder: no file adapter.
+- Today "Your data" card: create backup, export, check (local time), restore.
+
+## Multi-agent adversarial review of the F002–F005 diff (ultracode)
+Workflow `mvp-review-f002-f005`: 4 dimension finders + 1 skeptic per finding (25 agents; 6 verifications of the last dimension did not run: session limit). Findings were confirmed against the code at 5be93b6/0622e9d and fixed before verification finished, so the verifiers report them as "not reachable at HEAD" with the fixing commit. Each fix has a regression test that fails without it (mutations R1–R7):
+
+| # | Finding (severity) | Fix |
+|---|---|---|
+| 1 | Torn last line merged the next confirmed write into it; lost on reload (major) | close the tail before the next write (e2b1439) |
+| 2 | A write cut inside a multi-byte character made the whole vault unreadable and blocked restore (major) | line-by-line UTF-8 decoding, bad line skipped, never U+FFFD (e2b1439) |
+| 3 | Restore replaced a vault written by a newer app (any parse error counted as "no records") (major, found twice) | `RESTORE_TARGET_NEWER`; raw record lines counted (e2b1439) |
+| 4 | Restore replaced a readable vault whose records were all skipped on replay (major) | count raw record lines as well (c878b1b) |
+| 5 | Lab values with a thousands separator stored 1000× too small (major) | `AMBIGUOUS_SEPARATOR` (e2b1439) |
+| 6 | Labs/Timeline said "storage failed, try again" for a refused write (minor) | name `RESTART_REQUIRED`/`VAULT_READ_ONLY` (e2b1439) |
+| 7 | Tomorrow accepted as a lab sample date in most zones (minor) | compare local calendar days (e2b1439) |
+| 8 | Lab days sorted as UTC midnight against instants west of UTC (minor) | order by local day start; injectable, host-independent test (e2b1439, c878b1b) |
+| 9 | Backup Check showed UTC time without a zone (minor) | local time (e2b1439) |
+| 10 | Restored state lived in the card; returning to Today re-enabled backup/export (minor, found twice) | `AppServices.restartRequired` (e2b1439) |
+| 11 | Cancelled lab correction left the old sample date and laboratory in the form (minor) | add-mode values restored (e2b1439) |
+| 12 | Backups sorted by name (vault-id prefix), not newest first (minor) | sort by time in the name (0622e9d) |
+| 13 | Restore message did not say where the old vault went (minor) | kept path shown (0622e9d) |
+| 14 | Calendar-day ordering test passed without the fix on a UTC host (major, evidence) | injected zones (c878b1b) |
+| 15 | Smoke "saved weight on the Timeline" could pass on Today (minor, evidence) | require the Timeline to be open (c878b1b) |
+| 16 | No export test for withdrawals/deletions (minor, evidence) | test on the schema-2 fixture (c878b1b) |
+| 17 | TR interpretation scan never matched "Tanı"/"Sağlıklı" (ASCII `\b`) (minor, evidence) | Unicode-aware boundaries + self-test (c878b1b) |
+| 18 | No test that portable/production get no backup adapter (minor, evidence) | policy assertions (c878b1b) |
+
+## Acceptance → evidence
+AC-1 manifest/determinism, AC-2 restore gate refusals, AC-4 never replaces records, AC-5 write lock, AC-6 export, AC-7 policy: `test/data/backup_test.dart`, `test/application/export_test.dart`, `test/widget/f005_your_data_test.dart`, `test/data/storage_policy_test.dart`, `test/data/review_fixes_test.dart` (EV-TEST-F005-0013, and in New York time EV-TEST-F005-0018) · AC-3 restore drill on real files (unit) + Linux integration with a fresh start and a relaunch (EV-TEST-F005-0015) · AC-8 EV-RUNTIME-F005-0003 (smoke 60/60) · AC-9 architecture test + D-015 · AC-10 regression receipts + mutations.
+
+## Tests / Builds / Runtime (receipts on c878b1b)
+- `flutter test` 193 PASS in UTC (EV-TEST-F005-0013) and in `TZ=America/New_York` (EV-TEST-F005-0018); integration 5 PASS incl. the restore drill (EV-TEST-F005-0015); tooling 16, contracts, `pnpm test` PASS; format/analyze clean.
+- Web COMPILED (EV-BUILD-F005-0003: tree `196fa8b2…211c`, main.dart.js `cce30634…950a`); smoke 60/60 RUNTIME_TESTED (EV-RUNTIME-F005-0003): in Chromium a backup downloads through a local Blob, its manifest SHA-256 matches the payload, it holds the saved weight and lab result and says it is unencrypted.
+- Linux COMPILED (EV-BUILD-F005-0004: bundle `33786226…adfb`, libapp.so `7ed5e652…1082`, UNSIGNED); launch RUNTIME_TESTED on the schema-3 fixture vault (EV-RUNTIME-F005-0004, `reports/runtime/linux-f005/f005b-linux-x11.png`).
+- The first gate run (EV-*-F005-0001…0009 on 0622e9d) passed but went stale with the second review round; kept as history, not verified gates.
+
+## Failures found and repairs
+1. **Product bugs:** the 18 review findings above (5 major data-integrity, 1 major evidence); each fixed with a regression test.
+2. Expected contract break: `dart:io` confinement now allowlists the two native adapters (`storage_io.dart`, `data_files_io.dart`).
+3. Test defects: the widget tamper test replaced text inside escaped JSON and so tampered nothing (now decodes, edits the payload, re-encodes); `removeLast` on a fixed-length list; an uppercase Turkish sample ("HASTALIK") that cannot match "hastalık" (dotless ı) replaced with a mixed-case one.
+
+## Mutations (each caught; all 13 re-run at c878b1b)
+B1 digest not checked · B2 restore replaces records · B3 old vault deleted, not kept · B4 payload not byte-identical · B5 export order unstable · B6 no write lock after restore · R1 torn tail not closed · R2 whole-file strict UTF-8 · R3 newer vault replaced · R4 lab day as a UTC instant (New York) · R5 thousands separator guessed · R6 skipped record lines not counted · R7 lab day as a UTC instant (UTC host, injected zones).
+
+## Known limitations
+G-29 browser restore · G-30 backups unencrypted (F006) · G-31 no import of external formats · cloud backup not built.
+
+## Next recommended Forge
+**F006@v0.32 — local security hardening** (last MVP Forge, D-014).
