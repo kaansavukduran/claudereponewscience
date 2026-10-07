@@ -7,9 +7,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/app/bootstrap.dart';
 import 'package:human_health_os/src/app/human_os_app.dart';
+import 'package:human_health_os/src/app/startup_error_app.dart';
 import 'package:human_health_os/src/config/app_config.dart';
 import 'package:human_health_os/src/core/capabilities.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
+import 'package:human_health_os/src/domain/ports/health_repository.dart';
 
 const staging = AppConfig(
   profile: BuildProfile.staging,
@@ -189,8 +191,8 @@ void main() {
     );
   });
 
-  testWidgets('the clinical disclaimer leads the banner, so ellipsis at '
-      'large text sizes never cuts it (EN and TR)', (tester) async {
+  testWidgets('the banner shows the clinical disclaimer first and the whole '
+      'text at large sizes (EN and TR)', (tester) async {
     for (final (locale, lead) in [
       (const Locale('en'), 'Not for clinical decisions'),
       (const Locale('tr'), 'Klinik karar için değil'),
@@ -201,11 +203,14 @@ void main() {
         find.descendant(of: banner, matching: find.byType(Text)),
       );
       expect(text.data, startsWith(lead), reason: locale.languageCode);
+      // No line limit or ellipsis: the profile name is never cut (UX-1).
+      expect(text.maxLines, isNull);
+      expect(text.overflow, isNot(TextOverflow.ellipsis));
       expect(tester.takeException(), isNull);
     }
   });
 
-  testWidgets('staging storage on a desktop says "Off in this build", not '
+  testWidgets('staging storage on a desktop says "Saving off", not '
       '"Not built yet"', (tester) async {
     tester.view.physicalSize = const Size(1440, 2400);
     tester.view.devicePixelRatio = 1.0;
@@ -215,7 +220,148 @@ void main() {
     );
     await tester.pumpWidget(HumanOsApp(services: services!));
     await tester.pumpAndSettle();
-    expect(find.text('Off in this build'), findsOneWidget);
+    expect(find.text('Saving off'), findsOneWidget);
     expect(find.textContaining('Staging builds do not save'), findsOneWidget);
   });
+
+  testWidgets('a storage failure while saving shows an error and no latest '
+      'value (UX-2)', (tester) async {
+    tester.view.physicalSize = desktop;
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+    final sink = _FailingAppendSink();
+    final services = await tester.runAsync(() async {
+      final repo = LogRepository(
+        sink: sink,
+        durability: StorageDurability.localFile,
+        location: 'test',
+      );
+      await repo.open();
+      final s = await servicesFor(development, HostPlatform.linux, repo);
+      sink.failAppends = true; // the profile was written; now writes fail
+      return s;
+    });
+    await tester.pumpWidget(HumanOsApp(services: services!));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const ValueKey('weight-input')), '81');
+    await tester.tap(find.byKey(const ValueKey('weight-save')));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('Not saved: storage failed'), findsOneWidget);
+    expect(find.byKey(const ValueKey('weight-latest')), findsNothing);
+    expect(find.byKey(const ValueKey('weight-saved')), findsNothing);
+  });
+
+  testWidgets('planned rail items meet the 48 dp touch-target guideline '
+      '(UX-4)', (tester) async {
+    await boot(tester, size: desktop);
+    for (final d in ['medications', 'learn']) {
+      final size = tester.getSize(find.byKey(ValueKey('rail-planned-$d')));
+      expect(size.height, greaterThanOrEqualTo(48), reason: d);
+    }
+    await expectLater(tester, meetsGuideline(androidTapTargetGuideline));
+  });
+
+  testWidgets('the More sheet marks the open area with an icon, not colour '
+      'alone (UX-5)', (tester) async {
+    await boot(tester, size: phone);
+    await go(tester, bar(), 'More');
+    await tester.tap(find.text('Activity'));
+    await tester.pumpAndSettle();
+    await go(tester, bar(), 'More');
+    final sheet = find.byKey(const ValueKey('more-sheet'));
+    final tile = tester.widget<ListTile>(
+      find.ancestor(of: find.text('Activity'), matching: find.byType(ListTile)),
+    );
+    expect(tile.selected, isTrue);
+    expect((tile.trailing as Icon?)?.icon, Icons.check);
+    expect(
+      find.descendant(of: sheet, matching: find.byIcon(Icons.check)),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('large text on a 320 dp phone: a 3-digit latest weight and the '
+      'banner do not overflow (UX-7)', (tester) async {
+    await boot(tester, size: const Size(320, 640), textScale: 2.0);
+    expect(tester.takeException(), isNull);
+    // At this size the input is below the fold; scroll to it like a user.
+    final todayList = find
+        .descendant(
+          of: find.byKey(const ValueKey('screen-today')),
+          matching: find.byType(Scrollable),
+        )
+        .first;
+    final input = find.byKey(const ValueKey('weight-input'));
+    await tester.scrollUntilVisible(input, 200, scrollable: todayList);
+    await tester.enterText(input, '123,4');
+    await tester.ensureVisible(find.byKey(const ValueKey('weight-save')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('weight-save')));
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('weight-latest')),
+      -200,
+      scrollable: todayList,
+    );
+    expect(find.byKey(const ValueKey('weight-latest')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('medium rail (1024×700), Turkish, text ×2: no overflow and the '
+      'planned group is reachable (UX-6)', (tester) async {
+    await boot(
+      tester,
+      size: const Size(1024, 700),
+      textScale: 2.0,
+      locale: const Locale('tr'),
+    );
+    expect(tester.takeException(), isNull);
+    final item = find.byKey(const ValueKey('rail-planned-learn'));
+    await tester.scrollUntilVisible(
+      item,
+      200,
+      scrollable: find
+          .descendant(of: rail(), matching: find.byType(Scrollable))
+          .first,
+    );
+    await tester.tap(item);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('screen-learn')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a failed startup shows an explanation, not a blank window '
+      '(UX-8)', (tester) async {
+    await tester.pumpWidget(
+      const StartupErrorApp(error: 'StateError: example'),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Human OS could not start'), findsOneWidget);
+    expect(find.textContaining('Nothing was changed on disk'), findsOneWidget);
+    expect(find.text('StateError: example'), findsOneWidget);
+  });
+}
+
+/// Sink whose appends fail on demand, to exercise the save-failure state.
+class _FailingAppendSink implements LogSink {
+  String? text;
+  bool failAppends = false;
+
+  @override
+  Future<String?> read() async => text;
+
+  @override
+  Future<void> create(String header) async => text = '$header\n';
+
+  @override
+  Future<void> appendLine(String line) async {
+    if (failAppends) throw const FileSystemException('disk full (test)');
+    text = '${text ?? ''}$line\n';
+  }
 }

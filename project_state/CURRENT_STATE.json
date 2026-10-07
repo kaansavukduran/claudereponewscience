@@ -35,7 +35,7 @@
       "AC-9 `flutter analyze` PASS (receipt)",
       "AC-10 `flutter build web` as written = COMPILED (receipt); offline variant `flutter build web --release --no-web-resources-cdn ...` PASS with a build receipt carrying target, arch, profile, signing and smoke-evidence fields",
       "AC-11 Web runtime smoke on the offline build: shell renders, Today -> Timeline -> Labs, 0 page errors, 0 console errors, 0 failed requests, 0 external requests; receipt hashes main.dart.js and the smoke JSON",
-      "AC-12 No persistence behavior change since the baseline: lib/src/domain, test/data, integration_test and pubspec.lock unchanged; lib/src/data changes limited to comments (scope check receipt)",
+      "AC-12 No new persistence and no vault format, schema or path change since the baseline: lib/src/domain, test/data, integration_test and pubspec.lock unchanged; lib/src/data changes limited to comments (scope check receipt). The only persistence-gating change is AC-4's fail-closed APP_ENV, which only removes configurations that persisted (tested in app_config_test/storage_policy_test; D-013)",
       "AC-13 Regression receipts: Linux integration test, Linux release build + launch, run_gate unit tests, Python contracts, TS tests",
       "AC-14 Every verified gate has a clean-tree PASS receipt whose covered paths are unchanged at HEAD; tools/validate_project_state.py PASS; final multi-lens self-audit leaves no unresolved F001-blocking finding"
     ],

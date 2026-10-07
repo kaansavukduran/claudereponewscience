@@ -27,7 +27,7 @@ class BuildProfileBanner extends StatelessWidget {
           width: double.infinity,
           color: scheme.tertiaryContainer,
           alignment: Alignment.centerLeft,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Row(
             children: [
               Icon(
@@ -37,10 +37,10 @@ class BuildProfileBanner extends StatelessWidget {
               ),
               const SizedBox(width: 8),
               Expanded(
+                // No line limit: the banner grows instead of cutting the
+                // clinical clause or the profile name.
                 child: Text(
                   text,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.labelMedium
                       ?.copyWith(color: scheme.onTertiaryContainer),
                 ),

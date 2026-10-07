@@ -25,4 +25,8 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-19 | Empty or relative `XDG_DATA_HOME` / `HHOS_DATA_DIR` accepted for the development vault (SEM-10) | OPEN | F002 (with the `human-health-os/` XDG move, C-4) |
 | G-20 | Android, Windows, macOS and iOS app labels are still the template name `human_health_os`; web title and manifest read `Human OS` since F001@v0.32 (LENS-7) | PARTIAL | F013 / F015 |
 | G-21 | Receipts for non-Flutter gates recorded only the Flutter lockfile digest (STATE-19) | CLOSED | F001@v0.32: receipt schema 2 records both lockfiles |
+| G-22 | Domain port comment `health_repository.dart:31` still says encryption arrives in "FORGE 004" (ladder F006); left untouched because `lib/src/domain` was frozen for F001 (final audit ARCH-4) | OPEN | F002 |
+| G-23 | Storage status is inferred from the platform, not from a reason reported by the adapter; the profile gate and notice are duplicated in `storage_io.dart` and `storage_web.dart`; the unreadable-vault and browser-blocked states have no dedicated UI (final audit ARCH-1, ARCH-5, UX-3). Mitigated in F001@v0.32 by a cause-neutral "Saving off" label | OPEN | F002 |
+| G-24 | No web loading indicator before the first frame (`<noscript>` and a startup-error screen exist since F001@v0.32) (UX-8 remainder) | OPEN | F016 |
+| G-25 | Planned rail labels are limited to two lines at 80 dp in the medium rail (no overflow, but long Turkish labels ellipsize at large text sizes) (UX-6 remainder) | OPEN | next UI Forge |
 

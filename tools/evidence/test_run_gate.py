@@ -104,11 +104,21 @@ class RunGateTest(unittest.TestCase):
         self.assertIn("human_health_os/pubspec.lock", r["lockfiles"])
         self.assertIn("pnpm-lock.yaml", r["lockfiles"])
 
-    def test_nonexistent_covers_path_is_a_usage_error(self):
+    def test_nonexistent_covers_path_is_rejected_before_running(self):
+        marker = Path(self.ev, "ran.marker")
         p = run_gate(self.ev, "--id", "EV-TEST-6", "--kind", "TEST", "--forge", "F001",
-                     "--covers", "no/such/path", "--", "true")
+                     "--covers", "no/such/path", "--", "touch", str(marker))
         self.assertEqual(p.returncode, 2)
+        self.assertFalse(marker.exists(), "the gate command must not run")
         self.assertFalse(Path(self.ev, "tests", "EV-TEST-6.json").exists())
+        self.assertFalse(Path(self.ev, "logs", "EV-TEST-6.log").exists())
+
+    def test_command_is_recorded_shell_quoted(self):
+        run_gate(self.ev, "--id", "EV-TEST-7", "--kind", "TEST", "--forge", "F001",
+                 "--", "sh", "-c", "echo 'a b'")
+        r = self.receipt("tests", "EV-TEST-7")
+        self.assertEqual(r["argv"], ["sh", "-c", "echo 'a b'"])
+        self.assertEqual(r["command"], "sh -c 'echo '\"'\"'a b'\"'\"''")
 
     def test_bad_id_is_rejected(self):
         p = run_gate(self.ev, "--id", "test1", "--kind", "TEST", "--forge", "F001", "--", "true")

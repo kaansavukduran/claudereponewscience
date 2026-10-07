@@ -88,7 +88,7 @@ class TodayScreen extends StatelessWidget {
                           CapabilityStatus.available => s.available,
                           CapabilityStatus.notImplemented => s.notImplemented,
                           CapabilityStatus.notRequired => s.notRequired,
-                          CapabilityStatus.offInThisBuild => s.offInThisBuild,
+                          CapabilityStatus.off => s.savingOff,
                           CapabilityStatus.unsupportedOnPlatform =>
                             s.unsupported,
                         },
@@ -96,7 +96,7 @@ class TodayScreen extends StatelessWidget {
                           CapabilityStatus.available => StatusTone.ok,
                           CapabilityStatus.notImplemented => StatusTone.muted,
                           CapabilityStatus.notRequired => StatusTone.ok,
-                          CapabilityStatus.offInThisBuild => StatusTone.info,
+                          CapabilityStatus.off => StatusTone.info,
                           CapabilityStatus.unsupportedOnPlatform =>
                             StatusTone.info,
                         },
@@ -155,13 +155,20 @@ class _KeyValue extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
+      // Both sides may wrap: a long value (e.g. DEVELOPMENT at 2x text on a
+      // 320 dp phone) overflowed a fixed-width value cell.
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(child: Text(k, style: text.bodyMedium)),
-          Text(
-            v,
-            style: text.bodyMedium?.copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
+          const SizedBox(width: 8),
+          Flexible(
+            child: Text(
+              v,
+              textAlign: TextAlign.end,
+              style: text.bodyMedium?.copyWith(
+                fontFeatures: const [FontFeature.tabularFigures()],
+              ),
             ),
           ),
         ],

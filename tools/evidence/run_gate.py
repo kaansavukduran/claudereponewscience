@@ -28,6 +28,7 @@ import hashlib
 import json
 import os
 import re
+import shlex
 import subprocess
 import sys
 from pathlib import Path
@@ -135,6 +136,11 @@ def main() -> int:
     source_changes = [p for p in changed if not p.startswith(EVIDENCE_PATHS)]
     versions = tool_versions(root)
 
+    # Validate --covers before running anything (audit EH-9).
+    missing_covers = [c for c in args.covers if not (root / c).exists()]
+    if missing_covers:
+        ap.error(f"--covers paths do not exist: {missing_covers}")
+
     started = now()
     with log_path.open("wb") as log:
         proc = subprocess.run(cmd, cwd=root / args.cwd, stdout=log, stderr=subprocess.STDOUT)
@@ -145,9 +151,6 @@ def main() -> int:
     if args.summary:
         matches = [line for line in text if re.search(args.summary, line)]
         summary = matches[-1].strip() if matches else None
-    missing_covers = [c for c in args.covers if not (root / c).exists()]
-    if missing_covers:
-        ap.error(f"--covers paths do not exist: {missing_covers}")
     receipt = {
         "receipt_schema": RECEIPT_SCHEMA,
         "evidence_id": args.id,
@@ -156,7 +159,9 @@ def main() -> int:
         "source_revision": revision,
         "working_tree_dirty": bool(source_changes),
         "dirty_source_paths": source_changes[:20],
-        "command": " ".join(cmd),
+        # Shell-quoted, so the recorded command reproduces exactly (EH-8).
+        "command": shlex.join(cmd),
+        "argv": cmd,
         "cwd": args.cwd,
         "started_at": started,
         "finished_at": finished,

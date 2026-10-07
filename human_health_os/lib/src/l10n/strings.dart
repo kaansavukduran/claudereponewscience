@@ -60,7 +60,13 @@ class S {
   String get notImplemented => _t('Not built yet', 'Henüz yapılmadı');
   String get unsupported => _t('Not on this platform', 'Bu platformda yok');
   String get notRequired => _t('Not required', 'Gerekmiyor');
-  String get offInThisBuild => _t('Off in this build', 'Bu derlemede kapalı');
+  String get savingOff => _t('Saving off', 'Kayıt kapalı');
+  String get startupFailedTitle =>
+      _t('Human OS could not start', 'Human OS başlatılamadı');
+  String get startupFailedBody => _t(
+    'Nothing was changed on disk. Close and reopen the app; if this keeps happening, keep the message below for a bug report.',
+    'Diskte hiçbir şey değiştirilmedi. Uygulamayı kapatıp yeniden aç; tekrar olursa aşağıdaki mesajı hata bildirimi için sakla.',
+  );
   String get plannedGroup => _t('Planned', 'Planlanan');
 
   // FORGE 002 — weight heartbeat
@@ -89,6 +95,10 @@ class S {
     'OUT_OF_RANGE' => _t(
       'Weight must be between 0 and 700 kg.',
       'Ağırlık 0 ile 700 kg arasında olmalı.',
+    ),
+    'SAVE_FAILED' => _t(
+      'Not saved: storage failed. Nothing was changed; try again.',
+      'Kaydedilmedi: depolama hata verdi. Hiçbir şey değişmedi; tekrar dene.',
     ),
     _ => _t('This value could not be saved.', 'Bu değer kaydedilemedi.'),
   };

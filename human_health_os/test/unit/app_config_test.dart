@@ -26,7 +26,7 @@ void main() {
     expect(AppConfig.fromEnvironment().sourceRevision, 'unknown');
   });
 
-  test('memory-only storage: "off in this build" where an adapter exists, '
+  test('memory-only storage: "saving off" where an adapter exists, '
       '"not built yet" where none does', () {
     String status(HostPlatform p) =>
         CapabilityRegistry.forPlatform(p).capabilities
@@ -39,7 +39,7 @@ void main() {
       HostPlatform.windows,
       HostPlatform.macos,
     ]) {
-      expect(status(p), 'offInThisBuild', reason: p.name);
+      expect(status(p), 'off', reason: p.name);
     }
     expect(status(HostPlatform.android), 'notImplemented');
     expect(status(HostPlatform.ios), 'notImplemented');

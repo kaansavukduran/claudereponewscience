@@ -17,8 +17,9 @@ import 'destinations.dart';
 const double kRailBreakpoint = 840;
 const double kExtendedRailBreakpoint = 1200;
 
-/// Fits two lines of banner text (narrow phones, long Turkish copy).
-const double kBuildBannerHeight = 44;
+/// Rail widths shared by the primary destinations and the planned group.
+const double kRailMinWidth = 80;
+const double kRailMinExtendedWidth = 256;
 
 class AppShell extends StatefulWidget {
   const AppShell({super.key, required this.services});
@@ -52,46 +53,45 @@ class _AppShellState extends State<AppShell> {
     final wide = width >= kRailBreakpoint;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(s.appTitle),
-        centerTitle: false,
-        bottom: widget.services.config.isProduction
-            ? null
-            : PreferredSize(
-                preferredSize: const Size.fromHeight(kBuildBannerHeight),
-                child: SizedBox(
-                  height: kBuildBannerHeight,
-                  child: BuildProfileBanner(config: widget.services.config),
-                ),
-              ),
-      ),
-      body: SafeArea(
-        top: false,
-        child: wide
-            ? Row(
-                children: [
-                  _ScrollableRail(
-                    extended: width >= kExtendedRailBreakpoint,
-                    current: _current,
-                    onSelect: _go,
-                  ),
-                  const VerticalDivider(width: 1),
-                  Expanded(
-                    child: Align(
-                      alignment: Alignment.topCenter,
-                      child: ConstrainedBox(
-                        constraints: const BoxConstraints(maxWidth: 960),
-                        child: body,
-                      ),
-                    ),
-                  ),
-                ],
-              )
-            : body,
+      appBar: AppBar(title: Text(s.appTitle), centerTitle: false),
+      // The profile banner sits above the content and takes the height its
+      // text needs, so no clause is cut at large text sizes (audit UX-1).
+      body: Column(
+        children: [
+          BuildProfileBanner(config: widget.services.config),
+          Expanded(child: _content(wide, width, body)),
+        ],
       ),
       bottomNavigationBar: wide
           ? null
           : _CompactBar(current: _current, onSelect: _go),
+    );
+  }
+
+  Widget _content(bool wide, double width, Widget body) {
+    return SafeArea(
+      top: false,
+      child: wide
+          ? Row(
+              children: [
+                _ScrollableRail(
+                  extended: width >= kExtendedRailBreakpoint,
+                  current: _current,
+                  onSelect: _go,
+                ),
+                const VerticalDivider(width: 1),
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.topCenter,
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(maxWidth: 960),
+                      child: body,
+                    ),
+                  ),
+                ),
+              ],
+            )
+          : body,
     );
   }
 }
@@ -118,6 +118,8 @@ class _ScrollableRail extends StatelessWidget {
     return NavigationRail(
       key: const ValueKey('nav-rail'),
       scrollable: true,
+      minWidth: kRailMinWidth,
+      minExtendedWidth: kRailMinExtendedWidth,
       extended: extended,
       labelType: extended
           ? NavigationRailLabelType.none
@@ -158,7 +160,7 @@ class _PlannedRailGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final theme = Theme.of(context);
-    final width = extended ? 232.0 : 80.0;
+    final width = extended ? kRailMinExtendedWidth : kRailMinWidth;
     return SizedBox(
       key: const ValueKey('rail-planned-group'),
       width: width,
@@ -169,7 +171,7 @@ class _PlannedRailGroup extends StatelessWidget {
         children: [
           const Divider(height: 24),
           Padding(
-            padding: EdgeInsets.symmetric(horizontal: extended ? 24 : 4),
+            padding: EdgeInsets.symmetric(horizontal: extended ? 30 : 4),
             child: Semantics(
               header: true,
               child: Text(
@@ -228,32 +230,38 @@ class _PlannedRailItem extends StatelessWidget {
         key: ValueKey('rail-planned-${destination.id.name}'),
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: EdgeInsets.symmetric(
-            horizontal: extended ? 24 : 4,
-            vertical: extended ? 10 : 6,
+        // At least 48 dp tall: the touch-target guideline (audit UX-4).
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            // Left inset 30 centres the 20 dp icon on the primary icons' axis.
+            padding: extended
+                ? const EdgeInsets.fromLTRB(30, 10, 16, 10)
+                : const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: extended
+                ? Row(
+                    children: [
+                      icon,
+                      const SizedBox(width: 12),
+                      Expanded(child: Text(label, style: style)),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      icon,
+                      const SizedBox(height: 2),
+                      Text(
+                        label,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: color,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
           ),
-          child: extended
-              ? Row(
-                  children: [
-                    icon,
-                    const SizedBox(width: 12),
-                    Expanded(child: Text(label, style: style)),
-                  ],
-                )
-              : Column(
-                  children: [
-                    icon,
-                    const SizedBox(height: 2),
-                    Text(
-                      label,
-                      style: theme.textTheme.labelSmall?.copyWith(color: color),
-                      textAlign: TextAlign.center,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
         ),
       ),
     );
@@ -299,7 +307,10 @@ class _CompactBar extends StatelessWidget {
                 ),
                 for (final d in plannedDestinations)
                   ListTile(
-                    leading: Icon(d.icon),
+                    // The open area is marked by icon shape and a check, not
+                    // by colour alone (audit UX-5).
+                    leading: Icon(d.id == current ? d.selectedIcon : d.icon),
+                    trailing: d.id == current ? const Icon(Icons.check) : null,
                     title: Text(d.label(s.lang)),
                     selected: d.id == current,
                     onTap: () => Navigator.of(context).pop(d.id),

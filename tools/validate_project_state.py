@@ -115,6 +115,15 @@ def gate_problems(root: Path, gate: dict, receipt: dict) -> list[str]:
                        f"{rev[:12]}: {changed[:5]}")
         elif diff.returncode != 0:
             out.append(f"verified gate {name!r}: cannot diff against revision {rev[:12]}")
+        else:
+            # git diff ignores untracked files; a new file in a covered path
+            # also invalidates the evidence (audit EH-7).
+            untracked = subprocess.run(
+                ["git", "ls-files", "--others", "--exclude-standard", "--", *covers],
+                cwd=root, capture_output=True, text=True).stdout.split()
+            if untracked:
+                out.append(f"verified gate {name!r} is STALE: untracked files in covered paths: "
+                           f"{untracked[:5]}")
     if receipt.get("kind") == "BUILD":
         missing = [k for k in BUILD_IDENTITY if not receipt.get(k)]
         if missing:

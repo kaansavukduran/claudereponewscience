@@ -61,6 +61,10 @@ class _WeightCardState extends State<WeightCard> {
       _errorCode = e.code;
     } on RecordValidationError catch (e) {
       _errorCode = e.code;
+    } catch (_) {
+      // Storage/IO failure: say it was not saved (audit UX-2). Nothing is
+      // shown as latest, because memory is only updated after a write.
+      _errorCode = 'SAVE_FAILED';
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -138,11 +142,19 @@ class _WeightCardState extends State<WeightCard> {
                 children: [
                   Text(s.latest, style: text.labelLarge),
                   const SizedBox(width: 12),
-                  Text(
-                    '${_fmt(latest.quantity!.value)} kg',
-                    key: const ValueKey('weight-latest'),
-                    style: text.headlineMedium?.copyWith(
-                      fontFeatures: const [FontFeature.tabularFigures()],
+                  // Scales down instead of overflowing on narrow phones at
+                  // large text sizes (audit UX-7).
+                  Flexible(
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        '${_fmt(latest.quantity!.value)} kg',
+                        key: const ValueKey('weight-latest'),
+                        style: text.headlineMedium?.copyWith(
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                      ),
                     ),
                   ),
                 ],

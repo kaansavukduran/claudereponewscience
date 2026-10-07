@@ -8,7 +8,10 @@ Scope:    since the F001 baseline commit, nothing changed in the domain
           changes under lib/src/data are limited to comment lines and to
           user-visible notice text that cites Forge ids (legacy
           "FORGE 004" -> ladder "F006"). That is the evidence that F001
-          changed no persistence behaviour.
+          added no persistence and changed no vault format, schema or
+          path. It cannot see app_config.dart: the fail-closed APP_ENV
+          change (v0.32 AC-4) only removes configurations that persisted
+          and is tested in app_config_test / storage_policy_test.
 
 Usage: python3 tools/evidence/check_f001_scope.py <baseline-commit>
 """

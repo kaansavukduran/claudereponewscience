@@ -35,4 +35,6 @@ if [ "$before" = "$after" ]; then echo "# app files under watched dir: unchanged
 else echo "# app files under watched dir: CHANGED" >> "$LOG"; list_files | sed "s|^$WATCH|<watch>|" >> "$LOG"; fi
 echo "# mesa shader cache files (driver, not app data): $(find "$WATCH" -path '*/.cache/mesa_shader_cache/*' -type f 2>/dev/null | wc -l)" >> "$LOG"
 echo "# result: $([ $RC = 0 ] && echo PASS || echo FAIL)" >> "$LOG"
+# Echo the log so a wrapping gate receipt records what was observed (EH-1).
+cat "$LOG"
 exit $RC

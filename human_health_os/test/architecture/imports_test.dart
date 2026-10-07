@@ -34,29 +34,59 @@ List<String> bannedDirectives(String source) => [
     if (_bannedInDomain.any((b) => m.group(2)!.startsWith(b))) m.group(2)!,
 ];
 
+/// Ways Dart code can reach the network. Patterns, not exact spellings, so
+/// `@JS("fetch")`, `@JS( 'fetch' )` or an `external ... fetch(` binding are
+/// caught too (audit EH-6). The web smoke's 0-external-requests check is the
+/// runtime counterpart.
+final List<RegExp> _networkPatterns = [
+  RegExp(r'package:(http|dio|web|web_socket_channel)/'),
+  RegExp(r'\bHttpClient\b'),
+  RegExp(r'\bWebSocket\b'),
+  RegExp(r'\b(Raw)?Socket\.connect\b'),
+  RegExp(r'\bXMLHttpRequest\b'),
+  RegExp(r'\bEventSource\b'),
+  RegExp(r"""@JS\(\s*['"](window\.)?fetch['"]\s*\)"""),
+  RegExp(r'\bexternal\b[^;{]*\bfetch\s*\('),
+  RegExp(r'\bwindow\.fetch\b'),
+  RegExp(r'dart:js_interop_unsafe'),
+  RegExp(r'\bImage\.network\b'),
+  RegExp(r'\bNetworkImage\b'),
+];
+
+List<String> networkUses(String source) => [
+  for (final p in _networkPatterns)
+    if (p.hasMatch(source)) p.pattern,
+];
+
 void main() {
-  test('lib/ has no network clients (offline core)', () {
-    final offenders = <String>[];
-    for (final f in dartFiles('lib')) {
-      final src = f.readAsStringSync();
-      for (final banned in [
-        'package:http/',
-        'HttpClient',
-        'package:dio/',
-        'WebSocket',
-        'Socket.connect',
-        'RawSocket',
-        // Browser and image paths to the network (v0.32 check 8).
-        'XMLHttpRequest',
-        "@JS('fetch')",
-        'window.fetch',
-        'Image.network',
-        'NetworkImage',
-        'package:web/',
-      ]) {
-        if (src.contains(banned)) offenders.add('${f.path}: $banned');
-      }
+  test('the network guard catches every spelling it claims to', () {
+    for (final sample in [
+      "import 'package:http/http.dart' as http;",
+      "@JS('fetch')",
+      '@JS( "fetch" ) external JSPromise f(JSString u);',
+      'external JSPromise<JSAny?> fetch(JSString url);',
+      "import 'dart:js_interop_unsafe';",
+      'final c = HttpClient();',
+      "Image.network('https://x')",
+      'const NetworkImage(url)',
+      'XMLHttpRequest()',
+    ]) {
+      expect(networkUses(sample), isNotEmpty, reason: sample);
     }
+    for (final ok in [
+      "@JS('localStorage') external _Storage? get _localStorage;",
+      '// a comment about fetching data later',
+      "import 'dart:js_interop';",
+    ]) {
+      expect(networkUses(ok), isEmpty, reason: ok);
+    }
+  });
+
+  test('lib/ has no network clients (offline core)', () {
+    final offenders = [
+      for (final f in dartFiles('lib'))
+        for (final p in networkUses(f.readAsStringSync())) '${f.path}: $p',
+    ];
     expect(offenders, isEmpty);
   });
 

@@ -51,13 +51,13 @@ integration_test/                # Linux desktop: real file IO, relaunch, moved 
 ../tools/flutter_web_smoke.mjs   # Playwright smoke of build/web (run from repo root)
 ```
 
-**Target (planned, not built):** `domain/{observations,labs,medications,nutrition,activity,sleep,conditions,prevention,pathways,scoring,comparison}`, `data/{import,export,adapters}`, one `features/` folder per destination, `test/contracts` (golden vectors, F003) and release helpers.
+**Target (planned, not built):** `domain/{observations,labs,medications,nutrition,activity,sleep,conditions,prevention,pathways,scoring,comparison}`, `data/{import,export,adapters}`, one `features/` folder per destination, `test/contracts` (golden vectors, F011) and release helpers.
 
 Dependency direction is `features → application/domain ports ← data adapters`. Domain never imports Flutter, `dart:io`, `dart:html`, `dart:ui`, `dart:js_interop`, storage or HTTP packages. `test/architecture/imports_test.dart` enforces this on import/export/part directives in either quote style, fails if `lib/src/domain` disappears, and has its own negative fixtures.
 
 ## Platform adapters and the capability registry
 
-At startup a `CapabilityRegistry` reports what is **really** available on this runtime. Implemented ids: `local_storage` (available only when a file or browser adapter opened; always labelled "not encrypted" until F006), `health_platform` (Health Connect on Android, HealthKit on iOS, unsupported elsewhere; adapters planned F023/F024), `key_store` (planned F004/F030K) and `network` (not required). Planned ids: `file_system`, `notifications`, `background_work`.
+At startup a `CapabilityRegistry` reports what is **really** available on this runtime. Implemented ids: `local_storage` (available only when a file or browser adapter opened, always labelled "not encrypted" until F006; status `off` when an adapter exists but saving is off by policy, browser blocking or an unreadable vault; `notImplemented` on Android/iOS), `health_platform` (Health Connect on Android, HealthKit on iOS, unsupported elsewhere; adapter planned F013), `key_store` (planned F006) and `network` (not required). Planned ids: `file_system`, `notifications`, `background_work`.
 
 The UI shows unavailable integrations as unavailable. It never borrows another platform's capability.
 

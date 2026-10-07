@@ -61,6 +61,11 @@ class GateProblemsTest(unittest.TestCase):
         (self.repo / "app" / "main.dart").write_text("edited\n")
         self.assertTrue(any("STALE" in p for p in gate_problems(self.repo, {"gate": "g"}, self.receipt())))
 
+    def test_untracked_file_in_covered_path_makes_it_stale(self):
+        (self.repo / "app" / "new.dart").write_text("new\n")
+        problems = gate_problems(self.repo, {"gate": "g"}, self.receipt())
+        self.assertTrue(any("STALE" in p and "new.dart" in p for p in problems), problems)
+
     def test_dirty_receipt_and_missing_covers_and_fail_are_rejected(self):
         self.assertTrue(any("dirty" in p for p in gate_problems(
             self.repo, {"gate": "g"}, self.receipt(working_tree_dirty=True, dirty_source_paths=["app/x"]))))

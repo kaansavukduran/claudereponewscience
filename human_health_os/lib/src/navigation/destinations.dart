@@ -103,8 +103,8 @@ const List<Destination> destinations = [
     principleEn: 'A correction adds a new version; the old one stays visible in history.',
     principleTr:
         'Düzeltme yeni bir sürüm ekler; eskisi geçmişte görünür kalır.',
-    emptyStateEn: 'This view does not list records yet. Entries you save on Today are shown there, with how they are stored.',
-    emptyStateTr: 'Bu görünüm henüz kayıt listelemiyor. Bugün ekranında kaydettiğin girişler orada, nasıl saklandıklarıyla birlikte görünür.',
+    emptyStateEn: 'This view does not list records yet. Your 10 most recent entries are shown on Today, with how they are stored.',
+    emptyStateTr: 'Bu görünüm henüz kayıt listelemiyor. Son 10 girişin, nasıl saklandıklarıyla birlikte Bugün ekranında görünür.',
   ),
   Destination(
     id: DestinationId.labs,
