@@ -115,6 +115,10 @@ class S {
       'Only the current version can be changed; reopen the timeline.',
       'Yalnız güncel sürüm değiştirilebilir; zaman çizelgesini yeniden aç.',
     ),
+    'RESTART_REQUIRED' => _t(
+      'Not saved: restart Human OS to use the restored data first.',
+      'Kaydedilmedi: önce geri yüklenen verileri kullanmak için Human OS\'u yeniden başlat.',
+    ),
     'VAULT_READ_ONLY' => _t(
       'Not saved: your saved data is open read-only (see the note above).',
       'Kaydedilmedi: kayıtlı verilerin salt okunur açık (yukarıdaki nota bak).',
@@ -371,6 +375,77 @@ class S {
     AmendReason.deleted => _t(
       'Use this to remove a measurement you no longer want counted. Every version leaves your views; it stays only in history, and a later correction cannot bring it back. Completely erasing it is not built yet.',
       'Artık sayılmasını istemediğin bir ölçümü kaldırmak için kullan. Tüm sürümleri görünümlerinden çıkar; yalnız geçmişte kalır ve sonraki bir düzeltme onu geri getiremez. Tamamen silme henüz yapılmadı.',
+    ),
+  };
+
+  // Your data (F005): backups and exports.
+  String get dataNotAvailable => _t(
+    'Backups and exports are written only by development builds until the encrypted vault arrives (Forge F006).',
+    'Yedekler ve dışa aktarımlar, şifreli kasa gelene kadar (Forge F006) yalnız geliştirme derlemelerinde yazılır.',
+  );
+  String get dataUnencrypted => _t(
+    'Backups and exports are not encrypted yet (development build). Keep the files private.',
+    'Yedekler ve dışa aktarımlar henüz şifreli değil (geliştirme derlemesi). Dosyaları gizli tut.',
+  );
+  String get createBackup => _t('Create backup', 'Yedek oluştur');
+  String get exportJson =>
+      _t('Export records (JSON)', 'Kayıtları dışa aktar (JSON)');
+  String savedTo(String where) => _t('Saved: $where', 'Kaydedildi: $where');
+  String get backupsTitle =>
+      _t('Backups on this device', 'Bu cihazdaki yedekler');
+  String get noBackups => _t('No backups yet.', 'Henüz yedek yok.');
+  String get checkBackup => _t('Check', 'Kontrol et');
+  String get restoreBackup => _t('Restore', 'Geri yükle');
+  String get browserRestoreNotBuilt => _t(
+    'In the browser a backup downloads as a file. Restoring it here is not built yet.',
+    'Tarayıcıda yedek bir dosya olarak iner. Burada geri yükleme henüz yapılmadı.',
+  );
+  String backupChecked(int records, int profiles, String made) => _t(
+    'Checked: $records records and $profiles profiles, checksum matches. Made $made.',
+    'Kontrol edildi: $records kayıt ve $profiles profil, sağlama toplamı eşleşiyor. Oluşturma: $made.',
+  );
+  String get restoreTitle =>
+      _t('Restore this backup?', 'Bu yedek geri yüklensin mi?');
+  String get restoreExplain => _t(
+    'The backup is checked again, written beside your data, read back and only then used. The current data file is kept, not deleted. A restore never replaces records: it is refused while this device holds any.',
+    'Yedek yeniden kontrol edilir, verilerinin yanına yazılır, geri okunur ve ancak ondan sonra kullanılır. Mevcut veri dosyası saklanır, silinmez. Geri yükleme kayıtların yerine geçmez: bu cihazda kayıt varken reddedilir.',
+  );
+  String restored(int n) => _t(
+    'Restored $n records. Close and reopen Human OS to use them.',
+    '$n kayıt geri yüklendi. Kullanmak için Human OS\'u kapatıp yeniden aç.',
+  );
+  String backupError(String code, [String? detail]) => switch (code) {
+    'DIGEST_MISMATCH' => _t(
+      'This backup is damaged: its content does not match its checksum. Nothing was changed.',
+      'Bu yedek bozuk: içeriği sağlama toplamıyla eşleşmiyor. Hiçbir şey değişmedi.',
+    ),
+    'BACKUP_NEWER' => _t(
+      'This backup was made by a newer Human OS. Update the app to use it.',
+      'Bu yedek daha yeni bir Human OS ile yapılmış. Kullanmak için uygulamayı güncelle.',
+    ),
+    'BACKUP_ENCRYPTED_UNSUPPORTED' => _t(
+      'This backup is encrypted; this version cannot open encrypted backups yet.',
+      'Bu yedek şifreli; bu sürüm şifreli yedekleri henüz açamaz.',
+    ),
+    'RESTORE_TARGET_HAS_RECORDS' => _t(
+      'This device already holds records. Restoring would replace them, so it was not done.',
+      'Bu cihazda zaten kayıt var. Geri yükleme onların yerine geçeceği için yapılmadı.',
+    ),
+    'VAULT_INCOMPATIBLE' => _t(
+      'The data in this backup cannot be read by this version (${detail ?? '?'}). Nothing was changed.',
+      'Bu yedekteki veriler bu sürümle okunamıyor (${detail ?? '?'}). Hiçbir şey değişmedi.',
+    ),
+    'COUNT_MISMATCH' || 'VAULT_ID_MISMATCH' => _t(
+      'This backup does not match its own description. Nothing was changed.',
+      'Bu yedek kendi tanımıyla uyuşmuyor. Hiçbir şey değişmedi.',
+    ),
+    'RESTORE_VERIFY_FAILED' => _t(
+      'The restored copy did not read back identically. Nothing was changed.',
+      'Geri yüklenen kopya aynı şekilde geri okunamadı. Hiçbir şey değişmedi.',
+    ),
+    _ => _t(
+      'This file is not a readable Human OS backup. Nothing was changed.',
+      'Bu dosya okunabilir bir Human OS yedeği değil. Hiçbir şey değişmedi.',
     ),
   };
 

@@ -6,6 +6,7 @@ import 'dart:js_interop';
 
 import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
+import '../backup/data_files_web.dart';
 import 'log_repository.dart';
 import 'storage_status.dart';
 
@@ -63,5 +64,6 @@ Future<StorageChoice> createPlatformRepository(AppConfig config) async {
       durability: StorageDurability.browserStorage,
       location: 'browser storage ($browserVaultKey)',
     ),
+    files: BrowserDataFiles(),
   );
 }

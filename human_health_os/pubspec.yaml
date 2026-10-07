@@ -9,6 +9,7 @@ environment:
 # Dependency policy: every non-SDK package needs a recorded review in
 # project_state/DECISIONS.md (license, maintenance, platform support, native code, privacy).
 dependencies:
+  crypto: ^3.0.7
   flutter:
     sdk: flutter
   flutter_localizations:

@@ -5,6 +5,7 @@ library;
 import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/ports/storage_status.dart';
+import '../backup/data_files.dart';
 import 'log_repository.dart';
 
 export '../../domain/ports/storage_status.dart';
@@ -15,9 +16,14 @@ class StorageChoice {
     this.reason = StorageReason.saving,
     this.detail,
     this.notes = const [],
+    this.files,
   });
 
   final HealthRepository repository;
+
+  /// Where backups and exports go; null when this build may not write
+  /// unencrypted files (staging, production, portable) or has no place.
+  final DataFiles? files;
   final StorageReason reason;
 
   /// Extra context for [reason] (a variable name or an error code).

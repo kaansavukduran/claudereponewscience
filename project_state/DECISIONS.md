@@ -93,3 +93,14 @@ The user wrote (Turkish): "I don't know what main is … you think and do it, de
 - **Branch:** work stays on `claude/code-capabilities-kz21fr`. No `main` branch is created now. When the MVP Forges are closed, propose (do not perform unasked) making the closed state the default branch as the "stable version".
 - **F002 on-disk migrations:** schema upgrades run in memory only and open the vault read-only until a backup checkpoint exists (F005), because master §35.2 forbids a lossy or unrecoverable rewrite of health history.
 - **C-4 move:** the Linux development vault moves from `$XDG_DATA_HOME/HumanHealthOS/` to `human-health-os/` by a same-directory rename, only in development builds (the only builds that persist), never when both folders exist.
+
+## D-015: Dependency review — `crypto` (F005, 2026-10-07; D-007 procedure)
+
+- **Package:** `crypto` ^3.0.7 (pub.dev, publisher `dart.dev`, repository `github.com/dart-lang/core/pkgs/crypto`, latest release 2025-11-04).
+- **Purpose:** SHA-256 digests for backup payloads and manifests (master §36.2) and export integrity. Hashing only; no encryption.
+- **License:** BSD-3-Clause (OSI approved), compatible with the project.
+- **Maintenance:** maintained by the Dart team; pub points 160/160; null-safe, Dart 3 compatible.
+- **Platforms:** pure Dart; Android, iOS, Linux, macOS, Windows and web (also WASM-ready). No native code, no network use.
+- **Transitive:** `typed_data` only (Dart team).
+- **Alternatives:** hand-written SHA-256 (rejected: unreviewed code for an integrity primitive), `pointycastle`/`cryptography` (larger; to be reviewed in F006 for encryption and key derivation, where `crypto` is not enough).
+- **Lockfile:** `human_health_os/pubspec.lock` is committed with the change.

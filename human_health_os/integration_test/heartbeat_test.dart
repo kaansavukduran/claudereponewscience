@@ -5,11 +5,14 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:human_health_os/src/app/app_services.dart';
 import 'package:human_health_os/src/app/bootstrap.dart';
 import 'package:human_health_os/src/application/heartbeat_service.dart';
 import 'package:human_health_os/src/app/human_os_app.dart';
 import 'package:human_health_os/src/config/app_config.dart';
 import 'package:human_health_os/src/core/capabilities.dart';
+import 'package:human_health_os/src/data/backup/backup_bundle.dart';
+import 'package:human_health_os/src/data/backup/data_files.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/data/local/storage_io.dart';
 import 'package:human_health_os/src/data/local/vault_log.dart';
@@ -235,5 +238,83 @@ void main() {
     expect(value, findsOneWidget);
     expect(find.text('Lab flag: H'), findsOneWidget);
     dir.deleteSync(recursive: true);
+  });
+
+  testWidgets('F005 restore drill: backup -> lose the vault -> fresh start '
+      '-> restore -> relaunch shows the same records', (tester) async {
+    if (!Platform.isLinux) return;
+    final data = Directory.systemTemp.createTempSync('hhos-it-f005-');
+    final env = {'XDG_DATA_HOME': data.path, 'HOME': data.path};
+    final exe = '${data.path}/bin/human_health_os';
+    Future<AppServices> launch() async {
+      final choice = await createPlatformRepository(
+        dev,
+        env: env,
+        executablePath: exe,
+      );
+      final report = await choice.repository.open();
+      return servicesFor(
+        dev,
+        HostPlatform.linux,
+        choice.repository,
+        report: report,
+        files: choice.files,
+      );
+    }
+
+    final s1 = await launch();
+    final w = await s1.heartbeat.recordWeightKg(
+      profileId: s1.self.id,
+      input: '82,5',
+    );
+    await s1.heartbeat.recordLab(
+      profileId: s1.self.id,
+      input: const LabInput(
+        analyte: 'HbA1c',
+        value: '5,4',
+        notReported: false,
+        unit: '%',
+        sampleDate: '2026-10-03',
+        sourceFlag: 'H',
+      ),
+    );
+    final vault = File('${data.path}/human-health-os/$vaultFileName');
+    final original = vault.readAsStringSync();
+    final bundle = createBackupBundle(
+      vaultLogText: (await s1.readVaultText!())!,
+      appVersion: 'it',
+      sourceRevision: 'it',
+      createdAt: DateTime.utc(2026, 10, 7, 12),
+    );
+    await s1.dataFiles!.save(
+      DataFileKind.backup,
+      'drill.hhosbackup.json',
+      bundle,
+    );
+
+    vault.deleteSync(); // the disaster
+    final s2 = await launch(); // a fresh start creates a new, empty vault
+    expect(await s2.heartbeat.currentWeights(s2.self.id), isEmpty);
+    expect(s2.self.id, isNot(s1.self.id));
+
+    final saved = (await s2.dataFiles!.backups()).single;
+    final staged = stageRestore(await s2.dataFiles!.read(saved));
+    final out = await s2.dataFiles!.restore(
+      staged,
+      now: DateTime.utc(2026, 10, 7, 13),
+    );
+    expect(out.keptPrevious, isNotNull);
+    expect(vault.readAsStringSync(), original);
+
+    final s3 = await launch(); // relaunch after the restore
+    expect(s3.self.id, s1.self.id);
+    expect(
+      (await s3.heartbeat.currentWeights(s3.self.id)).single.toJson(),
+      w.toJson(),
+    );
+    await tester.pumpWidget(HumanOsApp(services: s3));
+    await tester.pumpAndSettle();
+    expect(find.text('82.5 kg'), findsWidgets);
+    data.deleteSync(recursive: true);
   });
 }

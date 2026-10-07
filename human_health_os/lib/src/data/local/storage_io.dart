@@ -7,6 +7,7 @@ import 'dart:io';
 
 import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
+import '../backup/data_files_io.dart';
 import 'log_repository.dart';
 import 'storage_status.dart';
 
@@ -214,5 +215,6 @@ Future<StorageChoice> createPlatformRepository(
       location: file.path,
     ),
     notes: notes,
+    files: FileDataFiles(dataDir: dir, vault: file),
   );
 }

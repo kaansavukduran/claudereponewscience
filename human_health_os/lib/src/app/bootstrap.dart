@@ -5,6 +5,7 @@ library;
 import '../application/heartbeat_service.dart';
 import '../config/app_config.dart';
 import '../core/capabilities.dart';
+import '../data/backup/data_files.dart';
 import '../data/local/log_repository.dart';
 import '../data/local/storage.dart';
 import '../data/local/vault_log.dart' show VaultFormatError;
@@ -41,6 +42,7 @@ Future<AppServices> bootstrap(AppConfig config, HostPlatform platform) async {
     detail: detail,
     notes: choice.notes,
     report: report,
+    files: choice.files,
   );
 }
 
@@ -53,6 +55,7 @@ Future<AppServices> servicesFor(
   String? detail,
   List<StorageNote> notes = const [],
   LoadReport report = const LoadReport(warnings: []),
+  DataFiles? files,
 }) async {
   final heartbeat = HeartbeatService(repo);
   final self = await heartbeat.ensureSelfProfile();
@@ -77,5 +80,15 @@ Future<AppServices> servicesFor(
     storageDetail: detail,
     storageNotes: notes,
     loadWarnings: report.warnings,
+    // Files stay available when the vault could not be opened: restoring a
+    // backup is the way back. A backup copies the persisted log, so a memory
+    // store offers none.
+    dataFiles: files,
+    readVaultText:
+        repo is LogRepository &&
+            repo.description.durability != StorageDurability.memoryOnly
+        ? repo.sink.read
+        : null,
+    lockStorage: repo is LogRepository ? repo.lock : null,
   );
 }

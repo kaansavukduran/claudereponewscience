@@ -4,6 +4,7 @@ library;
 
 import '../application/heartbeat_service.dart';
 import '../config/app_config.dart';
+import '../data/backup/data_files.dart';
 import '../core/capabilities.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
@@ -20,6 +21,9 @@ class AppServices {
     this.storageDetail,
     this.storageNotes = const [],
     this.loadWarnings = const [],
+    this.dataFiles,
+    this.readVaultText,
+    this.lockStorage,
   });
 
   final AppConfig config;
@@ -41,4 +45,13 @@ class AppServices {
 
   /// Saved entries skipped while opening the vault.
   final List<LoadWarning> loadWarnings;
+
+  /// Backups and exports (F005); null when this build may not write them.
+  final DataFiles? dataFiles;
+
+  /// The exact vault log text, for a backup; null for a memory-only store.
+  final Future<String?> Function()? readVaultText;
+
+  /// Stops all writes in this session with a code (after a restore).
+  final void Function(String code)? lockStorage;
 }

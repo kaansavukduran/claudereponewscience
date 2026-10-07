@@ -204,6 +204,40 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     check(`${label}: lab result survives reload`, await scrollTo(page.getByText('5,4 %').first()));
     check(`${label}: no "normal/abnormal" wording on Labs`, !(await page.getByText(/\b(abnormal|normal)\b/i).first().isVisible().catch(() => false)));
     await page.screenshot({ path: join(out, `flutter-web-${label}-labs-result.png`) });
+    // F005: a backup downloads as a file (a local Blob, no network) whose
+    // manifest checksum matches its payload.
+    await navItem(todayLabel).click().catch(() => {});
+    await heading(todayLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+    const todayHead = await heading(todayLabel).boundingBox().catch(() => null);
+    const todayWheelX = todayHead ? Math.max(2, todayHead.x - 8) : wheelX;
+    const backupButton = page.getByRole('button', { name: 'Create backup' }).first();
+    for (let i = 0; i < 25 && (await backupButton.count()) === 0; i++) {
+      await page.mouse.move(todayWheelX, viewport.height / 2);
+      await page.mouse.wheel(0, 300);
+      await page.waitForTimeout(200);
+    }
+    for (let i = 0; i < 20; i++) {
+      const b = await backupButton.boundingBox().catch(() => null);
+      if (b && b.y >= 110 && b.y + b.height <= viewport.height - 90) break;
+      await page.mouse.move(todayWheelX, viewport.height / 2);
+      await page.mouse.wheel(0, b ? Math.max(-400, Math.min(400, b.y - viewport.height / 2)) : 300);
+      await page.waitForTimeout(250);
+    }
+    try {
+      const [download] = await Promise.all([
+        page.waitForEvent('download', { timeout: 15_000 }),
+        backupButton.click({ timeout: 10_000 }),
+      ]);
+      const saved = join(out, `flutter-web-${label}-backup.json`);
+      await download.saveAs(saved);
+      const bundle = JSON.parse(await readFile(saved, 'utf8'));
+      const digest = createHash('sha256').update(bundle.payload, 'utf8').digest('hex');
+      check(`${label}: backup downloads with a matching checksum`, bundle.manifest.payload_sha256 === digest && bundle.manifest.format === 'hhos-backup', `${download.suggestedFilename()}`);
+      check(`${label}: backup holds the saved weight and lab result`, bundle.manifest.record_count >= 2 && bundle.payload.includes('"analyte_label":"HbA1c"'), `records=${bundle.manifest.record_count}`);
+      check(`${label}: backup says it is not encrypted`, bundle.manifest.encryption === 'none-dev-only');
+    } catch (e) {
+      check(`${label}: backup downloads with a matching checksum`, false, e.message.split('\n')[0]);
+    }
   }
   check(`${label}: no external network requests`, external.length === 0, external.slice(0, 5).join(' '));
   check(`${label}: no page errors`, errors.length === 0, errors.slice(0, 3).join(' | '));

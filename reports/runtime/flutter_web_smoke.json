@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-10-07T12:53:49.650Z",
-  "git_head": "e8ea0645497d9c58485d20c1516429297c4bfad2",
-  "working_tree_dirty": false,
+  "ran_at": "2026-10-07T13:04:46.383Z",
+  "git_head": "b976d126d46cb339d24378b7835796d7c89d8bdc",
+  "working_tree_dirty": true,
   "build": "/home/user/claudereponewscience/human_health_os/build/web",
-  "main_dart_js_sha256": "5f41353dd0bb321dfd853a80fbb4d20d297217683eb4fee8cb223c1a30827ca2",
+  "main_dart_js_sha256": "17523be95d6fe56b7ed106a1ac3cd111876bbd5cd9b59fb9b78035f73eecc184",
   "browser": "chromium 141.0.7390.37",
   "runs": [
     {
@@ -123,6 +123,21 @@
       "detail": ""
     },
     {
+      "name": "desktop-en: backup downloads with a matching checksum",
+      "status": "PASS",
+      "detail": "human-os-backup-a8c7c836-20261007T130422Z.hhosbackup.json"
+    },
+    {
+      "name": "desktop-en: backup holds the saved weight and lab result",
+      "status": "PASS",
+      "detail": "records=2"
+    },
+    {
+      "name": "desktop-en: backup says it is not encrypted",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "desktop-en: no external network requests",
       "status": "PASS",
       "detail": ""
@@ -229,6 +244,21 @@
     },
     {
       "name": "phone-en: no \"normal/abnormal\" wording on Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: backup downloads with a matching checksum",
+      "status": "PASS",
+      "detail": "human-os-backup-7099fb6c-20261007T130443Z.hhosbackup.json"
+    },
+    {
+      "name": "phone-en: backup holds the saved weight and lab result",
+      "status": "PASS",
+      "detail": "records=2"
+    },
+    {
+      "name": "phone-en: backup says it is not encrypted",
       "status": "PASS",
       "detail": ""
     },

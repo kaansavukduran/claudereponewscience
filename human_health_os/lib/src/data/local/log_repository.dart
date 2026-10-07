@@ -43,11 +43,18 @@ class LogRepository implements HealthRepository {
   final int targetVersion;
   VaultState? _state;
   bool _readOnly = false;
+  String? _lockedCode;
 
   @override
-  bool get writable => _state != null && !_readOnly;
+  bool get writable => _state != null && !_readOnly && _lockedCode == null;
+
+  /// Refuses every later write with [code] (e.g. after the vault file was
+  /// replaced by a restore: this session's memory no longer matches it).
+  void lock(String code) => _lockedCode = code;
 
   void _checkWritable() {
+    final locked = _lockedCode;
+    if (locked != null) throw StorageWriteRefused(locked);
     if (_readOnly) throw const StorageWriteRefused('VAULT_READ_ONLY');
   }
 

@@ -7,6 +7,7 @@ import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
 import 'weight_card.dart';
+import 'your_data_card.dart';
 
 class TodayScreen extends StatelessWidget {
   const TodayScreen({super.key, required this.services});
@@ -44,6 +45,8 @@ class TodayScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         WeightCard(services: services),
+        const SizedBox(height: 12),
+        YourDataCard(services: services),
         const SizedBox(height: 12),
         _Section(
           title: s.thisBuild,

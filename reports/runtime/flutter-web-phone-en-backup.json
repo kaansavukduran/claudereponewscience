@@ -1,0 +1,22 @@
+{
+  "manifest": {
+    "format": "hhos-backup",
+    "format_version": 1,
+    "created_at": "2026-10-07T13:04:43.524Z",
+    "source_app_version": "0.1.0+1",
+    "source_revision": "local",
+    "vault_id": "7099fb6c-42c4-4e80-a927-f691f098f38e",
+    "vault_format_version": 1,
+    "record_schema_versions": [
+      3
+    ],
+    "profile_count": 1,
+    "record_count": 2,
+    "skipped_entries": 0,
+    "payload_sha256": "72fc8f66485aa4c7dcc4030cfce794fd9307b191858133e1fec28aba4f828f20",
+    "payload_bytes": 1343,
+    "encryption": "none-dev-only",
+    "attachments": []
+  },
+  "payload": "{\"format\":\"hhos-vault-log\",\"format_version\":1,\"vault_id\":\"7099fb6c-42c4-4e80-a927-f691f098f38e\",\"created_at\":\"2026-10-07T13:04:23.837Z\",\"encryption\":\"none-dev-only\"}\n{\"op\":\"profile.put\",\"data\":{\"schema_version\":1,\"id\":\"e489742f-1463-43b7-abb9-75b97e151daa\",\"type\":\"self\",\"created_at\":\"2026-10-07T13:04:23.838Z\",\"display_name\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"332a9220-7223-4b9c-a8d2-32c709d06f38\",\"profile_id\":\"e489742f-1463-43b7-abb9-75b97e151daa\",\"kind\":\"body.weight\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":78.4,\"unit\":\"kg\"},\"original_text\":\"78,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-07T13:04:26.672Z\",\"recorded_at\":\"2026-10-07T13:04:26.672Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"a95d1699-4e0b-45c0-8a79-19dbd14590dc\",\"profile_id\":\"e489742f-1463-43b7-abb9-75b97e151daa\",\"kind\":\"lab.result\",\"state\":\"reported\",\"value_status\":\"present\",\"quantity\":{\"value\":5.4,\"unit\":\"%\"},\"original_text\":\"5,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-07T00:00:00.000Z\",\"recorded_at\":\"2026-10-07T13:04:34.689Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":{\"analyte_label\":\"HbA1c\",\"specimen\":null,\"laboratory\":null,\"source_flag\":\"H\",\"reference_text\":\"4.0 - 6.0\"}}}\n"
+}

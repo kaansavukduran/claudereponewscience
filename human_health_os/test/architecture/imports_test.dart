@@ -90,14 +90,31 @@ void main() {
     expect(offenders, isEmpty);
   });
 
-  test('dart:io is confined to the native storage adapter', () {
+  // Native adapters, reached only through the conditional import in
+  // data/local/storage.dart (never compiled for the web).
+  const nativeAdapters = [
+    'data/local/storage_io.dart',
+    'data/backup/data_files_io.dart', // F005: backup/export files
+  ];
+
+  test('dart:io is confined to the native storage adapters', () {
     final offenders = [
       for (final f in dartFiles('lib'))
         if (f.readAsStringSync().contains("import 'dart:io'") &&
-            !f.path.endsWith('data/local/storage_io.dart'))
+            !nativeAdapters.any(f.path.endsWith))
           f.path,
     ];
     expect(offenders, isEmpty);
+  });
+
+  test('native adapters are imported only by the native storage adapter', () {
+    final importers = [
+      for (final f in dartFiles('lib'))
+        if (f.readAsStringSync().contains("data_files_io.dart'") &&
+            !f.path.endsWith('data/local/storage_io.dart'))
+          f.path,
+    ];
+    expect(importers, isEmpty);
   });
 
   test('the domain guard catches every directive form', () {
