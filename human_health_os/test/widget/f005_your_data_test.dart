@@ -184,7 +184,8 @@ void main() {
     await tapKey(tester, 'confirm-restore');
     expect(
       message(tester),
-      'Restored 1 records. Close and reopen Human OS to use them.',
+      'Restored 1 records. Close and reopen Human OS to use them. '
+      'The previous data file was kept at memory:before-restore.',
     );
     expect(files.vaultText, other.text);
     expect(files.kept, isNotNull, reason: 'the replaced vault is kept');

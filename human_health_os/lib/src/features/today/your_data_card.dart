@@ -131,7 +131,7 @@ class _YourDataCardState extends State<YourDataCard> {
       // This session's memory belongs to the replaced file: no more writes.
       _s.lockStorage?.call('RESTART_REQUIRED');
       _s.restartRequired?.value = true;
-      return s.restored(out.records);
+      return s.restored(out.records, out.keptPrevious);
     }, s);
   }
 

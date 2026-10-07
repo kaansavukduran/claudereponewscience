@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/application/heartbeat_service.dart';
 import 'package:human_health_os/src/data/backup/backup_bundle.dart';
+import 'package:human_health_os/src/data/backup/data_files.dart';
 import 'package:human_health_os/src/data/backup/data_files_io.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/data/local/storage_io.dart';
@@ -154,5 +155,30 @@ void main() {
         expect(vault.readAsStringSync(), damaged);
       },
     );
+  });
+
+  test('saved backups are newest first by their time, whatever the vault '
+      'prefix (review finding)', () async {
+    final files = FileDataFiles(dataDir: tmp, vault: vault);
+    await files.save(
+      DataFileKind.backup,
+      'human-os-backup-ffffffff-20261001T080000Z.hhosbackup.json',
+      '{}',
+    );
+    await files.save(
+      DataFileKind.backup,
+      'human-os-backup-00000000-20261007T080000Z.hhosbackup.json',
+      '{}',
+    );
+    await files.save(
+      DataFileKind.backup,
+      'human-os-backup-aaaaaaaa-20261005T080000Z.hhosbackup.json',
+      '{}',
+    );
+    expect((await files.backups()).map((b) => b.name.substring(25, 41)), [
+      '20261007T080000Z',
+      '20261005T080000Z',
+      '20261001T080000Z',
+    ]);
   });
 }

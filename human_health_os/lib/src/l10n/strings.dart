@@ -418,10 +418,17 @@ class S {
     'The backup is checked again, written beside your data, read back and only then used. The current data file is kept, not deleted. A restore never replaces records: it is refused while this device holds any.',
     'Yedek yeniden kontrol edilir, verilerinin yanına yazılır, geri okunur ve ancak ondan sonra kullanılır. Mevcut veri dosyası saklanır, silinmez. Geri yükleme kayıtların yerine geçmez: bu cihazda kayıt varken reddedilir.',
   );
-  String restored(int n) => _t(
-    'Restored $n records. Close and reopen Human OS to use them.',
-    '$n kayıt geri yüklendi. Kullanmak için Human OS\'u kapatıp yeniden aç.',
-  );
+  String restored(int n, String? keptAt) =>
+      _t(
+        'Restored $n records. Close and reopen Human OS to use them.',
+        '$n kayıt geri yüklendi. Kullanmak için Human OS\'u kapatıp yeniden aç.',
+      ) +
+      (keptAt == null
+          ? ''
+          : _t(
+              ' The previous data file was kept at $keptAt.',
+              ' Önceki veri dosyası şurada saklandı: $keptAt.',
+            ));
   String backupError(String code, [String? detail]) => switch (code) {
     'DIGEST_MISMATCH' => _t(
       'This backup is damaged: its content does not match its checksum. Nothing was changed.',

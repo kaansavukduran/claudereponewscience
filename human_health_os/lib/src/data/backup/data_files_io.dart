@@ -51,7 +51,7 @@ class FileDataFiles implements DataFiles {
         ),
       );
     }
-    return files..sort((a, b) => b.name.compareTo(a.name));
+    return files..sort(newestBackupFirst);
   }
 
   @override

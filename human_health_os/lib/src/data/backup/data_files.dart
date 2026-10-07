@@ -68,6 +68,18 @@ String backupFileName(String vaultId, DateTime t) =>
 
 String exportFileName(DateTime t) => 'human-os-export-${fileStamp(t)}.json';
 
+final RegExp _stampInName = RegExp(r'(\d{8}T\d{6}Z)\.hhosbackup\.json$');
+
+/// Newest first by the time in the file name (falling back to the file
+/// time), never by the whole name: its vault-id prefix would group backups
+/// of different vaults (review finding).
+int newestBackupFirst(SavedFile a, SavedFile b) {
+  String key(SavedFile f) =>
+      _stampInName.firstMatch(f.name)?.group(1) ?? fileStamp(f.modified);
+  final c = key(b).compareTo(key(a));
+  return c != 0 ? c : b.name.compareTo(a.name);
+}
+
 /// Memory adapter for tests: keeps files in a map and restores into a
 /// replaceable text slot.
 class MemoryDataFiles implements DataFiles {
@@ -101,7 +113,7 @@ class MemoryDataFiles implements DataFiles {
           bytes: e.value.length,
           modified: times[e.key]!,
         ),
-  ]..sort((a, b) => b.name.compareTo(a.name));
+  ]..sort(newestBackupFirst);
 
   @override
   Future<String> read(SavedFile file) async => files[file.id]!;
