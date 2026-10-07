@@ -3,57 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "TESTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F002",
-    "contract": "v0.32",
-    "run_id": "F002@v0.32",
-    "goal": "Close the master §39 F002 exit gate (persistence integration test, migration version initialized, no plaintext-secret shortcut) on the existing persistence slice, with the open persistence gaps",
-    "status": "TESTING",
-    "baseline_commit": "2105a9e",
-    "started_at": "2026-10-07T07:55:00Z",
-    "scope": [
-      "vault compatibility metadata and migration graph (G-15)",
-      "replay validation and record-driven weight display (G-18)",
-      "data-directory rules (G-19) and the human-health-os/ XDG move (C-4)",
-      "storage reason codes, one profile gate, localized storage text (G-23, G-14 for storage)",
-      "domain comment (G-22)",
-      "no-plaintext-secret test"
-    ],
-    "out_of_scope": [
-      "encryption (F006)",
-      "writing an upgraded vault file / backups (F005)",
-      "new record kinds (F003, F004)",
-      "mobile storage adapters (F013/F015)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Compatibility metadata (§35.3): writes format 1, reads format 1, no downgrade; a newer vault, record or profile schema blocks the open with VAULT_NEWER / RECORD_SCHEMA_NEWER and the file stays byte-identical; a header without a numeric version or vault id is refused with a code",
-      "AC-2 Migration graph (§35.1/§35.2): ordered ids, +1 steps, ambiguous/missing/skipping steps and lossy steps refused; a synthetic M002 migrates in memory only, the vault opens read-only, writes are refused (VAULT_READ_ONLY), the file is unchanged, and one receipt per step carries the §33.3 fields",
-      "AC-3 Fixture (§35.4): synthetic v1 vault equals the current writer's bytes and reads back with ids, manual/device provenance, correction lineage, notMeasured without quantity, UTC times and order, no duplicates",
-      "AC-4 Replay validation: entries breaking a record rule or naming an unknown profile are skipped with a warning naming line and rule; unreadable middle vs cut-off last entry are distinguished; the file is unchanged",
-      "AC-5 Weight card: Latest = newest current record with a value; each row shows its own state, source and unit; a missing value is named (e.g. 'Not measured'), never drawn as a number; no crash",
-      "AC-6 Data directory: empty/relative XDG_DATA_HOME ignored; relative HHOS_DATA_DIR refused (memory-only, reason dataDirInvalid, nothing written); empty HHOS_DATA_DIR = not set",
-      "AC-7 Linux folder human-health-os/ (C-4): legacy moved by rename when the new folder is absent (bytes identical); both present → new used, old untouched; failed move → old in use; staging/production never touch either; told to the user",
-      "AC-8 Storage reason codes from the adapters, one shared profile gate, capability status derived from the reason; storage notices, notes and load warnings localized EN/TR",
-      "AC-9 No plaintext-secret shortcut: the development vault holds no secret-like field, says encryption none-dev-only, description.encrypted false; the app reads only APP_ENV/APP_VERSION/SOURCE_REVISION from --dart-define; staging/production/portable stay memory-only",
-      "AC-10 Persistence integration test on Linux (real IO): save → relaunch → same record; legacy folder moved by the real adapter and reopened with the same vault, profile and record; header format_version 1",
-      "AC-11 Regression: all F001@v0.32 gates still pass (format, analyze, tests, web build + smoke, Linux build + launch, contracts, pnpm test)",
-      "AC-12 Mutations M1–M6 (no replay validation, old folder name, latest = first record, missing version read as 1, migrated vault writable, relative HHOS_DATA_DIR accepted) each fail the intended test"
-    ],
-    "completed_steps": [
-      "SPECIFY: D-014 (MVP batch), F002 acceptance AC-1..AC-12",
-      "IMPLEMENT: domain LoadWarning/MigrationReceipt/StorageWriteRefused/SchemaTooNewError/StorageReason; data vault_migrations, storage_status, storage_io/web reason codes + folder rules; app bootstrap/services; UI notices, notes, warnings, record-driven weight rows",
-      "TEST: vault_compat_test, no_plaintext_secret_test, f002_persistence_test, storage_policy/repository_contract updates, Linux integration move test; 111 unit/widget tests + 2 integration tests pass locally",
-      "MUTATION: M1-M6 each caught"
-    ],
-    "last_verified_gate": null,
-    "next_action": "commit, then run gates with --forge F002@v0.32",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -64,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F001@v0.32 (2026-10-07, source revision c8037566dd0b)",
+  "last_completed_forge": "F002@v0.32 (2026-10-07, source revision e16c73b2391c)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -77,93 +29,86 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F001-1011",
-      "criterion": "AC-1",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "evidence_id": "EV-TEST-F002-0001",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F001-1012",
-      "criterion": "AC-2",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "evidence_id": "EV-TEST-F002-0002",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F001-1013",
-      "criterion": "AC-2",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "evidence_id": "EV-TEST-F002-0003",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
-      "gate": "flutter test (81 tests)",
-      "evidence_id": "EV-TEST-F001-1014",
-      "criterion": "AC-3..AC-8",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "gate": "flutter test (111 tests: vault_compat, no_plaintext_secret, f002_persistence, storage_policy, repository_contract, F001 suite)",
+      "evidence_id": "EV-TEST-F002-0004",
+      "criterion": "AC-1..AC-9",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
       "gate": "evidence tooling unit tests (16)",
-      "evidence_id": "EV-TEST-F001-1015",
-      "criterion": "AC-13",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "evidence_id": "EV-TEST-F002-0005",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development)",
-      "evidence_id": "EV-BUILD-F001-1011",
-      "criterion": "AC-9",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
-      "result": "PASS"
-    },
-    {
-      "gate": "web runtime smoke (Chromium 141; console errors, failed and external requests)",
-      "evidence_id": "EV-RUNTIME-F001-1011",
-      "criterion": "AC-10",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
-      "result": "PASS"
-    },
-    {
-      "gate": "integration_test on Linux (real file IO, relaunch, folder move)",
-      "evidence_id": "EV-TEST-F001-1016",
+      "evidence_id": "EV-BUILD-F002-0001",
       "criterion": "AC-11",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "result": "PASS"
+    },
+    {
+      "gate": "web runtime smoke (Chromium 141; weight save -> reload in localStorage; 0 console errors)",
+      "evidence_id": "EV-RUNTIME-F002-0001",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "result": "PASS"
+    },
+    {
+      "gate": "integration_test on Linux (save/relaunch; legacy folder move through the real adapter)",
+      "evidence_id": "EV-TEST-F002-0006",
+      "criterion": "AC-10",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development)",
-      "evidence_id": "EV-BUILD-F001-1012",
+      "evidence_id": "EV-BUILD-F002-0002",
       "criterion": "AC-11",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
-      "gate": "Linux launch smoke (Ubuntu 24.04, Xvfb X11, 12 s liveness + screenshot)",
-      "evidence_id": "EV-RUNTIME-F001-1012",
-      "criterion": "AC-11",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "gate": "Linux launch with a pre-F002 vault in HumanHealthOS/: moved to human-health-os/, bytes unchanged, note + records shown",
+      "evidence_id": "EV-RUNTIME-F002-0002",
+      "criterion": "AC-7",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
       "gate": "golden-vector contract check",
-      "evidence_id": "EV-TEST-F001-1017",
-      "criterion": "AC-14",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "evidence_id": "EV-TEST-F002-0007",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     },
     {
-      "gate": "pnpm test (TS reference, Build Lab, API, client)",
-      "evidence_id": "EV-TEST-F001-1018",
-      "criterion": "AC-14",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
-      "result": "PASS"
-    },
-    {
-      "gate": "F001 scope check since 254c534",
-      "evidence_id": "EV-TEST-F001-1019",
-      "criterion": "AC-12",
-      "source_revision": "c8037566dd0bc22cf40dea2667a84be1ca7bd0a1",
+      "gate": "pnpm test",
+      "evidence_id": "EV-TEST-F002-0008",
+      "criterion": "AC-11",
+      "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
       "result": "PASS"
     }
   ],
@@ -195,8 +140,13 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": null,
-  "updated_at": "2026-10-07T08:30:00Z",
+  "next_recommended_forge": {
+    "forge_id": "F003",
+    "contract": "v0.32",
+    "run_id": "F003@v0.32",
+    "why": "master §39 ladder: timeline projection, correction lineage, delete vs entered-in-error semantics (MVP batch D-014)"
+  },
+  "updated_at": "2026-10-07T08:10:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -222,20 +172,20 @@
     "web": {
       "status": "RUNTIME_TESTED",
       "evidence": [
-        "EV-BUILD-F001-1011",
-        "EV-RUNTIME-F001-1011"
+        "EV-BUILD-F002-0001",
+        "EV-RUNTIME-F002-0001"
       ],
       "note": "development profile, offline build (--no-web-resources-cdn); Chromium 141 headless; PWA install NOT_TESTED"
     },
     "linux": {
-      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch + integration_test; EV-BUILD-F001-1012, EV-RUNTIME-F001-1012, EV-TEST-F001-1016)",
+      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch with legacy-vault move + integration_test; EV-BUILD-F002-0002, EV-RUNTIME-F002-0002, EV-TEST-F002-0006)",
       "product_surface": true,
       "packaged": "F015-L1 IN_PROGRESS_RECOVERABLE: tar.zst, deb, rpm, AppImage built (UNSIGNED); Ubuntu 24.04 install/launch PASS; Ubuntu 22.04 FAIL (libGLESv2 dependency); Flatpak NOT_BUILT; see reports/artifacts/forge-f030l-1.json",
       "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12); older distros need an older-glibc builder (D-009)",
       "distro_tests": "Ubuntu 24.04 (host) PASS for deb/tar.zst/AppImage on X11 + Weston Wayland; Ubuntu 22.04 FAIL (open defect); Fedora 44 static rpm checks only; Debian 12/13, Nobara 44, GNOME/KDE Wayland NOT_RUN",
       "evidence": [
-        "reports/runtime/linux-f001v032/f001v032-linux-x11.log",
-        "reports/runtime/linux-f001v032/f001v032-linux-x11.png"
+        "reports/runtime/linux-f002/f002-linux-x11.log",
+        "reports/runtime/linux-f002/f002-linux-x11.png"
       ]
     },
     "android": {
@@ -261,7 +211,7 @@
   },
   "domains": {
     "shell": "RUNTIME_TESTED (web + Linux, F001@v0.32 receipts EV-*-F001-1011..1019)",
-    "persistence": "RUNTIME_TESTED for development builds only (unencrypted; staging, production and portable memory-only until ladder F006)",
+    "persistence": "RUNTIME_TESTED for development builds (web localStorage, Linux file vault); vault format 1 with compatibility metadata, migration graph (synthetic steps tested), replay validation; unencrypted; staging, production and portable memory-only until F006",
     "encryption_vault": "NOT_STARTED",
     "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
     "labs": "NOT_STARTED in Flutter (TS reference engine exists)",
@@ -271,7 +221,7 @@
   "storage_policy": {
     "production": "memory only",
     "portable": "memory only until the encrypted vault (ladder F006); nothing written beside the executable",
-    "development_desktop": "unencrypted JSON-lines log in XDG data dir / Application Support / LOCALAPPDATA",
+    "development_desktop": "unencrypted JSON-lines log: $XDG_DATA_HOME/human-health-os (Linux; legacy HumanHealthOS/ moved by rename), Application Support/HumanHealthOS (macOS), %LOCALAPPDATA%\\HumanHealthOS (Windows); relative HHOS_DATA_DIR refused",
     "development_web": "unencrypted localStorage (may be evicted)",
     "android_ios": "memory only (path adapter planned)",
     "staging": "memory only until the encrypted vault (ladder F006) (D-010)"
@@ -628,6 +578,192 @@
         }
       ],
       "superseded_receipts": "EV-*-F001-1001..1010 (revision 3648371) are stale: the audit repairs changed covered paths; kept as history"
+    },
+    "F002@v0.32": {
+      "forge_id": "F002",
+      "contract": "v0.32",
+      "run_id": "F002@v0.32",
+      "goal": "Close the master §39 F002 exit gate (persistence integration test, migration version initialized, no plaintext-secret shortcut) on the existing persistence slice, with the open persistence gaps",
+      "status": "DONE",
+      "baseline_commit": "2105a9e",
+      "started_at": "2026-10-07T07:55:00Z",
+      "scope": [
+        "vault compatibility metadata and migration graph (G-15)",
+        "replay validation and record-driven weight display (G-18)",
+        "data-directory rules (G-19) and the human-health-os/ XDG move (C-4)",
+        "storage reason codes, one profile gate, localized storage text (G-23, G-14 for storage)",
+        "domain comment (G-22)",
+        "no-plaintext-secret test"
+      ],
+      "out_of_scope": [
+        "encryption (F006)",
+        "writing an upgraded vault file / backups (F005)",
+        "new record kinds (F003, F004)",
+        "mobile storage adapters (F013/F015)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Compatibility metadata (§35.3): writes format 1, reads format 1, no downgrade; a newer vault, record or profile schema blocks the open with VAULT_NEWER / RECORD_SCHEMA_NEWER and the file stays byte-identical; a header without a numeric version or vault id is refused with a code",
+        "AC-2 Migration graph (§35.1/§35.2): ordered ids, +1 steps, ambiguous/missing/skipping steps and lossy steps refused; a synthetic M002 migrates in memory only, the vault opens read-only, writes are refused (VAULT_READ_ONLY), the file is unchanged, and one receipt per step carries the §33.3 fields",
+        "AC-3 Fixture (§35.4): synthetic v1 vault equals the current writer's bytes and reads back with ids, manual/device provenance, correction lineage, notMeasured without quantity, UTC times and order, no duplicates",
+        "AC-4 Replay validation: entries breaking a record rule or naming an unknown profile are skipped with a warning naming line and rule; unreadable middle vs cut-off last entry are distinguished; the file is unchanged",
+        "AC-5 Weight card: Latest = newest current record with a value; each row shows its own state, source and unit; a missing value is named (e.g. 'Not measured'), never drawn as a number; no crash",
+        "AC-6 Data directory: empty/relative XDG_DATA_HOME ignored; relative HHOS_DATA_DIR refused (memory-only, reason dataDirInvalid, nothing written); empty HHOS_DATA_DIR = not set",
+        "AC-7 Linux folder human-health-os/ (C-4): legacy moved by rename when the new folder is absent (bytes identical); both present → new used, old untouched; failed move → old in use; staging/production never touch either; told to the user",
+        "AC-8 Storage reason codes from the adapters, one shared profile gate, capability status derived from the reason; storage notices, notes and load warnings localized EN/TR",
+        "AC-9 No plaintext-secret shortcut: the development vault holds no secret-like field, says encryption none-dev-only, description.encrypted false; the app reads only APP_ENV/APP_VERSION/SOURCE_REVISION from --dart-define; staging/production/portable stay memory-only",
+        "AC-10 Persistence integration test on Linux (real IO): save → relaunch → same record; legacy folder moved by the real adapter and reopened with the same vault, profile and record; header format_version 1",
+        "AC-11 Regression: all F001@v0.32 gates still pass (format, analyze, tests, web build + smoke, Linux build + launch, contracts, pnpm test)",
+        "AC-12 Mutations M1–M6 (no replay validation, old folder name, latest = first record, missing version read as 1, migrated vault writable, relative HHOS_DATA_DIR accepted) each fail the intended test"
+      ],
+      "completed_steps": [
+        "SPECIFY: D-014 (MVP batch), F002 acceptance AC-1..AC-12",
+        "IMPLEMENT: domain LoadWarning/MigrationReceipt/StorageWriteRefused/SchemaTooNewError/StorageReason; data vault_migrations, storage_status, storage_io/web reason codes + folder rules; app bootstrap/services; UI notices, notes, warnings, record-driven weight rows",
+        "TEST: vault_compat_test, no_plaintext_secret_test, f002_persistence_test, storage_policy/repository_contract updates, Linux integration move test; 111 unit/widget tests + 2 integration tests pass locally",
+        "MUTATION: M1-M6 each caught",
+        "GATES: 12 receipts on clean tree e16c73b (EV-*-F002-0001..0008), all PASS; Linux launch moved a real pre-F002 vault (fixture bytes) and showed it"
+      ],
+      "last_verified_gate": "EV-TEST-F002-0008",
+      "next_action": null,
+      "files_touched": [
+        "docs/ARCHITECTURE.md",
+        "docs/PLATFORM_MATRIX.md",
+        "docs/ROADMAP.md",
+        "human_health_os/integration_test/heartbeat_test.dart",
+        "human_health_os/lib/src/app/app_services.dart",
+        "human_health_os/lib/src/app/bootstrap.dart",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/core/capabilities.dart",
+        "human_health_os/lib/src/data/local/log_repository.dart",
+        "human_health_os/lib/src/data/local/storage_io.dart",
+        "human_health_os/lib/src/data/local/storage_status.dart",
+        "human_health_os/lib/src/data/local/storage_web.dart",
+        "human_health_os/lib/src/data/local/vault_log.dart",
+        "human_health_os/lib/src/data/local/vault_migrations.dart",
+        "human_health_os/lib/src/domain/ports/health_repository.dart",
+        "human_health_os/lib/src/domain/ports/storage_status.dart",
+        "human_health_os/lib/src/domain/profile/profile.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/data/no_plaintext_secret_test.dart",
+        "human_health_os/test/data/repository_contract_test.dart",
+        "human_health_os/test/data/storage_policy_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/domain/health_record_test.dart",
+        "human_health_os/test/fixtures/vault/README.md",
+        "human_health_os/test/fixtures/vault/v1_forge002.hhoslog.jsonl",
+        "human_health_os/test/widget/f001_contract_test.dart",
+        "human_health_os/test/widget/f002_persistence_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/SOURCES.md"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F002-0001",
+        "EV-TEST-F002-0002",
+        "EV-TEST-F002-0003",
+        "EV-TEST-F002-0004",
+        "EV-TEST-F002-0005",
+        "EV-BUILD-F002-0001",
+        "EV-RUNTIME-F002-0001",
+        "EV-TEST-F002-0006",
+        "EV-BUILD-F002-0002",
+        "EV-RUNTIME-F002-0002",
+        "EV-TEST-F002-0007",
+        "EV-TEST-F002-0008"
+      ],
+      "blocker": null,
+      "result": "F002_COMPLETE",
+      "finished_at": "2026-10-07T08:10:00Z",
+      "app_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F002-0001",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F002-0002",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F002-0003",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test (111 tests: vault_compat, no_plaintext_secret, f002_persistence, storage_policy, repository_contract, F001 suite)",
+          "evidence_id": "EV-TEST-F002-0004",
+          "criterion": "AC-1..AC-9",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "evidence tooling unit tests (16)",
+          "evidence_id": "EV-TEST-F002-0005",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development)",
+          "evidence_id": "EV-BUILD-F002-0001",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "web runtime smoke (Chromium 141; weight save -> reload in localStorage; 0 console errors)",
+          "evidence_id": "EV-RUNTIME-F002-0001",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "integration_test on Linux (save/relaunch; legacy folder move through the real adapter)",
+          "evidence_id": "EV-TEST-F002-0006",
+          "criterion": "AC-10",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development)",
+          "evidence_id": "EV-BUILD-F002-0002",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux launch with a pre-F002 vault in HumanHealthOS/: moved to human-health-os/, bytes unchanged, note + records shown",
+          "evidence_id": "EV-RUNTIME-F002-0002",
+          "criterion": "AC-7",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "golden-vector contract check",
+          "evidence_id": "EV-TEST-F002-0007",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F002-0008",
+          "criterion": "AC-11",
+          "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+          "result": "PASS"
+        }
+      ],
+      "note": "No production migration exists (format 1 is the baseline); the migration machinery is tested with synthetic M002/M003 steps. Vault on-disk upgrade waits for F005 checkpoints (D-014)."
     }
   },
   "forge_history_legacy_ids": {

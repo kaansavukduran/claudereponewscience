@@ -1,0 +1,63 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F002-0006",
+  "kind": "TEST",
+  "forge_id": "F002@v0.32",
+  "source_revision": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env LANG=C.UTF-8 timeout 900 xvfb-run -a -s '-screen 0 1280x1024x24' flutter test integration_test -d linux",
+  "argv": [
+    "env",
+    "LANG=C.UTF-8",
+    "timeout",
+    "900",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x1024x24",
+    "flutter",
+    "test",
+    "integration_test",
+    "-d",
+    "linux"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-10-07T08:01:27.542Z",
+  "finished_at": "2026-10-07T08:01:55.700Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v77 x86_64",
+  "summary": "00:04 +2: All tests passed!",
+  "log_sha256": "8c4c1ab336ccfdefb7f0500d45975009223684035551eafd76982b402f990804",
+  "log_lines": 11,
+  "log_tail": [
+    "   Woah! You appear to be trying to run flutter as root.",
+    "   We strongly recommend running the flutter tool without superuser privileges.",
+    "  /",
+    "\ud83d\udcce",
+    "00:00 +0: loading /home/user/claudereponewscience/human_health_os/integration_test/heartbeat_test.dart",
+    "Building Linux application...                                   ",
+    "\u2713 Built build/linux/x64/debug/bundle/human_health_os",
+    "00:00 +0: save weight \u2192 relaunch on the same file vault \u2192 same record",
+    "00:03 +1: F002: a pre-F002 Linux vault in HumanHealthOS/ moves to human-health-os/ and opens with the same vault, profile and record",
+    "00:03 +2: (tearDownAll)",
+    "00:04 +2: All tests passed!"
+  ],
+  "lockfile_sha256": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "dd69c7412567e0ee58945cb5d0e6d4bd865225a55772d901e47b7a6b70708180",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

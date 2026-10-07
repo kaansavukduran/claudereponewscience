@@ -352,3 +352,51 @@ Receipts `evidence/*/EV-*-F001-1011…1019.json`; `reports/runtime/flutter_web_s
 
 ## Final Status
 F001_COMPLETE.
+
+---
+
+# FORGE F002@v0.32 — local profile + persistence heartbeat (exit gate), 2026-10-07 — F002_COMPLETE
+
+**Forge ID** F002@v0.32 · **Goal** close the master §39 F002 exit gate (persistence integration test, migration version initialized, no plaintext-secret shortcut) on the existing persistence slice, with gaps G-15, G-18, G-19, G-22, G-23 and conflict C-4. **Baseline** 2105a9e → implementation e16c73b (clean tree for all gates). Batch context: D-014 (MVP = F002–F006).
+
+## Acceptance Criteria → evidence
+| AC | What | Evidence |
+|---|---|---|
+| AC-1 | Format 1 written/read, no downgrade; newer vault/record/profile refused with a code; file untouched | `vault_compat_test` (EV-TEST-F002-0004) |
+| AC-2 | Migration graph (+1, lossless, ordered ids); in-memory migration → read-only + §33.3 receipt; file unchanged | `vault_compat_test` |
+| AC-3 | Synthetic v1 fixture = writer bytes; ids, provenance, correction link, notMeasured, UTC, order kept | `test/fixtures/vault/`, `vault_compat_test` |
+| AC-4 | Replay validation: skipped entries named by line + rule; unreadable vs cut-off told apart | `vault_compat_test` |
+| AC-5 | Weight card: Latest = newest real value; record's own state/source/unit; missing value named | `f002_persistence_test`; Linux screenshot |
+| AC-6 | XDG_DATA_HOME empty/relative ignored; relative HHOS_DATA_DIR refused, nothing written | `repository_contract_test`, `storage_policy_test` |
+| AC-7 | `HumanHealthOS/` → `human-health-os/` rename; both present → old untouched; failed move → old used; staging/production never touch | `storage_policy_test`, EV-TEST-F002-0006, **EV-RUNTIME-F002-0002** |
+| AC-8 | StorageReason codes, one profile gate, capability from reason, EN/TR texts | `f002_persistence_test`, `f001_contract_test` |
+| AC-9 | No secret-like vault field; `encryption: none-dev-only`; only APP_ENV/APP_VERSION/SOURCE_REVISION defines | `no_plaintext_secret_test` |
+| AC-10 | Linux integration (real IO): save/relaunch; legacy move via the real adapter; header format 1 | EV-TEST-F002-0006 |
+| AC-11 | F001 regression gates | EV-TEST-F002-0001…0003, 0005, 0007, 0008; EV-BUILD-F002-0001/0002; EV-RUNTIME-F002-0001 |
+| AC-12 | Mutations M1–M6 caught | this entry (below) |
+
+## Tests / Builds / Runtime
+- `flutter test` 111 PASS (EV-TEST-F002-0004); integration 2 PASS (EV-TEST-F002-0006); tooling 16 PASS; contracts and `pnpm test` PASS.
+- Web build COMPILED (EV-BUILD-F002-0001: tree `49fe1cdd…b51f`, main.dart.js `b1d4f22b…4298`); web smoke 42/42 RUNTIME_TESTED (EV-RUNTIME-F002-0001).
+- Linux release COMPILED (EV-BUILD-F002-0002: bundle `98b613df…5645`, libapp.so `1ea5558e…ad26`, UNSIGNED). Launch RUNTIME_TESTED (EV-RUNTIME-F002-0002): a pre-F002 vault (the v1 fixture) placed in `~/.local/share/HumanHealthOS/` was moved by the real binary to `human-health-os/` with identical bytes; the screen shows the move note, Latest 74.8 kg (the correction), "Not measured" named, "Reported · Device" (`reports/runtime/linux-f002/f002-linux-x11.png`).
+
+## Failures found and repairs
+1. Expected breaks: F001 staging notice text and the record-schema error type changed → tests updated to the new contract.
+2. First G-18 widget assertion looked for a descendant of the `weight-latest` Text itself (finder excluded the root) → assert on the widget's data.
+
+## Mutations (each applied, intended test failed, reverted)
+M1 replay without `validate()` · M2 old folder name `HumanHealthOS` · M3 Latest = first record · M4 missing version read as 1 · M5 migrated vault writable · M6 relative `HHOS_DATA_DIR` accepted → all CAUGHT.
+
+## Security / privacy
+No secrets, keys or real health data added. The development vault stays unencrypted and says so; staging, production and portable remain memory-only. The folder move is a same-parent rename in development builds only; nothing is deleted or merged.
+
+## Known limitations
+- No production migration exists yet; on-disk upgrade of an older vault waits for F005 checkpoints (D-014).
+- Capability details remain EN-only (G-14 PARTIAL).
+- macOS/Windows folder rules are unit-tested only (not compiled here).
+
+## State update
+`development_state` READY; `active_forge` null; `forge_history["F002@v0.32"]` DONE; verified gates = the 12 F002 receipts; G-15, G-18, G-19, G-22, G-23 CLOSED; G-14 PARTIAL; C-4 applied.
+
+## Next recommended Forge
+**F003@v0.32 — timeline + correction lineage** (MVP batch, D-014).
