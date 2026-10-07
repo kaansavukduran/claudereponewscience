@@ -128,6 +128,14 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     check(`${label}: weight survives reload (browser storage)`, await after.isVisible().catch(() => false));
     check(`${label}: storage honesty label shown`, await page.getByText(/Saved in this browser \(it may be cleared\) · not encrypted/).first().isVisible().catch(() => false));
     await page.screenshot({ path: join(out, `flutter-web-${label}-weight.png`) });
+    // F003: the saved weight is on the Timeline after the reload.
+    await navItem(timelineLabel).click().catch(() => {});
+    await heading(timelineLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+    const onTimeline = page.getByText('78.4 kg').first();
+    await onTimeline.waitFor({ timeout: 15_000 }).catch(() => {});
+    check(`${label}: saved weight listed on the Timeline`, await onTimeline.isVisible().catch(() => false));
+    check(`${label}: Timeline does not say "No records yet"`, !(await page.getByText('No records yet').first().isVisible().catch(() => false)));
+    await page.screenshot({ path: join(out, `flutter-web-${label}-timeline-records.png`) });
   }
   check(`${label}: no external network requests`, external.length === 0, external.slice(0, 5).join(' '));
   check(`${label}: no page errors`, errors.length === 0, errors.slice(0, 3).join(' | '));

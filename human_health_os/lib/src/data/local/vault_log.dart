@@ -58,6 +58,42 @@ class VaultState {
   final List<LoadWarning> warnings = [];
   final List<MigrationReceipt> migrations = [];
 
+  /// Checks [r] against the record rules and against this vault: its
+  /// profile exists, and an amendment names an earlier record of the same
+  /// profile and kind that is a health fact, not a marker (v0.24: a
+  /// correction references an existing owned record). Throws
+  /// [RecordValidationError]; writes nothing.
+  void check(HealthRecord r) {
+    r.validate();
+    if (!profiles.containsKey(r.profileId)) {
+      throw const RecordValidationError(
+        'UNKNOWN_PROFILE',
+        'Record refers to an unknown profile',
+      );
+    }
+    final targetId = r.supersedesId;
+    if (targetId == null || records[r.id] != null) return;
+    final target = records[targetId];
+    if (target == null) {
+      throw const RecordValidationError(
+        'AMEND_TARGET_MISSING',
+        'The amended record does not exist',
+      );
+    }
+    if (target.profileId != r.profileId || target.kind != r.kind) {
+      throw const RecordValidationError(
+        'AMEND_TARGET_MISMATCH',
+        'A record can only amend a record of the same profile and kind',
+      );
+    }
+    if (isAmendMarker(target)) {
+      throw const RecordValidationError(
+        'AMEND_TARGET_IS_MARKER',
+        'A withdrawal or deletion cannot itself be amended',
+      );
+    }
+  }
+
   /// Applies one operation. Returns false when the record already exists with
   /// identical content (idempotent replay); throws on a conflicting duplicate.
   /// Records are validated on replay too, so a hand-edited or damaged entry
@@ -70,13 +106,7 @@ class VaultState {
         return true;
       case 'record.append':
         final r = HealthRecord.fromJson(data);
-        r.validate();
-        if (!profiles.containsKey(r.profileId)) {
-          throw const RecordValidationError(
-            'UNKNOWN_PROFILE',
-            'Record refers to an unknown profile',
-          );
-        }
+        check(r);
         final existing = records[r.id];
         if (existing != null) {
           if (jsonEncode(existing.toJson()) == jsonEncode(r.toJson())) {

@@ -98,6 +98,14 @@ class S {
       'Weight must be between 0 and 700 kg.',
       'Ağırlık 0 ile 700 kg arasında olmalı.',
     ),
+    'TARGET_NOT_FOUND' => _t(
+      'This entry no longer exists here.',
+      'Bu giriş artık burada yok.',
+    ),
+    'TARGET_NOT_CURRENT' => _t(
+      'Only the current version can be changed; reopen the timeline.',
+      'Yalnız güncel sürüm değiştirilebilir; zaman çizelgesini yeniden aç.',
+    ),
     'VAULT_READ_ONLY' => _t(
       'Not saved: your saved data is open read-only (see the note above).',
       'Kaydedilmedi: kayıtlı verilerin salt okunur açık (yukarıdaki nota bak).',
@@ -213,6 +221,97 @@ class S {
     ValueStatus.notMeasured => _t('Not measured', 'Ölçülmedi'),
     ValueStatus.notApplicable => _t('Not applicable', 'Uygulanamaz'),
     ValueStatus.unknown => _t('Unknown', 'Bilinmiyor'),
+  };
+
+  // Timeline (F003)
+  String get showHidden => _t(
+    'Show deleted and withdrawn',
+    'Silinenleri ve geri çekilenleri göster',
+  );
+  String get versionsDisagree => _t('Versions disagree', 'Sürümler çelişiyor');
+  String get versions => _t('Versions', 'Sürümler');
+  String get enteredOn => _t('entered', 'girildi');
+  String get cancel => _t('Cancel', 'Vazgeç');
+  String get saveCorrection => _t('Save correction', 'Düzeltmeyi kaydet');
+
+  String recordKind(RecordKind k) => switch (k) {
+    RecordKind.bodyWeight => _t('Body weight', 'Vücut ağırlığı'),
+  };
+
+  String versionsCount(int n) => _t('$n versions', '$n sürüm');
+
+  String entryStatus(EntryStatus st) => switch (st) {
+    EntryStatus.current => _t('Current', 'Güncel'),
+    EntryStatus.conflict => _t('Conflict', 'Çelişki'),
+    EntryStatus.deleted => _t('Deleted', 'Silindi'),
+    EntryStatus.enteredInError => _t('Entered in error', 'Yanlışlıkla girildi'),
+  };
+
+  String entryStatusExplain(EntryStatus st) => switch (st) {
+    EntryStatus.current => _t(
+      'The newest version counts. Older versions stay below as history.',
+      'En yeni sürüm geçerli. Eski sürümler aşağıda geçmiş olarak kalır.',
+    ),
+    EntryStatus.conflict => _t(
+      'Two versions disagree and neither replaced the other. Keep the right one and mark the other as entered in error.',
+      'İki sürüm çelişiyor ve biri diğerinin yerine geçmedi. Doğru olanı tut, diğerini yanlışlıkla girildi olarak işaretle.',
+    ),
+    EntryStatus.deleted => _t(
+      'You deleted this measurement. It no longer counts anywhere and stays only in this history; completely erasing it is not built yet.',
+      'Bu ölçümü sildin. Artık hiçbir yerde sayılmıyor ve yalnız bu geçmişte duruyor; tamamen silme henüz yapılmadı.',
+    ),
+    EntryStatus.enteredInError => _t(
+      'Marked as entered in error: it never counted as a real measurement.',
+      'Yanlışlıkla girildi olarak işaretlendi: hiçbir zaman gerçek bir ölçüm sayılmaz.',
+    ),
+  };
+
+  String versionRole({
+    required bool isFirst,
+    required bool withdrawn,
+    required bool current,
+  }) {
+    final base = isFirst
+        ? _t('Original', 'İlk kayıt')
+        : _t('Correction', 'Düzeltme');
+    if (withdrawn) {
+      return '$base · ${_t('withdrawn (entered in error)', 'geri çekildi (yanlışlıkla girildi)')}';
+    }
+    return current ? '$base · ${_t('current', 'güncel')}' : base;
+  }
+
+  String amendAction(AmendReason r) => switch (r) {
+    AmendReason.correction => _t('Correct', 'Düzelt'),
+    AmendReason.enteredInError => _t('Entered in error', 'Yanlışlıkla girildi'),
+    AmendReason.deleted => _t('Delete', 'Sil'),
+  };
+
+  String amendTitle(AmendReason r) => switch (r) {
+    AmendReason.correction => _t('Correct this value', 'Bu değeri düzelt'),
+    AmendReason.enteredInError => _t(
+      'Mark as entered in error?',
+      'Yanlışlıkla girildi olarak işaretlensin mi?',
+    ),
+    AmendReason.deleted => _t(
+      'Delete this measurement?',
+      'Bu ölçüm silinsin mi?',
+    ),
+  };
+
+  /// The three ways to change a record are different on purpose.
+  String amendExplain(AmendReason r) => switch (r) {
+    AmendReason.correction => _t(
+      'Save a better value for the same measurement. The old value stays in history.',
+      'Aynı ölçüm için daha doğru değeri kaydet. Eski değer geçmişte kalır.',
+    ),
+    AmendReason.enteredInError => _t(
+      'Use this when this entry should never have been saved (for example, a whole wrong entry). It stops counting and stays in history marked as withdrawn. If it was a correction, the previous version counts again.',
+      'Bu giriş hiç kaydedilmemeliydiyse kullan (ör. tamamen yanlış bir giriş). Sayılmayı bırakır ve geçmişte geri çekildi olarak kalır. Bir düzeltmeyse önceki sürüm yeniden geçerli olur.',
+    ),
+    AmendReason.deleted => _t(
+      'Use this to remove a measurement you no longer want counted. Every version leaves your views; it stays only in history, and a later correction cannot bring it back. Completely erasing it is not built yet.',
+      'Artık sayılmasını istemediğin bir ölçümü kaldırmak için kullan. Tüm sürümleri görünümlerinden çıkar; yalnız geçmişte kalır ve sonraki bir düzeltme onu geri getiremez. Tamamen silme henüz yapılmadı.',
+    ),
   };
 
   String storageLabel(String durability, bool encrypted) {

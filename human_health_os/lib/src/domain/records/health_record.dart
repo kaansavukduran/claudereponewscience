@@ -4,9 +4,14 @@
 /// checked locally is enforced by [HealthRecord.validate]:
 /// - a PRESENT value always has a quantity; any other value status never has one
 ///   (missing ≠ zero);
-/// - corrections are new records that point at what they supersede;
+/// - corrections are new records that point at what they supersede, and say
+///   why ([AmendReason]); nothing is edited in place;
 /// - the original source representation is kept next to the normalized value.
 library;
+
+import 'timeline.dart';
+
+export 'timeline.dart';
 
 /// What kind of truth a record represents. Never collapse these.
 enum RecordState {
@@ -47,6 +52,35 @@ enum RecordKind {
     (k) => k.code == code,
     orElse: () => throw FormatException('Unknown record kind "$code"'),
   );
+}
+
+/// Why a record points at an earlier one (record schema 2, ladder F003).
+/// See `timeline.dart` for how each reason changes what is current.
+enum AmendReason {
+  /// A better value for the same observation; the earlier version stays in
+  /// history.
+  correction('correction'),
+
+  /// The target should never have been saved. It stops counting (if it was
+  /// a correction, the previous version counts again) and stays in history
+  /// marked as withdrawn.
+  enteredInError('entered_in_error'),
+
+  /// The person removed a true record. The whole fact leaves every view and
+  /// stays in history as deleted (tombstone); later versions cannot bring
+  /// it back.
+  deleted('deleted');
+
+  const AmendReason(this.code);
+  final String code;
+
+  static AmendReason fromCode(String code) => AmendReason.values.firstWhere(
+    (r) => r.code == code,
+    orElse: () => throw FormatException('Unknown amend reason "$code"'),
+  );
+
+  /// Withdraws or deletes its target instead of carrying a health value.
+  bool get isMarker => this != correction;
 }
 
 class Quantity {
@@ -138,11 +172,18 @@ class HealthRecord {
     required this.observedAt,
     required this.recordedAt,
     this.supersedesId,
+    this.amendReason,
     this.deletedAt,
     this.schemaVersion = currentSchemaVersion,
   });
 
-  static const int currentSchemaVersion = 1;
+  /// Record schema history (master §35.1). Each version reads every older
+  /// one without rewriting it:
+  /// - 1 (FORGE 002): the envelope; `supersedes_id` alone means correction.
+  /// - 2 (F003): adds `amend_reason` (correction, entered in error, deleted).
+  ///   A schema 1 record has no reason; one with `supersedes_id` is read as
+  ///   a correction.
+  static const int currentSchemaVersion = 2;
 
   final String id;
   final String profileId;
@@ -161,6 +202,9 @@ class HealthRecord {
   /// When it was entered (UTC).
   final DateTime recordedAt;
   final String? supersedesId;
+
+  /// Why [supersedesId] is set (schema 2). Null on schema 1 records.
+  final AmendReason? amendReason;
   final DateTime? deletedAt;
   final int schemaVersion;
 
@@ -196,6 +240,35 @@ class HealthRecord {
         'A record cannot supersede itself',
       );
     }
+    final reason = amendReason;
+    if (reason != null && supersedesId == null) {
+      throw const RecordValidationError(
+        'AMEND_NEEDS_TARGET',
+        'An amendment must name the record it amends',
+      );
+    }
+    if (schemaVersion >= 2 && supersedesId != null && reason == null) {
+      throw const RecordValidationError(
+        'AMEND_REASON_REQUIRED',
+        'Say why a record supersedes another (schema 2)',
+      );
+    }
+    if (reason != null && reason.isMarker) {
+      if (valueStatus != ValueStatus.notApplicable || quantity != null) {
+        throw const RecordValidationError(
+          'MARKER_HAS_NO_VALUE',
+          'Withdrawing or deleting a record carries no health value',
+        );
+      }
+    }
+    if (schemaVersion >= 2 &&
+        (deletedAt != null) != (reason == AmendReason.deleted)) {
+      throw const RecordValidationError(
+        'DELETE_TIME_MISMATCH',
+        'Only a deletion carries a deletion time, and it always does',
+      );
+    }
+    if (reason != null && reason.isMarker) return;
     switch (kind) {
       case RecordKind.bodyWeight:
         final q = quantity;
@@ -215,6 +288,8 @@ class HealthRecord {
     }
   }
 
+  /// Written in the shape of [schemaVersion], so an old record keeps its
+  /// exact bytes when it is compared or exported again.
   Map<String, Object?> toJson() => {
     'schema_version': schemaVersion,
     'id': id,
@@ -228,6 +303,7 @@ class HealthRecord {
     'observed_at': observedAt.toIso8601String(),
     'recorded_at': recordedAt.toIso8601String(),
     'supersedes_id': supersedesId,
+    if (schemaVersion >= 2) 'amend_reason': amendReason?.code,
     'deleted_at': deletedAt?.toIso8601String(),
   };
 
@@ -254,6 +330,9 @@ class HealthRecord {
       observedAt: DateTime.parse(j['observed_at']! as String).toUtc(),
       recordedAt: DateTime.parse(j['recorded_at']! as String).toUtc(),
       supersedesId: j['supersedes_id'] as String?,
+      amendReason: j['amend_reason'] == null
+          ? null
+          : AmendReason.fromCode(j['amend_reason']! as String),
       deletedAt: j['deleted_at'] == null
           ? null
           : DateTime.parse(j['deleted_at']! as String).toUtc(),
@@ -261,17 +340,9 @@ class HealthRecord {
   }
 }
 
-/// Resolves correction chains: returns records that are neither superseded
-/// nor deleted, newest observation first. History stays in the store.
-List<HealthRecord> currentRecords(Iterable<HealthRecord> all) {
-  final superseded = {for (final r in all) ?r.supersedesId};
-  final current =
-      [
-        for (final r in all)
-          if (!superseded.contains(r.id) && r.deletedAt == null) r,
-      ]..sort((a, b) {
-        final byTime = b.observedAt.compareTo(a.observedAt);
-        return byTime != 0 ? byTime : b.recordedAt.compareTo(a.recordedAt);
-      });
-  return current;
-}
+/// The current versions (newest observation first): the heads of every live
+/// timeline entry. In a conflict both competing versions are returned.
+/// History stays in the store (see `timeline.dart`).
+List<HealthRecord> currentRecords(Iterable<HealthRecord> all) => [
+  for (final e in buildTimeline(all)) ...e.heads,
+];

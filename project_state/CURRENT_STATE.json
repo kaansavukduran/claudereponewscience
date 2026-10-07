@@ -3,9 +3,57 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "TESTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F003",
+    "contract": "v0.32",
+    "run_id": "F003@v0.32",
+    "goal": "Timeline projection and correction lineage: corrections add versions, entered-in-error and delete are different, conflicts are surfaced (master §39 F003)",
+    "status": "TESTING",
+    "baseline_commit": "0157f96",
+    "started_at": "2026-10-07T08:15:00Z",
+    "scope": [
+      "record schema 2 with amend_reason (correction, entered_in_error, deleted); schema 1 read unchanged",
+      "timeline projection (buildTimeline) with deterministic ordering",
+      "store referential integrity for amendments, checked before writing",
+      "use cases: correct, mark entered in error, delete (current version only)",
+      "Timeline screen with versions and the three actions; Today conflict display",
+      "schema-2 fixture, integration and smoke coverage"
+    ],
+    "out_of_scope": [
+      "hard delete / erasure workflow (retention)",
+      "editing observation time",
+      "derived-output invalidation (no derived outputs exist yet)",
+      "lab results on the timeline (F004)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Ordering: newest observation first, then newest entry, then id; independent of read order (rotations and reversal give the same timeline)",
+      "AC-2 Correction history: a chain is one entry; the newest version counts; every version stays; a correction to 'not measured' stays missing; a schema 1 supersedes without reason is a correction",
+      "AC-3 Entered in error: voids its target; on a correction the previous version counts again; on an original the entry leaves current views and stays in the history view",
+      "AC-4 Delete: tombstones the whole fact (all versions) with a deletion time; hidden from current views, shown in the history view; a later correction cannot resurrect it; schema 1 self-deleted records are deleted",
+      "AC-5 Conflict: two live corrections of one version are shown as a conflict with both versions; Today shows 'Versions disagree' instead of a number; marking one side entered in error resolves it",
+      "AC-6 Record schema 2 rules: amendment needs a target; schema 2 supersedes needs a reason; markers carry no value; only deletions carry deleted_at; schema 1 JSON keeps its exact shape",
+      "AC-7 Store integrity: amendments of missing records, markers, or another profile/kind are refused before writing (file unchanged); on replay they are skipped with a warning",
+      "AC-8 Use cases: correct / entered in error / delete append exactly one record each (append-only), only on the current version (TARGET_NOT_CURRENT / TARGET_NOT_FOUND), and survive a restart",
+      "AC-9 Timeline UI: entries newest first with state and source; correct flow; entered-in-error and delete confirmations explain the difference; history toggle; EN/TR; 320 dp at 2x text without overflow",
+      "AC-10 Fixture v1_f003_schema2 (mixed schema 1 and 2) equals the writer's bytes and replays into the expected lineage",
+      "AC-11 Linux integration (real IO): correction + withdrawal survive a relaunch; web smoke: saved weight listed on the Timeline after reload",
+      "AC-12 Regression: F001/F002 gates pass; mutations T1-T6 each fail the intended test"
+    ],
+    "completed_steps": [
+      "SPECIFY: AC-1..AC-12",
+      "IMPLEMENT: AmendReason + schema 2, timeline.dart, VaultState.check, HeartbeatService correct/amend/timeline, TimelineScreen + detail sheet, Today conflict, EN/TR strings, Timeline destination built",
+      "TEST: timeline_test (13), lineage_store_test, f003_timeline_test (6), vault_compat fixture tests, integration F003 test, smoke Timeline checks; 138 unit/widget + 3 integration pass locally",
+      "MUTATION: T1-T6 caught (T4 redone as a behavioural mutation after a compile-only variant)"
+    ],
+    "last_verified_gate": null,
+    "next_action": "commit, then run gates with --forge F003@v0.32",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -140,13 +188,8 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": {
-    "forge_id": "F003",
-    "contract": "v0.32",
-    "run_id": "F003@v0.32",
-    "why": "master §39 ladder: timeline projection, correction lineage, delete vs entered-in-error semantics (MVP batch D-014)"
-  },
-  "updated_at": "2026-10-07T08:10:00Z",
+  "next_recommended_forge": null,
+  "updated_at": "2026-10-07T08:50:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",

@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../app/app_services.dart';
 import '../features/common/planned_destination_screen.dart';
+import '../features/timeline/timeline_screen.dart';
 import '../features/today/today_screen.dart';
 import '../l10n/strings.dart';
 import '../presentation/widgets/build_profile_banner.dart';
@@ -36,10 +37,11 @@ class _AppShellState extends State<AppShell> {
   void _go(DestinationId id) => setState(() => _current = id);
 
   Widget _screenFor(DestinationId id) {
-    if (id == DestinationId.today) {
-      return TodayScreen(services: widget.services);
-    }
-    return PlannedDestinationScreen(destination: destinationById(id));
+    return switch (id) {
+      DestinationId.today => TodayScreen(services: widget.services),
+      DestinationId.timeline => TimelineScreen(services: widget.services),
+      _ => PlannedDestinationScreen(destination: destinationById(id)),
+    };
   }
 
   @override

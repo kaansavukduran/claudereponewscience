@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-10-07T08:01:27.204Z",
-  "git_head": "e16c73b2391c3d26613034c251c4177fcf0aad1b",
-  "working_tree_dirty": false,
+  "ran_at": "2026-10-07T08:13:43.954Z",
+  "git_head": "0157f96be14f93e2cf6ee8cb0aa88a9e224313f7",
+  "working_tree_dirty": true,
   "build": "/home/user/claudereponewscience/human_health_os/build/web",
-  "main_dart_js_sha256": "b1d4f22b4dbf81c30d1a8675be7d0500a78f9b101f83ff7c057d9fb075ae4298",
+  "main_dart_js_sha256": "c401948f13ed1cb2b2469bbc1c83d6ffd03f66dfded3916b5c40b7fa92f1a500",
   "browser": "chromium 141.0.7390.37",
   "runs": [
     {
@@ -93,6 +93,16 @@
       "detail": ""
     },
     {
+      "name": "desktop-en: saved weight listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: Timeline does not say \"No records yet\"",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "desktop-en: no external network requests",
       "status": "PASS",
       "detail": ""
@@ -169,6 +179,16 @@
     },
     {
       "name": "phone-en: storage honesty label shown",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: saved weight listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: Timeline does not say \"No records yet\"",
       "status": "PASS",
       "detail": ""
     },

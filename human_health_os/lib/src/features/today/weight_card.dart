@@ -23,6 +23,7 @@ class WeightCard extends StatefulWidget {
 class _WeightCardState extends State<WeightCard> {
   final _controller = TextEditingController();
   List<HealthRecord> _weights = const [];
+  List<TimelineEntry> _entries = const [];
   String? _errorCode;
   bool _busy = false;
   bool _justSaved = false;
@@ -42,8 +43,13 @@ class _WeightCardState extends State<WeightCard> {
   }
 
   Future<void> _reload() async {
-    final w = await _svc.currentWeights(widget.services.self.id);
-    if (mounted) setState(() => _weights = w);
+    final entries = await _svc.weightTimeline(widget.services.self.id);
+    if (mounted) {
+      setState(() {
+        _entries = entries;
+        _weights = [for (final e in entries) ...e.heads];
+      });
+    }
   }
 
   Future<void> _save() async {
@@ -112,13 +118,18 @@ class _WeightCardState extends State<WeightCard> {
     final text = Theme.of(context).textTheme;
     final services = widget.services;
     final storage = services.storage;
-    // "Latest" is the newest current record that has a number; a newer
-    // "not measured" entry is listed in the history, never shown as a value.
-    final latest = _weights
+    // "Latest" is the newest live entry that has a number; a newer "not
+    // measured" entry is listed in the history, never shown as a value. When
+    // that entry's versions disagree, no single number is picked (F003).
+    final latestEntry = _entries
         .where(
-          (w) => w.valueStatus == ValueStatus.present && w.quantity != null,
+          (e) => e.heads.any(
+            (w) => w.valueStatus == ValueStatus.present && w.quantity != null,
+          ),
         )
         .firstOrNull;
+    final conflict = latestEntry?.status == EntryStatus.conflict;
+    final latest = conflict ? null : latestEntry?.heads.first;
     final notice = s.storageNotice(
       services.storageReason,
       detail: services.storageDetail,
@@ -178,7 +189,13 @@ class _WeightCardState extends State<WeightCard> {
               ),
             ],
             const SizedBox(height: 12),
-            if (latest == null)
+            if (conflict)
+              Text(
+                s.versionsDisagree,
+                key: const ValueKey('weight-conflict'),
+                style: text.titleMedium,
+              )
+            else if (latest == null)
               Text(
                 s.noWeightYet,
                 key: const ValueKey('weight-empty'),

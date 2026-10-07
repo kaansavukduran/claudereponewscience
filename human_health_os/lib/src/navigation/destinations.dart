@@ -99,12 +99,12 @@ const List<Destination> destinations = [
     selectedIcon: Icons.timeline,
     purposeEn: 'Every record on one timeline, with its source and corrections.',
     purposeTr: 'Her kayıt, kaynağı ve düzeltmeleriyle tek zaman çizelgesinde.',
-    plannedForge: 'Forge F003',
+    // Built in F003 for every record kind that exists (body weight); Labs
+    // results join it in F004.
+    plannedForge: null,
     principleEn: 'A correction adds a new version; the old one stays visible in history.',
     principleTr:
         'Düzeltme yeni bir sürüm ekler; eskisi geçmişte görünür kalır.',
-    emptyStateEn: 'This view does not list records yet. Your 10 most recent entries are shown on Today, with how they are stored.',
-    emptyStateTr: 'Bu görünüm henüz kayıt listelemiyor. Son 10 girişin, nasıl saklandıklarıyla birlikte Bugün ekranında görünür.',
   ),
   Destination(
     id: DestinationId.labs,

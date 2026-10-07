@@ -109,13 +109,9 @@ class LogRepository implements HealthRepository {
   @override
   Future<void> appendRecord(HealthRecord record) async {
     _checkWritable();
-    record.validate();
-    if (!_s.profiles.containsKey(record.profileId)) {
-      throw const RecordValidationError(
-        'UNKNOWN_PROFILE',
-        'Record refers to an unknown profile',
-      );
-    }
+    // Every rule is checked before the write, so the file never receives a
+    // line that replay would skip.
+    _s.check(record);
     final existing = _s.records[record.id];
     if (existing != null) {
       // Idempotent retry of the same write is fine; a different payload is not.

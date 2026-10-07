@@ -99,11 +99,12 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes format 1, reads format 1, never downgrades', () {
+    test('this app writes vault format 1 (record schema 2 since F003), '
+        'reads format 1, never downgrades', () {
       expect(vaultFormatVersion, 1);
       expect(vaultOldestReadableVersion, 1);
       expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 1);
+      expect(HealthRecord.currentSchemaVersion, 2);
       expect(Profile.currentSchemaVersion, 1);
     });
 
@@ -169,7 +170,7 @@ void main() {
         vaultWith([
           header(),
           profileLine(),
-          encodeOp('record.append', weight('r1', patch: {'schema_version': 2})),
+          encodeOp('record.append', weight('r1', patch: {'schema_version': 3})),
         ]);
         await expectRefused('RECORD_SCHEMA_NEWER');
         vaultWith([header(), profileLine(schema: 2)]);
@@ -293,9 +294,15 @@ void main() {
   });
 
   group('fixture v1_forge002 (§35.4)', () {
-    test('the fixture is byte-for-byte what the current writer produces', () {
-      final lines = File(fixtureV1).readAsLinesSync();
-      for (final line in lines.skip(1)) {
+    test('every fixture is byte-for-byte what the current writer produces', () {
+      final fixtures = Directory('test/fixtures/vault')
+          .listSync()
+          .whereType<File>()
+          .where((f) => f.path.endsWith('.hhoslog.jsonl'))
+          .toList();
+      expect(fixtures.length, greaterThanOrEqualTo(2));
+      final lines = [for (final f in fixtures) ...f.readAsLinesSync().skip(1)];
+      for (final line in lines) {
         final m = jsonDecode(line) as Map<String, Object?>;
         final data = (m['data']! as Map).cast<String, Object?>();
         final again = m['op'] == 'profile.put'
@@ -398,5 +405,33 @@ void main() {
         ]);
       },
     );
+  });
+
+  group('fixture v1_f003_schema2 (record schema 2)', () {
+    test('mixed schema 1 and 2 records replay into the F003 lineage', () {
+      final state = parseVaultLog(
+        File('test/fixtures/vault/v1_f003_schema2.hhoslog.jsonl')
+            .readAsStringSync(),
+      );
+      expect(state.warnings, isEmpty);
+      final t = buildTimeline(state.records.values, includeHidden: true);
+      String id(int n) => '00000000-0000-4000-8000-0000000000c$n';
+      expect(
+        [for (final e in t) (e.rootId, e.status)],
+        [
+          (id(4), EntryStatus.deleted),
+          (id(1), EntryStatus.current),
+          (id(0), EntryStatus.current),
+        ],
+      );
+      final restored = t[1];
+      expect(restored.heads.single.quantity, const Quantity(80, 'kg'));
+      expect(restored.withdrawn, {id(2)});
+      expect(state.records[id(0)]!.schemaVersion, 1);
+      expect(
+        state.records[id(0)]!.toJson().containsKey('amend_reason'),
+        isFalse,
+      );
+    });
   });
 }

@@ -122,7 +122,7 @@ void main() {
     expect(find.byKey(const ValueKey('nav-bar')), findsOneWidget);
     await visit(tester, 'Timeline');
     expect(find.byKey(const ValueKey('screen-timeline')), findsOneWidget);
-    expect(find.text('Planned in Forge F003'), findsOneWidget);
+    expect(find.byKey(const ValueKey('timeline-empty')), findsOneWidget);
     await visit(tester, 'Labs');
     expect(find.byKey(const ValueKey('screen-labs')), findsOneWidget);
     expect(find.byKey(const ValueKey('screen-timeline')), findsNothing);
@@ -157,7 +157,7 @@ void main() {
     expect(find.text('3.47.6'), findsOneWidget);
     expect(find.text('3.13.5'), findsOneWidget);
     expect(find.text('Record schema'), findsOneWidget);
-    expect(find.text('v1'), findsOneWidget);
+    expect(find.text('v2'), findsOneWidget);
   });
 
   testWidgets(

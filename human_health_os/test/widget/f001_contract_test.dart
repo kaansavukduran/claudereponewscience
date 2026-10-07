@@ -174,7 +174,7 @@ void main() {
   });
 
   testWidgets('Timeline never claims "No records yet" after a weight was '
-      'saved (it does not list records yet)', (tester) async {
+      'saved: it lists the weight (F003)', (tester) async {
     await boot(tester, size: desktop);
     await tester.enterText(find.byKey(const ValueKey('weight-input')), '80');
     await tester.tap(find.byKey(const ValueKey('weight-save')));
@@ -184,9 +184,16 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey('weight-latest')), findsOneWidget);
     await go(tester, rail(), 'Timeline');
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await tester.pumpAndSettle();
     expect(find.text('No records yet'), findsNothing);
     expect(
-      find.textContaining('This view does not list records yet'),
+      find.descendant(
+        of: find.byKey(const ValueKey('screen-timeline')),
+        matching: find.text('80 kg'),
+      ),
       findsOneWidget,
     );
   });

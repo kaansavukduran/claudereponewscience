@@ -13,6 +13,7 @@ import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/data/local/storage_io.dart';
 import 'package:human_health_os/src/data/local/vault_log.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
+import 'package:human_health_os/src/domain/records/health_record.dart';
 import 'package:integration_test/integration_test.dart';
 
 const dev = AppConfig(
@@ -137,5 +138,48 @@ void main() {
     expect(second.notes, isEmpty);
     expect(second.repository.description.location, moved.path);
     data.deleteSync(recursive: true);
+  });
+
+  testWidgets('F003: a correction and a withdrawal survive a relaunch on the '
+      'real file vault (append-only)', (tester) async {
+    final dir = Directory.systemTemp.createTempSync('hhos-it-f003-');
+    final vault = File('${dir.path}/$vaultFileName');
+    LogRepository open() => LogRepository(
+      sink: FileLogSink(vault),
+      durability: StorageDurability.localFile,
+      location: vault.path,
+    );
+    final a = open();
+    await a.open();
+    final s1 = await servicesFor(dev, HostPlatform.linux, a);
+    final w = await s1.heartbeat.recordWeightKg(
+      profileId: s1.self.id,
+      input: '90',
+    );
+    final c = await s1.heartbeat.correctWeightKg(
+      profileId: s1.self.id,
+      targetId: w.id,
+      input: '9',
+    );
+    final before = vault.readAsStringSync();
+    await s1.heartbeat.amend(
+      profileId: s1.self.id,
+      targetId: c.id,
+      reason: AmendReason.enteredInError,
+    );
+    expect(vault.readAsStringSync().startsWith(before), isTrue);
+
+    final b = open(); // relaunch
+    final report = await b.open();
+    expect(report.warnings, isEmpty);
+    final s2 = await servicesFor(dev, HostPlatform.linux, b, report: report);
+    final entry = (await s2.heartbeat.timeline(s2.self.id)).single;
+    expect(entry.heads.single.id, w.id);
+    expect(entry.withdrawn, {c.id});
+    await tester.pumpWidget(HumanOsApp(services: s2));
+    await tester.pumpAndSettle();
+    expect(find.text('90 kg'), findsWidgets);
+    expect(find.text('9 kg'), findsNothing);
+    dir.deleteSync(recursive: true);
   });
 }
