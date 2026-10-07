@@ -129,6 +129,27 @@ class VaultState {
 String encodeOp(String op, Map<String, Object?> data) =>
     jsonEncode({'op': op, 'data': data});
 
+/// Decodes stored log bytes line by line. A line that is not valid UTF-8
+/// (a write cut inside a multi-byte character, or a damaged byte) becomes an
+/// unreadable line that replay skips with a warning; it never makes the
+/// whole vault unreadable and is never silently "repaired" into other text.
+String decodeLogBytes(List<int> bytes) {
+  final out = StringBuffer();
+  var start = 0;
+  for (var i = 0; i <= bytes.length; i++) {
+    if (i < bytes.length && bytes[i] != 0x0A) continue;
+    final line = bytes.sublist(start, i);
+    try {
+      out.write(utf8.decode(line));
+    } on FormatException {
+      out.write('\u0000undecodable line');
+    }
+    if (i < bytes.length) out.write('\n');
+    start = i + 1;
+  }
+  return out.toString();
+}
+
 /// Parses a whole log. Throws [VaultFormatError] if the vault cannot be
 /// opened safely: an unusable header, a vault or record written by a newer
 /// app (master §35.3: block, never downgrade), or a version with no

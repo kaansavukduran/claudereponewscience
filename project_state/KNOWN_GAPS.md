@@ -19,7 +19,7 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-13 | Linux keyring (Secret Service) adapter | OPEN | F006 |
 | G-14 | UI copy partly EN-only (capability details, storage notices) | PARTIAL | F002@v0.32: storage notices, notes and load warnings localized EN/TR; capability details still EN-only (ARB move, R-12) |
 | G-15 | No migration graph / migration receipts (v0.31 §35) for the vault log v1 | CLOSED | F002@v0.32: compatibility metadata, migration graph (+1, lossless, ordered ids), in-memory migration with §33.3 receipts, v1 fixture (`test/data/vault_compat_test.dart`); on-disk upgrade waits for F005 checkpoints (D-014) |
-| G-16 | No backup/restore drill (v0.31 §36) | OPEN | F005 |
+| G-16 | No backup/restore drill (v0.31 §36) | CLOSED | F005@v0.32: restore drill as unit test on real files and Linux integration test (backup → lose vault → fresh start → restore → relaunch); browser restore still open (G-29) |
 | G-17 | No centralized log redaction (v0.31 §37) | OPEN | F006 |
 | G-18 | Weight card ignores the record's state, provenance and unit; a valid NOT_MEASURED weight (no quantity) appended through the repository API or a hand-edited vault would crash it; vault replay does not call validate() (v0.32 gap analysis SEM-9) | CLOSED | F002@v0.32: replay validates every record (skipped with line + rule); weight card uses record state/provenance/unit and names missing values |
 | G-19 | Empty or relative `XDG_DATA_HOME` / `HHOS_DATA_DIR` accepted for the development vault (SEM-10) | CLOSED | F002@v0.32: empty/relative XDG_DATA_HOME ignored; relative HHOS_DATA_DIR refused; `human-health-os/` move (C-4) |
@@ -32,4 +32,6 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-26 | Lab values are numeric only: censored ("< 5", "> 1000") and qualitative ("Pozitif", "Negatif") results cannot be entered yet (v0.24 numeric starter LabResult) | OPEN | next labs Forge |
 | G-27 | No lab interpretation in the app (reference state, decision limits, critical rules, RCV, personal baseline); the TS engine exists as the oracle | OPEN | F011 |
 | G-28 | Lab method, report time and the structured reference interval (low/high/unit, partition context) are not captured; only the printed range text | OPEN | next labs Forge |
-
+| G-29 | Restoring a backup in the browser is not built (needs a file chooser); web backups download only | OPEN | next data Forge |
+| G-30 | Backups and exports are unencrypted (`none-dev-only`) and therefore written only by development builds | OPEN | F006 |
+| G-31 | No import of external formats (CSV, FHIR, documents); export is Human OS JSON only | OPEN | F013 / later |

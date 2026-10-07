@@ -3,9 +3,57 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "TESTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F005",
+    "contract": "v0.32",
+    "run_id": "F005@v0.32",
+    "goal": "Import/export + backup foundation: deterministic export, backup with manifest and checksums, staged restore; exit: backup -> delete test vault -> restore -> same records, checksums/manifest verified (master §39 F005, §36)",
+    "status": "TESTING",
+    "baseline_commit": "b976d12",
+    "started_at": "2026-10-07T11:00:00Z",
+    "scope": [
+      "backup bundle + manifest (§36.2)",
+      "restore gate (§36.3) with staged copy, verification, keep-old, refusal over records, write lock after restore",
+      "deterministic export",
+      "adapters: desktop files, web download, memory",
+      "Your data card",
+      "crypto dependency review D-015"
+    ],
+    "out_of_scope": [
+      "encryption of backups (F006)",
+      "browser restore (G-29)",
+      "import of external formats (G-31)",
+      "cloud backup/sync"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Manifest (§36.2) carries format version, source app version and revision, created_at, vault id, vault format, record schema versions, counts, skipped entries, payload SHA-256 and size, encryption, attachments; no key material; bundle bytes deterministic; payload byte-identical to the vault log",
+      "AC-2 Restore gate refuses before writing: unreadable, not a backup, newer format, encrypted, digest mismatch (one changed character), count or identity mismatch, incompatible vault",
+      "AC-3 Restore drill: backup -> delete the vault -> restore -> vault bytes and timeline identical (unit test on real files and Linux integration test with a fresh start in between and a relaunch)",
+      "AC-4 Never replaces records: a restore over a vault with records is refused and the file is untouched; a fresh or unreadable live vault is kept as .before-restore-<time>, never deleted; the staged copy is verified before the switch",
+      "AC-5 After a restore the session refuses writes (RESTART_REQUIRED) until a restart",
+      "AC-6 Export is deterministic (any input order -> same bytes), keeps every record as stored, adds the timeline projection, filters to the profile, keeps missing values null",
+      "AC-7 Staging/production/portable builds write no backup or export files and say why; development builds label files as unencrypted",
+      "AC-8 Web: a backup downloads through a local Blob, its manifest checksum matches its payload and it holds the saved weight and lab result (smoke); restore in the browser is said to be not built",
+      "AC-9 dart:io stays confined to the native adapters (architecture test); crypto added after a recorded review",
+      "AC-10 Regression: F001-F004 gates pass; mutations B1-B6 each fail the intended test"
+    ],
+    "completed_steps": [
+      "SPECIFY: AC-1..AC-10, D-015",
+      "IMPLEMENT: backup_bundle, data_files (+io, web, memory), export, Your data card, storage lock, strings",
+      "TEST: backup_test (13), export_test (3), f005_your_data_test (6), Linux integration drill, smoke backup download; 180 unit/widget + 5 integration pass",
+      "REPAIR (test): the widget tamper replaced text inside escaped JSON and changed nothing -> tamper the decoded payload",
+      "MUTATION: B1-B6 caught",
+      "REVIEW: multi-agent adversarial review of the F002-F005 diff (running)"
+    ],
+    "last_verified_gate": null,
+    "next_action": "apply confirmed review findings, commit, run gates with --forge F005@v0.32",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -140,13 +188,8 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": {
-    "forge_id": "F005",
-    "contract": "v0.32",
-    "run_id": "F005@v0.32",
-    "why": "master §39 ladder: deterministic export, backup bundle with manifest + checksums, staged restore with a restore drill (backup -> delete test vault -> restore -> same records) (MVP batch D-014)"
-  },
-  "updated_at": "2026-10-07T10:50:00Z",
+  "next_recommended_forge": null,
+  "updated_at": "2026-10-07T13:15:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",

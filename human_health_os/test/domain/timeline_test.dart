@@ -310,4 +310,50 @@ void main() {
       expect(ids(e.heads), ['y1']);
     });
   });
+
+  group('calendar days vs instants (review finding)', () {
+    HealthRecord labOn(String id, int y, int m, int d) => HealthRecord(
+      id: id,
+      profileId: me,
+      kind: RecordKind.labResult,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: const Quantity(1, 'u'),
+      originalText: '1',
+      provenance: const Provenance.manual(),
+      observedAt: DateTime.utc(y, m, d),
+      recordedAt: DateTime.utc(y, m, d, 12),
+      lab: const LabDetails(analyteLabel: 'X'),
+    );
+
+    test('a lab dated D sorts above an entry made the evening before in the '
+        'device time zone (meaningful west of UTC; gate runs with '
+        'TZ=America/New_York)', () {
+      final evening = rec('w', day: 1).copyObservedAt(
+        DateTime(2026, 10, 6, 21).toUtc(), // local 21:00 on the 6th
+      );
+      final lab = labOn('l', 2026, 10, 7);
+      expect(buildTimeline([evening, lab]).map((e) => e.rootId), [
+        'l',
+        'w',
+      ], reason: 'offset ${DateTime(2026, 10, 6).timeZoneOffset}');
+      expect(orderingInstant(lab), DateTime(2026, 10, 7).toUtc());
+      expect(orderingInstant(evening), evening.observedAt);
+    });
+  });
+}
+
+extension on HealthRecord {
+  HealthRecord copyObservedAt(DateTime t) => HealthRecord(
+    id: id,
+    profileId: profileId,
+    kind: kind,
+    state: state,
+    valueStatus: valueStatus,
+    quantity: quantity,
+    originalText: originalText,
+    provenance: provenance,
+    observedAt: t,
+    recordedAt: t,
+  );
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
+import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
@@ -34,6 +35,11 @@ class _LabsScreenState extends State<LabsScreen> {
   bool _busy = false;
   bool _saved = false;
   HealthRecord? _correcting;
+
+  /// The add form's sample date and laboratory, kept while a correction
+  /// borrows the form (review finding: a cancelled correction left the old
+  /// result's date in the next new entry).
+  ({String date, String laboratory})? _addMode;
   List<TimelineEntry> _entries = const [];
 
   HeartbeatService get _svc => widget.services.heartbeat;
@@ -86,6 +92,7 @@ class _LabsScreenState extends State<LabsScreen> {
   void _startCorrection(HealthRecord r) {
     final lab = r.lab!;
     setState(() {
+      _addMode ??= (date: _date.text, laboratory: _laboratory.text);
       _correcting = r;
       _saved = false;
       _errorCode = null;
@@ -101,12 +108,21 @@ class _LabsScreenState extends State<LabsScreen> {
     });
   }
 
+  /// Clears one result's fields. Sample date and laboratory stay for the
+  /// next result from the same report, except after a correction, which
+  /// gives back the add form's own values.
   void _clear() {
     for (final c in [_analyte, _value, _unit, _specimen, _flag, _range]) {
       c.clear();
     }
     _notReported = false;
     _correcting = null;
+    final add = _addMode;
+    if (add != null) {
+      _date.text = add.date;
+      _laboratory.text = add.laboratory;
+      _addMode = null;
+    }
   }
 
   Future<void> _save() async {
@@ -132,6 +148,8 @@ class _LabsScreenState extends State<LabsScreen> {
     } on InputError catch (e) {
       _errorCode = e.code;
     } on RecordValidationError catch (e) {
+      _errorCode = e.code;
+    } on StorageWriteRefused catch (e) {
       _errorCode = e.code;
     } catch (_) {
       _errorCode = 'SAVE_FAILED';

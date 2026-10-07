@@ -71,8 +71,18 @@ class TimelineEntry {
 /// Records that withdraw or delete another record (not health facts).
 bool isAmendMarker(HealthRecord r) => r.amendReason?.isMarker ?? false;
 
+/// The moment used to order records: an instant as stored, or for a
+/// calendar day the start of that day in the device's time zone, so a lab
+/// dated D sorts after every instant shown on an earlier local day (review
+/// finding: UTC midnight misordered evening entries west of UTC).
+DateTime orderingInstant(HealthRecord r) {
+  if (!r.observedDateOnly) return r.observedAt;
+  final d = r.observedAt;
+  return DateTime(d.year, d.month, d.day).toUtc();
+}
+
 int _newestFirst(HealthRecord a, HealthRecord b) {
-  final t = b.observedAt.compareTo(a.observedAt);
+  final t = orderingInstant(b).compareTo(orderingInstant(a));
   if (t != 0) return t;
   final r = b.recordedAt.compareTo(a.recordedAt);
   return r != 0 ? r : a.id.compareTo(b.id);

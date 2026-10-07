@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
+import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
@@ -128,7 +129,7 @@ String fmtValue(S s, HealthRecord r) {
 /// A lab sample date is a calendar day (stored as UTC midnight): shown
 /// without a time and without a time-zone shift.
 String fmtObserved(HealthRecord r) {
-  if (r.kind != RecordKind.labResult) return fmtWhen(r.observedAt);
+  if (!r.observedDateOnly) return fmtWhen(r.observedAt);
   final d = r.observedAt;
   String two(int n) => n.toString().padLeft(2, '0');
   return '${d.year}-${two(d.month)}-${two(d.day)}';
@@ -257,6 +258,8 @@ class _EntryDetailState extends State<_EntryDetail> {
     } on InputError catch (e) {
       setState(() => _errorCode = e.code);
     } on RecordValidationError catch (e) {
+      setState(() => _errorCode = e.code);
+    } on StorageWriteRefused catch (e) {
       setState(() => _errorCode = e.code);
     } catch (_) {
       setState(() => _errorCode = 'SAVE_FAILED');

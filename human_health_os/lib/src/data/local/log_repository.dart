@@ -45,6 +45,25 @@ class LogRepository implements HealthRepository {
   bool _readOnly = false;
   String? _lockedCode;
 
+  /// True when the stored text may end in an unfinished line (a torn last
+  /// write found at open, or a write that failed in this session). The next
+  /// write first ends that line, so the fragment stays a separate, skipped
+  /// line and never swallows the new entry.
+  bool _tailOpen = false;
+
+  Future<void> _append(String line) async {
+    if (_tailOpen) {
+      await sink.appendLine('');
+      _tailOpen = false;
+    }
+    try {
+      await sink.appendLine(line);
+    } catch (_) {
+      _tailOpen = true;
+      rethrow;
+    }
+  }
+
   @override
   bool get writable => _state != null && !_readOnly && _lockedCode == null;
 
@@ -84,8 +103,10 @@ class LogRepository implements HealthRepository {
       await sink.create(header.encode());
       _state = VaultState(header);
       _readOnly = false;
+      _tailOpen = false;
       return const LoadReport(warnings: []);
     }
+    _tailOpen = !text.endsWith('\n');
     _state = parseVaultLog(
       text,
       migrations: migrations,
@@ -109,7 +130,7 @@ class LogRepository implements HealthRepository {
   Future<void> putProfile(Profile profile) async {
     _checkWritable();
     final line = encodeOp('profile.put', profile.toJson());
-    await sink.appendLine(line);
+    await _append(line);
     _s.apply('profile.put', profile.toJson());
   }
 
@@ -126,7 +147,7 @@ class LogRepository implements HealthRepository {
       return;
     }
     // Write first, then update memory: memory never shows unsaved data.
-    await sink.appendLine(encodeOp('record.append', record.toJson()));
+    await _append(encodeOp('record.append', record.toJson()));
     _s.apply('record.append', record.toJson());
   }
 

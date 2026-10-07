@@ -3,6 +3,7 @@
 /// download (web), and memory (tests). Pure Dart.
 library;
 
+import '../local/vault_log.dart' show VaultFormatError;
 import 'backup_bundle.dart';
 
 enum DataFileKind { backup, export }
@@ -121,16 +122,27 @@ class MemoryDataFiles implements DataFiles {
   }
 }
 
-/// Throws `RESTORE_TARGET_HAS_RECORDS` when [liveVaultText] holds records.
-/// An unreadable live vault does not block a restore (it is the recovery
-/// path); the adapter keeps that file instead of deleting it.
+/// Throws when a restore would replace health records in [liveVaultText]:
+/// `RESTORE_TARGET_NEWER` for a vault written by a newer app (it holds data
+/// this version cannot see), `RESTORE_TARGET_HAS_RECORDS` when it holds any
+/// record, readable or not. Only a vault without a single record line (for
+/// example a fresh one, or a file that is not a vault at all) may be
+/// replaced; the adapter keeps it instead of deleting it.
 void refuseIfHasRecords(String? liveVaultText) {
   if (liveVaultText == null || liveVaultText.trim().isEmpty) return;
-  final int records;
+  int records;
   try {
     records = parseLiveRecordCount(liveVaultText);
+  } on VaultFormatError catch (e) {
+    if (e.code == 'VAULT_NEWER' || e.code == 'RECORD_SCHEMA_NEWER') {
+      throw const BackupError(
+        'RESTORE_TARGET_NEWER',
+        'The data on this device was written by a newer Human OS',
+      );
+    }
+    records = _recordLines(liveVaultText);
   } catch (_) {
-    return;
+    records = _recordLines(liveVaultText);
   }
   if (records > 0) {
     throw BackupError(
@@ -139,3 +151,8 @@ void refuseIfHasRecords(String? liveVaultText) {
     );
   }
 }
+
+/// Lines that look like stored records, counted without trusting the rest
+/// of the file (used when the vault cannot be parsed).
+int _recordLines(String text) =>
+    text.split('\n').where((l) => l.contains('"op":"record.append"')).length;

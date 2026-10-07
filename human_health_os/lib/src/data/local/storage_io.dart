@@ -10,6 +10,7 @@ import '../../domain/ports/health_repository.dart';
 import '../backup/data_files_io.dart';
 import 'log_repository.dart';
 import 'storage_status.dart';
+import 'vault_log.dart' show decodeLogBytes;
 
 export 'storage_status.dart';
 
@@ -20,7 +21,7 @@ class FileLogSink implements LogSink {
 
   @override
   Future<String?> read() async =>
-      await file.exists() ? file.readAsString() : null;
+      await file.exists() ? decodeLogBytes(await file.readAsBytes()) : null;
 
   @override
   Future<void> create(String text) async {

@@ -2,6 +2,8 @@
 /// overwritten: the app falls back to memory and says so.
 library;
 
+import 'package:flutter/foundation.dart';
+
 import '../application/heartbeat_service.dart';
 import '../config/app_config.dart';
 import '../core/capabilities.dart';
@@ -90,5 +92,6 @@ Future<AppServices> servicesFor(
         ? repo.sink.read
         : null,
     lockStorage: repo is LogRepository ? repo.lock : null,
+    restartRequired: ValueNotifier<bool>(false),
   );
 }

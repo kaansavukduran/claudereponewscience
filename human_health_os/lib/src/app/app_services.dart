@@ -2,6 +2,8 @@
 /// so widget tests can run the real app on an in-memory or temp-dir vault.
 library;
 
+import 'package:flutter/foundation.dart';
+
 import '../application/heartbeat_service.dart';
 import '../config/app_config.dart';
 import '../data/backup/data_files.dart';
@@ -24,6 +26,7 @@ class AppServices {
     this.dataFiles,
     this.readVaultText,
     this.lockStorage,
+    this.restartRequired,
   });
 
   final AppConfig config;
@@ -54,4 +57,8 @@ class AppServices {
 
   /// Stops all writes in this session with a code (after a restore).
   final void Function(String code)? lockStorage;
+
+  /// True once the vault file was replaced in this session: every screen
+  /// must stop offering writes, backups and exports until a restart.
+  final ValueNotifier<bool>? restartRequired;
 }

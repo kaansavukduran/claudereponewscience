@@ -6,6 +6,7 @@ import '../../data/backup/backup_bundle.dart';
 import '../../data/backup/data_files.dart';
 import '../../l10n/strings.dart';
 import '../../presentation/widgets/status_chip.dart';
+import '../timeline/timeline_screen.dart' show fmtWhen;
 
 /// Your data (ladder F005): create a backup, export the records, check a
 /// saved backup and restore one through the staged restore gate.
@@ -23,7 +24,10 @@ class _YourDataCardState extends State<YourDataCard> {
   String? _message;
   bool _messageIsError = false;
   bool _busy = false;
-  bool _restored = false;
+
+  /// Kept in AppServices, not here: leaving and returning to Today must not
+  /// re-enable writes after a restore (review finding).
+  bool get _restored => _s.restartRequired?.value ?? false;
 
   AppServices get _s => widget.services;
   DataFiles? get _files => _s.dataFiles;
@@ -98,11 +102,7 @@ class _YourDataCardState extends State<YourDataCard> {
   Future<String> _check(SavedFile f, S s) async {
     final staged = stageRestore(await _files!.read(f));
     final m = staged.manifest;
-    return s.backupChecked(
-      m.recordCount,
-      m.profileCount,
-      m.createdAt.toIso8601String().substring(0, 16).replaceFirst('T', ' '),
-    );
+    return s.backupChecked(m.recordCount, m.profileCount, fmtWhen(m.createdAt));
   }
 
   Future<void> _restore(SavedFile f, S s) async {
@@ -130,7 +130,7 @@ class _YourDataCardState extends State<YourDataCard> {
       final out = await _files!.restore(staged, now: DateTime.now().toUtc());
       // This session's memory belongs to the replaced file: no more writes.
       _s.lockStorage?.call('RESTART_REQUIRED');
-      _restored = true;
+      _s.restartRequired?.value = true;
       return s.restored(out.records);
     }, s);
   }
@@ -185,6 +185,14 @@ class _YourDataCardState extends State<YourDataCard> {
                   ),
                 ],
               ),
+              if (_restored && _message == null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  s.restartToUse,
+                  key: const ValueKey('restart-to-use'),
+                  style: text.bodySmall,
+                ),
+              ],
               if (_message != null) ...[
                 const SizedBox(height: 8),
                 Semantics(

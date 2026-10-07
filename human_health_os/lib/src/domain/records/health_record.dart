@@ -219,6 +219,10 @@ class HealthRecord {
 
   /// The printed lab details of a [RecordKind.labResult] (schema 3).
   final LabDetails? lab;
+
+  /// [observedAt] is a calendar day (UTC midnight of that day), not an
+  /// instant: lab sample dates. Shown without a time-zone shift.
+  bool get observedDateOnly => kind == RecordKind.labResult;
   final int schemaVersion;
 
   /// Throws [RecordValidationError] when an invariant is violated.

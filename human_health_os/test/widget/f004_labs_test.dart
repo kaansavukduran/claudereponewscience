@@ -327,4 +327,50 @@ void main() {
     expect(find.byKey(const ValueKey('lab-saved')), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('a cancelled correction gives the add form its own sample date '
+      'and laboratory back (review finding)', (tester) async {
+    final s = await start(tester);
+    late HealthRecord old;
+    await tester.runAsync(() async {
+      old = await s.heartbeat.recordLab(
+        profileId: s.self.id,
+        input: const LabInput(
+          analyte: 'TSH',
+          value: '2',
+          notReported: false,
+          unit: 'mIU/L',
+          sampleDate: '2025-03-01',
+          laboratory: 'Old Lab',
+        ),
+      );
+    });
+    await go(tester, s, 'Labs');
+    await fill(tester, 'lab-date', '2026-10-05');
+    await fill(tester, 'lab-laboratory', 'New Lab');
+    await tapKey(tester, 'lab-correct-${old.id}');
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('lab-date')))
+          .controller!
+          .text,
+      '2025-03-01',
+    );
+    await tester.tap(find.text('Cancel'));
+    await settle(tester);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('lab-date')))
+          .controller!
+          .text,
+      '2026-10-05',
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('lab-laboratory')))
+          .controller!
+          .text,
+      'New Lab',
+    );
+  });
 }

@@ -201,6 +201,40 @@ void main() {
           .onPressed,
       isNull,
     );
+
+    // Leaving Today and coming back must not re-enable writes (review
+    // finding: the restored flag lived in the card's State).
+    await tester.tap(find.text('Timeline').first);
+    await settle(tester);
+    await tester.tap(find.text('Today').first);
+    await settle(tester);
+    expect(find.byKey(const ValueKey('restart-to-use')), findsOneWidget);
+    for (final key in ['create-backup']) {
+      expect(
+        tester.widget<FilledButton>(find.byKey(ValueKey(key))).onPressed,
+        isNull,
+        reason: key,
+      );
+    }
+    expect(
+      tester
+          .widget<OutlinedButton>(find.byKey(const ValueKey('export-json')))
+          .onPressed,
+      isNull,
+    );
+    // Labs gives the real reason, not "storage failed" (review finding).
+    await tester.tap(find.text('Labs').first);
+    await settle(tester);
+    await tester.enterText(find.byKey(const ValueKey('lab-analyte')), 'CRP');
+    await tester.enterText(find.byKey(const ValueKey('lab-value')), '3');
+    final save = find.byKey(const ValueKey('lab-save'));
+    await tester.ensureVisible(save);
+    await tester.tap(save);
+    await settle(tester);
+    expect(
+      find.textContaining('restart Human OS to use the restored data'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('staging: no files are written, and the card says why', (

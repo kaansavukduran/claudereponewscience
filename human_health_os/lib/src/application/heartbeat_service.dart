@@ -14,7 +14,7 @@ class InputError implements Exception {
   /// Stable code; the UI maps it to localized text.
   /// `EMPTY` · `NOT_A_NUMBER` · `OUT_OF_RANGE` · `FUTURE_TIME` ·
   /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT` · `LAB_ANALYTE_EMPTY` ·
-  /// `DATE_INVALID`
+  /// `DATE_INVALID` · `AMBIGUOUS_SEPARATOR`
   final String code;
 
   @override
@@ -72,6 +72,17 @@ DateTime parseSampleDate(String raw) {
     throw const InputError('DATE_INVALID');
   }
   return date;
+}
+
+/// Like [parseDecimal], but refuses a value whose separator could be a
+/// thousands separator ("150,000", "7.500", "250.000"): guessing would store
+/// a number 1000 times off while the screen shows the printed text.
+double parseLabDecimal(String raw) {
+  final t = raw.trim().replaceAll(' ', '');
+  if (RegExp(r'^[1-9]\d{0,2}[.,]\d{3}$').hasMatch(t)) {
+    throw const InputError('AMBIGUOUS_SEPARATOR');
+  }
+  return parseDecimal(raw);
 }
 
 class HeartbeatService {
@@ -245,13 +256,18 @@ class HeartbeatService {
     if (analyte.isEmpty) throw const InputError('LAB_ANALYTE_EMPTY');
     final sample = parseSampleDate(input.sampleDate);
     final now = clock.nowUtc();
-    // A calendar day may run up to a day ahead of UTC in some time zones.
-    if (sample.isAfter(now.add(const Duration(days: 1)))) {
+    // Compare calendar days in the user's time zone: the sample day may be
+    // today, never tomorrow (review finding: comparing instants let a
+    // mistyped tomorrow through in most zones).
+    final local = now.toLocal();
+    if (sample.isAfter(DateTime.utc(local.year, local.month, local.day))) {
       throw const InputError('FUTURE_TIME');
     }
     String? opt(String raw) => raw.trim().isEmpty ? null : raw.trim();
     final unit = opt(input.unit);
-    final double? value = input.notReported ? null : parseDecimal(input.value);
+    final double? value = input.notReported
+        ? null
+        : parseLabDecimal(input.value);
     return HealthRecord(
       id: _ids.newId(),
       profileId: profileId,

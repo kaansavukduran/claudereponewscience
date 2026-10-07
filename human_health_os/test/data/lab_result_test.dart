@@ -255,18 +255,52 @@ void main() {
           reason: bad,
         );
       }
+      // The clock says 2026-10-07 09:00 UTC. Tomorrow in the device's own
+      // calendar is refused (review finding: an instant-based check let a
+      // mistyped tomorrow through); today is fine.
+      final local = FixedClock().nowUtc().toLocal();
+      String day(DateTime d) =>
+          '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+      final today = DateTime(local.year, local.month, local.day);
       await expectLater(
         svc.recordLab(
           profileId: me,
-          input: li(date: '2026-10-09'),
+          input: li(date: day(today.add(const Duration(days: 1)))),
         ),
         input('FUTURE_TIME'),
       );
-      // A calendar day up to one day ahead of UTC is allowed (time zones).
       await svc.recordLab(
         profileId: me,
-        input: li(date: '2026-10-08'),
+        input: li(date: day(today)),
       );
+    });
+
+    test('a value whose separator could mean thousands is refused, not '
+        'guessed (review finding: 150,000 was stored as 150)', () async {
+      for (final ambiguous in ['150,000', '7.500', '250.000', '1,234']) {
+        await expectLater(
+          svc.recordLab(
+            profileId: me,
+            input: li(value: ambiguous),
+          ),
+          input('AMBIGUOUS_SEPARATOR'),
+          reason: ambiguous,
+        );
+      }
+      for (final (typed, value) in [
+        ('150000', 150000.0),
+        ('0,125', 0.125),
+        ('5,4', 5.4),
+        ('7.5', 7.5),
+        ('1234,5', 1234.5),
+      ]) {
+        final r = await svc.recordLab(
+          profileId: me,
+          input: li(value: typed),
+        );
+        expect(r.quantity!.value, value, reason: typed);
+        expect(r.originalText, typed);
+      }
     });
 
     test('a corrected transcription is a new version; the timeline holds '

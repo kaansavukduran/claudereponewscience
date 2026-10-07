@@ -99,6 +99,10 @@ class S {
       'Weight must be between 0 and 700 kg.',
       'Ağırlık 0 ile 700 kg arasında olmalı.',
     ),
+    'AMBIGUOUS_SEPARATOR' => _t(
+      'Is that a decimal point or a thousands separator? Write thousands without a separator (150000) and decimals with one digit group, e.g. 7.5.',
+      'Bu ondalık ayırıcı mı, binlik ayırıcı mı? Binlikleri ayırıcısız yaz (150000), ondalığı ör. 7,5 gibi yaz.',
+    ),
     'LAB_ANALYTE_EMPTY' => _t(
       'Enter the test name as printed.',
       'Raporda yazan test adını gir.',
@@ -404,6 +408,10 @@ class S {
     'Checked: $records records and $profiles profiles, checksum matches. Made $made.',
     'Kontrol edildi: $records kayıt ve $profiles profil, sağlama toplamı eşleşiyor. Oluşturma: $made.',
   );
+  String get restartToUse => _t(
+    'Restored data is waiting: close and reopen Human OS to use it. Saving, backups and exports are paused until then.',
+    'Geri yüklenen veriler bekliyor: kullanmak için Human OS\'u kapatıp yeniden aç. O zamana kadar kayıt, yedek ve dışa aktarma durduruldu.',
+  );
   String get restoreTitle =>
       _t('Restore this backup?', 'Bu yedek geri yüklensin mi?');
   String get restoreExplain => _t(
@@ -426,6 +434,10 @@ class S {
     'BACKUP_ENCRYPTED_UNSUPPORTED' => _t(
       'This backup is encrypted; this version cannot open encrypted backups yet.',
       'Bu yedek şifreli; bu sürüm şifreli yedekleri henüz açamaz.',
+    ),
+    'RESTORE_TARGET_NEWER' => _t(
+      'The data on this device was written by a newer Human OS. Restoring would hide it, so it was not done.',
+      'Bu cihazdaki veriler daha yeni bir Human OS ile yazılmış. Geri yükleme onları gizleyeceği için yapılmadı.',
     ),
     'RESTORE_TARGET_HAS_RECORDS' => _t(
       'This device already holds records. Restoring would replace them, so it was not done.',

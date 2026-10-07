@@ -4,6 +4,7 @@ library;
 
 import 'dart:io';
 
+import '../local/vault_log.dart' show decodeLogBytes;
 import 'backup_bundle.dart';
 import 'data_files.dart';
 
@@ -61,7 +62,9 @@ class FileDataFiles implements DataFiles {
     StagedRestore staged, {
     required DateTime now,
   }) async {
-    final live = await vault.exists() ? await vault.readAsString() : null;
+    final live = await vault.exists()
+        ? decodeLogBytes(await vault.readAsBytes())
+        : null;
     refuseIfHasRecords(live);
     await vault.parent.create(recursive: true);
     // Staged destination: written and verified before anything is switched.
