@@ -99,12 +99,12 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes vault format 1 (record schema 2 since F003), '
+    test('this app writes vault format 1 (record schema 3 since F004), '
         'reads format 1, never downgrades', () {
       expect(vaultFormatVersion, 1);
       expect(vaultOldestReadableVersion, 1);
       expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 2);
+      expect(HealthRecord.currentSchemaVersion, 3);
       expect(Profile.currentSchemaVersion, 1);
     });
 
@@ -170,7 +170,7 @@ void main() {
         vaultWith([
           header(),
           profileLine(),
-          encodeOp('record.append', weight('r1', patch: {'schema_version': 3})),
+          encodeOp('record.append', weight('r1', patch: {'schema_version': 4})),
         ]);
         await expectRefused('RECORD_SCHEMA_NEWER');
         vaultWith([header(), profileLine(schema: 2)]);
@@ -433,5 +433,37 @@ void main() {
         isFalse,
       );
     });
+  });
+
+  group('fixture v1_f004_schema3 (record schema 3: lab results)', () {
+    test(
+      'lab results replay with every printed field; missing stays missing',
+      () {
+        final state = parseVaultLog(
+          File('test/fixtures/vault/v1_f004_schema3.hhoslog.jsonl')
+              .readAsStringSync(),
+        );
+        expect(state.warnings, isEmpty);
+        String id(int n) => '00000000-0000-4000-8000-0000000000d$n';
+        final ldl = state.records[id(1)]!;
+        expect(ldl.kind, RecordKind.labResult);
+        expect(ldl.lab!.sourceFlag, 'H');
+        expect(ldl.lab!.referenceText, '< 130');
+        final ferritin = state.records[id(2)]!;
+        expect(ferritin.quantity!.unit, isNull);
+        expect(ferritin.lab!.referenceText, isNull);
+        expect(ferritin.lab!.sourceFlag, isNull);
+        final tsh = state.records[id(3)]!;
+        expect(tsh.valueStatus, ValueStatus.notReported);
+        expect(tsh.quantity, isNull);
+        final labs = buildTimeline(
+          state.records.values.where((r) => r.kind == RecordKind.labResult),
+        );
+        final hba1c = labs.singleWhere((e) => e.rootId == id(4));
+        expect(hba1c.heads.single.id, id(5));
+        expect(hba1c.heads.single.originalText, '5,4');
+        expect(state.records[id(0)]!.toJson().containsKey('lab'), isFalse);
+      },
+    );
   });
 }

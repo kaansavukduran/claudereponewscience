@@ -112,9 +112,11 @@ const List<Destination> destinations = [
     tr: 'Lab',
     icon: Icons.science_outlined,
     selectedIcon: Icons.science,
-    purposeEn: 'Lab results with units, method, specimen and the report’s own reference interval.',
-    purposeTr: 'Birim, yöntem, numune ve raporun kendi referans aralığıyla lab sonuçları.',
-    plannedForge: 'Forge F004',
+    purposeEn: 'Lab results as the report printed them: value, unit, specimen, the lab’s flag and its own reference range.',
+    purposeTr: 'Lab sonuçları raporda yazdığı gibi: değer, birim, numune, laboratuvarın işareti ve kendi referans aralığı.',
+    // Built in F004 (manual entry as printed). Interpretation is not part of
+    // this purpose; it is planned with the deterministic engines (F011).
+    plannedForge: null,
     principleEn: 'Reference interval ≠ optimal target ≠ decision limit. Out of range ≠ critical.',
     principleTr: 'Referans aralığı ≠ optimal hedef ≠ karar sınırı. Aralık dışı ≠ kritik.',
   ),

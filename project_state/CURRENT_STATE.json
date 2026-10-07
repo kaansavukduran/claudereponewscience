@@ -3,9 +3,56 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "TESTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F004",
+    "contract": "v0.32",
+    "run_id": "F004@v0.32",
+    "goal": "Labs vertical slice: manual LabResult entry as printed; range metadata kept as source text, distinct from (absent) app interpretation; timeline integration (master §39 F004)",
+    "status": "TESTING",
+    "baseline_commit": "e50873b",
+    "started_at": "2026-10-07T09:30:00Z",
+    "scope": [
+      "record schema 3: kind lab.result with LabDetails; Quantity.unit nullable for lab results only",
+      "LabInput, parseSampleDate, recordLab, correctLab, labTimeline",
+      "Labs screen (form + current results), Timeline shows lab entries (date only), entered in error / delete from the Timeline",
+      "schema-3 fixture, Linux integration, web smoke lab step",
+      "bug found: versions with equal entry times were ordered by id, not lineage (fixed in timeline.dart, regression test)"
+    ],
+    "out_of_scope": [
+      "interpretation (F011)",
+      "censored/qualitative values (G-26)",
+      "method/structured ranges (G-28)",
+      "document import/OCR"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Record schema 3: lab.result requires LabDetails with a non-empty printed name; LabDetails only on lab results; only lab results may lack a unit; finite values; no plausibility range; markers carry no lab details; schema 1/2 JSON keeps its shape",
+      "AC-2 Missing stays missing: an empty unit, flag or range is null in memory and in the stored JSON; 'the report gives no value' is NOT_REPORTED without a quantity, never 0",
+      "AC-3 Source flag preserved: the printed flag is stored verbatim and shown labelled as the lab's ('Lab flag: H'); the printed range is shown as the lab's range",
+      "AC-4 No diagnosis generated: recording a result stores exactly one record and no derived or labelled data; no screen text on Labs or the Timeline interprets a result (EN/TR scans of whole screens and of result rows)",
+      "AC-5 Entry: printed name, numeric value (comma or dot, kept as typed), unit, sample date YYYY-MM-DD (invalid dates refused; future beyond one day refused), specimen, laboratory; errors localized",
+      "AC-6 Timeline integration: lab results appear on the Timeline (printed name, date without time shift); a correction on Labs is a new version and the old one stays in the Timeline history; entered in error / delete work on lab results",
+      "AC-7 Fixture v1_f004_schema3 (schemas 1-3 mixed) equals the writer's bytes and replays with every printed field",
+      "AC-8 Linux integration (real IO): a lab result with a missing unit survives a relaunch byte-identically and shows '(unit not given)' and the lab flag",
+      "AC-9 Web smoke: a result typed in the browser is on screen as printed with the lab flag, survives a reload, no normal/abnormal wording",
+      "AC-10 Regression: F001-F003 gates pass; mutations L1-L6 each fail the intended test"
+    ],
+    "completed_steps": [
+      "SPECIFY: AC-1..AC-10",
+      "IMPLEMENT: LabDetails, schema 3, RecordKind.labResult, nullable lab unit, service lab use cases, LabsScreen, Timeline lab display, EN/TR strings",
+      "REPAIR: versions with equal entry times sorted by id instead of lineage (found by lab_result_test) -> lineage depth sort + regression test",
+      "TEST: lab_result_test, f004_labs_test (7), fixture v1_f004_schema3, integration F004, smoke lab step (54/54 locally); 156 unit/widget + 4 integration pass",
+      "REPAIR (test driver): smoke typed too fast and clicked off-screen fields on the phone layout -> wait, scroll fields into view by wheel over the list padding, require on-screen bounding boxes",
+      "MUTATION: L1-L6 caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": "commit, then run gates with --forge F004@v0.32",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -140,13 +187,8 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": {
-    "forge_id": "F004",
-    "contract": "v0.32",
-    "run_id": "F004@v0.32",
-    "why": "master §39 ladder: labs vertical slice (manual LabResult as printed, missing unit/range stays missing, source flag preserved, no diagnosis, timeline integration) (MVP batch D-014)"
-  },
-  "updated_at": "2026-10-07T09:20:00Z",
+  "next_recommended_forge": null,
+  "updated_at": "2026-10-07T10:30:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",

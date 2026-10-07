@@ -91,7 +91,10 @@ class _WeightCardState extends State<WeightCard> {
     if (r.valueStatus != ValueStatus.present || q == null) {
       return s.valueStatus(r.valueStatus);
     }
-    return '${_fmt(q.value)} ${q.unit}';
+    final unit = q.unit;
+    return unit == null
+        ? '${_fmt(q.value)} (${s.unitNotGiven})'
+        : '${_fmt(q.value)} $unit';
   }
 
   String _meta(S s, HealthRecord r) {

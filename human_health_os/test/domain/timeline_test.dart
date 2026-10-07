@@ -144,6 +144,22 @@ void main() {
       expect(ids(currentRecords([...e.versions])), ['z']);
     });
 
+    test('versions keep lineage order even with the same entry time and '
+        'ids that sort the other way', () {
+      final e = buildTimeline([
+        rec('zz-original', day: 1),
+        rec(
+          'aa-fix',
+          day: 1,
+          supersedes: 'zz-original',
+          reason: AmendReason.correction,
+          kg: 71,
+        ),
+      ]).single;
+      expect(ids(e.versions), ['zz-original', 'aa-fix']);
+      expect(ids(e.heads), ['aa-fix']);
+    });
+
     test('a correction to "not measured" stays missing, never zero', () {
       final e = buildTimeline([
         rec('x', day: 1),

@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-10-07T08:17:58.589Z",
-  "git_head": "8d64c5e29e9488b5d483e0b91e4a95c05497b0c0",
-  "working_tree_dirty": false,
+  "ran_at": "2026-10-07T12:48:29.371Z",
+  "git_head": "e50873b079dfcb4b84ae8e14e94a3f26c681ac9e",
+  "working_tree_dirty": true,
   "build": "/home/user/claudereponewscience/human_health_os/build/web",
-  "main_dart_js_sha256": "d1f0d5fad7eceefe86162a50dfb11aed2af9e5e5bb107902181c966b751d6222",
+  "main_dart_js_sha256": "9db6dd4e79578475b8358ad73feb98a2f73d0b1a5afe608d36c5c62cbd1062c1",
   "browser": "chromium 141.0.7390.37",
   "runs": [
     {
@@ -103,6 +103,26 @@
       "detail": ""
     },
     {
+      "name": "desktop-en: lab result listed as printed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: lab flag labelled as the lab's",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: lab result survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no \"normal/abnormal\" wording on Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "desktop-en: no external network requests",
       "status": "PASS",
       "detail": ""
@@ -189,6 +209,26 @@
     },
     {
       "name": "phone-en: Timeline does not say \"No records yet\"",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: lab result listed as printed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: lab flag labelled as the lab's",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: lab result survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no \"normal/abnormal\" wording on Labs",
       "status": "PASS",
       "detail": ""
     },

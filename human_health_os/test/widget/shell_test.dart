@@ -126,7 +126,10 @@ void main() {
     await visit(tester, 'Labs');
     expect(find.byKey(const ValueKey('screen-labs')), findsOneWidget);
     expect(find.byKey(const ValueKey('screen-timeline')), findsNothing);
-    expect(find.text('Planned in Forge F004'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('labs-no-interpretation')),
+      findsOneWidget,
+    );
   });
 
   testWidgets('desktop: Today → Timeline → Labs (rail)', (tester) async {
@@ -157,7 +160,7 @@ void main() {
     expect(find.text('3.47.6'), findsOneWidget);
     expect(find.text('3.13.5'), findsOneWidget);
     expect(find.text('Record schema'), findsOneWidget);
-    expect(find.text('v2'), findsOneWidget);
+    expect(find.text('v3'), findsOneWidget);
   });
 
   testWidgets(

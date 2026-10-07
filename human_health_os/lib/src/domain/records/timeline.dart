@@ -123,7 +123,25 @@ List<TimelineEntry> buildTimeline(
   }
   final entries = <TimelineEntry>[];
   for (final MapEntry(key: root, value: versions) in groups.entries) {
+    // Oldest first in lineage order: a version always comes after the one
+    // it corrects, even when both carry the same entry time.
+    final inGroup = {for (final v in versions) v.id};
+    final depth = <String, int>{};
+    int depthOf(HealthRecord v) => depth[v.id] ??= () {
+      var d = 0;
+      var cur = v;
+      final seen = <String>{cur.id};
+      while (cur.supersedesId != null &&
+          inGroup.contains(cur.supersedesId) &&
+          seen.add(cur.supersedesId!)) {
+        cur = byId[cur.supersedesId]!;
+        d++;
+      }
+      return d;
+    }();
     versions.sort((a, b) {
+      final d = depthOf(a).compareTo(depthOf(b));
+      if (d != 0) return d;
       final t = a.recordedAt.compareTo(b.recordedAt);
       return t != 0 ? t : a.id.compareTo(b.id);
     });

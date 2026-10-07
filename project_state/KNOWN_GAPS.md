@@ -29,4 +29,7 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-23 | Storage status is inferred from the platform, not from a reason reported by the adapter; the profile gate and notice are duplicated in `storage_io.dart` and `storage_web.dart`; the unreadable-vault and browser-blocked states have no dedicated UI (final audit ARCH-1, ARCH-5, UX-3). Mitigated in F001@v0.32 by a cause-neutral "Saving off" label | CLOSED | F002@v0.32: StorageReason codes from the adapters, one profile gate (`storage_status.dart`), capability status from the reason, dedicated texts for unreadable/newer/read-only vault and blocked browser |
 | G-24 | No web loading indicator before the first frame (`<noscript>` and a startup-error screen exist since F001@v0.32) (UX-8 remainder) | OPEN | F016 |
 | G-25 | Planned rail labels are limited to two lines at 80 dp in the medium rail (no overflow, but long Turkish labels ellipsize at large text sizes) (UX-6 remainder) | OPEN | next UI Forge |
+| G-26 | Lab values are numeric only: censored ("< 5", "> 1000") and qualitative ("Pozitif", "Negatif") results cannot be entered yet (v0.24 numeric starter LabResult) | OPEN | next labs Forge |
+| G-27 | No lab interpretation in the app (reference state, decision limits, critical rules, RCV, personal baseline); the TS engine exists as the oracle | OPEN | F011 |
+| G-28 | Lab method, report time and the structured reference interval (low/high/unit, partition context) are not captured; only the printed range text | OPEN | next labs Forge |
 

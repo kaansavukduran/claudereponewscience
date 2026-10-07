@@ -136,6 +136,74 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     check(`${label}: saved weight listed on the Timeline`, await onTimeline.isVisible().catch(() => false));
     check(`${label}: Timeline does not say "No records yet"`, !(await page.getByText('No records yet').first().isVisible().catch(() => false)));
     await page.screenshot({ path: join(out, `flutter-web-${label}-timeline-records.png`) });
+    // F004: a lab result typed as printed survives a reload, with its flag
+    // labelled as the lab's and no interpretation added.
+    await navItem(labsLabel).click().catch(() => {});
+    await heading(labsLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+    // Flutter hit-tests clicks by screen position, so an off-screen field
+    // must be scrolled into view by Flutter itself (wheel over the list
+    // padding; semantics <input>s swallow wheel events) before a click.
+    // Wheel just left of the Labs heading: inside the list's padding on any
+    // layout (rail or bottom bar), never over a text field.
+    const head = await heading(labsLabel).boundingBox().catch(() => null);
+    const wheelX = head ? Math.max(2, head.x - 8) : viewport.width - 6;
+    const intoView = async (locator) => {
+      for (let i = 0; i < 20; i++) {
+        const b = await locator.boundingBox().catch(() => null);
+        if (b && b.y >= 110 && b.y + b.height <= viewport.height - 90) return;
+        const dy = b ? Math.max(-400, Math.min(400, b.y - viewport.height / 2)) : 300;
+        await page.mouse.move(wheelX, viewport.height / 2);
+        await page.mouse.wheel(0, dy);
+        await page.waitForTimeout(250);
+      }
+    };
+    // Flutter web moves its hidden DOM input when focus changes; keys typed
+    // before that settles are dropped, so wait and type at a human pace.
+    const typeInto = async (name, text) => {
+      const box = page.getByRole('textbox', { name }).first();
+      await intoView(box);
+      await box.click({ timeout: 10_000 });
+      await page.waitForTimeout(400);
+      await page.keyboard.type(text, { delay: 60 });
+      await page.waitForTimeout(200);
+    };
+    try {
+      await typeInto(/Test name as printed/, 'HbA1c');
+      await typeInto(/^Value/, '5,4');
+      await typeInto(/Unit as printed/, '%');
+      await typeInto(/Flag printed by the lab/, 'H');
+      await typeInto(/Reference range as printed/, '4.0 - 6.0');
+      const save = page.getByRole('button', { name: 'Save', exact: true }).first();
+      await intoView(save);
+      await save.click({ timeout: 10_000 });
+    } catch (e) {
+      check(`${label}: lab form usable`, false, e.message.split('\n')[0]);
+    }
+    // On screen, not just present in the semantics tree.
+    const scrollTo = async (locator) => {
+      await locator.waitFor({ state: 'attached', timeout: 5_000 }).catch(() => {});
+      for (let i = 0; i < 25 && (await locator.count()) === 0; i++) {
+        await page.mouse.move(wheelX, viewport.height / 2);
+        await page.mouse.wheel(0, 300);
+        await page.waitForTimeout(200);
+      }
+      await intoView(locator);
+      const b = await locator.boundingBox().catch(() => null);
+      return !!b && b.y >= 0 && b.y + b.height <= viewport.height;
+    };
+    check(`${label}: lab result listed as printed`, await scrollTo(page.getByText('5,4 %').first()));
+    check(`${label}: lab flag labelled as the lab's`, await scrollTo(page.getByText('Lab flag: H').first()));
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('flutter-view', { state: 'attached', timeout: 60_000 });
+    for (let i = 0; i < 40 && (await page.locator('flt-semantics').count()) === 0; i++) {
+      await page.locator('flt-semantics-placeholder').dispatchEvent('click').catch(() => {});
+      await page.waitForTimeout(500);
+    }
+    await navItem(labsLabel).click().catch(() => {});
+    await heading(labsLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+    check(`${label}: lab result survives reload`, await scrollTo(page.getByText('5,4 %').first()));
+    check(`${label}: no "normal/abnormal" wording on Labs`, !(await page.getByText(/\b(abnormal|normal)\b/i).first().isVisible().catch(() => false)));
+    await page.screenshot({ path: join(out, `flutter-web-${label}-labs-result.png`) });
   }
   check(`${label}: no external network requests`, external.length === 0, external.slice(0, 5).join(' '));
   check(`${label}: no page errors`, errors.length === 0, errors.slice(0, 3).join(' | '));

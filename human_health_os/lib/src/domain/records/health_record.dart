@@ -9,8 +9,10 @@
 /// - the original source representation is kept next to the normalized value.
 library;
 
+import 'lab_details.dart';
 import 'timeline.dart';
 
+export 'lab_details.dart';
 export 'timeline.dart';
 
 /// What kind of truth a record represents. Never collapse these.
@@ -43,7 +45,10 @@ enum ProvenanceKind {
 
 /// Record kinds implemented so far. New kinds are added per FORGE.
 enum RecordKind {
-  bodyWeight('body.weight');
+  bodyWeight('body.weight'),
+
+  /// A laboratory result as printed (F004, record schema 3).
+  labResult('lab.result');
 
   const RecordKind(this.code);
   final String code;
@@ -88,13 +93,15 @@ class Quantity {
 
   final double value;
 
-  /// UCUM-style unit code as recorded (e.g. `kg`). Never converted silently.
-  final String unit;
+  /// Unit as recorded (e.g. `kg`, or a lab's printed `mg/dL`). Never
+  /// converted silently. Null only for a lab result whose report printed no
+  /// unit: a missing unit stays missing (F004); body weight always has one.
+  final String? unit;
 
   Map<String, Object?> toJson() => {'value': value, 'unit': unit};
 
   static Quantity fromJson(Map<String, Object?> j) =>
-      Quantity((j['value']! as num).toDouble(), j['unit']! as String);
+      Quantity((j['value']! as num).toDouble(), j['unit'] as String?);
 
   @override
   bool operator ==(Object other) =>
@@ -174,6 +181,7 @@ class HealthRecord {
     this.supersedesId,
     this.amendReason,
     this.deletedAt,
+    this.lab,
     this.schemaVersion = currentSchemaVersion,
   });
 
@@ -183,7 +191,9 @@ class HealthRecord {
   /// - 2 (F003): adds `amend_reason` (correction, entered in error, deleted).
   ///   A schema 1 record has no reason; one with `supersedes_id` is read as
   ///   a correction.
-  static const int currentSchemaVersion = 2;
+  /// - 3 (F004): adds the `lab.result` kind with `lab` details and allows a
+  ///   lab value without a unit. Older records read unchanged.
+  static const int currentSchemaVersion = 3;
 
   final String id;
   final String profileId;
@@ -206,6 +216,9 @@ class HealthRecord {
   /// Why [supersedesId] is set (schema 2). Null on schema 1 records.
   final AmendReason? amendReason;
   final DateTime? deletedAt;
+
+  /// The printed lab details of a [RecordKind.labResult] (schema 3).
+  final LabDetails? lab;
   final int schemaVersion;
 
   /// Throws [RecordValidationError] when an invariant is violated.
@@ -268,7 +281,28 @@ class HealthRecord {
         'Only a deletion carries a deletion time, and it always does',
       );
     }
-    if (reason != null && reason.isMarker) return;
+    if (reason != null && reason.isMarker) {
+      if (lab != null) {
+        throw const RecordValidationError(
+          'MARKER_HAS_NO_VALUE',
+          'Withdrawing or deleting a record carries no lab details',
+        );
+      }
+      return;
+    }
+    final q = quantity;
+    if (q != null && q.unit == null && kind != RecordKind.labResult) {
+      throw const RecordValidationError(
+        'UNIT_REQUIRED',
+        'Only a lab result may lack a unit',
+      );
+    }
+    if ((lab != null) != (kind == RecordKind.labResult)) {
+      throw const RecordValidationError(
+        'LAB_DETAILS_MISMATCH',
+        'Lab details belong to lab results, and every lab result has them',
+      );
+    }
     switch (kind) {
       case RecordKind.bodyWeight:
         final q = quantity;
@@ -283,6 +317,22 @@ class HealthRecord {
           throw const RecordValidationError(
             'OUT_OF_PLAUSIBLE_RANGE',
             'Body weight must be between 0 and 700 kg',
+          );
+        }
+      case RecordKind.labResult:
+        // No plausibility range: the app holds no clinical thresholds. Only
+        // a finite number and the printed name are required.
+        final v = quantity?.value;
+        if (v != null && !v.isFinite) {
+          throw const RecordValidationError(
+            'VALUE_NOT_FINITE',
+            'A lab value must be a finite number',
+          );
+        }
+        if (lab!.analyteLabel.trim().isEmpty) {
+          throw const RecordValidationError(
+            'LAB_ANALYTE_REQUIRED',
+            'A lab result needs the test name as printed',
           );
         }
     }
@@ -305,6 +355,7 @@ class HealthRecord {
     'supersedes_id': supersedesId,
     if (schemaVersion >= 2) 'amend_reason': amendReason?.code,
     'deleted_at': deletedAt?.toIso8601String(),
+    if (schemaVersion >= 3) 'lab': lab?.toJson(),
   };
 
   static HealthRecord fromJson(Map<String, Object?> j) {
@@ -336,6 +387,9 @@ class HealthRecord {
       deletedAt: j['deleted_at'] == null
           ? null
           : DateTime.parse(j['deleted_at']! as String).toUtc(),
+      lab: j['lab'] == null
+          ? null
+          : LabDetails.fromJson((j['lab']! as Map).cast<String, Object?>()),
     );
   }
 }

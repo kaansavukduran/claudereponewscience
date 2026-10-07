@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../app/app_services.dart';
 import '../features/common/planned_destination_screen.dart';
+import '../features/labs/labs_screen.dart';
 import '../features/timeline/timeline_screen.dart';
 import '../features/today/today_screen.dart';
 import '../l10n/strings.dart';
@@ -40,6 +41,7 @@ class _AppShellState extends State<AppShell> {
     return switch (id) {
       DestinationId.today => TodayScreen(services: widget.services),
       DestinationId.timeline => TimelineScreen(services: widget.services),
+      DestinationId.labs => LabsScreen(services: widget.services),
       _ => PlannedDestinationScreen(destination: destinationById(id)),
     };
   }

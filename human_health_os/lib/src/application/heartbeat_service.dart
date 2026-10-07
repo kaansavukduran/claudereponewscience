@@ -13,7 +13,8 @@ class InputError implements Exception {
 
   /// Stable code; the UI maps it to localized text.
   /// `EMPTY` · `NOT_A_NUMBER` · `OUT_OF_RANGE` · `FUTURE_TIME` ·
-  /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT`
+  /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT` · `LAB_ANALYTE_EMPTY` ·
+  /// `DATE_INVALID`
   final String code;
 
   @override
@@ -29,6 +30,48 @@ double parseDecimal(String raw) {
     throw const InputError('NOT_A_NUMBER');
   }
   return double.parse(t.replaceAll(',', '.'));
+}
+
+/// A lab result as typed from a report. Every field is the printed text.
+class LabInput {
+  const LabInput({
+    required this.analyte,
+    required this.value,
+    required this.notReported,
+    required this.unit,
+    required this.sampleDate,
+    this.specimen = '',
+    this.laboratory = '',
+    this.sourceFlag = '',
+    this.referenceText = '',
+  });
+
+  final String analyte;
+  final String value;
+
+  /// The report lists the test but gives no value (missing ≠ zero).
+  final bool notReported;
+  final String unit;
+
+  /// `YYYY-MM-DD`, the day the sample was collected.
+  final String sampleDate;
+  final String specimen;
+  final String laboratory;
+  final String sourceFlag;
+  final String referenceText;
+}
+
+/// Parses `YYYY-MM-DD` into that calendar day (UTC midnight, a date without
+/// a time of day). Anything else is `DATE_INVALID`.
+DateTime parseSampleDate(String raw) {
+  final m = RegExp(r'^(\d{4})-(\d{2})-(\d{2})$').firstMatch(raw.trim());
+  if (m == null) throw const InputError('DATE_INVALID');
+  final y = int.parse(m[1]!), mo = int.parse(m[2]!), d = int.parse(m[3]!);
+  final date = DateTime.utc(y, mo, d);
+  if (date.year != y || date.month != mo || date.day != d) {
+    throw const InputError('DATE_INVALID');
+  }
+  return date;
 }
 
 class HeartbeatService {
@@ -185,5 +228,78 @@ class HeartbeatService {
     );
     await repository.appendRecord(marker);
     return marker;
+  }
+
+  /// Lab results, newest sample first (ladder F004).
+  Future<List<TimelineEntry>> labTimeline(String profileId) async =>
+      buildTimeline(
+        await repository.records(profileId, kind: RecordKind.labResult),
+      );
+
+  HealthRecord _labRecord(
+    String profileId,
+    LabInput input, {
+    String? supersedesId,
+  }) {
+    final analyte = input.analyte.trim();
+    if (analyte.isEmpty) throw const InputError('LAB_ANALYTE_EMPTY');
+    final sample = parseSampleDate(input.sampleDate);
+    final now = clock.nowUtc();
+    // A calendar day may run up to a day ahead of UTC in some time zones.
+    if (sample.isAfter(now.add(const Duration(days: 1)))) {
+      throw const InputError('FUTURE_TIME');
+    }
+    String? opt(String raw) => raw.trim().isEmpty ? null : raw.trim();
+    final unit = opt(input.unit);
+    final double? value = input.notReported ? null : parseDecimal(input.value);
+    return HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.labResult,
+      state: RecordState.reported,
+      valueStatus: value == null
+          ? ValueStatus.notReported
+          : ValueStatus.present,
+      quantity: value == null ? null : Quantity(value, unit),
+      originalText: value == null ? null : input.value.trim(),
+      provenance: const Provenance.manual(),
+      observedAt: sample,
+      recordedAt: now,
+      supersedesId: supersedesId,
+      amendReason: supersedesId == null ? null : AmendReason.correction,
+      lab: LabDetails(
+        analyteLabel: analyte,
+        specimen: opt(input.specimen),
+        laboratory: opt(input.laboratory),
+        sourceFlag: opt(input.sourceFlag),
+        referenceText: opt(input.referenceText),
+      ),
+    );
+  }
+
+  /// Records a lab result exactly as printed: a REPORTED value with its
+  /// printed unit, flag and range. A missing unit or range stays missing.
+  Future<HealthRecord> recordLab({
+    required String profileId,
+    required LabInput input,
+  }) async {
+    final record = _labRecord(profileId, input);
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// A corrected transcription of the same lab result (new version).
+  Future<HealthRecord> correctLab({
+    required String profileId,
+    required String targetId,
+    required LabInput input,
+  }) async {
+    final target = await _currentTarget(profileId, targetId);
+    if (target.kind != RecordKind.labResult) {
+      throw const InputError('TARGET_NOT_CURRENT');
+    }
+    final record = _labRecord(profileId, input, supersedesId: target.id);
+    await repository.appendRecord(record);
+    return record;
   }
 }

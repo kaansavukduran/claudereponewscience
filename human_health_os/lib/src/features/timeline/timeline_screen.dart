@@ -116,11 +116,26 @@ String fmtValue(S s, HealthRecord r) {
   if (r.valueStatus != ValueStatus.present || q == null) {
     return s.valueStatus(r.valueStatus);
   }
-  final v = q.value == q.value.roundToDouble()
+  final v = r.kind == RecordKind.labResult
+      ? (r.originalText ?? q.value.toString())
+      : q.value == q.value.roundToDouble()
       ? q.value.toStringAsFixed(0)
       : q.value.toStringAsFixed(1);
-  return '$v ${q.unit}';
+  final unit = q.unit;
+  return unit == null ? '$v (${s.unitNotGiven})' : '$v $unit';
 }
+
+/// A lab sample date is a calendar day (stored as UTC midnight): shown
+/// without a time and without a time-zone shift.
+String fmtObserved(HealthRecord r) {
+  if (r.kind != RecordKind.labResult) return fmtWhen(r.observedAt);
+  final d = r.observedAt;
+  String two(int n) => n.toString().padLeft(2, '0');
+  return '${d.year}-${two(d.month)}-${two(d.day)}';
+}
+
+String recordTitle(S s, HealthRecord r) =>
+    r.lab?.analyteLabel ?? s.recordKind(r.kind);
 
 String fmtWhen(DateTime utc) {
   final l = utc.toLocal();
@@ -155,7 +170,7 @@ class _EntryTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Expanded(
-                    child: Text(s.recordKind(r.kind), style: text.titleSmall),
+                    child: Text(recordTitle(s, r), style: text.titleSmall),
                   ),
                   const SizedBox(width: 8),
                   Flexible(
@@ -169,7 +184,7 @@ class _EntryTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${fmtWhen(r.observedAt)} · ${s.recordState(r.state)} · '
+                '${fmtObserved(r)} · ${s.recordState(r.state)} · '
                 '${s.provenanceKind(r.provenance.kind)}',
                 style: text.bodySmall,
               ),
@@ -298,7 +313,7 @@ class _EntryDetailState extends State<_EntryDetail> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(s.recordKind(e.shown.kind), style: text.titleLarge),
+            Text(recordTitle(s, e.shown), style: text.titleLarge),
             const SizedBox(height: 4),
             Text(s.entryStatusExplain(e.status), style: text.bodyMedium),
             const SizedBox(height: 12),
@@ -374,17 +389,20 @@ class _EntryDetailState extends State<_EntryDetail> {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
-                      OutlinedButton.icon(
-                        key: ValueKey('action-correct-${head.id}'),
-                        onPressed: _busy || head.kind != RecordKind.bodyWeight
-                            ? null
-                            : () => setState(() {
-                                _correcting = head.id;
-                                _errorCode = null;
-                              }),
-                        icon: const Icon(Icons.edit_outlined),
-                        label: Text(s.amendAction(AmendReason.correction)),
-                      ),
+                      // Lab results are corrected on Labs, where every
+                      // printed field can be re-entered.
+                      if (head.kind == RecordKind.bodyWeight)
+                        OutlinedButton.icon(
+                          key: ValueKey('action-correct-${head.id}'),
+                          onPressed: _busy
+                              ? null
+                              : () => setState(() {
+                                  _correcting = head.id;
+                                  _errorCode = null;
+                                }),
+                          icon: const Icon(Icons.edit_outlined),
+                          label: Text(s.amendAction(AmendReason.correction)),
+                        ),
                       OutlinedButton.icon(
                         key: ValueKey('action-error-${head.id}'),
                         onPressed: _busy

@@ -422,7 +422,7 @@ AC-1 ordering, AC-2 correction history, AC-3 entered in error, AC-4 delete/no re
 
 ## Tests / Builds / Runtime (receipts on 8d64c5e)
 - `flutter test` 138 PASS (EV-TEST-F003-0004); integration 3 PASS (EV-TEST-F003-0006); tooling 16, contracts, `pnpm test` PASS; format/analyze clean.
-- Web COMPILED (EV-BUILD-F003-0001); smoke 44/44 RUNTIME_TESTED (EV-RUNTIME-F003-0001).
+- Web COMPILED (EV-BUILD-F003-0001); smoke 46/46 RUNTIME_TESTED (EV-RUNTIME-F003-0001).
 - Linux COMPILED (EV-BUILD-F003-0002, UNSIGNED); launch RUNTIME_TESTED on the schema-2 fixture vault (EV-RUNTIME-F003-0002): Today shows 80 kg (the 8 kg correction withdrawn), the deleted 79 kg is absent, the schema 1 record 81.5 kg is listed (`reports/runtime/linux-f003/f003-linux-x11.png`).
 
 ## Failures found and repairs

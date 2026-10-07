@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/app/bootstrap.dart';
+import 'package:human_health_os/src/application/heartbeat_service.dart';
 import 'package:human_health_os/src/app/human_os_app.dart';
 import 'package:human_health_os/src/config/app_config.dart';
 import 'package:human_health_os/src/core/capabilities.dart';
@@ -180,6 +181,59 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('90 kg'), findsWidgets);
     expect(find.text('9 kg'), findsNothing);
+    dir.deleteSync(recursive: true);
+  });
+
+  testWidgets('F004: a lab result keeps every printed field across a '
+      'relaunch on the real file vault', (tester) async {
+    final dir = Directory.systemTemp.createTempSync('hhos-it-f004-');
+    final vault = File('${dir.path}/$vaultFileName');
+    LogRepository open() => LogRepository(
+      sink: FileLogSink(vault),
+      durability: StorageDurability.localFile,
+      location: vault.path,
+    );
+    final a = open();
+    await a.open();
+    final s1 = await servicesFor(dev, HostPlatform.linux, a);
+    final saved = await s1.heartbeat.recordLab(
+      profileId: s1.self.id,
+      input: const LabInput(
+        analyte: 'LDL Kolesterol',
+        value: '142',
+        notReported: false,
+        unit: '',
+        sampleDate: '2026-10-03',
+        sourceFlag: 'H',
+        referenceText: '< 130',
+      ),
+    );
+
+    final b = open(); // relaunch
+    final report = await b.open();
+    expect(report.warnings, isEmpty);
+    final s2 = await servicesFor(dev, HostPlatform.linux, b, report: report);
+    final again = (await s2.heartbeat.labTimeline(s2.self.id)).single.shown;
+    expect(again.toJson(), saved.toJson());
+    expect(again.quantity!.unit, isNull, reason: 'missing unit stays missing');
+    await tester.pumpWidget(HumanOsApp(services: s2));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Labs').first);
+    await tester.pumpAndSettle();
+    // The result list sits below the entry form: scroll until it is built.
+    final value = find.text('142 (unit not given)');
+    await tester.scrollUntilVisible(
+      value,
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('screen-labs')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(value, findsOneWidget);
+    expect(find.text('Lab flag: H'), findsOneWidget);
     dir.deleteSync(recursive: true);
   });
 }

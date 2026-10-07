@@ -86,6 +86,7 @@ class S {
   String get history => _t('History', 'Geçmiş');
   String get enteredAs => _t('entered as', 'girilen');
   String inputError(String code) => switch (code) {
+    'FUTURE_TIME' => _t('This date is in the future.', 'Bu tarih gelecekte.'),
     'EMPTY' => _t(
       'Enter a value. Empty is not saved as 0.',
       'Bir değer gir. Boş değer 0 olarak kaydedilmez.',
@@ -97,6 +98,14 @@ class S {
     'OUT_OF_RANGE' => _t(
       'Weight must be between 0 and 700 kg.',
       'Ağırlık 0 ile 700 kg arasında olmalı.',
+    ),
+    'LAB_ANALYTE_EMPTY' => _t(
+      'Enter the test name as printed.',
+      'Raporda yazan test adını gir.',
+    ),
+    'DATE_INVALID' => _t(
+      'Use the date format YYYY-MM-DD, e.g. 2026-10-03.',
+      'Tarihi YYYY-AA-GG biçiminde yaz, ör. 2026-10-03.',
     ),
     'TARGET_NOT_FOUND' => _t(
       'This entry no longer exists here.',
@@ -236,7 +245,58 @@ class S {
 
   String recordKind(RecordKind k) => switch (k) {
     RecordKind.bodyWeight => _t('Body weight', 'Vücut ağırlığı'),
+    RecordKind.labResult => _t('Lab result', 'Lab sonucu'),
   };
+
+  // Labs (F004): everything is shown as the report printed it.
+  String get labsNoInterpretation => _t(
+    'Values, flags and ranges are shown exactly as the lab printed them. Human OS does not interpret lab results or say whether they are good or bad.',
+    'Değerler, işaretler ve aralıklar laboratuvarın yazdığı gibi gösterilir. Human OS lab sonuçlarını yorumlamaz, iyi ya da kötü olduklarını söylemez.',
+  );
+  String get labAddTitle =>
+      _t('Add a result from a report', 'Rapordan sonuç ekle');
+  String get labCorrectTitle =>
+      _t('Correct this result (new version)', 'Bu sonucu düzelt (yeni sürüm)');
+  String get labAnalyte => _t('Test name as printed', 'Raporda yazan test adı');
+  String get labAnalyteHelp => _t(
+    'Copy it exactly, e.g. "HbA1c". Similar names are kept apart.',
+    'Aynen yaz, ör. "HbA1c". Benzer adlar ayrı tutulur.',
+  );
+  String get labValue => _t('Value', 'Değer');
+  String get labNotReported =>
+      _t('The report gives no value', 'Raporda değer yok');
+  String get labUnit => _t('Unit as printed', 'Raporda yazan birim');
+  String get labUnitHelp => _t(
+    'Leave empty if the report prints none; it stays "not given", never guessed.',
+    'Raporda yoksa boş bırak; "verilmedi" olarak kalır, tahmin edilmez.',
+  );
+  String get labSampleDate => _t('Sample date', 'Numune tarihi');
+  String get labSpecimen =>
+      _t('Specimen (optional)', 'Numune türü (isteğe bağlı)');
+  String get labLaboratory =>
+      _t('Laboratory (optional)', 'Laboratuvar (isteğe bağlı)');
+  String get labFlag => _t(
+    'Flag printed by the lab (optional)',
+    'Laboratuvarın işareti (isteğe bağlı)',
+  );
+  String get labFlagHelp => _t(
+    'Copy any mark next to the value, e.g. H, L or *.',
+    'Değerin yanındaki işareti aynen yaz, ör. H, L ya da *.',
+  );
+  String get labRange => _t(
+    'Reference range as printed (optional)',
+    'Raporda yazan referans aralığı (isteğe bağlı)',
+  );
+  String get labRangeHelp => _t(
+    'Copy it as printed, e.g. "70 - 100". It is the lab\'s range, not a target.',
+    'Yazdığı gibi aktar, ör. "70 - 100". Laboratuvarın aralığıdır, hedef değildir.',
+  );
+  String labPrintedFlag(String f) =>
+      _t('Lab flag: $f', 'Laboratuvar işareti: $f');
+  String labPrintedRange(String r) =>
+      _t('Lab\'s printed range: $r', 'Laboratuvarın yazdığı aralık: $r');
+  String get labNoRangePrinted => _t('No range printed', 'Aralık yazılmamış');
+  String get unitNotGiven => _t('unit not given', 'birim verilmedi');
 
   String versionsCount(int n) => _t('$n versions', '$n sürüm');
 
