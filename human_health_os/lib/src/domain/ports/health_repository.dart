@@ -28,7 +28,7 @@ class StorageDescription {
 
   final StorageDurability durability;
 
-  /// FORGE 002 stores are NOT encrypted; encryption arrives in FORGE 004.
+  /// No store is encrypted yet; the encrypted vault arrives in ladder F006.
   final bool encrypted;
 
   /// Human-readable location (path or "browser storage"). No health data.
@@ -38,12 +38,88 @@ class StorageDescription {
   final String vaultId;
 }
 
-/// Result of opening a store. [warnings] lists recoverable problems that the
-/// UI must show (e.g. a truncated last line after a crash).
-class LoadReport {
-  const LoadReport({required this.warnings});
+/// Why a saved entry was skipped while opening a store. The entry stays in
+/// the file; only this session ignores it.
+enum LoadWarningKind {
+  /// The last entry is cut off (probably an interrupted save).
+  lastEntryIncomplete,
 
-  final List<String> warnings;
+  /// An entry before the last one is not readable.
+  entryUnreadable,
+
+  /// An entry is readable but breaks a record rule ([LoadWarning.code]).
+  entryInvalid,
+}
+
+/// A recoverable problem found while opening a store. The UI must show it.
+class LoadWarning {
+  const LoadWarning(this.kind, {required this.line, this.code});
+
+  final LoadWarningKind kind;
+
+  /// 1-based line in the store (line 1 is the header).
+  final int line;
+
+  /// The broken rule for [LoadWarningKind.entryInvalid] (e.g.
+  /// `PRESENT_REQUIRES_QUANTITY`).
+  final String? code;
+}
+
+/// One applied schema migration step (master §33.3).
+class MigrationReceipt {
+  const MigrationReceipt({
+    required this.id,
+    required this.fromVersion,
+    required this.toVersion,
+    required this.checkpoint,
+    required this.startedAt,
+    required this.finishedAt,
+    required this.result,
+    required this.entries,
+  });
+
+  final String id;
+  final int fromVersion;
+  final int toVersion;
+
+  /// What protects the old data (e.g. "the file was not changed").
+  final String checkpoint;
+  final DateTime startedAt;
+  final DateTime finishedAt;
+  final String result;
+
+  /// Logged entries the step processed.
+  final int entries;
+}
+
+/// Result of opening a store.
+class LoadReport {
+  const LoadReport({
+    required this.warnings,
+    this.migrations = const [],
+    this.readOnly = false,
+  });
+
+  /// Recoverable problems the UI must show.
+  final List<LoadWarning> warnings;
+
+  /// Migration steps applied in memory while opening.
+  final List<MigrationReceipt> migrations;
+
+  /// True when the store refuses writes (e.g. it was migrated in memory and
+  /// no upgrade checkpoint exists yet).
+  final bool readOnly;
+}
+
+/// A write was refused without touching the store.
+class StorageWriteRefused implements Exception {
+  const StorageWriteRefused(this.code);
+
+  /// Stable code, e.g. `VAULT_READ_ONLY`.
+  final String code;
+
+  @override
+  String toString() => 'StorageWriteRefused($code)';
 }
 
 abstract interface class HealthRepository {
@@ -51,6 +127,9 @@ abstract interface class HealthRepository {
 
   /// Opens or creates the store and reads everything into memory.
   Future<LoadReport> open();
+
+  /// False when writes are refused (see [LoadReport.readOnly]).
+  bool get writable;
 
   Future<List<Profile>> profiles();
 

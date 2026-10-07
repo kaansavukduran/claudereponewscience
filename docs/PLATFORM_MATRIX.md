@@ -26,8 +26,8 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 |---|---|---|---|---|---|---|
 | Health platform | Health Connect | HealthKit | — | — | (HealthKit not on macOS for this app) | — |
 | Key storage | Keystore | Keychain | WebCrypto non-extractable + passphrase | DPAPI (optional) + passphrase | Keychain | Secret Service/libsecret (optional) + passphrase |
-| Durable local storage (target) | yes | yes | can be evicted, so export is the durable path | yes | yes | yes (`$XDG_DATA_HOME/HumanHealthOS`) |
-| Durable local storage (F002, dev builds only, **unencrypted**) | no (memory + notice) | no (memory + notice) | `localStorage` | `%LOCALAPPDATA%` (not compiled here) | Application Support (not compiled here) | XDG data dir (tested) |
+| Durable local storage (target) | yes | yes | can be evicted, so export is the durable path | yes | yes | yes (`$XDG_DATA_HOME/human-health-os`, C-4) |
+| Durable local storage (F002, dev builds only, **unencrypted**) | no (memory + notice) | no (memory + notice) | `localStorage` | `%LOCALAPPDATA%` (not compiled here) | Application Support (not compiled here) | `$XDG_DATA_HOME/human-health-os/` (tested; the pre-F002 `HumanHealthOS/` folder is moved by rename on first start) |
 | Background work | WorkManager | limited BGTasks | none | none | limited | none |
 
 ## Cross-platform parity (v0.31 §38), implementation reality on 2026-10-06

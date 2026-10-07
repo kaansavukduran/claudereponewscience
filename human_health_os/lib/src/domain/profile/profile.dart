@@ -2,6 +2,8 @@
 /// portable folder never creates a new person (filesystem path ≠ identity).
 library;
 
+import '../records/health_record.dart' show SchemaTooNewError;
+
 enum ProfileType { self, realOther, synthetic, scenario }
 
 class Profile {
@@ -10,8 +12,10 @@ class Profile {
     required this.type,
     required this.createdAt,
     this.displayName,
-    this.schemaVersion = 1,
+    this.schemaVersion = currentSchemaVersion,
   });
+
+  static const int currentSchemaVersion = 1;
 
   final String id;
   final ProfileType type;
@@ -27,11 +31,17 @@ class Profile {
     'display_name': displayName,
   };
 
-  static Profile fromJson(Map<String, Object?> j) => Profile(
-    schemaVersion: (j['schema_version'] as num?)?.toInt() ?? 1,
-    id: j['id']! as String,
-    type: ProfileType.values.byName(j['type']! as String),
-    createdAt: DateTime.parse(j['created_at']! as String).toUtc(),
-    displayName: j['display_name'] as String?,
-  );
+  static Profile fromJson(Map<String, Object?> j) {
+    final version = (j['schema_version'] as num?)?.toInt() ?? 1;
+    if (version > currentSchemaVersion) {
+      throw SchemaTooNewError('profile', version, currentSchemaVersion);
+    }
+    return Profile(
+      schemaVersion: version,
+      id: j['id']! as String,
+      type: ProfileType.values.byName(j['type']! as String),
+      createdAt: DateTime.parse(j['created_at']! as String).toUtc(),
+      displayName: j['display_name'] as String?,
+    );
+  }
 }

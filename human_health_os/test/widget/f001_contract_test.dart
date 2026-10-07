@@ -221,7 +221,10 @@ void main() {
     await tester.pumpWidget(HumanOsApp(services: services!));
     await tester.pumpAndSettle();
     expect(find.text('Saving off'), findsOneWidget);
-    expect(find.textContaining('Staging builds do not save'), findsOneWidget);
+    expect(
+      find.textContaining('This STAGING build does not save'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('a storage failure while saving shows an error and no latest '

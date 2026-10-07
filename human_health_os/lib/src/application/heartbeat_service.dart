@@ -1,4 +1,4 @@
-/// FORGE 002 use cases: a local SELF profile and canonical body-weight
+/// Persistence heartbeat (F002) use cases: a local SELF profile and canonical body-weight
 /// observations through the [HealthRepository] port.
 library;
 

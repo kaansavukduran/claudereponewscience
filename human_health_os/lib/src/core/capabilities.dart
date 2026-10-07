@@ -8,6 +8,7 @@ library;
 import 'package:flutter/foundation.dart';
 
 import '../domain/ports/health_repository.dart';
+import '../domain/ports/storage_status.dart';
 
 enum HostPlatform { android, ios, web, windows, macos, linux, other }
 
@@ -24,10 +25,8 @@ enum CapabilityStatus {
   /// Deliberately not used by this build (e.g. network for the offline core).
   notRequired,
 
-  /// An adapter exists on this platform, but saving is off right now: the
-  /// build profile or portable mode forbids unencrypted saving, the browser
-  /// blocks storage, or the saved data could not be opened. The weight
-  /// card's notice names the actual reason (cause-neutral on purpose).
+  /// An adapter exists on this platform, but saving is off right now; the
+  /// detail names the [StorageReason] the adapter reported.
   off,
 }
 
@@ -70,10 +69,12 @@ class CapabilityRegistry {
   });
 
   /// Only real adapters are reported as `available`. [storage] describes the
-  /// repository actually opened at startup (null before it exists).
+  /// repository actually opened at startup and [reason] why it does or does
+  /// not save (both null before storage exists).
   factory CapabilityRegistry.forPlatform(
     HostPlatform platform, {
     StorageDescription? storage,
+    StorageReason? reason,
   }) {
     final healthPlatform = switch (platform) {
       HostPlatform.android => const Capability(
@@ -109,36 +110,7 @@ class CapabilityRegistry {
         detail: 'Encrypted vault with passphrase + platform key store planned (Forge F006).',
       ),
     };
-    final storageCap = switch (storage?.durability) {
-      StorageDurability.localFile => const Capability(
-        id: 'local_storage',
-        label: 'Local health records',
-        status: CapabilityStatus.available,
-        detail: 'Saved in a file on this device. Not encrypted yet (development build); encryption arrives in Forge F006.',
-      ),
-      StorageDurability.browserStorage => const Capability(
-        id: 'local_storage',
-        label: 'Local health records',
-        status: CapabilityStatus.available,
-        detail: 'Saved in this browser. The browser may clear it; not encrypted yet (development build).',
-      ),
-      StorageDurability.memoryOnly || null => switch (platform) {
-        HostPlatform.android ||
-        HostPlatform.ios ||
-        HostPlatform.other => const Capability(
-          id: 'local_storage',
-          label: 'Local health records',
-          status: CapabilityStatus.notImplemented,
-          detail: 'Not saved on this platform yet: entries last only until the app closes.',
-        ),
-        _ => const Capability(
-          id: 'local_storage',
-          label: 'Local health records',
-          status: CapabilityStatus.off,
-          detail: 'Not saved right now: entries last only until the app closes. The weight card says why.',
-        ),
-      },
-    };
+    final storageCap = _storageCapability(platform, storage, reason);
     return CapabilityRegistry(
       platform: platform,
       capabilities: [
@@ -157,4 +129,76 @@ class CapabilityRegistry {
 
   final HostPlatform platform;
   final List<Capability> capabilities;
+}
+
+Capability _storageCapability(
+  HostPlatform platform,
+  StorageDescription? storage,
+  StorageReason? reason,
+) {
+  Capability cap(CapabilityStatus status, String detail) => Capability(
+    id: 'local_storage',
+    label: 'Local health records',
+    status: status,
+    detail: detail,
+  );
+  final mobile = switch (platform) {
+    HostPlatform.android || HostPlatform.ios || HostPlatform.other => true,
+    _ => false,
+  };
+  final saving =
+      storage != null &&
+      storage.durability != StorageDurability.memoryOnly &&
+      (reason == null || reason == StorageReason.saving);
+  if (saving) {
+    return storage.durability == StorageDurability.localFile
+        ? cap(
+            CapabilityStatus.available,
+            'Saved in a file on this device. Not encrypted yet (development build); encryption arrives in Forge F006.',
+          )
+        : cap(
+            CapabilityStatus.available,
+            'Saved in this browser. The browser may clear it; not encrypted yet (development build).',
+          );
+  }
+  return switch (reason) {
+    StorageReason.profilePolicy => cap(
+      CapabilityStatus.off,
+      'Not saved in this build: staging and production builds save only to the encrypted vault (Forge F006).',
+    ),
+    StorageReason.portablePolicy => cap(
+      CapabilityStatus.off,
+      'Not saved in portable mode until the encrypted vault (Forge F006). Nothing is written next to the app.',
+    ),
+    StorageReason.dataDirInvalid => cap(
+      CapabilityStatus.off,
+      'Not saved: the data folder setting is not an absolute path.',
+    ),
+    StorageReason.browserBlocked => cap(
+      CapabilityStatus.off,
+      'Not saved: this browser blocks local storage.',
+    ),
+    StorageReason.vaultUnreadable => cap(
+      CapabilityStatus.off,
+      'Not saved: the saved data could not be opened and was left untouched.',
+    ),
+    StorageReason.vaultReadOnly => cap(
+      CapabilityStatus.off,
+      'Saved data is shown read-only: its format needs an upgrade, which waits for backups (Forge F005).',
+    ),
+    StorageReason.platformNotBuilt => cap(
+      CapabilityStatus.notImplemented,
+      'Not saved on this platform yet: entries last only until the app closes.',
+    ),
+    StorageReason.saving || null =>
+      mobile
+          ? cap(
+              CapabilityStatus.notImplemented,
+              'Not saved on this platform yet: entries last only until the app closes.',
+            )
+          : cap(
+              CapabilityStatus.off,
+              'Not saved right now: entries last only until the app closes.',
+            ),
+  };
 }

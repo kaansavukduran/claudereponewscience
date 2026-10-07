@@ -7,6 +7,9 @@ import 'dart:js_interop';
 import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
 import 'log_repository.dart';
+import 'storage_status.dart';
+
+export 'storage_status.dart';
 
 @JS('localStorage')
 external _Storage? get _localStorage;
@@ -39,13 +42,8 @@ class _BrowserLogSink implements LogSink {
 }
 
 Future<StorageChoice> createPlatformRepository(AppConfig config) async {
-  if (!config.mayPersistUnencrypted) {
-    return StorageChoice(
-      inMemoryRepository(),
-      notice:
-          '${config.isProduction ? 'Production' : 'Staging'} builds do not save unencrypted health data. Saving turns on with the encrypted vault (Forge F006); entries last until the app closes.',
-    );
-  }
+  final gated = profileGate(config);
+  if (gated != null) return gated;
   _Storage? storage;
   try {
     storage = _localStorage;
@@ -56,7 +54,7 @@ Future<StorageChoice> createPlatformRepository(AppConfig config) async {
   if (storage == null) {
     return StorageChoice(
       inMemoryRepository(),
-      notice: 'This browser blocks local storage. Entries are kept only until the page closes.',
+      reason: StorageReason.browserBlocked,
     );
   }
   return StorageChoice(
@@ -66,11 +64,4 @@ Future<StorageChoice> createPlatformRepository(AppConfig config) async {
       location: 'browser storage ($browserVaultKey)',
     ),
   );
-}
-
-class StorageChoice {
-  const StorageChoice(this.repository, {this.notice});
-
-  final HealthRepository repository;
-  final String? notice;
 }

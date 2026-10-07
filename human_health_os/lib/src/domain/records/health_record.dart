@@ -100,6 +100,20 @@ class Provenance {
   );
 }
 
+/// Data written by a newer app version. It is never guessed at or
+/// downgraded (master §35.3); the store that holds it refuses to open.
+class SchemaTooNewError implements Exception {
+  const SchemaTooNewError(this.what, this.version, this.supported);
+
+  final String what;
+  final int version;
+  final int supported;
+
+  @override
+  String toString() =>
+      'SchemaTooNewError: $what schema $version is newer than this app ($supported)';
+}
+
 class RecordValidationError implements Exception {
   const RecordValidationError(this.code, this.message);
 
@@ -220,9 +234,7 @@ class HealthRecord {
   static HealthRecord fromJson(Map<String, Object?> j) {
     final version = (j['schema_version'] as num?)?.toInt() ?? 1;
     if (version > currentSchemaVersion) {
-      throw FormatException(
-        'Record schema $version is newer than this app ($currentSchemaVersion)',
-      );
+      throw SchemaTooNewError('record', version, currentSchemaVersion);
     }
     final q = j['quantity'];
     return HealthRecord(

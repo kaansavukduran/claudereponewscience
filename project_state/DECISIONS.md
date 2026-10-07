@@ -85,3 +85,11 @@ The user supplied `HUMAN_OS_CLAUDE_CODE_MASTER_FORGE_v0.32_CLAUDE_CODE_WEB_ONE_S
 - Gap SEM-2 (fail-closed `APP_ENV`) was pulled into F001@v0.32 although the analysis marked it out of scope: it changes only which builds may persist, and only by removing configurations that persisted plaintext (a release build without `APP_ENV`, or a typo). A development vault written by such a build stays on disk untouched and opens again when the app is built with `--dart-define=APP_ENV=development`.
 - Phase 0 gap analysis: a read-only multi-agent review (4 lenses, each finding challenged by a skeptic) produced 40 confirmed and 6 refuted findings (`reports/audit/v032_phase0_gap_analysis.json`). In-scope findings are fixed in F001@v0.32; the rest are KNOWN_GAPS G-18…G-21.
 
+
+## D-014: "Develop the MVP" = ladder F002–F006 as separate Forges; `main` later (2026-10-07)
+
+The user wrote (Turkish): "I don't know what main is … you think and do it, develop the MVP." Decisions taken on their behalf, all reversible:
+- **MVP scope** = master §39 F002 (persistence heartbeat), F003 (timeline + correction lineage), F004 (labs slice), F005 (export/backup/restore) and F006 (local security: encrypted vault, keys, redacted logs). Each runs as its own Forge with its own acceptance criteria, receipts, FORGE_LOG entry and commit, in ladder order; a Forge that cannot close stops the batch instead of being skipped.
+- **Branch:** work stays on `claude/code-capabilities-kz21fr`. No `main` branch is created now. When the MVP Forges are closed, propose (do not perform unasked) making the closed state the default branch as the "stable version".
+- **F002 on-disk migrations:** schema upgrades run in memory only and open the vault read-only until a backup checkpoint exists (F005), because master §35.2 forbids a lossy or unrecoverable rewrite of health history.
+- **C-4 move:** the Linux development vault moves from `$XDG_DATA_HOME/HumanHealthOS/` to `human-health-os/` by a same-directory rename, only in development builds (the only builds that persist), never when both folders exist.

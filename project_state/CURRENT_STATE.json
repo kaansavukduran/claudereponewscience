@@ -3,9 +3,57 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "TESTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F002",
+    "contract": "v0.32",
+    "run_id": "F002@v0.32",
+    "goal": "Close the master §39 F002 exit gate (persistence integration test, migration version initialized, no plaintext-secret shortcut) on the existing persistence slice, with the open persistence gaps",
+    "status": "TESTING",
+    "baseline_commit": "2105a9e",
+    "started_at": "2026-10-07T07:55:00Z",
+    "scope": [
+      "vault compatibility metadata and migration graph (G-15)",
+      "replay validation and record-driven weight display (G-18)",
+      "data-directory rules (G-19) and the human-health-os/ XDG move (C-4)",
+      "storage reason codes, one profile gate, localized storage text (G-23, G-14 for storage)",
+      "domain comment (G-22)",
+      "no-plaintext-secret test"
+    ],
+    "out_of_scope": [
+      "encryption (F006)",
+      "writing an upgraded vault file / backups (F005)",
+      "new record kinds (F003, F004)",
+      "mobile storage adapters (F013/F015)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Compatibility metadata (§35.3): writes format 1, reads format 1, no downgrade; a newer vault, record or profile schema blocks the open with VAULT_NEWER / RECORD_SCHEMA_NEWER and the file stays byte-identical; a header without a numeric version or vault id is refused with a code",
+      "AC-2 Migration graph (§35.1/§35.2): ordered ids, +1 steps, ambiguous/missing/skipping steps and lossy steps refused; a synthetic M002 migrates in memory only, the vault opens read-only, writes are refused (VAULT_READ_ONLY), the file is unchanged, and one receipt per step carries the §33.3 fields",
+      "AC-3 Fixture (§35.4): synthetic v1 vault equals the current writer's bytes and reads back with ids, manual/device provenance, correction lineage, notMeasured without quantity, UTC times and order, no duplicates",
+      "AC-4 Replay validation: entries breaking a record rule or naming an unknown profile are skipped with a warning naming line and rule; unreadable middle vs cut-off last entry are distinguished; the file is unchanged",
+      "AC-5 Weight card: Latest = newest current record with a value; each row shows its own state, source and unit; a missing value is named (e.g. 'Not measured'), never drawn as a number; no crash",
+      "AC-6 Data directory: empty/relative XDG_DATA_HOME ignored; relative HHOS_DATA_DIR refused (memory-only, reason dataDirInvalid, nothing written); empty HHOS_DATA_DIR = not set",
+      "AC-7 Linux folder human-health-os/ (C-4): legacy moved by rename when the new folder is absent (bytes identical); both present → new used, old untouched; failed move → old in use; staging/production never touch either; told to the user",
+      "AC-8 Storage reason codes from the adapters, one shared profile gate, capability status derived from the reason; storage notices, notes and load warnings localized EN/TR",
+      "AC-9 No plaintext-secret shortcut: the development vault holds no secret-like field, says encryption none-dev-only, description.encrypted false; the app reads only APP_ENV/APP_VERSION/SOURCE_REVISION from --dart-define; staging/production/portable stay memory-only",
+      "AC-10 Persistence integration test on Linux (real IO): save → relaunch → same record; legacy folder moved by the real adapter and reopened with the same vault, profile and record; header format_version 1",
+      "AC-11 Regression: all F001@v0.32 gates still pass (format, analyze, tests, web build + smoke, Linux build + launch, contracts, pnpm test)",
+      "AC-12 Mutations M1–M6 (no replay validation, old folder name, latest = first record, missing version read as 1, migrated vault writable, relative HHOS_DATA_DIR accepted) each fail the intended test"
+    ],
+    "completed_steps": [
+      "SPECIFY: D-014 (MVP batch), F002 acceptance AC-1..AC-12",
+      "IMPLEMENT: domain LoadWarning/MigrationReceipt/StorageWriteRefused/SchemaTooNewError/StorageReason; data vault_migrations, storage_status, storage_io/web reason codes + folder rules; app bootstrap/services; UI notices, notes, warnings, record-driven weight rows",
+      "TEST: vault_compat_test, no_plaintext_secret_test, f002_persistence_test, storage_policy/repository_contract updates, Linux integration move test; 111 unit/widget tests + 2 integration tests pass locally",
+      "MUTATION: M1-M6 each caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": "commit, then run gates with --forge F002@v0.32",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -147,13 +195,8 @@
       "effect": "release state stays CANDIDATE_UNMERGED"
     }
   ],
-  "next_recommended_forge": {
-    "forge_id": "F002",
-    "contract": "v0.32",
-    "run_id": "F002@v0.32",
-    "why": "master §39 ladder: persistence heartbeat exit gate (migration version, persistence integration test, no plaintext-secret shortcut) plus open gaps G-15, G-18, G-19, G-22, G-23 and conflict C-4"
-  },
-  "updated_at": "2026-10-07T07:50:00Z",
+  "next_recommended_forge": null,
+  "updated_at": "2026-10-07T08:30:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",

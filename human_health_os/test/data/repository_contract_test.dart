@@ -159,7 +159,7 @@ void main() {
           .writeAsStringSync('{"op":"record.app', mode: FileMode.append);
       final b = fileRepo(tmp.path);
       final report = await b.open();
-      expect(report.warnings.single, contains('incomplete'));
+      expect(report.warnings.single.kind, LoadWarningKind.lastEntryIncomplete);
       expect((await HeartbeatService(b).currentWeights(me.id)).length, 1);
     });
 
@@ -185,33 +185,71 @@ void main() {
         env: const {},
         executablePath: '${exeDir.path}/human_health_os',
       );
-      expect(dir!.path, '${exeDir.path}${Platform.pathSeparator}UserData');
+      expect(dir.dir!.path, '${exeDir.path}${Platform.pathSeparator}UserData');
     });
 
-    test('XDG data dir on Linux; HHOS_DATA_DIR override wins', () {
+    test('XDG data dir on Linux (human-health-os/, C-4); HHOS_DATA_DIR override wins', () {
       final exe = '${tmp.path}/bin/human_health_os';
       if (Platform.isLinux) {
-        expect(
-          resolveDataDirectory(
-            env: const {'XDG_DATA_HOME': '/x/data'},
-            executablePath: exe,
-          )!.path,
-          '/x/data/HumanHealthOS',
+        final xdg = resolveDataDirectory(
+          env: const {'XDG_DATA_HOME': '/x/data'},
+          executablePath: exe,
         );
+        expect(xdg.dir!.path, '/x/data/human-health-os');
+        expect(xdg.legacy!.path, '/x/data/HumanHealthOS');
         expect(
           resolveDataDirectory(
             env: const {'HOME': '/home/u'},
             executablePath: exe,
-          )!.path,
-          '/home/u/.local/share/HumanHealthOS',
+          ).dir!.path,
+          '/home/u/.local/share/human-health-os',
         );
+      }
+      final custom = resolveDataDirectory(
+        env: const {'HHOS_DATA_DIR': '/custom'},
+        executablePath: exe,
+      );
+      expect(custom.dir!.path, '/custom');
+      expect(custom.legacy, isNull, reason: 'an override is never migrated');
+    });
+
+    test('empty or relative XDG_DATA_HOME is ignored (XDG spec); relative HHOS_DATA_DIR is refused (G-19)', () {
+      final exe = '${tmp.path}/bin/human_health_os';
+      if (Platform.isLinux) {
+        for (final bad in ['', 'relative/data', './data']) {
+          expect(
+            resolveDataDirectory(
+              env: {'XDG_DATA_HOME': bad, 'HOME': '/home/u'},
+              executablePath: exe,
+            ).dir!.path,
+            '/home/u/.local/share/human-health-os',
+            reason: 'XDG_DATA_HOME="$bad"',
+          );
+        }
+        expect(
+          resolveDataDirectory(
+            env: const {'XDG_DATA_HOME': '', 'HOME': ''},
+            executablePath: exe,
+          ).dir,
+          isNull,
+          reason: 'no usable base: no location is guessed',
+        );
+      }
+      for (final bad in ['data', './vault', '../x']) {
+        final r = resolveDataDirectory(
+          env: {'HHOS_DATA_DIR': bad, 'HOME': '/home/u'},
+          executablePath: exe,
+        );
+        expect(r.dir, isNull, reason: 'HHOS_DATA_DIR="$bad"');
+        expect(r.invalidVariable, 'HHOS_DATA_DIR');
       }
       expect(
         resolveDataDirectory(
-          env: const {'HHOS_DATA_DIR': '/custom'},
+          env: const {'HHOS_DATA_DIR': '', 'HOME': '/home/u'},
           executablePath: exe,
-        )!.path,
-        '/custom',
+        ).invalidVariable,
+        isNull,
+        reason: 'an empty override means "not set"',
       );
     });
   });

@@ -27,6 +27,8 @@ class LogRepository implements HealthRepository {
     required this.location,
     this.clock = const SystemClock(),
     IdGenerator? ids,
+    this.migrations = vaultMigrations,
+    this.targetVersion = vaultFormatVersion,
   }) : _ids = ids ?? UuidV4Generator();
 
   final LogSink sink;
@@ -34,7 +36,20 @@ class LogRepository implements HealthRepository {
   final String location;
   final Clock clock;
   final IdGenerator _ids;
+
+  /// The migration graph and the format this repository writes. Tests pass a
+  /// synthetic graph; the app uses the production one.
+  final List<VaultMigration> migrations;
+  final int targetVersion;
   VaultState? _state;
+  bool _readOnly = false;
+
+  @override
+  bool get writable => _state != null && !_readOnly;
+
+  void _checkWritable() {
+    if (_readOnly) throw const StorageWriteRefused('VAULT_READ_ONLY');
+  }
 
   VaultState get _s {
     final s = _state;
@@ -57,13 +72,27 @@ class LogRepository implements HealthRepository {
       final header = VaultHeader(
         vaultId: _ids.newId(),
         createdAt: clock.nowUtc(),
+        formatVersion: targetVersion,
       );
       await sink.create(header.encode());
       _state = VaultState(header);
+      _readOnly = false;
       return const LoadReport(warnings: []);
     }
-    _state = parseVaultLog(text);
-    return LoadReport(warnings: List.unmodifiable(_s.warnings));
+    _state = parseVaultLog(
+      text,
+      migrations: migrations,
+      targetVersion: targetVersion,
+      now: clock.nowUtc,
+    );
+    // A vault read through a migration is not appended to in the old format;
+    // it stays read-only until an upgrade with a checkpoint exists (D-014).
+    _readOnly = _s.migrations.isNotEmpty;
+    return LoadReport(
+      warnings: List.unmodifiable(_s.warnings),
+      migrations: List.unmodifiable(_s.migrations),
+      readOnly: _readOnly,
+    );
   }
 
   @override
@@ -71,6 +100,7 @@ class LogRepository implements HealthRepository {
 
   @override
   Future<void> putProfile(Profile profile) async {
+    _checkWritable();
     final line = encodeOp('profile.put', profile.toJson());
     await sink.appendLine(line);
     _s.apply('profile.put', profile.toJson());
@@ -78,6 +108,7 @@ class LogRepository implements HealthRepository {
 
   @override
   Future<void> appendRecord(HealthRecord record) async {
+    _checkWritable();
     record.validate();
     if (!_s.profiles.containsKey(record.profileId)) {
       throw const RecordValidationError(

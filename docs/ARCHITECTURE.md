@@ -38,9 +38,9 @@ lib/
     domain/                      # PURE DART
       records/                   # HealthRecord envelope, validation, currentRecords()
       profile/                   # Profile (self / realOther / synthetic / scenario)
-      ports/                     # HealthRepository, StorageDescription
+      ports/                     # HealthRepository, StorageDescription, LoadReport, StorageReason
     application/                 # HeartbeatService (weight entry, parseDecimal)
-    data/local/                  # vault_log (JSON lines), LogRepository, storage_io / storage_web
+    data/local/                  # vault_log (JSON lines), vault_migrations (§35), LogRepository, storage_status (profile gate), storage_io / storage_web
     features/today/ common/      # Today (weight card), honest planned-destination screen
     navigation/                  # destinations + responsive shell (rail ≥ 840 dp, bar below)
     presentation/                # theme roles, StatusChip, build banner
@@ -63,7 +63,9 @@ The UI shows unavailable integrations as unavailable. It never borrows another p
 
 ## Persistence (see SECURITY_MODEL.md)
 
-The `HealthRepository` port has one log-backed implementation over three sinks: memory, file (`dart:io`, development desktop builds only) and browser `localStorage` (development web builds only). Staging and production builds and portable mode stay memory-only until the encrypted vault (ladder F006) exists. Encryption comes in a dedicated FORGE: a versioned vault header, a passphrase KDF and a wrapped data key. The portable vault (Windows ZIP, Linux tar.zst) will live in `UserData/`, encrypted, and is identified by a UUID, never by its path.
+The `HealthRepository` port has one log-backed implementation over three sinks: memory, file (`dart:io`, development desktop builds only) and browser `localStorage` (development web builds only). Staging and production builds and portable mode stay memory-only until the encrypted vault (ladder F006) exists. Adapters report a `StorageReason` code (saving, profile or portable policy, platform not built, invalid data folder, browser blocked, unreadable or read-only vault) and `StorageNote`s (Linux folder move); the UI localizes them. The Linux development vault lives in `$XDG_DATA_HOME/human-health-os/` (an empty or relative `XDG_DATA_HOME` is ignored; a relative `HHOS_DATA_DIR` is refused).
+
+**Compatibility and migrations (master §35).** The app writes vault format 1 and reads format 1; a newer vault, record or profile schema is refused and never overwritten (`VAULT_NEWER`, `RECORD_SCHEMA_NEWER`). `vault_migrations.dart` holds the ordered graph (ids, `+1` steps, lossless only). An older vault is migrated in memory only, opens read-only and yields one `MigrationReceipt` per step (§33.3); writing an upgraded file waits for backup checkpoints (F005, D-014). Every replayed record is validated; a broken entry is skipped with a `LoadWarning` (line + rule) and stays in the file. Fixtures for each format live in `test/fixtures/vault/`. Encryption comes in a dedicated FORGE: a versioned vault header, a passphrase KDF and a wrapped data key. The portable vault (Windows ZIP, Linux tar.zst) will live in `UserData/`, encrypted, and is identified by a UUID, never by its path.
 
 ## What stays in TypeScript and why
 

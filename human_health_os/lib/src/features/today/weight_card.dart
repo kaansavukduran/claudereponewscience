@@ -2,12 +2,15 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
+import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../presentation/widgets/status_chip.dart';
 
-/// FORGE 002 heartbeat: one canonical record type, saved through the
-/// repository port and read back after restart.
+/// Persistence heartbeat: one canonical record type, saved through the
+/// repository port and read back after restart. Each row shows the record's
+/// own state, source and unit; a value that does not exist is named, never
+/// drawn as a number (gap G-18).
 class WeightCard extends StatefulWidget {
   const WeightCard({super.key, required this.services});
 
@@ -61,6 +64,8 @@ class _WeightCardState extends State<WeightCard> {
       _errorCode = e.code;
     } on RecordValidationError catch (e) {
       _errorCode = e.code;
+    } on StorageWriteRefused catch (e) {
+      _errorCode = e.code;
     } catch (_) {
       // Storage/IO failure: say it was not saved (audit UX-2). Nothing is
       // shown as latest, because memory is only updated after a write.
@@ -73,6 +78,28 @@ class _WeightCardState extends State<WeightCard> {
   String _fmt(double v) =>
       v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
 
+  /// The value cell: the number with the record's own unit, or the named
+  /// value status when there is no number (missing ≠ zero).
+  String _value(S s, HealthRecord r) {
+    final q = r.quantity;
+    if (r.valueStatus != ValueStatus.present || q == null) {
+      return s.valueStatus(r.valueStatus);
+    }
+    return '${_fmt(q.value)} ${q.unit}';
+  }
+
+  String _meta(S s, HealthRecord r) {
+    final q = r.quantity;
+    final shown = q == null ? null : _fmt(q.value);
+    final original = r.originalText;
+    return [
+      _when(r.observedAt),
+      s.recordState(r.state),
+      s.provenanceKind(r.provenance.kind),
+      if (original != null && original != shown) '${s.enteredAs} "$original"',
+    ].join(' · ');
+  }
+
   String _when(DateTime utc) {
     final l = utc.toLocal();
     String two(int n) => n.toString().padLeft(2, '0');
@@ -83,8 +110,20 @@ class _WeightCardState extends State<WeightCard> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
-    final storage = widget.services.storage;
-    final latest = _weights.isEmpty ? null : _weights.first;
+    final services = widget.services;
+    final storage = services.storage;
+    // "Latest" is the newest current record that has a number; a newer
+    // "not measured" entry is listed in the history, never shown as a value.
+    final latest = _weights
+        .where(
+          (w) => w.valueStatus == ValueStatus.present && w.quantity != null,
+        )
+        .firstOrNull;
+    final notice = s.storageNotice(
+      services.storageReason,
+      detail: services.storageDetail,
+      profile: services.config.profile.name.toUpperCase(),
+    );
     return Card(
       semanticContainer: false,
       key: const ValueKey('weight-card'),
@@ -112,18 +151,27 @@ class _WeightCardState extends State<WeightCard> {
                 ),
               ],
             ),
-            if (widget.services.storageNotice != null) ...[
+            if (notice != null) ...[
               const SizedBox(height: 8),
               Text(
-                widget.services.storageNotice!,
+                notice,
                 key: const ValueKey('storage-notice'),
                 style: text.bodySmall,
               ),
             ],
-            for (final w in widget.services.loadWarnings) ...[
+            for (final n in services.storageNotes) ...[
               const SizedBox(height: 8),
               Text(
-                w,
+                s.storageNote(n),
+                key: ValueKey('storage-note-${n.kind.name}'),
+                style: text.bodySmall,
+              ),
+            ],
+            for (final w in services.loadWarnings) ...[
+              const SizedBox(height: 8),
+              Text(
+                s.loadWarning(w),
+                key: ValueKey('load-warning-${w.line}'),
                 style: text.bodySmall?.copyWith(
                   color: Theme.of(context).colorScheme.error,
                 ),
@@ -149,7 +197,7 @@ class _WeightCardState extends State<WeightCard> {
                       fit: BoxFit.scaleDown,
                       alignment: Alignment.centerLeft,
                       child: Text(
-                        '${_fmt(latest.quantity!.value)} kg',
+                        _value(s, latest),
                         key: const ValueKey('weight-latest'),
                         style: text.headlineMedium?.copyWith(
                           fontFeatures: const [FontFeature.tabularFigures()],
@@ -214,17 +262,9 @@ class _WeightCardState extends State<WeightCard> {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(
                     children: [
-                      Expanded(
-                        child: Text(
-                          '${_when(w.observedAt)} · ${s.observed} · ${s.manualEntry}'
-                          '${w.originalText != null && w.originalText != _fmt(w.quantity!.value) ? ' · ${s.enteredAs} "${w.originalText}"' : ''}',
-                          style: text.bodySmall,
-                        ),
-                      ),
-                      Text(
-                        '${_fmt(w.quantity!.value)} kg',
-                        style: text.bodyMedium,
-                      ),
+                      Expanded(child: Text(_meta(s, w), style: text.bodySmall)),
+                      const SizedBox(width: 8),
+                      Text(_value(s, w), style: text.bodyMedium),
                     ],
                   ),
                 ),

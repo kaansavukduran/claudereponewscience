@@ -89,7 +89,7 @@ void main() {
 
   test('a newer record schema is refused, not silently misread', () {
     final j = weight().toJson()..['schema_version'] = 99;
-    expect(() => HealthRecord.fromJson(j), throwsFormatException);
+    expect(() => HealthRecord.fromJson(j), throwsA(isA<SchemaTooNewError>()));
   });
 
   test('corrections: superseded records leave the current view but stay in history', () {

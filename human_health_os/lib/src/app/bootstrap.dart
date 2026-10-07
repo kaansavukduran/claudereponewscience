@@ -7,30 +7,40 @@ import '../config/app_config.dart';
 import '../core/capabilities.dart';
 import '../data/local/log_repository.dart';
 import '../data/local/storage.dart';
+import '../data/local/vault_log.dart' show VaultFormatError;
 import '../domain/ports/health_repository.dart';
 import 'app_services.dart';
 
 Future<AppServices> bootstrap(AppConfig config, HostPlatform platform) async {
   final choice = await createPlatformRepository(config);
   HealthRepository repo = choice.repository;
-  String? notice = choice.notice;
-  List<String> warnings = const [];
+  var reason = choice.reason;
+  var detail = choice.detail;
+  var report = const LoadReport(warnings: []);
   try {
-    warnings = (await repo.open()).warnings;
+    report = await repo.open();
+    if (report.readOnly) reason = StorageReason.vaultReadOnly;
   } catch (e) {
     // Do not touch the unreadable vault; keep working in memory and explain.
     repo = inMemoryRepository();
     await repo.open();
-    notice =
-        'Your saved data could not be opened ($e). Nothing was changed on disk. '
-        'New entries are kept in memory only until this is fixed.';
+    reason = StorageReason.vaultUnreadable;
+    detail = e is VaultFormatError ? e.code : e.runtimeType.toString();
+  }
+  if (!repo.writable && (await repo.profiles()).isEmpty) {
+    // A read-only vault without a SELF profile has nothing to show and
+    // cannot create one; keep its file untouched and work in memory.
+    repo = inMemoryRepository();
+    await repo.open();
   }
   return servicesFor(
     config,
     platform,
     repo,
-    notice: notice,
-    warnings: warnings,
+    reason: reason,
+    detail: detail,
+    notes: choice.notes,
+    report: report,
   );
 }
 
@@ -39,21 +49,33 @@ Future<AppServices> servicesFor(
   AppConfig config,
   HostPlatform platform,
   HealthRepository repo, {
-  String? notice,
-  List<String> warnings = const [],
+  StorageReason? reason,
+  String? detail,
+  List<StorageNote> notes = const [],
+  LoadReport report = const LoadReport(warnings: []),
 }) async {
   final heartbeat = HeartbeatService(repo);
   final self = await heartbeat.ensureSelfProfile();
+  // Tests that hand in a repository without a reason get "not reported"
+  // (null) for a memory store, never an invented cause.
+  final status =
+      reason ??
+      (repo.description.durability == StorageDurability.memoryOnly
+          ? null
+          : StorageReason.saving);
   return AppServices(
     config: config,
     registry: CapabilityRegistry.forPlatform(
       platform,
       storage: repo.description,
+      reason: status,
     ),
     heartbeat: heartbeat,
     self: self,
     storage: repo.description,
-    storageNotice: notice,
-    loadWarnings: warnings,
+    storageReason: status,
+    storageDetail: detail,
+    storageNotes: notes,
+    loadWarnings: report.warnings,
   );
 }

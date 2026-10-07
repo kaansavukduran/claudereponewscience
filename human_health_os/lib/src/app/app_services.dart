@@ -6,6 +6,7 @@ import '../application/heartbeat_service.dart';
 import '../config/app_config.dart';
 import '../core/capabilities.dart';
 import '../domain/ports/health_repository.dart';
+import '../domain/ports/storage_status.dart';
 import '../domain/profile/profile.dart';
 
 class AppServices {
@@ -15,7 +16,9 @@ class AppServices {
     required this.heartbeat,
     required this.self,
     required this.storage,
-    this.storageNotice,
+    this.storageReason,
+    this.storageDetail,
+    this.storageNotes = const [],
     this.loadWarnings = const [],
   });
 
@@ -25,10 +28,17 @@ class AppServices {
   final Profile self;
   final StorageDescription storage;
 
-  /// Why data is not saved durably (production guard, unsupported platform,
-  /// unreadable vault). Shown to the user verbatim.
-  final String? storageNotice;
+  /// Why data is or is not saved durably, as reported by the adapter; null
+  /// when no adapter reported one (tests). The UI localizes it
+  /// (`S.storageNotice`).
+  final StorageReason? storageReason;
 
-  /// Recoverable problems found while opening the vault.
-  final List<String> loadWarnings;
+  /// Context for [storageReason] (a variable name or an error code).
+  final String? storageDetail;
+
+  /// Things the adapter did at startup (e.g. moved the data folder).
+  final List<StorageNote> storageNotes;
+
+  /// Saved entries skipped while opening the vault.
+  final List<LoadWarning> loadWarnings;
 }

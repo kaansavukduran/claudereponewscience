@@ -40,7 +40,7 @@ void main() {
       choice.repository.description.durability,
       StorageDurability.memoryOnly,
     );
-    expect(choice.notice, contains('encrypted vault'));
+    expect(choice.reason, StorageReason.portablePolicy);
     await choice.repository.open();
     expect(Directory('${appDir.path}/UserData').existsSync(), isFalse);
   });
@@ -55,7 +55,7 @@ void main() {
       choice.repository.description.durability,
       StorageDurability.memoryOnly,
     );
-    expect(choice.notice, contains('Production builds'));
+    expect(choice.reason, StorageReason.profilePolicy);
   });
 
   test('staging (packaged previews): nothing written to XDG either', () async {
@@ -68,7 +68,7 @@ void main() {
       choice.repository.description.durability,
       StorageDurability.memoryOnly,
     );
-    expect(choice.notice, contains('Staging builds'));
+    expect(choice.reason, StorageReason.profilePolicy);
     await choice.repository.open();
     expect(Directory('${tmp.path}/data').existsSync(), isFalse);
   });
@@ -86,8 +86,107 @@ void main() {
     );
     expect(
       choice.repository.description.location,
-      '${tmp.path}/data/HumanHealthOS/$vaultFileName',
+      '${tmp.path}/data/human-health-os/$vaultFileName',
     );
-    expect(choice.notice, isNull);
+    expect(choice.reason, StorageReason.saving);
+    expect(choice.notes, isEmpty);
   });
+
+  group(
+    'Linux development vault folder HumanHealthOS/ -> human-health-os/ (C-4)',
+    () {
+      late Directory data;
+      late File oldVault;
+      setUp(() {
+        data = Directory('${tmp.path}/data')..createSync();
+        oldVault = File('${data.path}/HumanHealthOS/$vaultFileName')
+          ..createSync(recursive: true)
+          ..writeAsStringSync('OLD VAULT BYTES\n');
+      });
+
+      Future<StorageChoice> open(AppConfig config) => createPlatformRepository(
+        config,
+        env: {'XDG_DATA_HOME': data.path, 'HOME': tmp.path},
+        executablePath: '${tmp.path}/bin/human_health_os',
+      );
+
+      test(
+        'moved by rename when the new folder is absent; bytes unchanged',
+        () async {
+          if (!Platform.isLinux) return;
+          final choice = await open(dev);
+          final moved = File('${data.path}/human-health-os/$vaultFileName');
+          expect(moved.readAsStringSync(), 'OLD VAULT BYTES\n');
+          expect(oldVault.existsSync(), isFalse);
+          expect(choice.repository.description.location, moved.path);
+          expect(choice.notes.single.kind, StorageNoteKind.movedLegacyFolder);
+        },
+      );
+
+      test(
+        'both folders present: the new one is used, the old one untouched',
+        () async {
+          if (!Platform.isLinux) return;
+          Directory('${data.path}/human-health-os').createSync();
+          final choice = await open(dev);
+          expect(oldVault.readAsStringSync(), 'OLD VAULT BYTES\n');
+          expect(
+            choice.repository.description.location,
+            '${data.path}/human-health-os/$vaultFileName',
+          );
+          expect(choice.notes.single.kind, StorageNoteKind.legacyFolderLeft);
+          expect(choice.notes.single.detail, '${data.path}/HumanHealthOS');
+        },
+      );
+
+      test('a failed move keeps using the old folder and says so', () async {
+        if (!Platform.isLinux) return;
+        final target = Directory('${data.path}/human-health-os');
+        final legacy = Directory('${data.path}/HumanHealthOS');
+        // A file in the way makes the rename fail without touching the vault.
+        final r = adoptLegacyFolder(
+          Directory('${oldVault.path}/blocked/human-health-os'),
+          legacy,
+        );
+        expect(r.dir.path, legacy.path);
+        expect(r.note!.kind, StorageNoteKind.legacyFolderInUse);
+        expect(oldVault.readAsStringSync(), 'OLD VAULT BYTES\n');
+        expect(target.existsSync(), isFalse);
+      });
+
+      test('staging and production never touch either folder', () async {
+        if (!Platform.isLinux) return;
+        for (final config in [staging, prod]) {
+          final choice = await open(config);
+          expect(choice.reason, StorageReason.profilePolicy);
+          expect(oldVault.readAsStringSync(), 'OLD VAULT BYTES\n');
+          expect(
+            Directory('${data.path}/human-health-os').existsSync(),
+            isFalse,
+          );
+        }
+      });
+    },
+  );
+
+  test(
+    'relative HHOS_DATA_DIR: memory only, nothing written anywhere',
+    () async {
+      final before = Directory.current.listSync().length;
+      final choice = await createPlatformRepository(
+        dev,
+        env: {'HHOS_DATA_DIR': 'relative-vault', 'HOME': tmp.path},
+        executablePath: '${tmp.path}/bin/human_health_os',
+      );
+      expect(choice.reason, StorageReason.dataDirInvalid);
+      expect(choice.detail, 'HHOS_DATA_DIR');
+      expect(
+        choice.repository.description.durability,
+        StorageDurability.memoryOnly,
+      );
+      await choice.repository.open();
+      expect(Directory('relative-vault').existsSync(), isFalse);
+      expect(Directory.current.listSync().length, before);
+    },
+  );
 }
