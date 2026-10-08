@@ -3,7 +3,7 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "FORGE_PLANNING",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
   "active_forge": {
     "forge_id": "F007",
@@ -11,19 +11,54 @@
     "run_id": "F007@v0.32",
     "slice": "measurements",
     "goal": "Daily domains, slice 1: measurements beyond body weight on the canonical record, timeline, correction lineage and encrypted vault (master §39 F007: one bounded slice per Forge)",
-    "status": "FORGE_PLANNING",
+    "status": "IMPLEMENTING",
     "baseline_commit": "48c3c94",
     "started_at": "2026-10-08T21:34:05Z",
-    "scope": [],
-    "out_of_scope": [],
-    "acceptance_criteria": [],
+    "scope": [
+      "record schema 4 (RS-004, additive): body.waist_circumference (cm), vital.resting_heart_rate (bpm), vital.blood_pressure (mmHg, structured systolic/diastolic); optional measurement context as typed; kind-tagged details slot",
+      "each record written with the oldest schema that holds it: weight and lab stay schema 3, so older apps are locked out only once a measurement is saved",
+      "automatic backup checkpoint of the earlier vault before its first schema-4 record (desktop development and encrypted vaults)",
+      "manual entry on Today (Measurements card), Timeline rows and kind-aware Correct, entered in error, delete; EN/TR",
+      "deterministic old-code check on main 48c3c94: the F006 code refuses schema-4 data and backups without changing them"
+    ],
+    "out_of_scope": [
+      "temperature, SpO2, height, respiratory rate, body composition (G-42)",
+      "derived results (BMI, waist-height ratio, trends, session summaries): F011",
+      "any interpretation: categories, stages, ranges, targets, alerts, education card",
+      "structured context, devices and calibration, measurement sessions (free-text context only) (G-41)",
+      "unit choice or conversion, UCUM codes, REVIEW plausibility tier and upper bounds (G-43, G-46)",
+      "entering the measurement time (the time saved is when Save is pressed, said on screen) (G-44)",
+      "automatic checkpoint on web development builds (G-47)",
+      "platform imports (F013); new primary destination; vault, envelope, backup or export format changes"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Record schema 4 (RS-004): the three kinds and the context and details keys exist only at schema >= 4 (KIND_NEEDS_NEWER_SCHEMA, FIELD_NEEDS_NEWER_SCHEMA); canonical unit only (UNIT_NOT_SUPPORTED); finite numbers; waist, heart rate and systolic > 0, diastolic >= 0; no upper bound or clinical threshold; schema 1-3 records keep their exact JSON; weight and lab are still written at schema 3",
+      "AC-2 Structured blood pressure: one record with kind-tagged details {type, systolic, diastolic, unit, systolic_text, diastolic_text} and no quantity; details only on a present, non-marker blood-pressure record; the checks run before the marker early return; entry refuses systolic <= diastolic (BP_ORDER) while stored records are not re-judged on that rule (domain rules only loosen)",
+      "AC-3 Missing is not zero: blank is EMPTY and writes nothing; a typed 0 is refused at entry; a not-measured record carries no number and shows its status, never 0; Latest skips it",
+      "AC-4 Source text and precision: typed text kept; shown with the typed decimals; blood pressure shown as 118/76 mmHg on Today, on the Timeline row and in the detail sheet's versions; no unit converted",
+      "AC-5 No interpretation: one record per save, nothing derived; EN/TR scans with the F004 lists plus a measurement list (hypertension, stage, tachycardia, obesity, category and Turkish forms) find nothing on the card, rows or sheet",
+      "AC-6 Repeated readings are kept (two identical readings 30 s apart are two records); a same-id retry is idempotent",
+      "AC-7 Correction lineage for all three kinds from the Timeline; every correct method refuses another kind's record (TARGET_WRONG_KIND), weight and lab included",
+      "AC-8 Today Measurements card: header, Latest per kind with value, time, source and a spoken summary, a kind chooser, entry form (two fields for blood pressure, optional context), the note that values are kept as typed and the time saved is when Save is pressed, a live-region Saved message, history; EN/TR; 320 dp at 2x text; three primary destinations unchanged",
+      "AC-9 Storage and privacy: same repository paths (development log, encrypted vault, backups, export); formats unchanged; no new dependency; the vault file, backups and console output hold no kind codes, typed values or context text",
+      "AC-10 Compatibility: this build reads schemas 1-4 and refuses 5; on main 48c3c94 the F006 code (scratch worktree, deterministic test) refuses the schema-4 fixture and the encrypted schema-4 fixture with RECORD_SCHEMA_NEWER, refuses F007 backups with VAULT_INCOMPATIBLE and a restore over them with RESTORE_TARGET_NEWER, leaves the bytes unchanged, and still opens a vault where F007 saved only weight (schema 3) and the F007 checkpoint backup",
+      "AC-11 Checkpoint: before the first schema-4 record is appended to a vault that holds records but none of schema 4, a backup of that vault is saved and named on screen; if it cannot be written the save is refused (CHECKPOINT_FAILED) and nothing is written",
+      "AC-12 Fixtures v1_f007_schema4 (plaintext, schemas 1-4) and enc_v1_f007 (encrypted): writer bytes, every field replayed, README rows, backup_test list",
+      "AC-13 Linux integration with real files: development and production encrypted vaults keep the three kinds and a correction across a relaunch; the checkpoint lands on disk",
+      "AC-14 Web smoke: a blood pressure typed in Chromium shows 118/76 mmHg on Today and the Timeline, survives a reload and is in the backup download; no console errors",
+      "AC-15 Regression and close: F001-F006 suites in UTC and New York, gates on a clean tree, mutations each caught, state and docs updated (D-018, SOURCES C-10/C-11, git.main repaired), one next Forge"
+    ],
     "completed_steps": [
-      "ORIENT: state READY after F006@v0.32; main created at 48c3c94 (D-017); ladder F007 slice 1 selected (next_recommended_forge)"
+      "ORIENT: state READY after F006@v0.32; main created at 48c3c94 (D-017); ladder F007 slice 1 selected (next_recommended_forge)",
+      "SPECIFY: workflow wf_1e0a46f9-0ea (4 readers, a specifier, a skeptic; 6 agents): draft spec and 16 critique issues (5 major); decisions: per-record minimum schema, free-text context and kind-tagged details in schema 4, automatic checkpoint before the first schema-4 record, deterministic old-code check instead of an old-binary screenshot, measurement-specific interpretation scan, BP ordering as an entry rule only",
+      "REPAIR (state): git.main said 'not created' after main was pushed at 48c3c94; repository reality recorded (master §31.3)"
     ],
     "last_verified_gate": null,
-    "next_action": "SPECIFY (multi-agent understand + spec)",
+    "next_action": "IMPLEMENT",
     "files_touched": [],
-    "migration_ids": [],
+    "migration_ids": [
+      "RS-004"
+    ],
     "evidence_ids": [],
     "blocker": null
   },
@@ -1764,6 +1799,6 @@
   "git": {
     "branch": "claude/code-capabilities-kz21fr",
     "push": "OK (origin)",
-    "main": "not created; propose once the MVP (F002-F006) is complete"
+    "main": "48c3c94 (D-017): the closed MVP F002-F006; advances only when a later Forge closes with receipts"
   }
 }
