@@ -1472,7 +1472,8 @@
         "REPAIR (product, fix round): a restore that moved no file says nothing changed (RESTORE_NOT_SWITCHED); the gate decides from what a step wrote (created, new passphrase stored), not from a re-read; Flutter's default library name stays readable in redacted logs; the Turkish save-failure text names the real action",
         "MUTATION: S32-S38 caught at e2463a6; all 38 run at 98ac39e: 36 caught, S18 (a store without size) and S28 (a failure inside create after the write) not caught; two tests added, both now caught (38/38)",
         "GATES (history): second run EV-*-F006-0010..0018 on 98ac39e, 14 PASS, stale after the two added tests",
-        "GATES: 14 receipts on clean tree 9b8217d, all PASS"
+        "GATES: 14 receipts on clean tree 9b8217d, all PASS",
+        "STATE: validator receipt EV-TEST-F006-0028 on the close commit 0354c9e"
       ],
       "last_verified_gate": "EV-TEST-F006-0027",
       "next_action": null,
@@ -1603,7 +1604,8 @@
         "EV-RUNTIME-F006-0009",
         "EV-TEST-F006-0025",
         "EV-TEST-F006-0026",
-        "EV-TEST-F006-0027"
+        "EV-TEST-F006-0027",
+        "EV-TEST-F006-0028"
       ],
       "blocker": null,
       "result": "F006_COMPLETE",
