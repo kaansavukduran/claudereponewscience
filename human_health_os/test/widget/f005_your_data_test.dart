@@ -39,6 +39,21 @@ class UnreadableBackups extends MemoryDataFiles {
       throw const FileSystemException('permission denied');
 }
 
+/// The first read fails (a lock released a moment later), later reads
+/// work. A restore reads its backup once, so the checks, the key prompt and
+/// the restore all see the same bytes; it never goes on with a second read.
+class FirstReadFails extends MemoryDataFiles {
+  int reads = 0;
+
+  @override
+  Future<String> read(SavedFile file) {
+    if (reads++ == 0) {
+      throw const FileSystemException('held by another program');
+    }
+    return super.read(file);
+  }
+}
+
 /// The last move of a restore fails (another program holds the file); the
 /// previous vault is back in place.
 class SwitchFails extends MemoryDataFiles {
@@ -363,5 +378,22 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('restored data'), findsNothing);
+  });
+
+  testWidgets('a restore reads its backup once: a failed read is reported '
+      'and nothing goes on with a second read', (tester) async {
+    final bundle = await backupMadeElsewhere(tester);
+    final files = FirstReadFails()
+      ..files['backup/b.hhosbackup.json'] = bundle
+      ..times['backup/b.hhosbackup.json'] = DateTime.utc(2026, 10, 7);
+    await start(tester, sink: MemoryLogSink(), files: files);
+    await tapKey(tester, 'restore-b.hhosbackup.json');
+    await tapKey(tester, 'confirm-restore');
+    expect(
+      message(tester),
+      'That did not work (FileSystemException). Nothing was changed.',
+    );
+    expect(files.reads, 1);
+    expect(files.vaultText, isNull, reason: 'nothing restored');
   });
 }
