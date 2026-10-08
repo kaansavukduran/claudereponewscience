@@ -542,4 +542,110 @@ void main() {
       }
     });
   });
+
+  group('fixture v1_f007_schema4 (record schema 4: measurements)', () {
+    String id(int n) =>
+        '00000000-0000-4000-8000-0000000000e${n.toRadixString(16)}';
+    final text = File('test/fixtures/vault/v1_f007_schema4.hhoslog.jsonl')
+        .readAsStringSync();
+
+    test('measurements replay with every field; repeated readings kept; '
+        'missing stays missing; older records keep their shape', () {
+      final state = parseVaultLog(text);
+      expect(state.warnings, isEmpty);
+      final first = state.records[id(3)]!;
+      expect(first.schemaVersion, 4);
+      expect(first.kind, RecordKind.bloodPressure);
+      expect(first.quantity, isNull);
+      expect(
+        first.details,
+        const BloodPressureDetails(
+          systolic: 118,
+          diastolic: 76,
+          systolicText: '118',
+          diastolicText: '76',
+        ),
+      );
+      expect(first.context, 'sitting, left arm');
+      expect(state.records[id(4)]!.details, first.details);
+      final waist = state.records[id(7)]!;
+      expect(
+        (waist.quantity, waist.originalText, waist.context),
+        (const Quantity(84.25, 'cm'), '84,25', 'standing'),
+      );
+      final none = state.records[id(13)]!;
+      expect(none.valueStatus, ValueStatus.notMeasured);
+      expect(none.quantity, isNull);
+      expect(none.context, 'watch not worn');
+      // Weight and lab keep the schema their writer used.
+      expect(state.records[id(0)]!.schemaVersion, 2);
+      expect(state.records[id(1)]!.schemaVersion, 3);
+      expect(state.records[id(2)]!.schemaVersion, 3);
+      expect(state.records[id(2)]!.toJson().containsKey('details'), isFalse);
+
+      final t = buildTimeline(state.records.values, includeHidden: true);
+      TimelineEntry entry(int n) => t.singleWhere((e) => e.rootId == id(n));
+      expect(entry(3).status, EntryStatus.current);
+      expect(entry(4).status, EntryStatus.current, reason: 'not deduplicated');
+      expect(entry(5).heads.single.id, id(6));
+      expect(entry(5).versions.map((v) => v.id), [id(5), id(6)]);
+      expect(entry(9).isLive, isFalse, reason: 'entered in error');
+      expect(entry(11).status, EntryStatus.deleted);
+    });
+
+    test('the F007 writer: a store opened on it stays writable, and every '
+        'line is what the writer produces', () async {
+      final state = parseVaultLog(text);
+      expect(state.migrations, isEmpty);
+      final lines = text.trimRight().split('\n');
+      for (final l in lines.skip(2)) {
+        final data = ((jsonDecode(l) as Map)['data'] as Map)
+            .cast<String, Object?>();
+        expect(
+          encodeOp('record.append', HealthRecord.fromJson(data).toJson()),
+          l,
+        );
+      }
+    });
+  });
+
+  group('fixture enc_v1_f007 (encrypted envelope v1 around schema 4)', () {
+    const passphrase = 'fixture passphrase F006 (synthetic)';
+    const recoveryKey = 'K7QM-2XRA-PLMN-B3DE-ZZ4H-QW5T-RT6Y-HJ7U';
+    final file = File('test/fixtures/vault/enc_v1_f007.hhosvault');
+    final plain = File('test/fixtures/vault/v1_f007_schema4.hhoslog.jsonl')
+        .readAsStringSync();
+
+    test(
+      'opens with its passphrase and its recovery key to exactly the '
+      'schema-4 log; the vault reads the same records; nothing changes',
+      () async {
+        for (final (secret, kind) in [
+          (passphrase, KeyKind.passphrase),
+          (recoveryKey, KeyKind.recovery),
+        ]) {
+          final raw = MemoryLogSink()..text = file.readAsStringSync();
+          final sink = await EncryptedLogSink.unlock(
+            raw,
+            secret,
+            kind: kind,
+            derive: deriveInline,
+          );
+          expect(await sink.read(), plain, reason: kind.name);
+        }
+        final raw = MemoryLogSink()..text = file.readAsStringSync();
+        final opened = await EncryptedVault(
+          raw: raw,
+          location: 'fixture',
+        ).unlock(passphrase);
+        expect(opened.report.warnings, isEmpty);
+        final ids = [
+          for (final p in await opened.repository.profiles())
+            for (final r in await opened.repository.records(p.id)) r.id,
+        ];
+        expect(ids, parseVaultLog(plain).order);
+        expect(raw.text, file.readAsStringSync());
+      },
+    );
+  });
 }
