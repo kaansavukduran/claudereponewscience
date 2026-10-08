@@ -132,6 +132,14 @@ class S {
       'Not saved: the data file is no longer in its folder. Nothing was written; restart Human OS.',
       'Kaydedilmedi: veri dosyası artık klasöründe değil. Hiçbir şey yazılmadı; Human OS\'u yeniden başlat.',
     ),
+    'VAULT_CHANGED' => _t(
+      'Not saved: the data file now holds another vault (replaced by another window or program). Nothing was written; restart Human OS.',
+      'Kaydedilmedi: veri dosyasında artık başka bir kasa var (başka bir pencere ya da program değiştirmiş). Hiçbir şey yazılmadı; Human OS\'u yeniden başlat.',
+    ),
+    'VAULT_WRITE_REFUSED' => _t(
+      'Not saved: the data file could not be opened for writing (another program may be using it, or its permissions changed). Nothing was written; try again.',
+      'Kaydedilmedi: veri dosyası yazmak için açılamadı (başka bir program kullanıyor olabilir ya da izinleri değişmiş olabilir). Hiçbir şey yazılmadı; tekrar dene.',
+    ),
     // The write may have reached the file before the failure (e.g. a flush
     // that failed afterwards), so the text promises nothing either way.
     'SAVE_FAILED' => _t(
@@ -219,8 +227,8 @@ class S {
       'Kayıtlı giriş ${w.line} bir kayıt kuralını çiğniyor (${w.code}) ve atlandı. Dosya değiştirilmedi.',
     ),
     LoadWarningKind.entryMissing => _t(
-      'Saved entry ${w.line} is missing from the encrypted vault: it was removed from the file. Nothing replaces it; any other problem found is listed here.',
-      'Kayıtlı giriş ${w.line} şifreli kasada yok: dosyadan çıkarılmış. Yerine hiçbir şey konmadı; bulunan başka sorunlar da burada listelenir.',
+      'Entry ${w.line} is missing from the encrypted vault: it was removed from the file, or a save that failed never reached it. Nothing replaces it; any other problem found is listed here.',
+      'Giriş ${w.line} şifreli kasada yok: dosyadan çıkarılmış ya da başarısız bir kayıt dosyaya hiç ulaşmamış. Yerine hiçbir şey konmadı; bulunan başka sorunlar da burada listelenir.',
     ),
   };
 
@@ -519,6 +527,10 @@ class S {
       'This backup does not match its own description. Nothing was changed.',
       'Bu yedek kendi tanımıyla uyuşmuyor. Hiçbir şey değişmedi.',
     ),
+    'RESTORE_NOT_SWITCHED' => _t(
+      'The restore could not be finished: the data files could not be moved (another program may be using them). Nothing was changed on disk. Saving stays paused until Human OS restarts.',
+      'Geri yükleme tamamlanamadı: veri dosyaları taşınamadı (başka bir program kullanıyor olabilir). Diskte hiçbir şey değişmedi. Human OS yeniden başlayana kadar kayıt durduruldu.',
+    ),
     'RESTORE_SWITCH_FAILED' when detail == null || detail.isEmpty => _t(
       'The restore could not be finished: the restored copy could not be moved into place. The previous data file is back where it was. Restart Human OS before saving anything.',
       'Geri yükleme tamamlanamadı: geri yüklenen kopya yerine taşınamadı. Önceki veri dosyası eski yerinde. Bir şey kaydetmeden önce Human OS\'u yeniden başlat.',
@@ -655,6 +667,10 @@ class S {
           'The vault file is damaged or not a Human OS vault ($code). It was not changed.',
           'Kasa dosyası hasarlı ya da bir Human OS kasası değil ($code). Dosya değiştirilmedi.',
         );
+  String passphraseReplacedNotOpened(String code) => _t(
+    'The new passphrase is set, but the vault could not be opened ($code). Unlock it with the new passphrase.',
+    'Yeni parola ayarlandı ama kasa açılamadı ($code). Yeni parolayla kilidini aç.',
+  );
   String vaultCreatedNotOpened(String code) => _t(
     'The vault was created, but it could not be opened ($code). Unlock it with the passphrase you just chose.',
     'Kasa oluşturuldu ama açılamadı ($code). Az önce seçtiğin parolayla kilidini aç.',

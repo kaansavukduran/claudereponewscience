@@ -53,7 +53,8 @@ enum LoadWarningKind {
   entryInvalid,
 
   /// An encrypted vault lacks an entry between two readable ones: it was
-  /// removed from the file (F006). Nothing replaces it.
+  /// removed from the file, or a save that failed never reached it (F006).
+  /// Nothing replaces it.
   entryMissing,
 }
 

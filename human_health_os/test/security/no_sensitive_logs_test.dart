@@ -208,6 +208,10 @@ void main() {
             context: ErrorDescription('while showing $laboratory'),
           ),
         );
+        // The default library name is a constant, kept readable.
+        FlutterError.reportError(
+          FlutterErrorDetails(exception: StateError('$analyte $value')),
+        );
       } finally {
         FlutterError.onError = previousFlutter;
         dispatcher.onError = previousPlatform;
@@ -222,6 +226,10 @@ void main() {
     });
     expect(out, contains('[hhos] ui_error error=FormatException'));
     expect(out, contains('library=widgets_library'));
+    expect(
+      out,
+      contains('[hhos] ui_error error=StateError library=flutter_framework'),
+    );
     expect(out, contains('[hhos] uncaught_error error=StateError'));
     expect(out, contains('[hhos] uncaught_error error=FileSystemException'));
     expectClean(out);

@@ -106,6 +106,7 @@ class FileDataFiles implements DataFiles {
       }
       await _rename(restoring, vault.path);
     } catch (_) {
+      final movedAside = kept != null;
       // Never leave the vault's place empty: put the previous vault back.
       if (kept != null && !await vault.exists()) {
         try {
@@ -120,6 +121,8 @@ class FileDataFiles implements DataFiles {
       } catch (_) {
         // A leftover copy of the backup is harmless.
       }
+      // Nothing was moved: the previous vault (if any) never left its place.
+      if (!movedAside) throw const BackupError('RESTORE_NOT_SWITCHED', '');
       throw BackupError('RESTORE_SWITCH_FAILED', kept ?? '');
     }
     return RestoreOutcome(

@@ -120,9 +120,11 @@ abstract interface class DataFiles {
   /// Refuses (`RESTORE_TARGET_HAS_RECORDS`) when the live vault holds
   /// records: a restore never replaces real history. [beforeSwitch] runs
   /// right before the live vault is moved: the session must stop writing
-  /// from then on, whatever happens next. Throws `RESTORE_SWITCH_FAILED`
-  /// when the restored copy cannot be moved into place; the previous vault
-  /// is then put back where it was (or its kept path is reported).
+  /// from then on, whatever happens next. Throws `RESTORE_NOT_SWITCHED`
+  /// when no file could be moved (nothing changed), and
+  /// `RESTORE_SWITCH_FAILED` when the restored copy cannot be moved into
+  /// place after the previous vault was moved aside; that vault is then put
+  /// back where it was (or its kept path is reported).
   Future<RestoreOutcome> restore(
     StagedRestore staged, {
     required DateTime now,

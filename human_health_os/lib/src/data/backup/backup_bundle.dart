@@ -46,9 +46,11 @@ class BackupError implements Exception, CodedError {
   /// backup) · `BACKUP_KEY_NEEDED` · `BACKUP_KIND_MISMATCH` (an encrypted
   /// backup for a plaintext vault or the reverse) ·
   /// `RESTORE_TARGET_HAS_RECORDS` · `RESTORE_TARGET_NEWER` ·
-  /// `RESTORE_VERIFY_FAILED` · `RESTORE_SWITCH_FAILED` (the restored copy
-  /// could not be moved into place; [message] is where the previous vault
-  /// was kept, or empty when it is back in its place)
+  /// `RESTORE_VERIFY_FAILED` · `RESTORE_NOT_SWITCHED` (no file could be
+  /// moved; nothing changed) · `RESTORE_SWITCH_FAILED` (the restored copy
+  /// could not be moved into place after the previous vault was moved
+  /// aside; [message] is where that vault was kept, or empty when it is
+  /// back in its place)
   @override
   final String code;
   final String message;

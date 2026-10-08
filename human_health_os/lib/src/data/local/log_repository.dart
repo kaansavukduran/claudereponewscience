@@ -27,6 +27,14 @@ abstract interface class LogSink {
 
 /// A [LogSink] that can replace its first line and keep every byte after
 /// it exactly as stored (also bytes that do not decode as text).
+/// A store that reports its size cheaply (bytes for a file). The encrypted
+/// sink compares it before each append, so lines another writer added (a
+/// second window of the app) are noticed before a sequence number is used.
+abstract interface class SizedLogStore {
+  /// Null when nothing is stored.
+  Future<int?> size();
+}
+
 abstract interface class FirstLineReplaceable {
   /// Atomically replaces line 1 with [line].
   Future<void> replaceFirstLine(String line);
@@ -75,6 +83,8 @@ class LogRepository implements HealthRepository {
     }
     try {
       await sink.appendLine(line);
+    } on StorageWriteRefused {
+      rethrow; // nothing was written, so no fragment to close
     } catch (_) {
       _tailOpen = true;
       rethrow;
@@ -182,7 +192,7 @@ class LogRepository implements HealthRepository {
 }
 
 /// Memory-only sink (tests and platforms without a persistent adapter yet).
-class MemoryLogSink implements LogSink, FirstLineReplaceable {
+class MemoryLogSink implements LogSink, FirstLineReplaceable, SizedLogStore {
   /// Exposed for tests that simulate restarts or crashes.
   String? text;
 
@@ -194,6 +204,9 @@ class MemoryLogSink implements LogSink, FirstLineReplaceable {
 
   @override
   Future<void> appendLine(String line) async => text = '${text ?? ''}$line\n';
+
+  @override
+  Future<int?> size() async => text?.length;
 
   @override
   Future<void> replaceFirstLine(String line) async {

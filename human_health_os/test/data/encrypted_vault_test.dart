@@ -93,6 +93,43 @@ class LandedThenFailsSink extends MemoryLogSink {
   }
 }
 
+/// Refuses the next append before writing anything (a lock held by
+/// another program).
+class RefusingSink extends MemoryLogSink {
+  bool refuseNext = false;
+
+  @override
+  Future<void> appendLine(String line) async {
+    if (refuseNext) {
+      refuseNext = false;
+      throw const StorageWriteRefused('VAULT_WRITE_REFUSED');
+    }
+    return super.appendLine(line);
+  }
+}
+
+/// The vault file is gone for a moment (moved away and back): appends fail
+/// with a plain I/O error and reads find no file.
+class GoneSink extends MemoryLogSink {
+  String? away;
+
+  void goAway() {
+    away = text;
+    text = null;
+  }
+
+  void comeBack() {
+    text = away;
+    away = null;
+  }
+
+  @override
+  Future<void> appendLine(String line) async {
+    if (away != null) throw const FileSystemException('no such file');
+    return super.appendLine(line);
+  }
+}
+
 /// A store that exists but cannot be read (a lock or missing permissions).
 class UnreadableSink extends MemoryLogSink {
   @override
@@ -465,6 +502,93 @@ void main() {
         expect(ids.length, 5);
       },
     );
+
+    test('a write refused before anything was stored keeps its number: no '
+        'false "missing entry" and no blank line after the next save '
+        '(fix-round finding)', () async {
+      final raw = RefusingSink();
+      final (me, _) = await seed(vaultOn(raw));
+      final o = await vaultOn(raw).unlock(pass);
+      final svc = HeartbeatService(o.repository);
+      raw.refuseNext = true;
+      await expectLater(
+        svc.recordWeightKg(profileId: me, input: '71'),
+        throwsA(isA<StorageWriteRefused>()),
+      );
+      final before = raw.text!;
+      final saved = await svc.recordWeightKg(profileId: me, input: '70');
+      expect(raw.text!.substring(before.length), startsWith('{'));
+      final again = await vaultOn(raw).unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      final ids = (await again.repository.records(me)).map((r) => r.id);
+      expect(ids, contains(saved.id));
+      expect(ids.length, 4, reason: 'the refused entry is not there');
+    });
+
+    test('a write that failed while the vault file was gone does not use up '
+        'its number once the file is back (fix-round finding)', () async {
+      final raw = GoneSink();
+      final (me, _) = await seed(vaultOn(raw));
+      final o = await vaultOn(raw).unlock(pass);
+      final svc = HeartbeatService(o.repository);
+      raw.goAway();
+      await expectLater(
+        svc.recordWeightKg(profileId: me, input: '71'),
+        throwsA(isA<FileSystemException>()),
+      );
+      raw.comeBack();
+      final saved = await svc.recordWeightKg(profileId: me, input: '70');
+      final again = await vaultOn(raw).unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      final ids = (await again.repository.records(me)).map((r) => r.id);
+      expect(ids, contains(saved.id));
+      expect(ids.length, 4);
+    });
+
+    test("two windows on one vault: each learns the other's numbers before "
+        'writing, so no saved entry is hidden (fix-round finding)', () async {
+      final raw = MemoryLogSink();
+      final (me, _) = await seed(vaultOn(raw));
+      final a = await vaultOn(raw).unlock(pass);
+      final b = await vaultOn(raw).unlock(pass);
+      final first = await HeartbeatService(a.repository)
+          .recordWeightKg(profileId: me, input: '80');
+      final second = await HeartbeatService(b.repository)
+          .recordWeightKg(profileId: me, input: '81');
+      final third = await HeartbeatService(a.repository)
+          .recordWeightKg(profileId: me, input: '82');
+      final again = await vaultOn(raw).unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      final ids = (await again.repository.records(me)).map((r) => r.id);
+      expect(ids, containsAll([first.id, second.id, third.id]));
+      expect(ids.length, 6);
+    });
+
+    test('a vault replaced by another window (set aside, a new vault in its '
+        'place) is never appended to: VAULT_CHANGED, nothing written '
+        '(fix-round finding)', () async {
+      final raw = MemoryLogSink();
+      final (me, _) = await seed(vaultOn(raw));
+      final a = await vaultOn(raw).unlock(pass);
+      raw.text = null;
+      await vaultOn(raw).create(
+        passphrase: 'another long passphrase',
+        recoveryKey: newRecoveryKey(),
+      );
+      final replaced = raw.text;
+      await expectLater(
+        HeartbeatService(a.repository)
+            .recordWeightKg(profileId: me, input: '80'),
+        throwsA(
+          isA<StorageWriteRefused>().having(
+            (e) => e.code,
+            'code',
+            'VAULT_CHANGED',
+          ),
+        ),
+      );
+      expect(raw.text, replaced);
+    });
 
     test('a header without a passphrase slot: recovery adds one, and the new '
         'passphrase opens the vault (review finding)', () async {

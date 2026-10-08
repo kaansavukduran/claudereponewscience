@@ -300,6 +300,45 @@ void main() {
       expect(file.existsSync(), isFalse, reason: 'no headerless file');
     });
 
+    test('a save refused while the vault file was moved away leaves no false '
+        '"missing entry" once it is back (fix-round finding)', () async {
+      final (o, me, _) = await seeded();
+      final bytes = file.readAsBytesSync();
+      file.deleteSync();
+      final svc = HeartbeatService(o.repository);
+      await expectLater(
+        svc.recordWeightKg(profileId: me, input: '70'),
+        throwsA(
+          isA<StorageWriteRefused>().having(
+            (e) => e.code,
+            'code',
+            'VAULT_MISSING',
+          ),
+        ),
+      );
+      file.writeAsBytesSync(bytes);
+      await svc.recordWeightKg(profileId: me, input: '71');
+      final again = await vault().unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      expect(await again.repository.records(me), hasLength(3));
+    });
+
+    test('two windows on one vault file: no saved entry is hidden '
+        '(fix-round finding)', () async {
+      final (_, me, _) = await seeded();
+      final a = await vault().unlock(pass);
+      final b = await vault().unlock(pass);
+      await HeartbeatService(a.repository)
+          .recordWeightKg(profileId: me, input: '80');
+      await HeartbeatService(b.repository)
+          .recordWeightKg(profileId: me, input: '81');
+      await HeartbeatService(a.repository)
+          .recordWeightKg(profileId: me, input: '82');
+      final again = await vault().unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      expect(await again.repository.records(me), hasLength(5));
+    });
+
     test('a new passphrase keeps every byte after line 1, also a line that '
         'does not decode', () async {
       final (_, _, key) = await seeded();
@@ -382,6 +421,43 @@ void main() {
         tmp.listSync().where((e) => e.path.contains('before-restore')),
         isEmpty,
       );
+    });
+
+    test('a restore whose first move fails changed nothing and says so; '
+        'writes stay paused as a precaution (fix-round finding)', () async {
+      final (filesWith, staged, live) = await restoreSetup();
+      var locked = false;
+      final files = filesWith((f, to) async {
+        if (to.contains('before-restore')) {
+          throw const FileSystemException('held by another program');
+        }
+        await f.rename(to);
+      });
+      await expectLater(
+        files.restore(staged, now: t0, beforeSwitch: () => locked = true),
+        backupError('RESTORE_NOT_SWITCHED'),
+      );
+      expect(locked, isTrue);
+      expect(file.readAsBytesSync(), live);
+      expect(File('${file.path}.restoring').existsSync(), isFalse);
+    });
+
+    test('with no live vault, a failed move changed nothing and says so '
+        '(fix-round finding)', () async {
+      final (filesWith, staged, _) = await restoreSetup();
+      file.deleteSync();
+      final files = filesWith((f, to) async {
+        if (f.path.endsWith('.restoring')) {
+          throw const FileSystemException('held by another program');
+        }
+        await f.rename(to);
+      });
+      await expectLater(
+        files.restore(staged, now: t0, beforeSwitch: () {}),
+        backupError('RESTORE_NOT_SWITCHED'),
+      );
+      expect(file.existsSync(), isFalse);
+      expect(File('${file.path}.restoring').existsSync(), isFalse);
     });
 
     test('when even the move back fails, the previous vault is kept and its '

@@ -24,9 +24,10 @@ import 'dart:math' show max;
 import 'dart:typed_data';
 
 import '../../domain/errors.dart';
+import '../../domain/ports/health_repository.dart' show StorageWriteRefused;
 import '../crypto/recovery_key.dart';
 import '../crypto/vault_crypto.dart';
-import 'log_repository.dart' show FirstLineReplaceable, LogSink;
+import 'log_repository.dart' show FirstLineReplaceable, LogSink, SizedLogStore;
 
 export 'log_repository.dart' show encryptionEnvelopeV1;
 import 'vault_log.dart'
@@ -389,6 +390,19 @@ class EncryptedLogSink implements LogSink {
   ({String passphrase, String recovery, KdfParams Function() newKdf})? _pending;
   int _nextSeq = 0;
 
+  /// The stored size this session expects (after its last read or write);
+  /// null when the store cannot tell its size.
+  int? _size;
+
+  /// True when the stored file may hold lines this session does not know
+  /// about (an append whose outcome is unknown).
+  bool _stale = false;
+
+  Future<int?> _storedSize() async => switch (raw) {
+    final SizedLogStore store => await store.size(),
+    _ => null,
+  };
+
   String get vaultId => _header!.vaultId;
 
   /// Opens [text] (this vault's envelope, e.g. a copy for a backup).
@@ -410,6 +424,9 @@ class EncryptedLogSink implements LogSink {
 
   @override
   Future<String?> read() async {
+    // Measured before reading: a line added in between makes the size
+    // differ at the next append, which then reads again.
+    final size = await _storedSize();
     final text = await raw.read();
     if (text == null || text.trim().isEmpty) {
       if (_pending == null) throw const VaultEnvelopeError('NO_VAULT');
@@ -417,6 +434,7 @@ class EncryptedLogSink implements LogSink {
     }
     final opened = open(text);
     _nextSeq = opened.nextSeq;
+    _size = size;
     return opened.inner;
   }
 
@@ -453,6 +471,7 @@ class EncryptedLogSink implements LogSink {
     _header = header;
     _pending = null;
     _nextSeq = 1;
+    _size = await _storedSize();
   }
 
   String _sealLine(String id, int seq, String line) {
@@ -468,29 +487,63 @@ class EncryptedLogSink implements LogSink {
   Future<void> appendLine(String line) async {
     if (line.isEmpty) {
       // Ends a torn last line (log_repository.dart); carries no data.
-      await raw.appendLine('');
+      await _write('');
       return;
     }
+    await _syncIfStale();
     final seq = _nextSeq++;
     try {
-      await raw.appendLine(_sealLine(vaultId, seq, line));
+      await _write(_sealLine(vaultId, seq, line));
     } catch (_) {
-      // The outcome is unknown: the line may have landed before a flush or
-      // close failed. Learn it from storage; a number whose line might be
-      // there is never reused (review finding), and a write that stored
-      // nothing does not leave a false "removed entry" behind.
-      var next = seq + 1;
-      try {
-        final stored = await raw.read();
-        if (stored != null) {
-          next = max(seq, openEnvelopeText(stored, _dataKey, vaultId).nextSeq);
-        }
-      } catch (_) {
-        // Storage cannot be read: keep the number used.
-      }
-      _nextSeq = next;
+      // Not used yet: a refused write stored nothing, and after an unknown
+      // outcome (a flush or close that failed after the bytes landed) the
+      // next append learns from storage whether the line is there, so a
+      // number whose line might be stored is never reused (review finding)
+      // and one that stored nothing leaves no false "removed entry".
+      _nextSeq = seq;
       rethrow;
     }
+  }
+
+  /// Appends one stored line and keeps the expected size up to date.
+  Future<void> _write(String stored) async {
+    try {
+      await raw.appendLine(stored);
+    } on StorageWriteRefused {
+      rethrow; // nothing was written
+    } catch (_) {
+      _stale = true;
+      rethrow;
+    }
+    // Sealed lines are ASCII, so characters and bytes count the same.
+    final size = _size;
+    if (size != null) _size = size + stored.length + 1;
+  }
+
+  /// Before a number is used: when the stored file may hold lines this
+  /// session does not know about (an append whose outcome is unknown, or a
+  /// size that differs because a second window of the app wrote to the
+  /// same vault), learn the next number from storage. A file that now
+  /// holds another vault (set aside and replaced, or restored) is never
+  /// appended to: `VAULT_CHANGED`.
+  Future<void> _syncIfStale() async {
+    final size = await _storedSize();
+    if (!_stale && (size == null || size == _size)) return;
+    final text = await raw.read();
+    if (text == null) throw const StorageWriteRefused('VAULT_MISSING');
+    final EnvelopeHeader stored;
+    try {
+      stored = EnvelopeHeader.parse(_firstLine(text));
+    } on Object {
+      throw const StorageWriteRefused('VAULT_CHANGED');
+    }
+    if (stored.vaultId != vaultId) {
+      throw const StorageWriteRefused('VAULT_CHANGED');
+    }
+    _nextSeq = max(_nextSeq, openEnvelopeText(text, _dataKey, vaultId).nextSeq);
+    _header = stored;
+    _size = size;
+    _stale = false;
   }
 
   /// Replaces the passphrase slot (after a recovery, or a change). The
@@ -526,5 +579,6 @@ class EncryptedLogSink implements LogSink {
       );
     }
     _header = updated;
+    _size = await _storedSize();
   }
 }

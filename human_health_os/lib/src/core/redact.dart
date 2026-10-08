@@ -75,7 +75,7 @@ void reportFlutterError(FlutterErrorDetails details) => logEvent(
   'ui_error',
   error: details.exception,
   stack: details.stack,
-  fields: {'library': details.library?.replaceAll(' ', '_')},
+  fields: {'library': details.library?.toLowerCase().replaceAll(' ', '_')},
 );
 
 /// Reports an uncaught error redacted; it counts as handled.

@@ -19,6 +19,17 @@ import '../../l10n/strings.dart';
 
 enum _Mode { create, recoveryKey, unlock, recover, keyLost, unreadable }
 
+/// What a gate step had already written when opening the app failed.
+enum _Wrote { vault, passphrase }
+
+/// Opening the app failed after the step changed the vault file.
+class _OpenAfterWriteFailed implements Exception {
+  const _OpenAfterWriteFailed(this.cause, this.wrote);
+
+  final Object cause;
+  final _Wrote wrote;
+}
+
 /// Codes meaning "written by a newer Human OS": the data is fine, this app
 /// is too old. Such a vault is explained and never set aside.
 const Set<String> newerVaultCodes = {
@@ -136,6 +147,16 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       _key.clear();
       if (mounted) widget.onReady(services);
       return;
+    } on _OpenAfterWriteFailed catch (f) {
+      // The vault file already changed (created, or a new passphrase
+      // stored): never "nothing changed", whatever a re-read would show
+      // (review findings).
+      logEvent(failed, error: f.cause);
+      final code = errorCode(f.cause) ?? f.cause.runtimeType.toString();
+      _go(_Mode.unlock);
+      _error = f.wrote == _Wrote.vault
+          ? s.vaultCreatedNotOpened(code)
+          : s.passphraseReplacedNotOpened(code);
     } on CryptoFailure catch (e) {
       logEvent(failed, error: e);
       final wrong = e.code == 'NOT_AUTHENTIC' && wrongSecret != null;
@@ -182,6 +203,15 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       }
     }
     if (mounted) setState(() => _busy = false);
+  }
+
+  /// Opens the app on a vault that [wrote] has just changed.
+  Future<AppServices> _openAfterWrite(OpenedVault opened, _Wrote wrote) async {
+    try {
+      return await widget.gate.open(opened);
+    } catch (e) {
+      throw _OpenAfterWriteFailed(e, wrote);
+    }
   }
 
   Future<bool> _vaultExistsNow() async {
@@ -374,11 +404,12 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       'gate-create-vault',
       _keyWrittenDown
           ? () => _run(
-              () async => widget.gate.open(
+              () async => _openAfterWrite(
                 await _vault.create(
                   passphrase: _newPassphrase!,
                   recoveryKey: _recoveryKey!,
                 ),
+                _Wrote.vault,
               ),
               s,
               done: 'vault_created',
@@ -425,11 +456,12 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
         return;
       }
       _run(
-        () async => widget.gate.open(
+        () async => _openAfterWrite(
           await _vault.recover(
             recoveryKey: _key.text,
             newPassphrase: _pass.text,
           ),
+          _Wrote.passphrase,
         ),
         s,
         done: 'vault_recovered',

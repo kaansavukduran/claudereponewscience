@@ -81,6 +81,31 @@ class FullRaw extends MemoryLogSink {
   }
 }
 
+/// The medium drops right after the vault is written (a removable disk):
+/// reads and appends fail while [dropped] is on.
+class DroppingRaw extends MemoryLogSink {
+  bool dropAfterCreate = false;
+  bool dropped = false;
+
+  @override
+  Future<void> create(String header) async {
+    await super.create(header);
+    if (dropAfterCreate) dropped = true;
+  }
+
+  @override
+  Future<String?> read() async {
+    if (dropped) throw const FileSystemException('device gone');
+    return super.read();
+  }
+
+  @override
+  Future<void> appendLine(String line) async {
+    if (dropped) throw const FileSystemException('device gone');
+    return super.appendLine(line);
+  }
+}
+
 /// Like the isolate on native builds: the key arrives a few frames later,
 /// so the gate really shows its busy state in between.
 Future<Uint8List> slowDerive(String secret, KdfParams p) async {
@@ -662,6 +687,58 @@ void main() {
       expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
       await saveWeight(tester, '72');
       expect(latest(tester), '72 kg');
+    });
+
+    testWidgets('NO_VAULT: written, then the medium dropped so it cannot be '
+        'read back: the gate still says it was created (fix-round finding)', (
+      tester,
+    ) async {
+      final raw = DroppingRaw()..dropAfterCreate = true;
+      await launch(tester, Disk(raw));
+      await createThroughGate(tester);
+      expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
+      expect(
+        textOf(tester, 'gate-error'),
+        startsWith('The vault was created, but it could not be opened'),
+      );
+      raw.dropped = false;
+      await type(tester, 'gate-passphrase', pass);
+      await tapKey(tester, 'gate-unlock');
+      expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
+    });
+
+    testWidgets('RECOVERY: the new passphrase was stored, then opening failed: '
+        'the gate says so, never "nothing changed", and the new passphrase '
+        'opens the vault (fix-round finding)', (tester) async {
+      final raw = FullRaw();
+      final disk = Disk(raw);
+      await tester.runAsync(() async {
+        // A vault without its own profile yet: opening the app appends one.
+        final g = await gateOn(disk);
+        await g.vault.create(
+          passphrase: pass,
+          recoveryKey: newRecoveryKeyForTest,
+        );
+      });
+      raw.fail = true;
+      await launch(tester, disk);
+      await tapKey(tester, 'gate-use-recovery');
+      await type(tester, 'gate-recovery-input', newRecoveryKeyForTest);
+      await type(tester, 'gate-passphrase', 'yeni uzun parola 2026');
+      await type(tester, 'gate-passphrase-confirm', 'yeni uzun parola 2026');
+      await tapKey(tester, 'gate-recover');
+      expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
+      expect(
+        textOf(tester, 'gate-error'),
+        startsWith(
+          'The new passphrase is set, but the vault could not be '
+          'opened',
+        ),
+      );
+      raw.fail = false;
+      await type(tester, 'gate-passphrase', 'yeni uzun parola 2026');
+      await tapKey(tester, 'gate-unlock');
+      expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
     });
 
     testWidgets('RECOVERY on a vault from a newer app: explained as '

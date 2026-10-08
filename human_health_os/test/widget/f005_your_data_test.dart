@@ -57,6 +57,10 @@ class FirstReadFails extends MemoryDataFiles {
 /// The last move of a restore fails (another program holds the file); the
 /// previous vault is back in place.
 class SwitchFails extends MemoryDataFiles {
+  SwitchFails([this.code = 'RESTORE_SWITCH_FAILED']);
+
+  final String code;
+
   @override
   Future<RestoreOutcome> restore(
     StagedRestore staged, {
@@ -65,7 +69,7 @@ class SwitchFails extends MemoryDataFiles {
   }) async {
     target.checkKind(staged);
     beforeSwitch?.call();
-    throw const BackupError('RESTORE_SWITCH_FAILED', '');
+    throw BackupError(code, '');
   }
 }
 
@@ -395,5 +399,28 @@ void main() {
     );
     expect(files.reads, 1);
     expect(files.vaultText, isNull, reason: 'nothing restored');
+  });
+
+  testWidgets('a restore that could not move any file says nothing changed '
+      'on disk, and saving stays paused (fix-round finding)', (tester) async {
+    final bundle = await backupMadeElsewhere(tester);
+    final files = SwitchFails('RESTORE_NOT_SWITCHED')
+      ..files['backup/b.hhosbackup.json'] = bundle
+      ..times['backup/b.hhosbackup.json'] = DateTime.utc(2026, 10, 7);
+    await start(tester, sink: MemoryLogSink(), files: files);
+    await tapKey(tester, 'restore-b.hhosbackup.json');
+    await tapKey(tester, 'confirm-restore');
+    expect(
+      message(tester),
+      'The restore could not be finished: the data files could not be moved '
+      '(another program may be using them). Nothing was changed on disk. '
+      'Saving stays paused until Human OS restarts.',
+    );
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('create-backup')))
+          .onPressed,
+      isNull,
+    );
   });
 }

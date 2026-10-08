@@ -21,7 +21,7 @@ import 'vault_log.dart' show decodeLogBytes;
 
 export 'storage_status.dart';
 
-class FileLogSink implements LogSink, FirstLineReplaceable {
+class FileLogSink implements LogSink, FirstLineReplaceable, SizedLogStore {
   FileLogSink(this.file);
 
   final File file;
@@ -29,6 +29,9 @@ class FileLogSink implements LogSink, FirstLineReplaceable {
   @override
   Future<String?> read() async =>
       await file.exists() ? decodeLogBytes(await file.readAsBytes()) : null;
+
+  @override
+  Future<int?> size() async => await file.exists() ? await file.length() : null;
 
   @override
   Future<void> create(String text) async {
@@ -46,7 +49,14 @@ class FileLogSink implements LogSink, FirstLineReplaceable {
   @override
   Future<void> appendLine(String line) async {
     if (!await file.exists()) throw const StorageWriteRefused('VAULT_MISSING');
-    final raf = await file.open(mode: FileMode.append);
+    final RandomAccessFile raf;
+    try {
+      raf = await file.open(mode: FileMode.append);
+    } on FileSystemException {
+      // Not opened (a lock held by another program, permissions): nothing
+      // was written, so the caller may reuse what it reserved for the line.
+      throw const StorageWriteRefused('VAULT_WRITE_REFUSED');
+    }
     try {
       await raf.writeString('$line\n');
       await raf.flush();
