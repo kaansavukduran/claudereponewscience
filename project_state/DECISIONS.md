@@ -123,3 +123,10 @@ The user wrote (Turkish): "I don't know what main is … you think and do it, de
   5. A failed unlock writes nothing and never opens a plaintext store. "Start a new vault" (key lost, or a damaged file) renames the old file; nothing is deleted. A vault written by a newer app is never set aside.
   6. Encrypted backups carry the envelope byte for byte; restoring one asks for the backup's own passphrase or recovery key and checks the content before anything is written; plaintext and encrypted backups never cross. Export (plaintext JSON) is not offered for encrypted vaults (G-34).
 - **Lockfile:** `human_health_os/pubspec.lock` is committed with the change.
+
+## D-017: `main` is the stable branch, starting from the closed MVP (2026-10-08)
+
+The user approved the D-014 proposal after F006 closed ("main'i kur"). Decisions:
+- **`main`** is created from this commit: the closed MVP ladder F002–F006 (closing gates on 9b8217d, validator receipt EV-TEST-F006-0028). It holds only closed Forges: it moves forward when a later Forge closes with its receipts, never with work in progress.
+- **Development** continues on `claude/code-capabilities-kz21fr` (the designated branch). No force-push or history rewrite on either branch.
+- **GitHub default branch:** at the time of this decision it is `claude/code-capabilities-kz21fr` (the only branch). Switching the default to `main` is a repository setting (Settings → General → Default branch) that the tools of this session cannot change; the user is asked to do it.
