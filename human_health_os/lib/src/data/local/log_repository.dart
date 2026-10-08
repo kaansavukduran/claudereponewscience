@@ -25,6 +25,13 @@ abstract interface class LogSink {
   Future<void> appendLine(String line);
 }
 
+/// A [LogSink] that can replace its first line and keep every byte after
+/// it exactly as stored (also bytes that do not decode as text).
+abstract interface class FirstLineReplaceable {
+  /// Atomically replaces line 1 with [line].
+  Future<void> replaceFirstLine(String line);
+}
+
 class LogRepository implements HealthRepository {
   LogRepository({
     required this.sink,
@@ -175,7 +182,7 @@ class LogRepository implements HealthRepository {
 }
 
 /// Memory-only sink (tests and platforms without a persistent adapter yet).
-class MemoryLogSink implements LogSink {
+class MemoryLogSink implements LogSink, FirstLineReplaceable {
   /// Exposed for tests that simulate restarts or crashes.
   String? text;
 
@@ -187,6 +194,13 @@ class MemoryLogSink implements LogSink {
 
   @override
   Future<void> appendLine(String line) async => text = '${text ?? ''}$line\n';
+
+  @override
+  Future<void> replaceFirstLine(String line) async {
+    final t = text ?? '';
+    final cut = t.indexOf('\n');
+    text = cut < 0 ? '$line\n' : '$line${t.substring(cut)}';
+  }
 }
 
 LogRepository inMemoryRepository({

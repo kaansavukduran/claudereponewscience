@@ -78,6 +78,46 @@ class FlakySink extends MemoryLogSink {
   }
 }
 
+/// Stores the line, then fails (a flush or close that fails after the
+/// bytes reached the file).
+class LandedThenFailsSink extends MemoryLogSink {
+  bool failAfterNext = false;
+
+  @override
+  Future<void> appendLine(String line) async {
+    await super.appendLine(line);
+    if (failAfterNext && line.isNotEmpty) {
+      failAfterNext = false;
+      throw const FileSystemException('flush failed');
+    }
+  }
+}
+
+/// A store that exists but cannot be read (a lock or missing permissions).
+class UnreadableSink extends MemoryLogSink {
+  @override
+  Future<String?> read() async =>
+      throw const FileSystemException('permission denied');
+}
+
+/// An envelope (cheap key cost) around [innerLines], as a newer or damaged
+/// writer would have stored it.
+Future<MemoryLogSink> envelopeOf(List<String> innerLines, String key) async {
+  final raw = MemoryLogSink();
+  final sink = EncryptedLogSink.forNewVault(
+    raw,
+    passphrase: pass,
+    recoveryKey: key,
+    derive: deriveInline,
+    newKdf: cheap,
+  );
+  await sink.create(innerLines.first);
+  for (final l in innerLines.skip(1)) {
+    await sink.appendLine(l);
+  }
+  return raw;
+}
+
 Future<(String, String)> seed(EncryptedVault v, {String? recovery}) async {
   final key = recovery ?? newRecoveryKey();
   final opened = await v.create(passphrase: pass, recoveryKey: key);
@@ -364,6 +404,95 @@ void main() {
         vaultOn(raw).unlock(pass),
         cryptoFailure('NOT_AUTHENTIC'),
       );
+    });
+  });
+
+  group('review fixes (F006)', () {
+    test('recovery on a vault whose log this app cannot use writes nothing: '
+        'newer log, damaged log header (review finding)', () async {
+      final key = newRecoveryKey();
+      final newer = await envelopeOf([
+        '{"format":"hhos-vault-log","format_version":2,"vault_id":"v2",'
+            '"created_at":"2026-10-01T00:00:00.000Z",'
+            '"encryption":"hhos-vault-enc-v1"}',
+      ], key);
+      final damaged = MemoryLogSink();
+      await seed(vaultOn(damaged), recovery: key);
+      damaged.text = (damaged.text!.split('\n')..removeAt(1)).join('\n');
+      for (final (name, raw, code) in [
+        ('newer', newer, 'VAULT_NEWER'),
+        ('damaged', damaged, 'VAULT_HEADER_UNREADABLE'),
+      ]) {
+        final before = raw.text;
+        await expectLater(
+          vaultOn(
+            raw,
+          ).recover(recoveryKey: key, newPassphrase: 'a brand new passphrase'),
+          throwsA(isA<VaultFormatError>().having((e) => e.code, 'code', code)),
+          reason: name,
+        );
+        expect(raw.text, before, reason: '$name: not a byte changed');
+        // The old passphrase still opens the envelope.
+        await EncryptedLogSink.unlock(
+          raw,
+          pass,
+          kind: KeyKind.passphrase,
+          derive: deriveInline,
+        );
+      }
+    });
+
+    test(
+      'a write that landed before its flush failed: the sequence number '
+      'is not reused, so the next confirmed entry replays (review finding)',
+      () async {
+        final raw = LandedThenFailsSink();
+        final (me, _) = await seed(vaultOn(raw));
+        final o = await vaultOn(raw).unlock(pass);
+        final svc = HeartbeatService(o.repository);
+        raw.failAfterNext = true;
+        await expectLater(
+          svc.recordWeightKg(profileId: me, input: '71'),
+          throwsA(isA<FileSystemException>()),
+        );
+        final confirmed = await svc.recordWeightKg(profileId: me, input: '70');
+        final again = await vaultOn(raw).unlock(pass);
+        expect(again.report.warnings, isEmpty);
+        final ids = (await again.repository.records(me)).map((r) => r.id);
+        expect(ids, contains(confirmed.id), reason: 'the confirmed entry');
+        // The entry reported as failed landed after all: it replays too, and
+        // the save-failure text says it may be stored.
+        expect(ids.length, 5);
+      },
+    );
+
+    test('a header without a passphrase slot: recovery adds one, and the new '
+        'passphrase opens the vault (review finding)', () async {
+      final raw = MemoryLogSink();
+      final (me, key) = await seed(vaultOn(raw));
+      final ls = raw.text!.split('\n');
+      final h = (jsonDecode(ls.first) as Map).cast<String, Object?>();
+      h['keys'] = [
+        for (final k in h['keys']! as List)
+          if ((k as Map)['kind'] != 'passphrase') k,
+      ];
+      ls[0] = jsonEncode(h);
+      raw.text = ls.join('\n');
+      await expectLater(
+        vaultOn(raw).unlock(pass),
+        envelopeError('NO_SUCH_KEY'),
+      );
+      await vaultOn(raw)
+          .recover(recoveryKey: key, newPassphrase: 'a brand new passphrase');
+      final o = await vaultOn(raw).unlock('a brand new passphrase');
+      expect((await o.repository.records(me)).length, 3);
+    });
+
+    test('a store that exists but cannot be read is unreadable '
+        '(VAULT_READ_FAILED), never a new vault', () async {
+      final i = await vaultOn(UnreadableSink()).inspect();
+      expect(i.access, VaultAccess.unreadable);
+      expect(i.code, 'VAULT_READ_FAILED');
     });
   });
 

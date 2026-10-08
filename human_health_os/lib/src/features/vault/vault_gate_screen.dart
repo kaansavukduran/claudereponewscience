@@ -27,6 +27,11 @@ const Set<String> newerVaultCodes = {
   'RECORD_SCHEMA_NEWER',
 };
 
+/// Unreadable states whose file must stay where it is: a newer app's data,
+/// or a file that could not be read now (a lock or permissions) and may be
+/// perfectly healthy.
+const Set<String> keepInPlaceCodes = {...newerVaultCodes, 'VAULT_READ_FAILED'};
+
 class VaultGateScreen extends StatefulWidget {
   const VaultGateScreen({super.key, required this.gate, required this.onReady});
 
@@ -165,9 +170,26 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       }
     } catch (e) {
       logEvent(failed, error: e);
-      _error = s.gateFailed(errorCode(e) ?? e.runtimeType.toString());
+      final code = errorCode(e) ?? e.runtimeType.toString();
+      if (failed == 'vault_create_failed' && await _vaultExistsNow()) {
+        // The vault was written before the failure: never claim that
+        // nothing changed; it opens with the passphrase just chosen
+        // (review finding).
+        _go(_Mode.unlock);
+        _error = s.vaultCreatedNotOpened(code);
+      } else {
+        _error = s.gateFailed(code);
+      }
     }
     if (mounted) setState(() => _busy = false);
+  }
+
+  Future<bool> _vaultExistsNow() async {
+    try {
+      return (await _vault.inspect()).access == VaultAccess.unlock;
+    } catch (_) {
+      return false;
+    }
   }
 
   void _memoryOnly(S s) {
@@ -468,7 +490,7 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       _errorText(text),
       _secondary(s.gateMemoryOnly, 'gate-memory-only', () => _memoryOnly(s)),
       // A newer vault is the user's data for a newer app: never set aside.
-      if (_vault.canSetAside && !newerVaultCodes.contains(code))
+      if (_vault.canSetAside && !keepInPlaceCodes.contains(code))
         _secondary(s.startNewVault, 'gate-start-new', () => _startNew(s)),
     ];
   }

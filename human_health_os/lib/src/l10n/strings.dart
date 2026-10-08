@@ -127,9 +127,15 @@ class S {
       'Not saved: your saved data is open read-only (see the note above).',
       'Kaydedilmedi: kayıtlı verilerin salt okunur açık (yukarıdaki nota bak).',
     ),
+    'VAULT_MISSING' => _t(
+      'Not saved: the data file is no longer in its folder. Nothing was written; restart Human OS.',
+      'Kaydedilmedi: veri dosyası artık klasöründe değil. Hiçbir şey yazılmadı; Human OS\'u yeniden başlat.',
+    ),
+    // The write may have reached the file before the failure (e.g. a flush
+    // that failed afterwards), so the text promises nothing either way.
     'SAVE_FAILED' => _t(
-      'Not saved: storage failed. Nothing was changed; try again.',
-      'Kaydedilmedi: depolama hata verdi. Hiçbir şey değişmedi; tekrar dene.',
+      'Storage failed: this entry may not be saved. Try again; if it later shows up twice, mark one copy entered in error.',
+      'Depolama hata verdi: bu giriş kaydedilmemiş olabilir. Tekrar dene; daha sonra iki kez görünürse birini hatalı giriş olarak işaretle.',
     ),
     _ => _t('This value could not be saved.', 'Bu değer kaydedilemedi.'),
   };
@@ -212,8 +218,8 @@ class S {
       'Kayıtlı giriş ${w.line} bir kayıt kuralını çiğniyor (${w.code}) ve atlandı. Dosya değiştirilmedi.',
     ),
     LoadWarningKind.entryMissing => _t(
-      'Saved entry ${w.line} is missing from the encrypted vault: it was removed from the file. Nothing replaces it; the other entries are intact.',
-      'Kayıtlı giriş ${w.line} şifreli kasada yok: dosyadan çıkarılmış. Yerine hiçbir şey konmadı; diğer girişler sağlam.',
+      'Saved entry ${w.line} is missing from the encrypted vault: it was removed from the file. Nothing replaces it; any other problem found is listed here.',
+      'Kayıtlı giriş ${w.line} şifreli kasada yok: dosyadan çıkarılmış. Yerine hiçbir şey konmadı; bulunan başka sorunlar da burada listelenir.',
     ),
   };
 
@@ -432,8 +438,12 @@ class S {
   );
   String get openBackupTitle => _t('Open this backup', 'Bu yedeği aç');
   String get openBackupExplain => _t(
-    'Enter the passphrase this vault had when the backup was made, or its recovery key. The backup is opened and checked in memory before anything is written.',
-    'Yedek yapıldığında bu kasanın parolası neyse onu ya da kurtarma anahtarını gir. Yedek, hiçbir şey yazılmadan önce bellekte açılır ve kontrol edilir.',
+    'Enter the passphrase of the vault this backup was made from, as it was then, or that vault\'s recovery key. A vault created later has other keys. The backup is opened and checked in memory before anything is written.',
+    'Bu yedeğin alındığı kasanın o zamanki parolasını ya da o kasanın kurtarma anahtarını gir. Sonradan oluşturulan bir kasanın anahtarları farklıdır. Yedek, hiçbir şey yazılmadan önce bellekte açılır ve kontrol edilir.',
+  );
+  String dataFileFailed(String code) => _t(
+    'That did not work ($code). Nothing was changed.',
+    'Bu işlem yapılamadı ($code). Hiçbir şey değişmedi.',
   );
   String get useRecoveryKeyInstead => _t(
     'Use the recovery key instead',
@@ -507,6 +517,14 @@ class S {
     'COUNT_MISMATCH' || 'VAULT_ID_MISMATCH' => _t(
       'This backup does not match its own description. Nothing was changed.',
       'Bu yedek kendi tanımıyla uyuşmuyor. Hiçbir şey değişmedi.',
+    ),
+    'RESTORE_SWITCH_FAILED' when detail == null || detail.isEmpty => _t(
+      'The restore could not be finished: the restored copy could not be moved into place. The previous data file is back where it was. Restart Human OS before saving anything.',
+      'Geri yükleme tamamlanamadı: geri yüklenen kopya yerine taşınamadı. Önceki veri dosyası eski yerinde. Bir şey kaydetmeden önce Human OS\'u yeniden başlat.',
+    ),
+    'RESTORE_SWITCH_FAILED' => _t(
+      'The restore could not be finished: the restored copy could not be moved into place, and the previous data file is now at $detail. Nothing was deleted. Restart Human OS before saving anything.',
+      'Geri yükleme tamamlanamadı: geri yüklenen kopya yerine taşınamadı; önceki veri dosyası şimdi şurada: $detail. Hiçbir şey silinmedi. Bir şey kaydetmeden önce Human OS\'u yeniden başlat.',
     ),
     'RESTORE_VERIFY_FAILED' => _t(
       'The restored copy did not read back identically. Nothing was changed.',
@@ -618,12 +636,16 @@ class S {
   );
   String get unreadableTitle =>
       _t('The saved vault cannot be opened', 'Kayıtlı kasa açılamıyor');
-  String unreadableBody(String code) =>
-      const {
-        'ENVELOPE_NEWER',
-        'VAULT_NEWER',
-        'RECORD_SCHEMA_NEWER',
-      }.contains(code)
+  String unreadableBody(String code) => code == 'VAULT_READ_FAILED'
+      ? _t(
+          'The vault file could not be read: another program may be using it, or your user may not be allowed to read it. It was not changed. Close Human OS and try again, or keep this session in memory only.',
+          'Kasa dosyası okunamadı: başka bir program onu kullanıyor olabilir ya da kullanıcının onu okuma izni olmayabilir. Dosya değiştirilmedi. Human OS\'u kapatıp tekrar dene ya da bu oturumu yalnız bellekte tut.',
+        )
+      : const {
+          'ENVELOPE_NEWER',
+          'VAULT_NEWER',
+          'RECORD_SCHEMA_NEWER',
+        }.contains(code)
       ? _t(
           'It was written by a newer version of Human OS. Update the app to open it. The file was not changed.',
           'Human OS\'un daha yeni bir sürümüyle yazılmış. Açmak için uygulamayı güncelle. Dosya değiştirilmedi.',
@@ -632,6 +654,10 @@ class S {
           'The vault file is damaged or not a Human OS vault ($code). It was not changed.',
           'Kasa dosyası hasarlı ya da bir Human OS kasası değil ($code). Dosya değiştirilmedi.',
         );
+  String vaultCreatedNotOpened(String code) => _t(
+    'The vault was created, but it could not be opened ($code). Unlock it with the passphrase you just chose.',
+    'Kasa oluşturuldu ama açılamadı ($code). Az önce seçtiğin parolayla kilidini aç.',
+  );
   String gateFailed(String code) => _t(
     'Something went wrong ($code). Nothing was changed.',
     'Bir şey ters gitti ($code). Hiçbir şey değiştirilmedi.',

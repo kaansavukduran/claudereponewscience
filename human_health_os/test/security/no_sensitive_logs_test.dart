@@ -5,6 +5,7 @@
 // flow or failure.
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui' show PlatformDispatcher;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -84,8 +85,11 @@ void main() {
 
   test('only core/redact.dart writes to the console', () {
     final writers = RegExp(
-      r'(^|[^A-Za-z_.])(print|debugPrint|debugPrintStack)\s*\(|'
-      r'\bstd(out|err)\.(write|add)|\bdeveloper\.log\s*\(',
+      r'(^|[^A-Za-z_.])(print|debugPrint\w*)\s*\(|'
+      r'\bstd(out|err)\.(write|add)|\bdeveloper\.log\s*\(|'
+      r'''import\s+['"]dart:developer['"]|'''
+      r'\b(presentError|dumpErrorToConsole)\s*\(|'
+      r'\bZone\.current\.print\s*\(',
       multiLine: true,
     );
     final offenders = [
@@ -105,8 +109,16 @@ void main() {
     for (final sample in [
       "print('x');",
       'debugPrint(x);',
+      'debugPrintThrottled(x);',
+      'debugPrintSynchronously(x);',
+      'debugPrintStack(stackTrace: s);',
       'stderr.write(x);',
       "  developer.log('x');",
+      "import 'dart:developer';",
+      'import "dart:developer" as dev;',
+      'FlutterError.presentError(details);',
+      'FlutterError.dumpErrorToConsole(details);',
+      "Zone.current.print('x');",
     ]) {
       expect(writers.hasMatch(sample), isTrue, reason: sample);
     }
@@ -150,27 +162,45 @@ void main() {
         'records': 3,
         'ok': false,
         'kind': LoadWarningKind.entryMissing,
-        'code': 'VAULT_NEWER',
+        'step': 'switch_vault',
         'analyte': analyte,
         'secret': passphrase,
         'where': path,
         'value': value,
+        'dotted': '92.4',
+        'key': recovery,
+        'key_compact': recovery.replaceAll('-', ''),
+        'record': '00000000-0000-4000-8000-0000000000a1',
+        'code': 'VAULT_NEWER',
       },
     );
     expect(
       line,
       '[hhos] restore_failed error=BackupError(DIGEST_MISMATCH) records=3 '
-      'ok=false kind=entryMissing code=VAULT_NEWER analyte=<redacted> '
-      'secret=<redacted> where=<redacted> value=<redacted>',
+      'ok=false kind=entryMissing step=switch_vault analyte=<redacted> '
+      'secret=<redacted> where=<redacted> value=<redacted> '
+      'dotted=<redacted> key=<redacted> key_compact=<redacted> '
+      'record=<redacted> code=<redacted>',
     );
   });
 
   test('framework and uncaught errors are reported redacted', () async {
     final previousFlutter = FlutterError.onError;
     final out = await captured(() async {
+      final dispatcher = PlatformDispatcher.instance;
+      final previousPlatform = dispatcher.onError;
       installRedactedErrorReporting();
       try {
         expect(FlutterError.onError, same(reportFlutterError));
+        // Uncaught asynchronous errors go through the same redaction.
+        expect(dispatcher.onError, same(reportUncaughtError));
+        expect(
+          dispatcher.onError!(
+            FileSystemException('cannot write $analyte', path),
+            StackTrace.current,
+          ),
+          isTrue,
+        );
         FlutterError.reportError(
           FlutterErrorDetails(
             exception: FormatException('$analyte: $value mg/dL'),
@@ -180,6 +210,7 @@ void main() {
         );
       } finally {
         FlutterError.onError = previousFlutter;
+        dispatcher.onError = previousPlatform;
       }
       expect(
         reportUncaughtError(
@@ -192,6 +223,7 @@ void main() {
     expect(out, contains('[hhos] ui_error error=FormatException'));
     expect(out, contains('library=widgets_library'));
     expect(out, contains('[hhos] uncaught_error error=StateError'));
+    expect(out, contains('[hhos] uncaught_error error=FileSystemException'));
     expectClean(out);
   });
 

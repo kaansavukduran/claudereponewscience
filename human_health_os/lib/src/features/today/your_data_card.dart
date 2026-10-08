@@ -4,6 +4,7 @@ import '../../app/app_services.dart';
 import '../../application/export.dart';
 import '../../data/backup/backup_bundle.dart';
 import '../../data/backup/data_files.dart';
+import '../../core/redact.dart' show errorCode;
 import '../../data/crypto/recovery_key.dart' show RecoveryKeyFormatError;
 import '../../data/local/vault_envelope.dart' show KeyKind;
 import '../../l10n/strings.dart';
@@ -66,12 +67,19 @@ class _YourDataCardState extends State<YourDataCard> {
     } on RecoveryKeyFormatError {
       _message = s.recoveryKeyFormat;
       _messageIsError = true;
-    } catch (_) {
-      _message = s.inputError('SAVE_FAILED');
+    } catch (e) {
+      // A read, write or rename failed outside the restore gate's checks;
+      // nothing was switched (review finding: it used to say "storage").
+      _message = s.dataFileFailed(errorCode(e) ?? e.runtimeType.toString());
       _messageIsError = true;
     } finally {
       if (mounted) setState(() => _busy = false);
     }
+  }
+
+  void _lockAfterRestore() {
+    _s.lockStorage?.call('RESTART_REQUIRED');
+    _s.restartRequired?.value = true;
   }
 
   Future<String> _backup(S s) async {
@@ -190,8 +198,19 @@ class _YourDataCardState extends State<YourDataCard> {
     (String, KeyKind)? key;
     try {
       staged = stageRestore(await _files!.read(f));
-    } on BackupError {
-      staged = null; // _run below reports it
+    } catch (_) {
+      staged = null; // _run below reads it again and reports what failed
+    }
+    if (staged != null && staged.encrypted != _files!.holdsEncryptedVault) {
+      // Refused before any key is asked for or derived (review finding).
+      await _run(
+        (s) async => throw const BackupError(
+          'BACKUP_KIND_MISMATCH',
+          'Not the same kind of vault',
+        ),
+        s,
+      );
+      return;
     }
     if (staged != null && staged.needsKey) {
       if (!mounted) return;
@@ -208,10 +227,15 @@ class _YourDataCardState extends State<YourDataCard> {
           derive: _s.deriveKey,
         );
       }
-      final out = await _files!.restore(st, now: DateTime.now().toUtc());
-      // This session's memory belongs to the replaced file: no more writes.
-      _s.lockStorage?.call('RESTART_REQUIRED');
-      _s.restartRequired?.value = true;
+      final out = await _files!.restore(
+        st,
+        now: DateTime.now().toUtc(),
+        // From the moment the vault file starts to change, this session's
+        // memory no longer matches it: no more writes, even if the switch
+        // fails half-way (review finding).
+        beforeSwitch: _lockAfterRestore,
+      );
+      _lockAfterRestore();
       return st.encrypted
           ? s.restoredEncrypted(out.records, out.keptPrevious)
           : s.restored(out.records, out.keptPrevious);

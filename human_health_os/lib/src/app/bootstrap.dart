@@ -105,8 +105,17 @@ Future<AppStartup> startApp(
 /// Opens storage without a gate (development builds, memory stores). Builds
 /// that keep an encrypted vault must start with [startApp]: they never fall
 /// back to an unexplained memory store.
-Future<AppServices> bootstrap(AppConfig config, HostPlatform platform) async {
-  final choice = await createPlatformRepository(config);
+Future<AppServices> bootstrap(
+  AppConfig config,
+  HostPlatform platform, {
+  Map<String, String>? env,
+  String? executablePath,
+}) async {
+  final choice = await createPlatformRepository(
+    config,
+    env: env,
+    executablePath: executablePath,
+  );
   if (choice.vault != null) {
     throw StateError('This build starts at the vault gate (startApp)');
   }

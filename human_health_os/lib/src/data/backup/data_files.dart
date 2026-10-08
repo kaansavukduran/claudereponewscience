@@ -103,6 +103,10 @@ abstract interface class DataFiles {
   /// True when saved backups can be listed and restored here.
   bool get canRestore;
 
+  /// True when the vault a restore would replace is encrypted. A backup of
+  /// the other kind is refused before any key is asked for.
+  bool get holdsEncryptedVault;
+
   /// Saves [text] and returns a human-readable location.
   Future<String> save(DataFileKind kind, String fileName, String text);
 
@@ -114,8 +118,16 @@ abstract interface class DataFiles {
   /// The last steps of the restore gate (§36.3): write the staged payload
   /// beside the vault, verify the written copy, keep the old vault, switch.
   /// Refuses (`RESTORE_TARGET_HAS_RECORDS`) when the live vault holds
-  /// records: a restore never replaces real history.
-  Future<RestoreOutcome> restore(StagedRestore staged, {required DateTime now});
+  /// records: a restore never replaces real history. [beforeSwitch] runs
+  /// right before the live vault is moved: the session must stop writing
+  /// from then on, whatever happens next. Throws `RESTORE_SWITCH_FAILED`
+  /// when the restored copy cannot be moved into place; the previous vault
+  /// is then put back where it was (or its kept path is reported).
+  Future<RestoreOutcome> restore(
+    StagedRestore staged, {
+    required DateTime now,
+    void Function()? beforeSwitch,
+  });
 }
 
 /// `yyyyMMddTHHmmssZ`, safe in file names on every platform.
@@ -163,6 +175,9 @@ class MemoryDataFiles implements DataFiles {
   bool get canRestore => true;
 
   @override
+  bool get holdsEncryptedVault => target.encrypted;
+
+  @override
   Future<String> save(DataFileKind kind, String fileName, String text) async {
     final id = '${kind.name}/$fileName';
     files[id] = text;
@@ -189,10 +204,12 @@ class MemoryDataFiles implements DataFiles {
   Future<RestoreOutcome> restore(
     StagedRestore staged, {
     required DateTime now,
+    void Function()? beforeSwitch,
   }) async {
     target.checkKind(staged);
     target.refuseIfHolds(vaultText);
     staged.verifyWritten(staged.payload);
+    beforeSwitch?.call();
     kept = vaultText;
     vaultText = staged.payload;
     return RestoreOutcome(

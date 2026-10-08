@@ -4,6 +4,7 @@
 /// with their Forge; until then mobile falls back to memory with a notice.
 library;
 
+import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
@@ -20,7 +21,7 @@ import 'vault_log.dart' show decodeLogBytes;
 
 export 'storage_status.dart';
 
-class FileLogSink implements LogSink {
+class FileLogSink implements LogSink, FirstLineReplaceable {
   FileLogSink(this.file);
 
   final File file;
@@ -38,8 +39,13 @@ class FileLogSink implements LogSink {
     await tmp.rename(file.path);
   }
 
+  /// Appends to the existing log only. A vault file that disappeared (moved
+  /// by a restore that failed half-way, or deleted outside the app) is
+  /// never re-created by an append: that would start a file without a
+  /// header, and later entries would be unreadable (review finding).
   @override
   Future<void> appendLine(String line) async {
+    if (!await file.exists()) throw const StorageWriteRefused('VAULT_MISSING');
     final raf = await file.open(mode: FileMode.append);
     try {
       await raf.writeString('$line\n');
@@ -47,6 +53,21 @@ class FileLogSink implements LogSink {
     } finally {
       await raf.close();
     }
+  }
+
+  /// Replaces line 1 and keeps every byte after the first newline exactly,
+  /// also bytes that are not valid UTF-8; temp file and rename.
+  @override
+  Future<void> replaceFirstLine(String line) async {
+    final bytes = await file.readAsBytes();
+    final cut = bytes.indexOf(0x0A);
+    final out = BytesBuilder(copy: false)
+      ..add(utf8.encode(line))
+      ..addByte(0x0A);
+    if (cut >= 0) out.add(Uint8List.sublistView(bytes, cut + 1));
+    final tmp = File('${file.path}.tmp');
+    await tmp.writeAsBytes(out.takeBytes(), flush: true);
+    await tmp.rename(file.path);
   }
 }
 
@@ -253,6 +274,8 @@ Future<StorageChoice> createPlatformRepository(
       location: file.path,
     ),
     notes: notes,
+    // Opening an encrypted backup derives a key: off the UI thread here too.
+    derive: deriveInIsolate,
     files: FileDataFiles(dataDir: dir, vault: file),
   );
 }

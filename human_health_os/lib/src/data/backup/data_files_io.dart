@@ -13,7 +13,13 @@ class FileDataFiles implements DataFiles {
     required this.dataDir,
     required this.vault,
     this.target = const RestoreTarget.plaintext(),
-  });
+    Future<void> Function(File file, String to)? rename,
+  }) : _rename = rename ?? _renameFile;
+
+  static Future<void> _renameFile(File file, String to) => file.rename(to);
+
+  /// Moves a file (tests replace it to make a step fail).
+  final Future<void> Function(File file, String to) _rename;
 
   final Directory dataDir;
   final File vault;
@@ -28,6 +34,9 @@ class FileDataFiles implements DataFiles {
 
   @override
   bool get canRestore => true;
+
+  @override
+  bool get holdsEncryptedVault => target.encrypted;
 
   @override
   Future<String> save(DataFileKind kind, String fileName, String text) async {
@@ -68,6 +77,7 @@ class FileDataFiles implements DataFiles {
   Future<RestoreOutcome> restore(
     StagedRestore staged, {
     required DateTime now,
+    void Function()? beforeSwitch,
   }) async {
     target.checkKind(staged);
     final live = await vault.exists()
@@ -84,12 +94,34 @@ class FileDataFiles implements DataFiles {
       await restoring.delete();
       rethrow;
     }
+    // From here the file at the vault path changes: this session's memory
+    // no longer matches it, so it stops writing first (review finding).
+    beforeSwitch?.call();
     String? kept;
-    if (await vault.exists()) {
-      kept = '${vault.path}.before-restore-${fileStamp(now)}';
-      await vault.rename(kept);
+    try {
+      if (await vault.exists()) {
+        final aside = '${vault.path}.before-restore-${fileStamp(now)}';
+        await _rename(vault, aside);
+        kept = aside;
+      }
+      await _rename(restoring, vault.path);
+    } catch (_) {
+      // Never leave the vault's place empty: put the previous vault back.
+      if (kept != null && !await vault.exists()) {
+        try {
+          await _rename(File(kept), vault.path);
+          kept = null;
+        } catch (_) {
+          // It stays at [kept]; the message says where.
+        }
+      }
+      try {
+        if (await restoring.exists()) await restoring.delete();
+      } catch (_) {
+        // A leftover copy of the backup is harmless.
+      }
+      throw BackupError('RESTORE_SWITCH_FAILED', kept ?? '');
     }
-    await restoring.rename(vault.path);
     return RestoreOutcome(
       records: staged.manifest.recordCount,
       location: vault.path,

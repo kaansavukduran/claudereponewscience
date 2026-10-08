@@ -37,6 +37,9 @@ class BrowserDataFiles implements DataFiles {
   bool get canRestore => false;
 
   @override
+  bool get holdsEncryptedVault => false;
+
+  @override
   Future<String> save(DataFileKind kind, String fileName, String text) async {
     final blob = _Blob(
       [text.toJS].toJS,
@@ -62,5 +65,6 @@ class BrowserDataFiles implements DataFiles {
   Future<RestoreOutcome> restore(
     StagedRestore staged, {
     required DateTime now,
+    void Function()? beforeSwitch,
   }) => throw UnsupportedError('Restoring in the browser is not built yet');
 }

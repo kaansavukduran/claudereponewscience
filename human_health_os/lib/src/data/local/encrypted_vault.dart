@@ -103,9 +103,16 @@ class EncryptedVault {
   final Clock clock;
   final IdGenerator? ids;
 
-  /// Reads only; never writes.
+  /// Reads only; never writes. A file that exists but cannot be read (a
+  /// lock held by another program, missing permissions) is unreadable
+  /// with `VAULT_READ_FAILED`, so the gate can explain it.
   Future<VaultInspection> inspect() async {
-    final text = await raw.read();
+    final String? text;
+    try {
+      text = await raw.read();
+    } catch (_) {
+      return const VaultInspection(VaultAccess.unreadable, 'VAULT_READ_FAILED');
+    }
     switch (detectStoredVault(text)) {
       case StoredVaultKind.none:
         return const VaultInspection(VaultAccess.create);
@@ -177,8 +184,13 @@ class EncryptedVault {
       kind: KeyKind.recovery,
       derive: derive,
     );
+    // Open and parse first: a vault this app cannot use (written by a newer
+    // app, or damaged) is refused before anything is written (review
+    // finding). Opening an existing vault only reads; the sealed lines do
+    // not change, so the opened state stays valid after the new passphrase.
+    final opened = await _open(sink);
     await sink.changePassphrase(newPassphrase, newKdf: newKdf);
-    return _open(sink);
+    return opened;
   }
 
   bool get canSetAside => setAsideStore != null;

@@ -17,6 +17,7 @@ import 'package:human_health_os/src/data/crypto/vault_crypto.dart';
 import 'package:human_health_os/src/data/local/encrypted_vault.dart';
 import 'package:human_health_os/src/data/local/storage_io.dart';
 import 'package:human_health_os/src/data/local/vault_envelope.dart';
+import 'package:human_health_os/src/domain/ports/health_repository.dart';
 
 const pass = 'Mavi-Kedi 7 Ağaç Lamba!';
 const analyte = 'Açlık kan şekeri';
@@ -279,5 +280,128 @@ void main() {
     final d = (jsonDecode(await backupOf(o)) as Map).cast<String, Object?>();
     (d['manifest']! as Map)['vault_id'] = 'someone-else';
     expect(() => stageRestore(jsonEncode(d)), backupError('VAULT_ID_MISMATCH'));
+  });
+
+  group('review fixes on real files (F006)', () {
+    test('an append never re-creates a vault file that disappeared', () async {
+      final (o, me, _) = await seeded();
+      file.deleteSync();
+      await expectLater(
+        HeartbeatService(o.repository)
+            .recordWeightKg(profileId: me, input: '70'),
+        throwsA(
+          isA<StorageWriteRefused>().having(
+            (e) => e.code,
+            'code',
+            'VAULT_MISSING',
+          ),
+        ),
+      );
+      expect(file.existsSync(), isFalse, reason: 'no headerless file');
+    });
+
+    test('a new passphrase keeps every byte after line 1, also a line that '
+        'does not decode', () async {
+      final (_, _, key) = await seeded();
+      final bytes = file.readAsBytesSync();
+      final newlines = [
+        for (var i = 0; i < bytes.length; i++)
+          if (bytes[i] == 0x0A) i,
+      ];
+      bytes[newlines[2] + 12] = 0xC1; // not valid UTF-8, inside a sealed line
+      file.writeAsBytesSync(bytes);
+      final rest = bytes.sublist(newlines[0] + 1);
+      final opened = await vault().recover(
+        recoveryKey: key,
+        newPassphrase: 'a brand new passphrase',
+      );
+      expect(
+        opened.report.warnings.single.kind,
+        LoadWarningKind.entryUnreadable,
+      );
+      final after = file.readAsBytesSync();
+      expect(after.sublist(after.indexOf(0x0A) + 1), rest);
+      await vault().unlock('a brand new passphrase');
+    });
+
+    Future<
+      (
+        FileDataFiles Function(Future<void> Function(File, String)),
+        StagedRestore,
+        List<int>,
+      )
+    >
+    restoreSetup() async {
+      final (o, _, _) = await seeded();
+      final bundle = await backupOf(o);
+      file.deleteSync();
+      final fresh = await vault().create(
+        passphrase: 'another long passphrase',
+        recoveryKey: newRecoveryKey(),
+      );
+      await HeartbeatService(fresh.repository).ensureSelfProfile();
+      final staged = await unlockStagedRestore(
+        stageRestore(bundle),
+        pass,
+        kind: KeyKind.passphrase,
+      );
+      return (
+        (Future<void> Function(File, String) rename) => FileDataFiles(
+          dataDir: tmp,
+          vault: file,
+          target: RestoreTarget.encrypted(fresh.sink.open),
+          rename: rename,
+        ),
+        staged,
+        file.readAsBytesSync().toList(),
+      );
+    }
+
+    test('a restore whose last move fails: the session stops writing first, '
+        'the previous vault goes back in place (review finding)', () async {
+      final (filesWith, staged, live) = await restoreSetup();
+      var locked = false;
+      final files = filesWith((f, to) async {
+        if (f.path.endsWith('.restoring')) {
+          throw const FileSystemException('held by another program');
+        }
+        await f.rename(to);
+      });
+      await expectLater(
+        files.restore(staged, now: t0, beforeSwitch: () => locked = true),
+        throwsA(
+          isA<BackupError>()
+              .having((e) => e.code, 'code', 'RESTORE_SWITCH_FAILED')
+              .having((e) => e.message, 'kept at', ''),
+        ),
+      );
+      expect(locked, isTrue);
+      expect(file.readAsBytesSync(), live, reason: 'back in place');
+      expect(File('${file.path}.restoring').existsSync(), isFalse);
+      expect(
+        tmp.listSync().where((e) => e.path.contains('before-restore')),
+        isEmpty,
+      );
+    });
+
+    test('when even the move back fails, the previous vault is kept and its '
+        'place is named, never lost', () async {
+      final (filesWith, staged, live) = await restoreSetup();
+      final files = filesWith((f, to) async {
+        if (f.path.endsWith('.restoring') ||
+            f.path.contains('before-restore')) {
+          throw const FileSystemException('held by another program');
+        }
+        await f.rename(to);
+      });
+      try {
+        await files.restore(staged, now: t0, beforeSwitch: () {});
+        fail('the restore should fail');
+      } on BackupError catch (e) {
+        expect(e.code, 'RESTORE_SWITCH_FAILED');
+        expect(e.message, contains('before-restore'));
+        expect(File(e.message).readAsBytesSync(), live);
+      }
+    });
   });
 }

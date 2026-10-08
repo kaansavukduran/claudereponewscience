@@ -11,12 +11,15 @@
 library;
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 
 import '../domain/errors.dart';
 
 final RegExp _code = RegExp(r'^[A-Z][A-Z0-9_]{0,63}$');
-final RegExp _safeWord = RegExp(r'^[A-Za-z0-9_.:-]{1,64}$');
+
+/// Event names, field keys and string field values: lower-case words with
+/// underscores only. Ids (with dashes), recovery keys (upper case), values
+/// (with dots or commas) and paths never match (review hardening).
+final RegExp _safeWord = RegExp(r'^[a-z][a-z0-9_]{0,63}$');
 
 /// `Type(CODE)` for a coded error, `Type` otherwise. Never the message.
 String describeError(Object error) {
@@ -81,8 +84,11 @@ bool reportUncaughtError(Object error, StackTrace stack) {
   return true;
 }
 
-/// Routes framework and uncaught errors through [logEvent].
+/// Routes framework and uncaught errors through [logEvent]. The handler is
+/// set on [PlatformDispatcher.instance] itself: it is the binding's
+/// dispatcher in the app, and the test binding's wrapper drops assignments
+/// to `onError` (flutter_test window.dart), which would hide a regression.
 void installRedactedErrorReporting() {
   FlutterError.onError = reportFlutterError;
-  WidgetsBinding.instance.platformDispatcher.onError = reportUncaughtError;
+  PlatformDispatcher.instance.onError = reportUncaughtError;
 }

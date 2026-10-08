@@ -2,6 +2,7 @@
 // backup, restore through the gate (refused while records exist), lock
 // writes after a restore, and say plainly when a build may not write files.
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -244,14 +245,21 @@ void main() {
     tester.view.physicalSize = const Size(1280, 2600);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
+    final dir = Directory.systemTemp.createTempSync('hhos-f005-staging-');
+    addTearDown(() => dir.deleteSync(recursive: true));
     final startup = await tester.runAsync(
-      () => startApp(staging, HostPlatform.linux),
+      () => startApp(
+        staging,
+        HostPlatform.linux,
+        env: {'HHOS_DATA_DIR': dir.path, 'HOME': dir.path},
+      ),
     );
     await tester.pumpWidget(HumanOsApp.start(startup!));
     await settle(tester);
     await tapKey(tester, 'gate-memory-only');
     expect(find.byKey(const ValueKey('data-not-available')), findsOneWidget);
     expect(find.byKey(const ValueKey('create-backup')), findsNothing);
+    expect(dir.listSync(), isEmpty, reason: 'nothing written anywhere');
   });
 
   testWidgets('browser-like adapter: download only, restore said to be '

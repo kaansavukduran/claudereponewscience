@@ -20,12 +20,13 @@
 library;
 
 import 'dart:convert';
+import 'dart:math' show max;
 import 'dart:typed_data';
 
 import '../../domain/errors.dart';
 import '../crypto/recovery_key.dart';
 import '../crypto/vault_crypto.dart';
-import 'log_repository.dart' show LogSink;
+import 'log_repository.dart' show FirstLineReplaceable, LogSink;
 
 export 'log_repository.dart' show encryptionEnvelopeV1;
 import 'vault_log.dart'
@@ -153,11 +154,14 @@ class EnvelopeHeader {
     return null;
   }
 
+  /// Replaces the slot of [replacement]'s kind, or adds it when the header
+  /// has none (a damaged header must not swallow a new passphrase).
   EnvelopeHeader withSlot(KeySlot replacement) => EnvelopeHeader(
     vaultId: vaultId,
     slots: [
       for (final s in slots)
         if (s.kind == replacement.kind) replacement else s,
+      if (slot(replacement.kind) == null) replacement,
     ],
   );
 
@@ -471,9 +475,20 @@ class EncryptedLogSink implements LogSink {
     try {
       await raw.appendLine(_sealLine(vaultId, seq, line));
     } catch (_) {
-      // Nothing usable was stored under this number; reuse it, so a failed
-      // write is not later reported as a removed entry.
-      _nextSeq = seq;
+      // The outcome is unknown: the line may have landed before a flush or
+      // close failed. Learn it from storage; a number whose line might be
+      // there is never reused (review finding), and a write that stored
+      // nothing does not leave a false "removed entry" behind.
+      var next = seq + 1;
+      try {
+        final stored = await raw.read();
+        if (stored != null) {
+          next = max(seq, openEnvelopeText(stored, _dataKey, vaultId).nextSeq);
+        }
+      } catch (_) {
+        // Storage cannot be read: keep the number used.
+      }
+      _nextSeq = next;
       rethrow;
     }
   }
@@ -496,13 +511,20 @@ class EncryptedLogSink implements LogSink {
       kdf: newKdf(),
     );
     final updated = header.withSlot(slot);
-    final text = (await raw.read())!;
-    final cut = text.indexOf('\n');
-    var rest = cut < 0 ? '' : text.substring(cut + 1);
-    if (rest.endsWith('\n')) rest = rest.substring(0, rest.length - 1);
-    await raw.create(
-      rest.isEmpty ? updated.encode() : '${updated.encode()}\n$rest',
-    );
+    final store = raw;
+    if (store is FirstLineReplaceable) {
+      // Byte for byte after line 1: a damaged line keeps its exact bytes
+      // (review finding: rewriting decoded text destroyed them).
+      await (store as FirstLineReplaceable).replaceFirstLine(updated.encode());
+    } else {
+      final text = (await raw.read())!;
+      final cut = text.indexOf('\n');
+      var rest = cut < 0 ? '' : text.substring(cut + 1);
+      if (rest.endsWith('\n')) rest = rest.substring(0, rest.length - 1);
+      await raw.create(
+        rest.isEmpty ? updated.encode() : '${updated.encode()}\n$rest',
+      );
+    }
     _header = updated;
   }
 }

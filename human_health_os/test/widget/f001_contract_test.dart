@@ -70,6 +70,14 @@ Future<void> go(WidgetTester tester, Finder nav, String label) async {
   await tester.pumpAndSettle();
 }
 
+/// A fresh, empty data folder per test: the real storage policy runs, but
+/// never against the host's own data (review finding).
+Map<String, String> hermeticEnv() {
+  final dir = Directory.systemTemp.createTempSync('hhos-f001-');
+  addTearDown(() => dir.deleteSync(recursive: true));
+  return {'HHOS_DATA_DIR': dir.path, 'HOME': dir.path};
+}
+
 void main() {
   testWidgets('check 1: the app/root widget renders the Human OS shell', (
     tester,
@@ -163,7 +171,7 @@ void main() {
     // Staging starts at the vault gate (F006); the real storage policy only
     // reads, and choosing memory only writes nothing.
     final startup = await tester.runAsync(
-      () => startApp(staging, HostPlatform.linux),
+      () => startApp(staging, HostPlatform.linux, env: hermeticEnv()),
     );
     await tester.pumpWidget(HumanOsApp.start(startup!));
     await tester.pumpAndSettle();
@@ -229,7 +237,7 @@ void main() {
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     final startup = await tester.runAsync(
-      () => startApp(staging, HostPlatform.linux),
+      () => startApp(staging, HostPlatform.linux, env: hermeticEnv()),
     );
     await tester.pumpWidget(HumanOsApp.start(startup!));
     await tester.pumpAndSettle();
@@ -247,7 +255,7 @@ void main() {
 
   test('builds with an encrypted vault never start without the gate', () async {
     await expectLater(
-      bootstrap(staging, HostPlatform.linux),
+      bootstrap(staging, HostPlatform.linux, env: hermeticEnv()),
       throwsA(isA<StateError>()),
     );
   });
@@ -277,7 +285,10 @@ void main() {
       () => Future<void>.delayed(const Duration(milliseconds: 50)),
     );
     await tester.pumpAndSettle();
-    expect(find.textContaining('Not saved: storage failed'), findsOneWidget);
+    expect(
+      find.textContaining('Storage failed: this entry may not be saved'),
+      findsOneWidget,
+    );
     expect(find.byKey(const ValueKey('weight-latest')), findsNothing);
     expect(find.byKey(const ValueKey('weight-saved')), findsNothing);
   });
