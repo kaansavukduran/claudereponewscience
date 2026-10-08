@@ -30,6 +30,7 @@ const analyte = 'Açlık kan şekeri (synthetic)';
 const laboratory = 'Örnek Lab Synthetic';
 const value = '92,4';
 const path = '/home/synthetic-user/.local/share/human-health-os';
+const note = 'Synthetic posture note';
 final recovery = newRecoveryKey();
 
 List<String> get sensitive => [
@@ -45,6 +46,14 @@ List<String> get sensitive => [
   'synthetic-user',
   recovery,
   recovery.replaceAll('-', ''),
+  // F007 measurements: kind codes, a note and typed values. Only strings
+  // that cannot occur by chance in base64 ciphertext ("." "_" ",").
+  note,
+  '84,75',
+  'vital.blood_pressure',
+  'vital.resting_heart_rate',
+  'body.waist_circumference',
+  'systolic_text',
 ];
 
 KdfParams cheap() =>
@@ -259,6 +268,20 @@ void main() {
           laboratory: laboratory,
         ),
       );
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.bloodPressure,
+        input: const MeasurementInput(
+          systolic: '131',
+          diastolic: '87',
+          context: note,
+        ),
+      );
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.waistCircumference,
+        input: const MeasurementInput(value: '84,75'),
+      );
       final errors = <Object>[];
       Future<void> fails(Future<Object?> Function() f) async {
         try {
@@ -282,6 +305,17 @@ void main() {
             notReported: false,
             unit: 'mg/dL',
             sampleDate: '2026-10-03',
+          ),
+        ),
+      );
+      await fails(
+        () => svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.bloodPressure,
+          input: const MeasurementInput(
+            systolic: '87',
+            diastolic: '131',
+            context: note,
           ),
         ),
       );
@@ -310,7 +344,7 @@ void main() {
       for (final w in again.report.warnings) {
         logEvent('load_warning', fields: {'kind': w.kind, 'line': w.line});
       }
-      expect(errors.length, 4);
+      expect(errors.length, 5);
       for (final e in errors) {
         expectClean(describeError(e), where: '$e');
       }
@@ -320,6 +354,7 @@ void main() {
       contains('[hhos] step_failed error=CryptoFailure(NOT_AUTHENTIC)'),
     );
     expect(out, contains('[hhos] load_warning kind=entryUnreadable'));
+    expect(out, contains('[hhos] step_failed error=InputError(BP_ORDER)'));
     expectClean(out);
   });
 

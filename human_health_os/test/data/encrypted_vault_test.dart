@@ -17,6 +17,7 @@ import 'package:human_health_os/src/data/local/storage_io.dart';
 import 'package:human_health_os/src/data/local/vault_envelope.dart';
 import 'package:human_health_os/src/data/local/vault_log.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
+import 'package:human_health_os/src/domain/records/health_record.dart';
 
 const pass = 'Mavi-Kedi 7 Ağaç Lamba!';
 const analyte = 'Açlık kan şekeri';
@@ -242,6 +243,49 @@ void main() {
         (await repo.records(me)).map((r) => r.id),
       );
       expect(again.repository.description.vaultId, repo.description.vaultId);
+    });
+
+    test('measurements (F007) leave no kind code, note or typed value in '
+        'the file', () async {
+      final raw = MemoryLogSink();
+      final (me, _) = await seed(vaultOn(raw));
+      final o = await vaultOn(raw).unlock(pass);
+      final svc = HeartbeatService(o.repository);
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.bloodPressure,
+        input: const MeasurementInput(
+          systolic: '131',
+          diastolic: '87',
+          context: 'sitting, left arm',
+        ),
+      );
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.waistCircumference,
+        input: const MeasurementInput(value: '84,75'),
+      );
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.restingHeartRate,
+        input: const MeasurementInput(value: '57'),
+      );
+      final text = raw.text!;
+      for (final s in [
+        'vital.blood_pressure',
+        'vital.resting_heart_rate',
+        'body.waist_circumference',
+        'blood_pressure',
+        'systolic_text',
+        'sitting, left arm',
+        '84,75',
+        'mmHg',
+      ]) {
+        expect(text, isNot(contains(s)), reason: s);
+      }
+      final again = await vaultOn(raw).unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      expect(await again.repository.records(me), hasLength(6));
     });
 
     test('the file holds no plaintext, no secret and only the header fields '
