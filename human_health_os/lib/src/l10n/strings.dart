@@ -144,7 +144,7 @@ class S {
     // that failed afterwards), so the text promises nothing either way.
     'SAVE_FAILED' => _t(
       'Storage failed: this entry may not be saved. Try again; if it later shows up twice, mark one copy entered in error.',
-      'Depolama hata verdi: bu giriş kaydedilmemiş olabilir. Tekrar dene; daha sonra iki kez görünürse birini hatalı giriş olarak işaretle.',
+      'Depolama hata verdi: bu giriş kaydedilmemiş olabilir. Tekrar dene; daha sonra iki kez görünürse birini yanlışlıkla girildi olarak işaretle.',
     ),
     _ => _t('This value could not be saved.', 'Bu değer kaydedilemedi.'),
   };
