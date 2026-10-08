@@ -1,0 +1,88 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-F006-0005",
+  "kind": "RUNTIME",
+  "forge_id": "F006@v0.32",
+  "source_revision": "98ac39e279a87ee759d313a6d819b127e06e4c6f",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env HOME=/tmp/claude-0/f006b/linux/empty-home LANG=C.UTF-8 xvfb-run -a -s '-screen 0 1280x900x24' tools/linux/launch_smoke.sh f006b-prod-first-start reports/runtime/linux-f006 /tmp/claude-0/f006b/linux/empty-home -- human_health_os/build/linux/x64/release/bundle/human_health_os",
+  "argv": [
+    "env",
+    "HOME=/tmp/claude-0/f006b/linux/empty-home",
+    "LANG=C.UTF-8",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x900x24",
+    "tools/linux/launch_smoke.sh",
+    "f006b-prod-first-start",
+    "reports/runtime/linux-f006",
+    "/tmp/claude-0/f006b/linux/empty-home",
+    "--",
+    "human_health_os/build/linux/x64/release/bundle/human_health_os"
+  ],
+  "cwd": ".",
+  "started_at": "2026-10-08T14:55:13.514Z",
+  "finished_at": "2026-10-08T14:55:25.728Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v80 x86_64",
+  "summary": "# result: PASS",
+  "log_sha256": "d014bd1155e814010c7d109f7bca5990ce9d773797eb235d4dbf80303a863d03",
+  "log_lines": 16,
+  "log_tail": [
+    "libEGL warning: DRI3 error: Could not get DRI3 device",
+    "libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering",
+    "",
+    "(org.humanhealthos.HumanHealthOS:13481): Atk-CRITICAL **: 14:55:13.754: atk_socket_embed: assertion 'plug_id != NULL' failed",
+    "[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).",
+    "",
+    "** (org.humanhealthos.HumanHealthOS:13481): CRITICAL **: 14:55:14.204: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed",
+    "# liveness: alive after 12 s",
+    "# screenshot: f006b-prod-first-start.png",
+    "# app files under watched dir: unchanged",
+    "# mesa shader cache files (driver, not app data): 90",
+    "# result: PASS"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/linux/launch_smoke.sh"
+  ],
+  "target": "linux",
+  "arch": "x86_64",
+  "profile": "production",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f006/f006b-prod-first-start.log",
+      "type": "file",
+      "bytes": 987,
+      "sha256": "d014bd1155e814010c7d109f7bca5990ce9d773797eb235d4dbf80303a863d03"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f006/f006b-prod-first-start.png",
+      "type": "file",
+      "bytes": 45078,
+      "sha256": "7e9f5e0a77d41395f8a657bead5b72d4739acc64c8ae096a8fe6a4cc3110b7a2"
+    },
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/linux/x64/release/bundle/lib/libapp.so",
+      "type": "file",
+      "bytes": 6407048,
+      "sha256": "ebd00c2618d7f44c63367d52d77132f8a6082dd6cf7562ec9be9c898ed18fbcd"
+    }
+  ]
+}

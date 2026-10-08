@@ -1,0 +1,54 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F006-0010",
+  "kind": "TEST",
+  "forge_id": "F006@v0.32",
+  "source_revision": "98ac39e279a87ee759d313a6d819b127e06e4c6f",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter pub get",
+  "argv": [
+    "flutter",
+    "pub",
+    "get"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-10-08T14:51:37.543Z",
+  "finished_at": "2026-10-08T14:51:38.010Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v80 x86_64",
+  "summary": null,
+  "log_sha256": "dee414d73d5ef5178a95927d15f5721c48aa0e44575e0f3e3206da477a400bd1",
+  "log_lines": 13,
+  "log_tail": [
+    "   We strongly recommend running the flutter tool without superuser privileges.",
+    "  /",
+    "\ud83d\udcce",
+    "Resolving dependencies...",
+    "Downloading packages...",
+    "  material_color_utilities 0.13.0 (0.13.1 available)",
+    "  meta 1.18.3 (1.19.0 available)",
+    "  test_api 0.7.12 (0.7.14 available)",
+    "  vector_math 2.4.0 (2.4.3 available)",
+    "Got dependencies!",
+    "4 packages have newer versions incompatible with dependency constraints.",
+    "Try `flutter pub outdated` for more information."
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
