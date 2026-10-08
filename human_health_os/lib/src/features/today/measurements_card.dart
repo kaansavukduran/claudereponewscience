@@ -74,6 +74,7 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
       _errorCode = null;
       _errorField = null;
       _justSaved = false;
+      _checkpoint = null;
     });
     try {
       await _svc.recordMeasurement(
@@ -339,9 +340,19 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(child: Text(_meta(s, r), style: text.bodySmall)),
+                      Expanded(
+                        flex: 3,
+                        child: Text(_meta(s, r), style: text.bodySmall),
+                      ),
                       const SizedBox(width: 8),
-                      Text(measurementValue(s, r), style: text.bodyMedium),
+                      Flexible(
+                        flex: 2,
+                        child: Text(
+                          measurementValue(s, r),
+                          textAlign: TextAlign.end,
+                          style: text.bodyMedium,
+                        ),
+                      ),
                     ],
                   ),
                 ),

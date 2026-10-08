@@ -89,23 +89,27 @@ class TodayScreen extends StatelessWidget {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      StatusChip(
-                        label: switch (c.status) {
-                          CapabilityStatus.available => s.available,
-                          CapabilityStatus.notImplemented => s.notImplemented,
-                          CapabilityStatus.notRequired => s.notRequired,
-                          CapabilityStatus.off => s.savingOff,
-                          CapabilityStatus.unsupportedOnPlatform =>
-                            s.unsupported,
-                        },
-                        tone: switch (c.status) {
-                          CapabilityStatus.available => StatusTone.ok,
-                          CapabilityStatus.notImplemented => StatusTone.muted,
-                          CapabilityStatus.notRequired => StatusTone.ok,
-                          CapabilityStatus.off => StatusTone.info,
-                          CapabilityStatus.unsupportedOnPlatform =>
-                            StatusTone.info,
-                        },
+                      // May wrap: at 320 dp with 2x text a fixed chip
+                      // overflowed the row (found by the F007 layout test).
+                      Flexible(
+                        child: StatusChip(
+                          label: switch (c.status) {
+                            CapabilityStatus.available => s.available,
+                            CapabilityStatus.notImplemented => s.notImplemented,
+                            CapabilityStatus.notRequired => s.notRequired,
+                            CapabilityStatus.off => s.savingOff,
+                            CapabilityStatus.unsupportedOnPlatform =>
+                              s.unsupported,
+                          },
+                          tone: switch (c.status) {
+                            CapabilityStatus.available => StatusTone.ok,
+                            CapabilityStatus.notImplemented => StatusTone.muted,
+                            CapabilityStatus.notRequired => StatusTone.ok,
+                            CapabilityStatus.off => StatusTone.info,
+                            CapabilityStatus.unsupportedOnPlatform =>
+                              StatusTone.info,
+                          },
+                        ),
                       ),
                     ],
                   ),
