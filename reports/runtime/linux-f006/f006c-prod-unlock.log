@@ -1,0 +1,28 @@
+# f006c-prod-unlock 2026-10-08T21:19:28Z
+# host: Ubuntu 24.04.5 LTS, x86_64
+# display: DISPLAY=:100
+# command: human_health_os/build/linux/x64/release/bundle/human_health_os
+# vault sha256 before: 404df315aa514c41ae3c536b67d548c9beaa4431d5ed140733b82e1ac4def501
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(org.humanhealthos.HumanHealthOS:2828): Atk-CRITICAL **: 21:19:28.922: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+
+** (org.humanhealthos.HumanHealthOS:2828): CRITICAL **: 21:19:29.321: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed
+# screenshot: f006c-prod-unlock-locked.png
+[hhos] vault_unlock_failed error=CryptoFailure(NOT_AUTHENTIC)
+# screenshot: f006c-prod-unlock-wrong.png
+# step: wrong passphrase refused
+[hhos] vault_unlocked warnings=0
+# screenshot: f006c-prod-unlock-unlocked.png
+# step: right passphrase opened the vault
+# liveness: alive
+# vault sha256 after: 404df315aa514c41ae3c536b67d548c9beaa4431d5ed140733b82e1ac4def501
+# vault file: unchanged
+# vault header: hhos-vault-enc v1
+# files: <home>/.local/share/human-health-os/vault.hhosvault 
+# data folder: only the vault
+# passphrase in output: no
+# passphrase in output: no
+# result: PASS

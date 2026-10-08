@@ -8,7 +8,7 @@ Status: **SPECIFIED** (plan), with the parts listed under "Implemented" built an
 - **Key states:** no vault (create, or memory only) · locked · wrong passphrase · recovery (recovery key + new passphrase) · key lost (explained: nobody can decrypt it; never opened, reset or deleted; a new vault keeps the old file aside) · unreadable (newer or damaged; untouched).
 - **Backups** of an encrypted vault are the envelope byte for byte; restore requires the backup's own key and checks the content before switching.
 - **Logging** goes through `core/redact.dart` only (type + code, safe fields); Flutter and platform errors are routed there.
-- **Not built:** OS key stores as a convenience unlock (G-13), encrypted browser storage (G-32), passphrase change and data-key rotation (G-33), export for encrypted vaults (G-34), rollback detection (G-35), app lock (G-36), key slots authenticated as a set (G-39).
+- **Not built:** OS key stores as a convenience unlock (G-13), encrypted browser storage (G-32), passphrase change and data-key rotation (G-33), export for encrypted vaults (G-34), rollback detection (G-35), app lock (G-36), key slots authenticated as a set (G-39), a single-instance lock for the unlocked vault (G-40).
 
 ## Assets
 

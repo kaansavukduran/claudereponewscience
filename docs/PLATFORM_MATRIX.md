@@ -31,20 +31,20 @@ Checked 2026-10-06 in the cloud container: Ubuntu 24.04.5 x86_64, Flutter 3.47.6
 | Durable local storage (F006, staging/production/portable, **encrypted**) | no (memory + notice) | no (memory + notice) | no: memory only (G-32) | `%LOCALAPPDATA%` or `UserData\` beside the EXE (not compiled here) | Application Support (not compiled here) | `$XDG_DATA_HOME/human-health-os/vault.hhosvault` or `UserData/` beside the binary (tested) |
 | Background work | WorkManager | limited BGTasks | none | none | limited | none |
 
-## Cross-platform parity (v0.31 §38), implementation reality on 2026-10-06
+## Cross-platform parity (v0.31 §38), implementation reality on 2026-10-08
 
 States: REQUIRED (target), SUPPORTED, PARTIAL, UNSUPPORTED_BY_PLATFORM, BLOCKED_ENVIRONMENT, NOT_IMPLEMENTED, NOT_TESTED.
 
 | Capability | Android | iOS | Web | Windows | macOS | Linux |
 |---|---|---|---|---|---|---|
 | Shell + navigation | NOT_TESTED (BLOCKED_ENVIRONMENT) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (runtime smoke) | NOT_TESTED (BLOCKED_BY_HOST_OS) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (launch + integration test, Ubuntu 24.04) |
-| Core local records | NOT_IMPLEMENTED (memory only) | NOT_IMPLEMENTED (memory only) | PARTIAL (dev builds, unencrypted localStorage) | PARTIAL (dev builds, unencrypted; not compiled here) | PARTIAL (dev builds, unencrypted; not compiled here) | PARTIAL (dev builds, unencrypted, tested) |
-| Timeline | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
-| Labs | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
+| Core local records | NOT_IMPLEMENTED (memory only) | NOT_IMPLEMENTED (memory only) | PARTIAL (development builds only, unencrypted localStorage; other builds memory only, G-32) | NOT_TESTED (BLOCKED_BY_HOST_OS; same Dart code: encrypted vault, development log) | NOT_TESTED (BLOCKED_BY_HOST_OS; same Dart code) | SUPPORTED (encrypted vault for staging/production/portable, development log labelled unencrypted; EV-TEST-F006-0024, EV-RUNTIME-F006-0009) |
+| Timeline | NOT_TESTED (BLOCKED_ENVIRONMENT) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (F003, smoke EV-RUNTIME-F003-0001; again in EV-RUNTIME-F006-0007) | NOT_TESTED (BLOCKED_BY_HOST_OS) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (F003, EV-TEST-F003-0006, EV-RUNTIME-F003-0002; again in EV-TEST-F006-0024) |
+| Labs | NOT_TESTED (BLOCKED_ENVIRONMENT) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (F004, smoke EV-RUNTIME-F004-0001; again in EV-RUNTIME-F006-0007) | NOT_TESTED (BLOCKED_BY_HOST_OS) | NOT_TESTED (BLOCKED_BY_HOST_OS) | SUPPORTED (F004, EV-TEST-F004-0006, EV-RUNTIME-F004-0002; again in EV-TEST-F006-0024) |
 | Offline deterministic core | REQUIRED | REQUIRED | SUPPORTED (0 network requests in smoke) | REQUIRED | REQUIRED | SUPPORTED (no network code; architecture test) |
 | Health Connect | NOT_IMPLEMENTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
 | HealthKit | UNSUPPORTED_BY_PLATFORM | NOT_IMPLEMENTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_IMPLEMENTED (conditional) | UNSUPPORTED_BY_PLATFORM |
-| Encrypted / portable vault | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED (G-32) | IMPLEMENTED (not compiled here) | IMPLEMENTED (not compiled here) | INTEGRATION_TESTED + RUNTIME_TESTED (F006) |
+| Encrypted / portable vault | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED (G-32) | IMPLEMENTED (not compiled here) | IMPLEMENTED (not compiled here) | INTEGRATION_TESTED (EV-TEST-F006-0024) + RUNTIME_TESTED (EV-RUNTIME-F006-0008, EV-RUNTIME-F006-0009; Ubuntu 24.04, X11) |
 | Native notifications | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
 | PWA install | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_TESTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
 

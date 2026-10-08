@@ -1,0 +1,64 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F006-0024",
+  "kind": "TEST",
+  "forge_id": "F006@v0.32",
+  "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env LANG=C.UTF-8 timeout 900 xvfb-run -a -s '-screen 0 1280x1024x24' flutter test integration_test -d linux",
+  "argv": [
+    "env",
+    "LANG=C.UTF-8",
+    "timeout",
+    "900",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x1024x24",
+    "flutter",
+    "test",
+    "integration_test",
+    "-d",
+    "linux"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-10-08T21:17:59.996Z",
+  "finished_at": "2026-10-08T21:18:43.115Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v80 x86_64",
+  "summary": "00:11 +7: All tests passed!",
+  "log_sha256": "b5bf3cd2121a4e156abb16d0d45034afb9935ed54cc066a3f0de8de4b784b2f5",
+  "log_lines": 19,
+  "log_tail": [
+    "00:00 +0: save weight \u2192 relaunch on the same file vault \u2192 same record",
+    "00:02 +1: F002: a pre-F002 Linux vault in HumanHealthOS/ moves to human-health-os/ and opens with the same vault, profile and record",
+    "00:02 +2: F003: a correction and a withdrawal survive a relaunch on the real file vault (append-only)",
+    "00:03 +3: F004: a lab result keeps every printed field across a relaunch on the real file vault",
+    "00:04 +4: F005 restore drill: backup -> lose the vault -> fresh start -> restore -> relaunch shows the same records",
+    "00:05 +5: F006: a production build starts at the vault gate, creates the encrypted vault (production key cost, in an isolate), and after a relaunch refuses a wrong passphrase and opens with the right one",
+    "[hhos] vault_created warnings=0",
+    "[hhos] vault_unlock_failed error=CryptoFailure(NOT_AUTHENTIC)",
+    "[hhos] vault_unlocked warnings=0",
+    "00:09 +6: F006 on real files: recovery replaces the passphrase; key loss keeps the locked vault aside; a portable vault lives in UserData/ and keeps its identity when the folder moves",
+    "00:11 +7: (tearDownAll)",
+    "00:11 +7: All tests passed!"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

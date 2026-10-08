@@ -3,77 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F006",
-    "contract": "v0.32",
-    "run_id": "F006@v0.32",
-    "goal": "Local security hardening: reviewed secret/key abstraction, installed and portable desktop vault protection, redacted logs; exit: sensitive-data logging tests, key-loss/recovery states defined, no plaintext fallback (master §39 F006, §10, §11, §37; v0.24 key loss, DR-09)",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "b1aeae6",
-    "started_at": "2026-10-07T18:15:00Z",
-    "scope": [
-      "pointycastle review D-016; Argon2id + ChaCha20-Poly1305 with known-answer tests",
-      "encrypted vault envelope hhos-vault-enc v1 around the unchanged logical log",
-      "passphrase + recovery key; key states and the unlock gate (EN/TR)",
-      "staging/production/portable desktop builds persist only encrypted; web non-development stays memory-only",
-      "encrypted backups and restore with the backup's key",
-      "central redaction, error handlers, sensitive-data logging tests"
-    ],
-    "out_of_scope": [
-      "encrypted browser storage (measured: pointycastle Poly1305 fails under dart2js; Argon2id 7.4 s in V8)",
-      "OS keyring convenience unlock (master §11: convenience only)",
-      "data-key rotation and app auto-lock",
-      "mobile storage adapters (path_provider)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Reviewed crypto (D-016): pointycastle 4.0.0; Argon2id v1.3 (m=19456 KiB, t=2, p=1) and ChaCha20-Poly1305 (RFC 8439); RFC 8439 §2.8.2 and RFC 9106 §5.3 known answers pass; production cost parameters asserted; no custom primitives",
-      "AC-2 Envelope hhos-vault-enc v1: a random data key seals every line of the unchanged format-1 log (decrypted text identical to the plaintext log); the key is stored only wrapped by a passphrase key and a recovery key; the file holds no plaintext health data, passphrase, recovery key or unwrapped key (byte scan)",
-      "AC-3 Integrity: each entry is bound to its vault and position; a changed, moved, copied-in or missing entry is skipped with a visible warning, never applied; a torn last write is closed before the next; a newer or unreadable envelope is refused and left untouched",
-      "AC-4 Key states defined and tested: NO_VAULT (create with confirmed passphrase and a recovery key shown once, or memory only), LOCKED, WRONG_PASSPHRASE, RECOVERY (recovery key + new passphrase; the old passphrase stops opening the file), KEY_LOST (no false promise; never opened, reset or deleted; a new vault keeps the locked file aside), UNREADABLE (memory only, file untouched)",
-      "AC-5 No plaintext fallback: staging/production/portable desktop builds persist only through the encrypted vault; a failed unlock or create writes nothing and never opens a plaintext store; web non-development builds stay memory-only; development keeps the labelled plaintext log",
-      "AC-6 Encrypted backups carry the envelope byte for byte; restore verifies the backup's passphrase or recovery key before switching; plaintext and encrypted backups never cross into the other kind of vault; export is not offered for encrypted vaults",
-      "AC-7 Redaction (§37): one central renderer for errors and log events (type + code, safe fields); Flutter, platform and startup errors go through it; synthetic sensitive strings never appear in captured output, error screens, the vault file or a backup",
-      "AC-8 Linux: integration test with real files (create, save, relaunch, unlock, recovery, key lost); production-profile release build launches to the vault gate and writes no plaintext",
-      "AC-9 Key derivation runs off the UI thread on native; dependency added after a recorded review; dart:io confinement holds",
-      "AC-10 Regression: F001-F005 gates pass; mutations each fail the intended test"
-    ],
-    "completed_steps": [
-      "SPECIFY: AC-1..AC-10; web crypto measured (Poly1305 unsupported under dart2js, Argon2id 7.4 s in V8)",
-      "IMPLEMENT: vault_crypto + recovery_key (D-016), vault_envelope (hhos-vault-enc v1), encrypted_vault (create/unlock/recover/set aside), storage policy (encrypted for staging/production/portable desktop), vault gate UI EN/TR, encrypted backups + restore with the backup key, export off for encrypted vaults, core/redact.dart + error handlers",
-      "TEST: vault_crypto (RFC 8439, RFC 9106, argon2-cffi cross-check), encrypted_vault, encrypted_backup, vault gate widget, sensitive-data logging, encrypted fixture enc_v1_f006; 252 unit/widget + 7 Linux integration pass",
-      "REPAIR (test): a two-digit '73' substring check failed in about half the runs (random ciphertext); replaced by strings that cannot occur by chance",
-      "REPAIR (product): after a wrong passphrase the field lost its focus on Linux (the platform closes the input connection while the key is derived); the field is cleared and refocused; found by the Linux integration test",
-      "IMPLEMENT: redacted gate events (vault_created, vault_unlocked, vault_recovered, vault_set_aside, session_memory_only and *_failed with error type and code only), used by the keyboard-driven Linux runtime smoke",
-      "REPAIR (product): an envelope without any entry was taken for a new, empty vault (refused with a StateError, nothing written); now reported as a missing log header, so the gate shows the unreadable state; found by a new widget test",
-      "REPAIR (product): a vault whose inner log is newer or damaged showed a generic error on the unlock screen; now the unreadable state, and data from a newer app is never offered to be set aside",
-      "MUTATION: S1-S16 caught at 87c00ec (S13 rewritten as a behavioural mutation after a compile error in the first version)",
-      "REVIEW: first adversarial review run (4 finders) stopped by the session limit before any finding; rerun on b1aeae6..c69dadf as workflow wf_630e488a-5de (4 lenses find, 4 skeptics refute, 8 agents): 15 confirmed reports = 11 distinct findings (2 major after verification), 6 refuted",
-      "REPAIR (product, review, major): recovery rewrote the passphrase slot before the inner log was checked, so a newer or damaged vault was left modified while the gate said it was not changed; recovery now opens and parses first",
-      "REPAIR (product, review, major): a restore that failed after the live vault was moved left the session writable and its next save created a headerless file; the session stops writing before the switch, a failed switch puts the previous vault back (or names where it is kept, RESTORE_SWITCH_FAILED), and appends never re-create a missing vault file (VAULT_MISSING)",
-      "REPAIR (product, review): a failed append whose bytes landed reused its sequence number and hid the next saved entry; the number is resynced from storage; the SAVE_FAILED text no longer says nothing changed",
-      "REPAIR (product, review): a new passphrase rewrote the file from decoded text and destroyed damaged bytes; line 1 is replaced at byte level; recovery adds a missing passphrase slot (set authentication of the slots stays open as G-39)",
-      "REPAIR (product, review): development builds asked for an encrypted backup's key before refusing it by kind; a backup that could not be read made a confirmed restore do nothing; a vault that could not be read at startup ended on the startup-error screen (now VAULT_READ_FAILED, kept in place); the gate said nothing changed after create had written the vault; the entry-missing warning claimed the other entries were intact",
-      "REPAIR (test, review): the F001/F005 staging tests ran against the host's real data folder (now a temporary HHOS_DATA_DIR, asserted empty); a test now checks that uncaught platform errors reach the redactor (the test binding drops onError assignments, so the handler is set on PlatformDispatcher.instance); redaction keeps only lower-case code words for string fields; the console-writer guard covers more writers",
-      "REPAIR (product, own finding): the restore read the backup twice, and the restart texts promised restored data after a switch that failed; one read, neutral texts",
-      "TEST: regression tests for every finding at data, file and widget level; vault_unlock_smoke.sh hardened (fixed-string passphrase search, the data folder holds only the vault, line 1 is the envelope header; checked to FAIL on a plaintext vault with an extra file); 268 unit/widget + 7 Linux integration pass at 82c9523",
-      "MUTATION: S17-S30 (one per review fix) and S31 (the restore's single read) caught; S1-S16 re-run on the same code, all caught (31/31)",
-      "GATES (history): first run EV-*-F006-0001..0009 on 795212b, 14 PASS, stale after the fix round",
-      "REVIEW (fix round): workflow wf_d07eadb1-87a over c69dadf..82c9523 (3 lenses read the diff from git while mutations ran; skeptics for the 6 most severe; 9 agents): 10 reports = 6 distinct findings; FIXES-1 (two windows on one vault) verified real and major, HONESTY-1 (a stored-nothing append still used up its number) verified real (minor); 4 verifications did not run (session limit); all 6 fixed anyway",
-      "REPAIR (product, fix round): a write refused before anything is stored keeps its sequence number (VAULT_MISSING, VAULT_WRITE_REFUSED); after an unknown outcome the next append learns the number from storage; the missing-entry text no longer asserts removal",
-      "REPAIR (product, fix round, major): before each append the encrypted sink compares the stored size and learns the next number from storage, so a second window of the app cannot hide saved entries; a vault replaced by another window is never appended to (VAULT_CHANGED); single-instance lock open as G-40",
-      "REPAIR (product, fix round): a restore that moved no file says nothing changed (RESTORE_NOT_SWITCHED); the gate decides from what a step wrote (created, new passphrase stored), not from a re-read; Flutter's default library name stays readable in redacted logs; the Turkish save-failure text names the real action",
-      "MUTATION: S32-S38 caught at e2463a6; all 38 run at 98ac39e: 36 caught, S18 (a store without size) and S28 (a failure inside create after the write) not caught; two tests added, both now caught (38/38)",
-      "GATES (history): second run EV-*-F006-0010..0018 on 98ac39e, 14 PASS, stale after the two added tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "GATES (third run), then close",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -84,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F005@v0.32 (2026-10-07, source revision c878b1bf4521)",
+  "last_completed_forge": "F006@v0.32 (2026-10-08, source revision 9b8217dfb794)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -96,94 +28,101 @@
   },
   "verified_gates": [
     {
-      "gate": "flutter pub get (crypto ^3.0.7 added, D-015)",
-      "evidence_id": "EV-TEST-F005-0010",
+      "gate": "flutter pub get (pointycastle 4.0.0 added, D-016)",
+      "evidence_id": "EV-TEST-F006-0019",
       "criterion": "AC-9",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F005-0011",
+      "evidence_id": "EV-TEST-F006-0020",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F005-0012",
+      "evidence_id": "EV-TEST-F006-0021",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
-      "gate": "flutter test (193: backup, export, Your data, review regressions, F001-F004 suites)",
-      "evidence_id": "EV-TEST-F005-0013",
-      "criterion": "AC-1..AC-7, AC-9",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "gate": "flutter test (crypto known answers, envelope integrity, key states, encrypted backups, vault gate, sensitive-data logging, review regressions, F001-F005 suites)",
+      "evidence_id": "EV-TEST-F006-0022",
+      "criterion": "AC-1..AC-7, AC-9, AC-10",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
-      "gate": "evidence tooling unit tests (16)",
-      "evidence_id": "EV-TEST-F005-0014",
+      "gate": "evidence and state tooling unit tests",
+      "evidence_id": "EV-TEST-F006-0023",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development)",
-      "evidence_id": "EV-BUILD-F005-0003",
+      "evidence_id": "EV-BUILD-F006-0005",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
-      "gate": "web runtime smoke incl. a backup downloaded in Chromium with a matching checksum",
-      "evidence_id": "EV-RUNTIME-F005-0003",
+      "gate": "web runtime smoke (development: Today, Timeline, Labs, backup download; no console errors)",
+      "evidence_id": "EV-RUNTIME-F006-0007",
+      "criterion": "AC-10",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "result": "PASS"
+    },
+    {
+      "gate": "integration_test on Linux with real files (production vault: create, save, relaunch, unlock; recovery; key lost; F002-F005 drills)",
+      "evidence_id": "EV-TEST-F006-0024",
+      "criterion": "AC-4, AC-5, AC-8",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "result": "PASS"
+    },
+    {
+      "gate": "flutter build linux --release (production profile)",
+      "evidence_id": "EV-BUILD-F006-0006",
       "criterion": "AC-8",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
-      "gate": "integration_test on Linux incl. the restore drill (lose the vault, fresh start, restore, relaunch)",
-      "evidence_id": "EV-TEST-F005-0015",
-      "criterion": "AC-3",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "gate": "Linux production first start on an empty home: vault gate, nothing written (Ubuntu 24.04, Xvfb X11)",
+      "evidence_id": "EV-RUNTIME-F006-0008",
+      "criterion": "AC-5, AC-8",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
-      "gate": "flutter build linux --release (development)",
-      "evidence_id": "EV-BUILD-F005-0004",
+      "gate": "Linux production unlock by keyboard on the encrypted fixture: wrong passphrase refused, right one opens, vault unchanged, only the vault in the data folder, no passphrase in the output",
+      "evidence_id": "EV-RUNTIME-F006-0009",
+      "criterion": "AC-4, AC-7, AC-8",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "result": "PASS"
+    },
+    {
+      "gate": "flutter test with TZ=America/New_York",
+      "evidence_id": "EV-TEST-F006-0025",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
-      "result": "PASS"
-    },
-    {
-      "gate": "Linux launch smoke (Ubuntu 24.04, Xvfb X11)",
-      "evidence_id": "EV-RUNTIME-F005-0004",
-      "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter test with TZ=America/New_York (193)",
-      "evidence_id": "EV-TEST-F005-0018",
-      "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
       "gate": "golden-vector contract check",
-      "evidence_id": "EV-TEST-F005-0016",
+      "evidence_id": "EV-TEST-F006-0026",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     },
     {
-      "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F005-0017",
+      "gate": "pnpm test (TS reference, Build Lab)",
+      "evidence_id": "EV-TEST-F006-0027",
       "criterion": "AC-10",
-      "source_revision": "c878b1bf4521b5c76b7fd50d593c1d1d348e89a4",
+      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
       "result": "PASS"
     }
   ],
@@ -216,12 +155,13 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "F006",
+    "forge_id": "F007",
     "contract": "v0.32",
-    "run_id": "F006@v0.32",
-    "why": "master §39 ladder: local security hardening (reviewed key abstraction, encrypted vault for staging/production/portable, key-loss/recovery states, redacted logs, no plaintext fallback); last MVP Forge (D-014)"
+    "run_id": "F007@v0.32",
+    "slice": "measurements",
+    "why": "master §39 ladder after the MVP (D-014, F002-F006 closed): daily domains, one bounded slice per Forge; the first slice is measurements beyond body weight on the same canonical record, timeline, correction lineage and encrypted vault"
   },
-  "updated_at": "2026-10-08T08:08:45Z",
+  "updated_at": "2026-10-08T21:21:19Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -247,20 +187,24 @@
     "web": {
       "status": "RUNTIME_TESTED",
       "evidence": [
-        "EV-BUILD-F005-0003",
-        "EV-RUNTIME-F005-0003"
+        "EV-BUILD-F006-0005",
+        "EV-RUNTIME-F006-0007"
       ],
-      "note": "development profile, offline build (--no-web-resources-cdn); Chromium 141 headless; PWA install NOT_TESTED"
+      "note": "development profile, offline build (--no-web-resources-cdn); Chromium headless; other web profiles memory-only (G-32); PWA install NOT_TESTED"
     },
     "linux": {
-      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: launch + integration_test incl. restore drill; EV-BUILD-F005-0004, EV-RUNTIME-F005-0004, EV-TEST-F005-0015)",
+      "status": "RUNTIME_TESTED (Ubuntu 24.04, Xvfb X11: production-profile first start at the vault gate with nothing written, keyboard unlock on the encrypted fixture, integration_test with real files; EV-BUILD-F006-0006, EV-RUNTIME-F006-0008, EV-RUNTIME-F006-0009, EV-TEST-F006-0024)",
       "product_surface": true,
       "packaged": "F015-L1 IN_PROGRESS_RECOVERABLE: tar.zst, deb, rpm, AppImage built (UNSIGNED); Ubuntu 24.04 install/launch PASS; Ubuntu 22.04 FAIL (libGLESv2 dependency); Flatpak NOT_BUILT; see reports/artifacts/forge-f030l-1.json",
       "compat_floor": "GLIBC_2.34 + GTK3 (Fedora>=35/Nobara, Ubuntu>=22.04, Debian>=12); older distros need an older-glibc builder (D-009)",
       "distro_tests": "Ubuntu 24.04 (host) PASS for deb/tar.zst/AppImage on X11 + Weston Wayland; Ubuntu 22.04 FAIL (open defect); Fedora 44 static rpm checks only; Debian 12/13, Nobara 44, GNOME/KDE Wayland NOT_RUN",
       "evidence": [
-        "reports/runtime/linux-f005/f005b-linux-x11.log",
-        "reports/runtime/linux-f005/f005b-linux-x11.png"
+        "reports/runtime/linux-f006/f006c-prod-first-start.log",
+        "reports/runtime/linux-f006/f006c-prod-first-start.png",
+        "reports/runtime/linux-f006/f006c-prod-unlock.log",
+        "reports/runtime/linux-f006/f006c-prod-unlock-locked.png",
+        "reports/runtime/linux-f006/f006c-prod-unlock-wrong.png",
+        "reports/runtime/linux-f006/f006c-prod-unlock-unlocked.png"
       ]
     },
     "android": {
@@ -286,23 +230,25 @@
   },
   "domains": {
     "shell": "RUNTIME_TESTED (web + Linux, F001@v0.32 receipts EV-*-F001-1011..1019)",
-    "persistence": "RUNTIME_TESTED for development builds (web localStorage, Linux file vault); vault format 1 with compatibility metadata, migration graph (synthetic steps tested), replay validation; unencrypted; staging, production and portable memory-only until F006",
-    "encryption_vault": "NOT_STARTED",
+    "persistence": "RUNTIME_TESTED: development builds keep a labelled unencrypted log (web localStorage, Linux file); staging, production and portable desktop builds persist only through the encrypted vault (F006@v0.32, Linux tested); web non-development builds and Android/iOS are memory-only",
+    "encryption_vault": "RUNTIME_TESTED on Linux (F006@v0.32): envelope hhos-vault-enc v1 (Argon2id + ChaCha20-Poly1305, D-016), key states and the vault gate (EN/TR), encrypted backups restored with the backup's key, redacted logs; Windows/macOS compile the same pure-Dart code but are not built here; web non-development memory-only (G-32); open: G-13, G-33, G-35..G-39",
     "dart_engines": "NOT_STARTED (TS reference has 73 vectors)",
     "labs": "RUNTIME_TESTED (F004@v0.32): manual lab results as printed (record schema 3), Labs screen, timeline integration, no interpretation; interpretation engine in Flutter NOT_STARTED (F011)",
     "sync": "NOT_STARTED (TS reference API exists, dev auth only)",
     "canonical_record": "UNIT_TESTED + INTEGRATION_TESTED + RUNTIME_TESTED (body.weight, lab.result; record schema 3)",
     "timeline": "RUNTIME_TESTED (F003@v0.32): projection with correction / entered-in-error / delete / conflict semantics; Timeline screen; record schema 2",
-    "backup": "RUNTIME_TESTED (F005@v0.32): backup bundle + manifest + SHA-256, staged restore gate, restore drill on Linux, web backup download; unencrypted dev-only until F006; browser restore NOT_BUILT (G-29)",
-    "export": "UNIT_TESTED + RUNTIME_TESTED (deterministic JSON export, desktop file / web download)"
+    "backup": "RUNTIME_TESTED (F005@v0.32, F006@v0.32): backup bundle + manifest + SHA-256, staged restore gate and drill; an encrypted vault backs up its envelope byte for byte and restores only with the backup's own key; a failed switch puts the previous vault back; browser restore NOT_BUILT (G-29)",
+    "export": "UNIT_TESTED + RUNTIME_TESTED (deterministic JSON export, desktop file / web download)",
+    "redaction": "UNIT_TESTED + RUNTIME_TESTED (F006@v0.32): core/redact.dart is the only console writer (type + code, safe fields); Flutter, platform and startup errors routed through it; synthetic secrets never in output, error screens, the vault file or backups"
   },
   "storage_policy": {
-    "production": "memory only",
-    "portable": "memory only until the encrypted vault (ladder F006); nothing written beside the executable",
+    "production": "encrypted vault only (vault.hhosvault; F006@v0.32); nothing is written before the user creates or unlocks it; memory only if the user chooses",
+    "portable": "encrypted vault only, in UserData/ beside the executable (F006@v0.32); no plaintext beside the executable",
     "development_desktop": "unencrypted JSON-lines log: $XDG_DATA_HOME/human-health-os (Linux; legacy HumanHealthOS/ moved by rename), Application Support/HumanHealthOS (macOS), %LOCALAPPDATA%\\HumanHealthOS (Windows); relative HHOS_DATA_DIR refused",
     "development_web": "unencrypted localStorage (may be evicted)",
     "android_ios": "memory only (path adapter planned)",
-    "staging": "memory only until the encrypted vault (ladder F006) (D-010)"
+    "staging": "encrypted vault only (vault-staging.hhosvault; F006@v0.32); never opens the production or development vault (D-010)",
+    "web_other_profiles": "memory only (G-32)"
   },
   "forge_history": {
     "F001@v0.31": {
@@ -1464,6 +1410,306 @@
         }
       ],
       "review": "multi-agent adversarial review of the F002-F005 diff (workflow mvp-review-f002-f005): 18 findings fixed with regression tests (R1-R7 mutations); 6 verifications did not run (session limit)"
+    },
+    "F006@v0.32": {
+      "forge_id": "F006",
+      "contract": "v0.32",
+      "run_id": "F006@v0.32",
+      "goal": "Local security hardening: reviewed secret/key abstraction, installed and portable desktop vault protection, redacted logs; exit: sensitive-data logging tests, key-loss/recovery states defined, no plaintext fallback (master §39 F006, §10, §11, §37; v0.24 key loss, DR-09)",
+      "status": "DONE",
+      "baseline_commit": "b1aeae6",
+      "started_at": "2026-10-07T18:15:00Z",
+      "scope": [
+        "pointycastle review D-016; Argon2id + ChaCha20-Poly1305 with known-answer tests",
+        "encrypted vault envelope hhos-vault-enc v1 around the unchanged logical log",
+        "passphrase + recovery key; key states and the unlock gate (EN/TR)",
+        "staging/production/portable desktop builds persist only encrypted; web non-development stays memory-only",
+        "encrypted backups and restore with the backup's key",
+        "central redaction, error handlers, sensitive-data logging tests"
+      ],
+      "out_of_scope": [
+        "encrypted browser storage (measured: pointycastle Poly1305 fails under dart2js; Argon2id 7.4 s in V8)",
+        "OS keyring convenience unlock (master §11: convenience only)",
+        "data-key rotation and app auto-lock",
+        "mobile storage adapters (path_provider)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Reviewed crypto (D-016): pointycastle 4.0.0; Argon2id v1.3 (m=19456 KiB, t=2, p=1) and ChaCha20-Poly1305 (RFC 8439); RFC 8439 §2.8.2 and RFC 9106 §5.3 known answers pass; production cost parameters asserted; no custom primitives",
+        "AC-2 Envelope hhos-vault-enc v1: a random data key seals every line of the unchanged format-1 log (decrypted text identical to the plaintext log); the key is stored only wrapped by a passphrase key and a recovery key; the file holds no plaintext health data, passphrase, recovery key or unwrapped key (byte scan)",
+        "AC-3 Integrity: each entry is bound to its vault and position; a changed, moved, copied-in or missing entry is skipped with a visible warning, never applied; a torn last write is closed before the next; a newer or unreadable envelope is refused and left untouched",
+        "AC-4 Key states defined and tested: NO_VAULT (create with confirmed passphrase and a recovery key shown once, or memory only), LOCKED, WRONG_PASSPHRASE, RECOVERY (recovery key + new passphrase; the old passphrase stops opening the file), KEY_LOST (no false promise; never opened, reset or deleted; a new vault keeps the locked file aside), UNREADABLE (memory only, file untouched)",
+        "AC-5 No plaintext fallback: staging/production/portable desktop builds persist only through the encrypted vault; a failed unlock or create writes nothing and never opens a plaintext store; web non-development builds stay memory-only; development keeps the labelled plaintext log",
+        "AC-6 Encrypted backups carry the envelope byte for byte; restore verifies the backup's passphrase or recovery key before switching; plaintext and encrypted backups never cross into the other kind of vault; export is not offered for encrypted vaults",
+        "AC-7 Redaction (§37): one central renderer for errors and log events (type + code, safe fields); Flutter, platform and startup errors go through it; synthetic sensitive strings never appear in captured output, error screens, the vault file or a backup",
+        "AC-8 Linux: integration test with real files (create, save, relaunch, unlock, recovery, key lost); production-profile release build launches to the vault gate and writes no plaintext",
+        "AC-9 Key derivation runs off the UI thread on native; dependency added after a recorded review; dart:io confinement holds",
+        "AC-10 Regression: F001-F005 gates pass; mutations each fail the intended test"
+      ],
+      "completed_steps": [
+        "SPECIFY: AC-1..AC-10; web crypto measured (Poly1305 unsupported under dart2js, Argon2id 7.4 s in V8)",
+        "IMPLEMENT: vault_crypto + recovery_key (D-016), vault_envelope (hhos-vault-enc v1), encrypted_vault (create/unlock/recover/set aside), storage policy (encrypted for staging/production/portable desktop), vault gate UI EN/TR, encrypted backups + restore with the backup key, export off for encrypted vaults, core/redact.dart + error handlers",
+        "TEST: vault_crypto (RFC 8439, RFC 9106, argon2-cffi cross-check), encrypted_vault, encrypted_backup, vault gate widget, sensitive-data logging, encrypted fixture enc_v1_f006; 252 unit/widget + 7 Linux integration pass",
+        "REPAIR (test): a two-digit '73' substring check failed in about half the runs (random ciphertext); replaced by strings that cannot occur by chance",
+        "REPAIR (product): after a wrong passphrase the field lost its focus on Linux (the platform closes the input connection while the key is derived); the field is cleared and refocused; found by the Linux integration test",
+        "IMPLEMENT: redacted gate events (vault_created, vault_unlocked, vault_recovered, vault_set_aside, session_memory_only and *_failed with error type and code only), used by the keyboard-driven Linux runtime smoke",
+        "REPAIR (product): an envelope without any entry was taken for a new, empty vault (refused with a StateError, nothing written); now reported as a missing log header, so the gate shows the unreadable state; found by a new widget test",
+        "REPAIR (product): a vault whose inner log is newer or damaged showed a generic error on the unlock screen; now the unreadable state, and data from a newer app is never offered to be set aside",
+        "MUTATION: S1-S16 caught at 87c00ec (S13 rewritten as a behavioural mutation after a compile error in the first version)",
+        "REVIEW: first adversarial review run (4 finders) stopped by the session limit before any finding; rerun on b1aeae6..c69dadf as workflow wf_630e488a-5de (4 lenses find, 4 skeptics refute, 8 agents): 15 confirmed reports = 11 distinct findings (2 major after verification), 6 refuted",
+        "REPAIR (product, review, major): recovery rewrote the passphrase slot before the inner log was checked, so a newer or damaged vault was left modified while the gate said it was not changed; recovery now opens and parses first",
+        "REPAIR (product, review, major): a restore that failed after the live vault was moved left the session writable and its next save created a headerless file; the session stops writing before the switch, a failed switch puts the previous vault back (or names where it is kept, RESTORE_SWITCH_FAILED), and appends never re-create a missing vault file (VAULT_MISSING)",
+        "REPAIR (product, review): a failed append whose bytes landed reused its sequence number and hid the next saved entry; the number is resynced from storage; the SAVE_FAILED text no longer says nothing changed",
+        "REPAIR (product, review): a new passphrase rewrote the file from decoded text and destroyed damaged bytes; line 1 is replaced at byte level; recovery adds a missing passphrase slot (set authentication of the slots stays open as G-39)",
+        "REPAIR (product, review): development builds asked for an encrypted backup's key before refusing it by kind; a backup that could not be read made a confirmed restore do nothing; a vault that could not be read at startup ended on the startup-error screen (now VAULT_READ_FAILED, kept in place); the gate said nothing changed after create had written the vault; the entry-missing warning claimed the other entries were intact",
+        "REPAIR (test, review): the F001/F005 staging tests ran against the host's real data folder (now a temporary HHOS_DATA_DIR, asserted empty); a test now checks that uncaught platform errors reach the redactor (the test binding drops onError assignments, so the handler is set on PlatformDispatcher.instance); redaction keeps only lower-case code words for string fields; the console-writer guard covers more writers",
+        "REPAIR (product, own finding): the restore read the backup twice, and the restart texts promised restored data after a switch that failed; one read, neutral texts",
+        "TEST: regression tests for every finding at data, file and widget level; vault_unlock_smoke.sh hardened (fixed-string passphrase search, the data folder holds only the vault, line 1 is the envelope header; checked to FAIL on a plaintext vault with an extra file); 268 unit/widget + 7 Linux integration pass at 82c9523",
+        "MUTATION: S17-S30 (one per review fix) and S31 (the restore's single read) caught; S1-S16 re-run on the same code, all caught (31/31)",
+        "GATES (history): first run EV-*-F006-0001..0009 on 795212b, 14 PASS, stale after the fix round",
+        "REVIEW (fix round): workflow wf_d07eadb1-87a over c69dadf..82c9523 (3 lenses read the diff from git while mutations ran; skeptics for the 6 most severe; 9 agents): 10 reports = 6 distinct findings; FIXES-1 (two windows on one vault) verified real and major, HONESTY-1 (a stored-nothing append still used up its number) verified real (minor); 4 verifications did not run (session limit); all 6 fixed anyway",
+        "REPAIR (product, fix round): a write refused before anything is stored keeps its sequence number (VAULT_MISSING, VAULT_WRITE_REFUSED); after an unknown outcome the next append learns the number from storage; the missing-entry text no longer asserts removal",
+        "REPAIR (product, fix round, major): before each append the encrypted sink compares the stored size and learns the next number from storage, so a second window of the app cannot hide saved entries; a vault replaced by another window is never appended to (VAULT_CHANGED); single-instance lock open as G-40",
+        "REPAIR (product, fix round): a restore that moved no file says nothing changed (RESTORE_NOT_SWITCHED); the gate decides from what a step wrote (created, new passphrase stored), not from a re-read; Flutter's default library name stays readable in redacted logs; the Turkish save-failure text names the real action",
+        "MUTATION: S32-S38 caught at e2463a6; all 38 run at 98ac39e: 36 caught, S18 (a store without size) and S28 (a failure inside create after the write) not caught; two tests added, both now caught (38/38)",
+        "GATES (history): second run EV-*-F006-0010..0018 on 98ac39e, 14 PASS, stale after the two added tests",
+        "GATES: 14 receipts on clean tree 9b8217d, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F006-0027",
+      "next_action": null,
+      "files_touched": [
+        "CLAUDE.md",
+        "docs/ARCHITECTURE.md",
+        "docs/PLATFORM_MATRIX.md",
+        "docs/SECURITY_MODEL.md",
+        "evidence/builds/EV-BUILD-F006-0001.json",
+        "evidence/builds/EV-BUILD-F006-0002.json",
+        "evidence/builds/EV-BUILD-F006-0003.json",
+        "evidence/builds/EV-BUILD-F006-0004.json",
+        "evidence/runtime/EV-RUNTIME-F006-0001.json",
+        "evidence/runtime/EV-RUNTIME-F006-0002.json",
+        "evidence/runtime/EV-RUNTIME-F006-0003.json",
+        "evidence/runtime/EV-RUNTIME-F006-0004.json",
+        "evidence/runtime/EV-RUNTIME-F006-0005.json",
+        "evidence/runtime/EV-RUNTIME-F006-0006.json",
+        "evidence/tests/EV-TEST-F006-0001.json",
+        "evidence/tests/EV-TEST-F006-0002.json",
+        "evidence/tests/EV-TEST-F006-0003.json",
+        "evidence/tests/EV-TEST-F006-0004.json",
+        "evidence/tests/EV-TEST-F006-0005.json",
+        "evidence/tests/EV-TEST-F006-0006.json",
+        "evidence/tests/EV-TEST-F006-0007.json",
+        "evidence/tests/EV-TEST-F006-0008.json",
+        "evidence/tests/EV-TEST-F006-0009.json",
+        "evidence/tests/EV-TEST-F006-0010.json",
+        "evidence/tests/EV-TEST-F006-0011.json",
+        "evidence/tests/EV-TEST-F006-0012.json",
+        "evidence/tests/EV-TEST-F006-0013.json",
+        "evidence/tests/EV-TEST-F006-0014.json",
+        "evidence/tests/EV-TEST-F006-0015.json",
+        "evidence/tests/EV-TEST-F006-0016.json",
+        "evidence/tests/EV-TEST-F006-0017.json",
+        "evidence/tests/EV-TEST-F006-0018.json",
+        "human_health_os/integration_test/heartbeat_test.dart",
+        "human_health_os/lib/main.dart",
+        "human_health_os/lib/src/app/app_services.dart",
+        "human_health_os/lib/src/app/bootstrap.dart",
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/app/startup_error_app.dart",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/core/capabilities.dart",
+        "human_health_os/lib/src/core/redact.dart",
+        "human_health_os/lib/src/data/backup/backup_bundle.dart",
+        "human_health_os/lib/src/data/backup/data_files.dart",
+        "human_health_os/lib/src/data/backup/data_files_io.dart",
+        "human_health_os/lib/src/data/backup/data_files_web.dart",
+        "human_health_os/lib/src/data/crypto/recovery_key.dart",
+        "human_health_os/lib/src/data/crypto/vault_crypto.dart",
+        "human_health_os/lib/src/data/local/encrypted_vault.dart",
+        "human_health_os/lib/src/data/local/log_repository.dart",
+        "human_health_os/lib/src/data/local/storage_io.dart",
+        "human_health_os/lib/src/data/local/storage_status.dart",
+        "human_health_os/lib/src/data/local/storage_web.dart",
+        "human_health_os/lib/src/data/local/vault_envelope.dart",
+        "human_health_os/lib/src/data/local/vault_log.dart",
+        "human_health_os/lib/src/data/local/vault_migrations.dart",
+        "human_health_os/lib/src/domain/errors.dart",
+        "human_health_os/lib/src/domain/ports/health_repository.dart",
+        "human_health_os/lib/src/domain/ports/storage_status.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/features/today/your_data_card.dart",
+        "human_health_os/lib/src/features/vault/vault_gate_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/pubspec.lock",
+        "human_health_os/pubspec.yaml",
+        "human_health_os/test/data/encrypted_backup_test.dart",
+        "human_health_os/test/data/encrypted_vault_test.dart",
+        "human_health_os/test/data/storage_policy_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/data/vault_crypto_test.dart",
+        "human_health_os/test/fixtures/vault/README.md",
+        "human_health_os/test/fixtures/vault/enc_v1_f006.hhosvault",
+        "human_health_os/test/security/no_sensitive_logs_test.dart",
+        "human_health_os/test/widget/f001_contract_test.dart",
+        "human_health_os/test/widget/f005_your_data_test.dart",
+        "human_health_os/test/widget/f006_vault_gate_test.dart",
+        "human_health_os/tool/make_encrypted_fixture.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/KNOWN_GAPS.md",
+        "project_state/RISKS.md",
+        "reports/runtime/flutter-web-desktop-en-backup.json",
+        "reports/runtime/flutter-web-desktop-en-labs-result.png",
+        "reports/runtime/flutter-web-desktop-en-labs.png",
+        "reports/runtime/flutter-web-desktop-en-timeline-records.png",
+        "reports/runtime/flutter-web-desktop-en-today.png",
+        "reports/runtime/flutter-web-desktop-en-weight.png",
+        "reports/runtime/flutter-web-phone-en-backup.json",
+        "reports/runtime/flutter-web-phone-en-labs-result.png",
+        "reports/runtime/flutter-web-phone-en-labs.png",
+        "reports/runtime/flutter-web-phone-en-timeline-records.png",
+        "reports/runtime/flutter-web-phone-en-today.png",
+        "reports/runtime/flutter-web-phone-en-weight.png",
+        "reports/runtime/flutter-web-phone-tr-labs.png",
+        "reports/runtime/flutter-web-phone-tr-timeline.png",
+        "reports/runtime/flutter_web_smoke.json",
+        "reports/runtime/flutter_web_smoke_795212befa36.json",
+        "reports/runtime/flutter_web_smoke_98ac39e279a8.json",
+        "reports/runtime/linux-f006/f006-prod-first-start.log",
+        "reports/runtime/linux-f006/f006-prod-first-start.png",
+        "reports/runtime/linux-f006/f006-prod-unlock-locked.png",
+        "reports/runtime/linux-f006/f006-prod-unlock-unlocked.png",
+        "reports/runtime/linux-f006/f006-prod-unlock-wrong.png",
+        "reports/runtime/linux-f006/f006-prod-unlock.log",
+        "reports/runtime/linux-f006/f006b-prod-first-start.log",
+        "reports/runtime/linux-f006/f006b-prod-first-start.png",
+        "reports/runtime/linux-f006/f006b-prod-unlock-locked.png",
+        "reports/runtime/linux-f006/f006b-prod-unlock-unlocked.png",
+        "reports/runtime/linux-f006/f006b-prod-unlock-wrong.png",
+        "reports/runtime/linux-f006/f006b-prod-unlock.log",
+        "tools/linux/vault_unlock_smoke.sh"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F006-0019",
+        "EV-TEST-F006-0020",
+        "EV-TEST-F006-0021",
+        "EV-TEST-F006-0022",
+        "EV-TEST-F006-0023",
+        "EV-BUILD-F006-0005",
+        "EV-RUNTIME-F006-0007",
+        "EV-TEST-F006-0024",
+        "EV-BUILD-F006-0006",
+        "EV-RUNTIME-F006-0008",
+        "EV-RUNTIME-F006-0009",
+        "EV-TEST-F006-0025",
+        "EV-TEST-F006-0026",
+        "EV-TEST-F006-0027"
+      ],
+      "blocker": null,
+      "result": "F006_COMPLETE",
+      "finished_at": "2026-10-08T21:21:19Z",
+      "app_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get (pointycastle 4.0.0 added, D-016)",
+          "evidence_id": "EV-TEST-F006-0019",
+          "criterion": "AC-9",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F006-0020",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F006-0021",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test (crypto known answers, envelope integrity, key states, encrypted backups, vault gate, sensitive-data logging, review regressions, F001-F005 suites)",
+          "evidence_id": "EV-TEST-F006-0022",
+          "criterion": "AC-1..AC-7, AC-9, AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "evidence and state tooling unit tests",
+          "evidence_id": "EV-TEST-F006-0023",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development)",
+          "evidence_id": "EV-BUILD-F006-0005",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "web runtime smoke (development: Today, Timeline, Labs, backup download; no console errors)",
+          "evidence_id": "EV-RUNTIME-F006-0007",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "integration_test on Linux with real files (production vault: create, save, relaunch, unlock; recovery; key lost; F002-F005 drills)",
+          "evidence_id": "EV-TEST-F006-0024",
+          "criterion": "AC-4, AC-5, AC-8",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (production profile)",
+          "evidence_id": "EV-BUILD-F006-0006",
+          "criterion": "AC-8",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux production first start on an empty home: vault gate, nothing written (Ubuntu 24.04, Xvfb X11)",
+          "evidence_id": "EV-RUNTIME-F006-0008",
+          "criterion": "AC-5, AC-8",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux production unlock by keyboard on the encrypted fixture: wrong passphrase refused, right one opens, vault unchanged, only the vault in the data folder, no passphrase in the output",
+          "evidence_id": "EV-RUNTIME-F006-0009",
+          "criterion": "AC-4, AC-7, AC-8",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York",
+          "evidence_id": "EV-TEST-F006-0025",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "golden-vector contract check",
+          "evidence_id": "EV-TEST-F006-0026",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test (TS reference, Build Lab)",
+          "evidence_id": "EV-TEST-F006-0027",
+          "criterion": "AC-10",
+          "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+          "result": "PASS"
+        }
+      ],
+      "review": "two multi-agent adversarial reviews: wf_630e488a-5de over b1aeae6..c69dadf (4 lenses + 4 skeptics; 15 confirmed reports = 11 distinct findings, 2 major; 6 refuted, 5 of them acted on anyway, G-39 recorded) fixed in ff37108, 82c9523, d81c5db with regression tests (mutations S17-S31); fix-round review wf_d07eadb1-87a over c69dadf..82c9523 (3 lenses + skeptics for the 6 most severe, 9 agents; 4 verifications did not run: session limit): 10 reports = 6 distinct findings, incl. FIXES-1 (two windows on one vault, verified major), all fixed in e2463a6 and 98ac39e (mutations S32-S38); two tests added in 9b8217d so all 38 mutations are caught; G-40 recorded"
     }
   },
   "forge_history_legacy_ids": {

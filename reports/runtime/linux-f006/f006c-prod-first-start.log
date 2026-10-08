@@ -1,0 +1,16 @@
+# f006c-prod-first-start 2026-10-08T21:19:16Z
+# host: Ubuntu 24.04.5 LTS, x86_64, glibc 2.39
+# display: DISPLAY=:100 WAYLAND_DISPLAY= GDK_BACKEND=
+# command: human_health_os/build/linux/x64/release/bundle/human_health_os
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(org.humanhealthos.HumanHealthOS:2716): Atk-CRITICAL **: 21:19:16.438: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+
+** (org.humanhealthos.HumanHealthOS:2716): CRITICAL **: 21:19:16.820: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed
+# liveness: alive after 12 s
+# screenshot: f006c-prod-first-start.png
+# app files under watched dir: unchanged
+# mesa shader cache files (driver, not app data): 90
+# result: PASS
