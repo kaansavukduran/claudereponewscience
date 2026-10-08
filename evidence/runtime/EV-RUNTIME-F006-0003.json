@@ -1,0 +1,101 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-F006-0003",
+  "kind": "RUNTIME",
+  "forge_id": "F006@v0.32",
+  "source_revision": "795212befa36ecd50a71930e5b652d5564db2556",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env HOME=/tmp/claude-0/f006/linux/locked-home LANG=C.UTF-8 xvfb-run -a -s '-screen 0 1280x900x24' tools/linux/vault_unlock_smoke.sh f006-prod-unlock reports/runtime/linux-f006 /tmp/claude-0/f006/linux/locked-home 'fixture passphrase F006 (synthetic)' -- human_health_os/build/linux/x64/release/bundle/human_health_os",
+  "argv": [
+    "env",
+    "HOME=/tmp/claude-0/f006/linux/locked-home",
+    "LANG=C.UTF-8",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x900x24",
+    "tools/linux/vault_unlock_smoke.sh",
+    "f006-prod-unlock",
+    "reports/runtime/linux-f006",
+    "/tmp/claude-0/f006/linux/locked-home",
+    "fixture passphrase F006 (synthetic)",
+    "--",
+    "human_health_os/build/linux/x64/release/bundle/human_health_os"
+  ],
+  "cwd": ".",
+  "started_at": "2026-10-08T14:21:13.722Z",
+  "finished_at": "2026-10-08T14:21:38.459Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v80 x86_64",
+  "summary": "# result: PASS",
+  "log_sha256": "35e3ce488a0971298a0618afaeebd279c5f6f6d307247f56619674bb1ff08f80",
+  "log_lines": 28,
+  "log_tail": [
+    "[hhos] vault_unlocked warnings=0",
+    "# screenshot: f006-prod-unlock-unlocked.png",
+    "# step: right passphrase opened the vault",
+    "# liveness: alive",
+    "# vault sha256 after: 404df315aa514c41ae3c536b67d548c9beaa4431d5ed140733b82e1ac4def501",
+    "# vault file: unchanged",
+    "# vault header: hhos-vault-enc v1",
+    "# files: <home>/.local/share/human-health-os/vault.hhosvault ",
+    "# data folder: only the vault",
+    "# passphrase in output: no",
+    "# passphrase in output: no",
+    "# result: PASS"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/linux/vault_unlock_smoke.sh"
+  ],
+  "target": "linux",
+  "arch": "x86_64",
+  "profile": "production",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f006/f006-prod-unlock.log",
+      "type": "file",
+      "bytes": 1467,
+      "sha256": "35e3ce488a0971298a0618afaeebd279c5f6f6d307247f56619674bb1ff08f80"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f006/f006-prod-unlock-locked.png",
+      "type": "file",
+      "bytes": 29854,
+      "sha256": "d0fead576ea1851c3c12f086b699152c2cd3144586ccb7fd5f896c1cc6839493"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f006/f006-prod-unlock-wrong.png",
+      "type": "file",
+      "bytes": 35647,
+      "sha256": "c4fe665a8efc5e68ab1a70425420d9cd7b115e4b350be8e53cd2f0bd98002b39"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/linux-f006/f006-prod-unlock-unlocked.png",
+      "type": "file",
+      "bytes": 84947,
+      "sha256": "86289ab8e06e855d485cc8a84b87ecefc13b8ea100632a12da7c3ef1b58750bd"
+    },
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/linux/x64/release/bundle/lib/libapp.so",
+      "type": "file",
+      "bytes": 6390664,
+      "sha256": "18be15ea1b9fd1fd0e6a8a608beaf046576876d3de33918b18f882e4e2c27a55"
+    }
+  ]
+}

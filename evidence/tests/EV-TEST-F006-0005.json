@@ -1,0 +1,51 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F006-0005",
+  "kind": "TEST",
+  "forge_id": "F006@v0.32",
+  "source_revision": "795212befa36ecd50a71930e5b652d5564db2556",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "python3 -m unittest tools/evidence/test_run_gate.py tools/test_validate_project_state.py",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "tools/evidence/test_run_gate.py",
+    "tools/test_validate_project_state.py"
+  ],
+  "cwd": ".",
+  "started_at": "2026-10-08T14:18:09.046Z",
+  "finished_at": "2026-10-08T14:18:12.472Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.22.0",
+    "python": "Python 3.13.16"
+  },
+  "host": "Linux 6.18.44-fc-v80 x86_64",
+  "summary": "OK",
+  "log_sha256": "6969eea9cff1802569fdb451d736e30684ce7768f7ed1267b5c9b1546f32ef14",
+  "log_lines": 5,
+  "log_tail": [
+    "................",
+    "----------------------------------------------------------------------",
+    "Ran 16 tests in 3.338s",
+    "",
+    "OK"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "tools/evidence",
+    "tools/validate_project_state.py",
+    "tools/test_validate_project_state.py"
+  ]
+}
