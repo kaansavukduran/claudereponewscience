@@ -6,6 +6,7 @@ import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
+import '../measurements/measurement_format.dart';
 import '../../presentation/widgets/status_chip.dart';
 
 /// Timeline (ladder F003): every fact once, newest first, with its versions.
@@ -113,6 +114,7 @@ class _TimelineScreenState extends State<TimelineScreen> {
 }
 
 String fmtValue(S s, HealthRecord r) {
+  if (r.kind.isMeasurement) return measurementValue(s, r);
   final q = r.quantity;
   if (r.valueStatus != ValueStatus.present || q == null) {
     return s.valueStatus(r.valueStatus);
@@ -237,26 +239,170 @@ class _EntryDetail extends StatefulWidget {
 
 class _EntryDetailState extends State<_EntryDetail> {
   final _controller = TextEditingController();
+  final _systolic = TextEditingController();
+  final _diastolic = TextEditingController();
+  final _context = TextEditingController();
   String? _correcting;
   String? _errorCode;
+  String? _errorField;
   bool _busy = false;
 
   @override
   void dispose() {
     _controller.dispose();
+    _systolic.dispose();
+    _diastolic.dispose();
+    _context.dispose();
     super.dispose();
   }
+
+  void _startCorrecting(HealthRecord head) => setState(() {
+    _correcting = head.id;
+    _errorCode = null;
+    _errorField = null;
+    _controller.clear();
+    _systolic.clear();
+    _diastolic.clear();
+    // The note belongs to the observation; a correction keeps it unless
+    // the person changes it.
+    _context.text = head.context ?? '';
+  });
+
+  /// An error without a field of its own shows on the form's first field.
+  String? _errorFor(S s, String field) {
+    final first = _correctingKind == RecordKind.bloodPressure
+        ? 'systolic'
+        : 'value';
+    return _errorCode != null && (_errorField ?? first) == field
+        ? s.inputError(_errorCode!)
+        : null;
+  }
+
+  RecordKind? get _correctingKind {
+    for (final h in widget.entry.heads) {
+      if (h.id == _correcting) return h.kind;
+    }
+    return null;
+  }
+
+  Widget _correctField(
+    S s,
+    TextEditingController c,
+    String label,
+    String key,
+    String field, {
+    bool number = true,
+    bool autofocus = false,
+    String? helper,
+  }) => Padding(
+    padding: const EdgeInsets.only(bottom: 8),
+    child: TextField(
+      key: ValueKey(key),
+      controller: c,
+      autofocus: autofocus,
+      keyboardType: number
+          ? const TextInputType.numberWithOptions(decimal: true)
+          : TextInputType.text,
+      maxLength: number ? null : HealthRecord.maxContextLength,
+      decoration: InputDecoration(
+        labelText: label,
+        helperText: helper,
+        helperMaxLines: 3,
+        border: const OutlineInputBorder(),
+        errorText: _errorFor(s, field),
+        errorMaxLines: 3,
+        counterText: '',
+      ),
+    ),
+  );
+
+  /// The correction form of [head]'s kind: one number for body weight and
+  /// scalar measurements, two for blood pressure, plus the note.
+  List<Widget> _correctionFields(S s, HealthRecord head) {
+    final helper = s.amendExplain(AmendReason.correction);
+    if (head.kind == RecordKind.bloodPressure) {
+      return [
+        _correctField(
+          s,
+          _systolic,
+          s.systolicField,
+          'correct-input-systolic',
+          'systolic',
+          autofocus: true,
+          helper: helper,
+        ),
+        _correctField(
+          s,
+          _diastolic,
+          s.diastolicField,
+          'correct-input-diastolic',
+          'diastolic',
+        ),
+        _correctField(
+          s,
+          _context,
+          s.contextField,
+          'correct-input-context',
+          'context',
+          number: false,
+        ),
+      ];
+    }
+    return [
+      _correctField(
+        s,
+        _controller,
+        head.kind.isMeasurement ? s.measurementField(head.kind) : s.weightField,
+        'correct-input',
+        'value',
+        autofocus: true,
+        helper: helper,
+      ),
+      if (head.kind.isMeasurement)
+        _correctField(
+          s,
+          _context,
+          s.contextField,
+          'correct-input-context',
+          'context',
+          number: false,
+        ),
+    ];
+  }
+
+  Future<void> _saveCorrection(HealthRecord head) => _run(
+    () => head.kind.isMeasurement
+        ? widget.svc.correctMeasurement(
+            profileId: widget.profileId,
+            targetId: head.id,
+            input: MeasurementInput(
+              value: _controller.text,
+              systolic: _systolic.text,
+              diastolic: _diastolic.text,
+              context: _context.text,
+            ),
+          )
+        : widget.svc.correctWeightKg(
+            profileId: widget.profileId,
+            targetId: head.id,
+            input: _controller.text,
+          ),
+  );
 
   Future<void> _run(Future<void> Function() action) async {
     setState(() {
       _busy = true;
       _errorCode = null;
+      _errorField = null;
     });
     try {
       await action();
       if (mounted) Navigator.of(context).pop(true);
     } on InputError catch (e) {
-      setState(() => _errorCode = e.code);
+      setState(() {
+        _errorCode = e.code;
+        _errorField = e.field;
+      });
     } on RecordValidationError catch (e) {
       setState(() => _errorCode = e.code);
     } on StorageWriteRefused catch (e) {
@@ -335,7 +481,13 @@ class _EntryDetailState extends State<_EntryDetail> {
                     ),
                     '${s.enteredOn} ${fmtWhen(v.recordedAt)}',
                     s.provenanceKind(v.provenance.kind),
-                    if (v.originalText != null) '"${v.originalText}"',
+                    if (v.kind.isMeasurement) ...[
+                      if (typedWhenDifferent(v) case final typed?)
+                        '${s.enteredAs} "$typed"',
+                      if (v.context case final note?)
+                        '${s.contextLabel}: "$note"',
+                    ] else if (v.originalText != null)
+                      '"${v.originalText}"',
                   ].join(' · '),
                 ),
               ),
@@ -355,36 +507,10 @@ class _EntryDetailState extends State<_EntryDetail> {
                     child: Text(fmtValue(s, head), style: text.titleSmall),
                   ),
                 if (_correcting == head.id) ...[
-                  TextField(
-                    key: const ValueKey('correct-input'),
-                    controller: _controller,
-                    autofocus: true,
-                    keyboardType: const TextInputType.numberWithOptions(
-                      decimal: true,
-                    ),
-                    decoration: InputDecoration(
-                      labelText: s.weightField,
-                      helperText: s.amendExplain(AmendReason.correction),
-                      helperMaxLines: 3,
-                      border: const OutlineInputBorder(),
-                      errorText: _errorCode == null
-                          ? null
-                          : s.inputError(_errorCode!),
-                      errorMaxLines: 3,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
+                  ..._correctionFields(s, head),
                   FilledButton(
                     key: const ValueKey('correct-save'),
-                    onPressed: _busy
-                        ? null
-                        : () => _run(
-                            () => widget.svc.correctWeightKg(
-                              profileId: widget.profileId,
-                              targetId: head.id,
-                              input: _controller.text,
-                            ),
-                          ),
+                    onPressed: _busy ? null : () => _saveCorrection(head),
                     child: Text(s.saveCorrection),
                   ),
                 ] else
@@ -394,15 +520,13 @@ class _EntryDetailState extends State<_EntryDetail> {
                     children: [
                       // Lab results are corrected on Labs, where every
                       // printed field can be re-entered.
-                      if (head.kind == RecordKind.bodyWeight)
+                      if (head.kind == RecordKind.bodyWeight ||
+                          head.kind.isMeasurement)
                         OutlinedButton.icon(
                           key: ValueKey('action-correct-${head.id}'),
                           onPressed: _busy
                               ? null
-                              : () => setState(() {
-                                  _correcting = head.id;
-                                  _errorCode = null;
-                                }),
+                              : () => _startCorrecting(head),
                           icon: const Icon(Icons.edit_outlined),
                           label: Text(s.amendAction(AmendReason.correction)),
                         ),

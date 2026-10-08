@@ -6,6 +6,7 @@ import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
+import 'measurements_card.dart';
 import 'weight_card.dart';
 import 'your_data_card.dart';
 
@@ -45,6 +46,8 @@ class TodayScreen extends StatelessWidget {
         ),
         const SizedBox(height: 16),
         WeightCard(services: services),
+        const SizedBox(height: 12),
+        MeasurementsCard(services: services),
         const SizedBox(height: 12),
         YourDataCard(services: services),
         const SizedBox(height: 12),

@@ -42,6 +42,11 @@ const tablet = Size(820, 1180);
 const desktop = Size(1440, 900);
 const laptop = Size(1024, 700);
 
+/// Tall enough for the whole of Today: a lazy list builds only what is on
+/// screen, and these tests read its last sections (This build,
+/// capabilities) next to its first (F007 made Today longer).
+const desktopTall = Size(1440, 4000);
+
 void main() {
   group('starts on Today', () {
     for (final size in [phone, tablet, laptop, desktop]) {
@@ -148,7 +153,7 @@ void main() {
   ) async {
     await pumpApp(
       tester,
-      size: desktop,
+      size: desktopTall,
       config: const AppConfig(
         profile: BuildProfile.development,
         version: '0.1.0+1',
@@ -166,7 +171,7 @@ void main() {
   testWidgets(
     'build identity that was not passed reads "unknown", not a guess',
     (tester) async {
-      await pumpApp(tester, size: desktop);
+      await pumpApp(tester, size: desktopTall);
       expect(find.text('Flutter'), findsOneWidget);
       expect(find.text('Dart'), findsOneWidget);
       // Flutter and Dart versions were not passed to devConfig.
@@ -251,7 +256,7 @@ void main() {
   testWidgets('This build card shows the source revision', (tester) async {
     await pumpApp(
       tester,
-      size: desktop,
+      size: desktopTall,
       config: const AppConfig(
         profile: BuildProfile.development,
         version: '0.1.0+1',
@@ -277,7 +282,7 @@ void main() {
   testWidgets(
     'Today states no weight yet, memory-only storage, network not required',
     (tester) async {
-      await pumpApp(tester, size: desktop);
+      await pumpApp(tester, size: desktopTall);
       expect(find.byKey(const ValueKey('weight-empty')), findsOneWidget);
       expect(
         find.textContaining('Not saved: kept only until the app closes'),
@@ -292,7 +297,7 @@ void main() {
   testWidgets('web registry never claims HealthKit/Health Connect', (
     tester,
   ) async {
-    await pumpApp(tester, size: desktop, platform: HostPlatform.web);
+    await pumpApp(tester, size: desktopTall, platform: HostPlatform.web);
     expect(find.text('Health Connect'), findsNothing);
     expect(find.text('Apple Health (HealthKit)'), findsNothing);
     expect(find.text('Not on this platform'), findsOneWidget);
