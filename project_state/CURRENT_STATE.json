@@ -3,9 +3,30 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "FORGE_PLANNING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F007",
+    "contract": "v0.32",
+    "run_id": "F007@v0.32",
+    "slice": "measurements",
+    "goal": "Daily domains, slice 1: measurements beyond body weight on the canonical record, timeline, correction lineage and encrypted vault (master §39 F007: one bounded slice per Forge)",
+    "status": "FORGE_PLANNING",
+    "baseline_commit": "48c3c94",
+    "started_at": "2026-10-08T21:34:05Z",
+    "scope": [],
+    "out_of_scope": [],
+    "acceptance_criteria": [],
+    "completed_steps": [
+      "ORIENT: state READY after F006@v0.32; main created at 48c3c94 (D-017); ladder F007 slice 1 selected (next_recommended_forge)"
+    ],
+    "last_verified_gate": null,
+    "next_action": "SPECIFY (multi-agent understand + spec)",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -161,7 +182,7 @@
     "slice": "measurements",
     "why": "master §39 ladder after the MVP (D-014, F002-F006 closed): daily domains, one bounded slice per Forge; the first slice is measurements beyond body weight on the same canonical record, timeline, correction lineage and encrypted vault"
   },
-  "updated_at": "2026-10-08T21:21:19Z",
+  "updated_at": "2026-10-08T21:34:05Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
