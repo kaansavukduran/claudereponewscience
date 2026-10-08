@@ -3,6 +3,7 @@
 // a recovery key shown once, unlock, wrong passphrase, recovery, key lost
 // (no false promises; the locked file is kept), unreadable, memory only;
 // and the Your data card of an encrypted vault.
+import 'dart:io' show FileSystemException;
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -16,10 +17,16 @@ import 'package:human_health_os/src/data/crypto/vault_crypto.dart';
 import 'package:human_health_os/src/data/local/encrypted_vault.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/data/local/vault_envelope.dart';
+import 'package:human_health_os/src/domain/ports/health_repository.dart';
 import 'package:human_health_os/src/domain/ports/storage_status.dart';
 
 const prod = AppConfig(
   profile: BuildProfile.production,
+  version: '0.1.0+1',
+  sourceRevision: 'test',
+);
+const dev = AppConfig(
+  profile: BuildProfile.development,
   version: '0.1.0+1',
   sourceRevision: 'test',
 );
@@ -44,9 +51,34 @@ class LinkedFiles extends MemoryDataFiles {
 
 /// Shared across "launches" of one test, like a disk.
 class Disk {
-  final raw = MemoryLogSink();
+  Disk([MemoryLogSink? raw]) : raw = raw ?? MemoryLogSink();
+
+  final MemoryLogSink raw;
   final backups = <String, String>{};
   String? keptAside;
+}
+
+/// A vault file another program holds: reads fail while [fail] is on.
+class HeldRaw extends MemoryLogSink {
+  bool fail = false;
+
+  @override
+  Future<String?> read() async {
+    if (fail) throw const FileSystemException('held by another program');
+    return super.read();
+  }
+}
+
+/// A full disk: appends fail while [fail] is on; a whole new file still
+/// lands (it is written before the first append).
+class FullRaw extends MemoryLogSink {
+  bool fail = false;
+
+  @override
+  Future<void> appendLine(String line) async {
+    if (fail) throw const FileSystemException('no space left on device');
+    return super.appendLine(line);
+  }
 }
 
 /// Like the isolate on native builds: the key arrives a few frames later,
@@ -569,6 +601,154 @@ void main() {
     expect(mem.makeBackup, isNull);
     expect(mem.dataFiles, isNull);
     expect(mem.storageReason, StorageReason.sessionOnly);
+  });
+
+  group('review fixes (F006)', () {
+    testWidgets('UNREADABLE: a vault file that cannot be read now (held by '
+        'another program) is explained, kept in place and never set aside', (
+      tester,
+    ) async {
+      final raw = HeldRaw();
+      final disk = Disk(raw);
+      await launch(tester, disk);
+      await createThroughGate(tester);
+      final stored = raw.text;
+      raw.fail = true;
+      await launch(tester, disk);
+      expect(
+        find.byKey(const ValueKey('vault-gate-unreadable')),
+        findsOneWidget,
+      );
+      expect(
+        textOf(tester, 'gate-unreadable-body'),
+        startsWith('The vault file could not be read'),
+      );
+      expect(find.byKey(const ValueKey('gate-start-new')), findsNothing);
+      await tapKey(tester, 'gate-memory-only');
+      expect(
+        find.textContaining('could not be opened (VAULT_READ_FAILED)'),
+        findsOneWidget,
+      );
+      expect(disk.keptAside, isNull);
+      expect(raw.text, stored);
+    });
+
+    testWidgets('NO_VAULT: when the new vault was written but could not be '
+        'opened, the gate never says nothing changed; the passphrase just '
+        'chosen opens it', (tester) async {
+      final raw = FullRaw()..fail = true;
+      final disk = Disk(raw);
+      await launch(tester, disk);
+      final events = <String>[];
+      final previous = debugPrint;
+      debugPrint = (String? m, {int? wrapWidth}) => events.add('$m');
+      try {
+        await createThroughGate(tester);
+      } finally {
+        debugPrint = previous;
+      }
+      expect(events.single, startsWith('[hhos] vault_create_failed error='));
+      expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
+      expect(
+        textOf(tester, 'gate-error'),
+        startsWith('The vault was created, but it could not be opened'),
+      );
+      expect(textOf(tester, 'gate-error'), isNot(contains('Nothing')));
+      expect(detectStoredVault(raw.text), StoredVaultKind.encrypted);
+
+      raw.fail = false;
+      await type(tester, 'gate-passphrase', pass);
+      await tapKey(tester, 'gate-unlock');
+      expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
+      await saveWeight(tester, '72');
+      expect(latest(tester), '72 kg');
+    });
+
+    testWidgets('RECOVERY on a vault from a newer app: explained as '
+        'unreadable before the new passphrase is written; the file and its '
+        'old passphrase are unchanged', (tester) async {
+      final newer = Disk();
+      await tester.runAsync(() async {
+        final sink = EncryptedLogSink.forNewVault(
+          newer.raw,
+          passphrase: pass,
+          recoveryKey: newRecoveryKeyForTest,
+          derive: deriveInline,
+          newKdf: cheap,
+        );
+        await sink.create(
+          '{"format":"hhos-vault-log","format_version":2,"vault_id":"v-newer",'
+          '"created_at":"2026-10-01T00:00:00.000Z",'
+          '"encryption":"hhos-vault-enc-v1"}',
+        );
+      });
+      final stored = newer.raw.text;
+      await launch(tester, newer);
+      await tapKey(tester, 'gate-use-recovery');
+      await type(tester, 'gate-recovery-input', newRecoveryKeyForTest);
+      await type(tester, 'gate-passphrase', 'yeni uzun parola 2026');
+      await type(tester, 'gate-passphrase-confirm', 'yeni uzun parola 2026');
+      await tapKey(tester, 'gate-recover');
+      expect(
+        find.byKey(const ValueKey('vault-gate-unreadable')),
+        findsOneWidget,
+      );
+      expect(textOf(tester, 'gate-unreadable-body'), contains('newer version'));
+      expect(newer.raw.text, stored, reason: 'no new passphrase written');
+    });
+
+    testWidgets('a development vault refuses an encrypted backup before '
+        'asking for its key, and writes nothing', (tester) async {
+      final old = Disk();
+      final made = await tester.runAsync(() async {
+        final g = await gateOn(old);
+        final s = await g.open(
+          await g.vault.create(
+            passphrase: pass,
+            recoveryKey: newRecoveryKeyForTest,
+          ),
+        );
+        await s.heartbeat.recordWeightKg(profileId: s.self.id, input: '81');
+        return s.makeBackup!(DateTime.utc(2026, 10, 6));
+      });
+      const name = 'human-os-backup-old-20261006T000000Z.hhosbackup.json';
+      final files = MemoryDataFiles()
+        ..files['backup/$name'] = made!
+        ..times['backup/$name'] = DateTime.utc(2026, 10, 6);
+      tester.view.physicalSize = const Size(1280, 2600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+      final services = await tester.runAsync(() async {
+        final repo = LogRepository(
+          sink: MemoryLogSink(),
+          durability: StorageDurability.localFile,
+          location: 'test',
+        );
+        final report = await repo.open();
+        return servicesFor(
+          dev,
+          HostPlatform.linux,
+          repo,
+          report: report,
+          files: files,
+        );
+      });
+      await tester.pumpWidget(HumanOsApp(services: services!));
+      await settle(tester);
+      await tapKey(tester, 'restore-$name');
+      await tapKey(tester, 'confirm-restore');
+      expect(
+        find.byKey(const ValueKey('backup-secret')),
+        findsNothing,
+        reason: 'no key is asked for',
+      );
+      expect(
+        tester.widget<Text>(find.byKey(const ValueKey('data-message'))).data,
+        startsWith('This backup and this vault are not the same kind'),
+      );
+      expect(files.vaultText, isNull);
+      expect(files.kept, isNull);
+    });
   });
 }
 

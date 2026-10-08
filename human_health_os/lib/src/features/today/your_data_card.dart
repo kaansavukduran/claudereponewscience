@@ -194,14 +194,17 @@ class _YourDataCardState extends State<YourDataCard> {
       ),
     );
     if (ok != true) return;
-    StagedRestore? staged;
-    (String, KeyKind)? key;
+    // Read once: the checks, the key prompt and the restore all use the
+    // same bytes.
+    final StagedRestore staged;
     try {
       staged = stageRestore(await _files!.read(f));
-    } catch (_) {
-      staged = null; // _run below reads it again and reports what failed
+    } catch (e, st) {
+      if (mounted) await _run((s) => Future.error(e, st), s);
+      return;
     }
-    if (staged != null && staged.encrypted != _files!.holdsEncryptedVault) {
+    if (!mounted) return;
+    if (staged.encrypted != _files!.holdsEncryptedVault) {
       // Refused before any key is asked for or derived (review finding).
       await _run(
         (s) async => throw const BackupError(
@@ -212,13 +215,13 @@ class _YourDataCardState extends State<YourDataCard> {
       );
       return;
     }
-    if (staged != null && staged.needsKey) {
-      if (!mounted) return;
+    (String, KeyKind)? key;
+    if (staged.needsKey) {
       key = await _askBackupKey(s);
-      if (key == null) return;
+      if (key == null || !mounted) return;
     }
     await _run((s) async {
-      var st = staged ?? stageRestore(await _files!.read(f));
+      var st = staged;
       if (key != null) {
         st = await unlockStagedRestore(
           st,

@@ -32,6 +32,49 @@ class NoRestoreFiles extends MemoryDataFiles {
   bool get canRestore => false;
 }
 
+/// Backups this user may not read (permissions, a lock).
+class UnreadableBackups extends MemoryDataFiles {
+  @override
+  Future<String> read(SavedFile file) async =>
+      throw const FileSystemException('permission denied');
+}
+
+/// The last move of a restore fails (another program holds the file); the
+/// previous vault is back in place.
+class SwitchFails extends MemoryDataFiles {
+  @override
+  Future<RestoreOutcome> restore(
+    StagedRestore staged, {
+    required DateTime now,
+    void Function()? beforeSwitch,
+  }) async {
+    target.checkKind(staged);
+    beforeSwitch?.call();
+    throw const BackupError('RESTORE_SWITCH_FAILED', '');
+  }
+}
+
+/// A backup of a vault with one weight entry, made elsewhere.
+Future<String> backupMadeElsewhere(WidgetTester tester) async {
+  final other = MemoryLogSink();
+  final source = LogRepository(
+    sink: other,
+    durability: StorageDurability.localFile,
+    location: 'x',
+  );
+  return (await tester.runAsync(() async {
+    await source.open();
+    final s0 = await servicesFor(dev, HostPlatform.linux, source);
+    await s0.heartbeat.recordWeightKg(profileId: s0.self.id, input: '77');
+    return createBackupBundle(
+      vaultLogText: other.text!,
+      appVersion: 'x',
+      sourceRevision: 'x',
+      createdAt: DateTime.utc(2026, 10, 7),
+    );
+  }))!;
+}
+
 Future<void> settle(WidgetTester tester) async {
   await tester.runAsync(
     () => Future<void>.delayed(const Duration(milliseconds: 80)),
@@ -194,7 +237,7 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('weight-input')), '70');
     await tapKey(tester, 'weight-save');
     expect(
-      find.textContaining('restart Human OS to use the restored data'),
+      find.textContaining('a restore ran in this session. Restart Human OS'),
       findsOneWidget,
     );
     expect(
@@ -234,7 +277,7 @@ void main() {
     await tester.tap(save);
     await settle(tester);
     expect(
-      find.textContaining('restart Human OS to use the restored data'),
+      find.textContaining('a restore ran in this session. Restart Human OS'),
       findsOneWidget,
     );
   });
@@ -270,5 +313,55 @@ void main() {
       findsOneWidget,
     );
     expect(find.byKey(const ValueKey('no-backups')), findsNothing);
+  });
+
+  testWidgets('a backup that cannot be read: the card names what failed and '
+      'that nothing changed', (tester) async {
+    final files = UnreadableBackups()
+      ..files['backup/b.hhosbackup.json'] = '{}'
+      ..times['backup/b.hhosbackup.json'] = DateTime.utc(2026, 10, 7);
+    await start(tester, sink: MemoryLogSink(), files: files);
+    await tapKey(tester, 'restore-b.hhosbackup.json');
+    await tapKey(tester, 'confirm-restore');
+    expect(
+      message(tester),
+      'That did not work (FileSystemException). Nothing was changed.',
+    );
+    expect(files.vaultText, isNull);
+    expect(find.byKey(const ValueKey('restart-to-use')), findsNothing);
+  });
+
+  testWidgets('a restore whose last move fails: the card says the previous '
+      'file is back, and this session stops writing until a restart', (
+    tester,
+  ) async {
+    final bundle = await backupMadeElsewhere(tester);
+    final files = SwitchFails()
+      ..files['backup/b.hhosbackup.json'] = bundle
+      ..times['backup/b.hhosbackup.json'] = DateTime.utc(2026, 10, 7);
+    await start(tester, sink: MemoryLogSink(), files: files);
+    await tapKey(tester, 'restore-b.hhosbackup.json');
+    await tapKey(tester, 'confirm-restore');
+    expect(
+      message(tester),
+      startsWith(
+        'The restore could not be finished: the restored copy could not be '
+        'moved into place. The previous data file is back where it was.',
+      ),
+    );
+    expect(
+      tester
+          .widget<FilledButton>(find.byKey(const ValueKey('create-backup')))
+          .onPressed,
+      isNull,
+      reason: 'paused until a restart',
+    );
+    await tester.enterText(find.byKey(const ValueKey('weight-input')), '70');
+    await tapKey(tester, 'weight-save');
+    expect(
+      find.textContaining('a restore ran in this session. Restart Human OS'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('restored data'), findsNothing);
   });
 }

@@ -119,9 +119,10 @@ class S {
       'Only the current version can be changed; reopen the timeline.',
       'Yalnız güncel sürüm değiştirilebilir; zaman çizelgesini yeniden aç.',
     ),
+    // Also after a restore that failed half-way: no promise of restored data.
     'RESTART_REQUIRED' => _t(
-      'Not saved: restart Human OS to use the restored data first.',
-      'Kaydedilmedi: önce geri yüklenen verileri kullanmak için Human OS\'u yeniden başlat.',
+      'Not saved: a restore ran in this session. Restart Human OS first.',
+      'Kaydedilmedi: bu oturumda bir geri yükleme çalıştı. Önce Human OS\'u yeniden başlat.',
     ),
     'VAULT_READ_ONLY' => _t(
       'Not saved: your saved data is open read-only (see the note above).',
@@ -461,8 +462,8 @@ class S {
               ' Önceki kasa dosyası şurada saklandı: $keptAt.',
             ));
   String get restartToUse => _t(
-    'Restored data is waiting: close and reopen Human OS to use it. Saving, backups and exports are paused until then.',
-    'Geri yüklenen veriler bekliyor: kullanmak için Human OS\'u kapatıp yeniden aç. O zamana kadar kayıt, yedek ve dışa aktarma durduruldu.',
+    'A restore ran in this session: close and reopen Human OS before going on. Saving, backups and exports are paused until then.',
+    'Bu oturumda bir geri yükleme çalıştı: devam etmeden önce Human OS\'u kapatıp yeniden aç. O zamana kadar kayıt, yedek ve dışa aktarma durduruldu.',
   );
   String get restoreTitle =>
       _t('Restore this backup?', 'Bu yedek geri yüklensin mi?');
