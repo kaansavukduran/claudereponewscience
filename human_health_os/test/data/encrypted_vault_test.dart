@@ -130,6 +130,28 @@ class GoneSink extends MemoryLogSink {
   }
 }
 
+/// Like [LandedThenFailsSink], on a store that cannot tell its size: only
+/// the failed append itself tells the sink to read storage again.
+class UnsizedLandedThenFails implements LogSink {
+  final inner = MemoryLogSink();
+  bool failAfterNext = false;
+
+  @override
+  Future<String?> read() => inner.read();
+
+  @override
+  Future<void> create(String text) => inner.create(text);
+
+  @override
+  Future<void> appendLine(String line) async {
+    await inner.appendLine(line);
+    if (failAfterNext && line.isNotEmpty) {
+      failAfterNext = false;
+      throw const FileSystemException('flush failed');
+    }
+  }
+}
+
 /// A store that exists but cannot be read (a lock or missing permissions).
 class UnreadableSink extends MemoryLogSink {
   @override
@@ -588,6 +610,26 @@ void main() {
         ),
       );
       expect(raw.text, replaced);
+    });
+
+    test('on a store that cannot tell its size, a write that landed before '
+        'its flush failed is still learned from storage before the next '
+        'number is used', () async {
+      final raw = UnsizedLandedThenFails();
+      final (me, _) = await seed(vaultOn(raw));
+      final o = await vaultOn(raw).unlock(pass);
+      final svc = HeartbeatService(o.repository);
+      raw.failAfterNext = true;
+      await expectLater(
+        svc.recordWeightKg(profileId: me, input: '71'),
+        throwsA(isA<FileSystemException>()),
+      );
+      final confirmed = await svc.recordWeightKg(profileId: me, input: '70');
+      final again = await vaultOn(raw).unlock(pass);
+      expect(again.report.warnings, isEmpty);
+      final ids = (await again.repository.records(me)).map((r) => r.id);
+      expect(ids, contains(confirmed.id));
+      expect(ids.length, 5);
     });
 
     test('a header without a passphrase slot: recovery adds one, and the new '

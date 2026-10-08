@@ -106,6 +106,25 @@ class DroppingRaw extends MemoryLogSink {
   }
 }
 
+/// Cannot tell its size right after the vault is written (a stat that
+/// fails), so the create step itself fails after the write.
+class SizeFailsAfterCreate extends MemoryLogSink {
+  bool armed = false;
+  bool failing = false;
+
+  @override
+  Future<void> create(String header) async {
+    await super.create(header);
+    if (armed) failing = true;
+  }
+
+  @override
+  Future<int?> size() async {
+    if (failing) throw const FileSystemException('stat failed');
+    return super.size();
+  }
+}
+
 /// Like the isolate on native builds: the key arrives a few frames later,
 /// so the gate really shows its busy state in between.
 Future<Uint8List> slowDerive(String secret, KdfParams p) async {
@@ -702,6 +721,22 @@ void main() {
         startsWith('The vault was created, but it could not be opened'),
       );
       raw.dropped = false;
+      await type(tester, 'gate-passphrase', pass);
+      await tapKey(tester, 'gate-unlock');
+      expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
+    });
+
+    testWidgets('NO_VAULT: the create step itself failed after the vault was '
+        'written: a re-read finds it, never "nothing changed"', (tester) async {
+      final raw = SizeFailsAfterCreate()..armed = true;
+      await launch(tester, Disk(raw));
+      await createThroughGate(tester);
+      expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
+      expect(
+        textOf(tester, 'gate-error'),
+        startsWith('The vault was created, but it could not be opened'),
+      );
+      raw.failing = false;
       await type(tester, 'gate-passphrase', pass);
       await tapKey(tester, 'gate-unlock');
       expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);

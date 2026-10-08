@@ -25,8 +25,6 @@ abstract interface class LogSink {
   Future<void> appendLine(String line);
 }
 
-/// A [LogSink] that can replace its first line and keep every byte after
-/// it exactly as stored (also bytes that do not decode as text).
 /// A store that reports its size cheaply (bytes for a file). The encrypted
 /// sink compares it before each append, so lines another writer added (a
 /// second window of the app) are noticed before a sequence number is used.
@@ -35,6 +33,8 @@ abstract interface class SizedLogStore {
   Future<int?> size();
 }
 
+/// A [LogSink] that can replace its first line and keep every byte after
+/// it exactly as stored (also bytes that do not decode as text).
 abstract interface class FirstLineReplaceable {
   /// Atomically replaces line 1 with [line].
   Future<void> replaceFirstLine(String line);
