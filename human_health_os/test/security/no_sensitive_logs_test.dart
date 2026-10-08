@@ -322,7 +322,7 @@ void main() {
     expectClean(lines.join('\n'), where: 'the log');
     expect(
       lines.join('\n'),
-      contains('vault_gate_failed error=FileSystemException'),
+      contains('vault_create_failed error=FileSystemException'),
     );
   });
 }

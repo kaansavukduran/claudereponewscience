@@ -475,6 +475,23 @@ void main() {
       expect(raw.text, broken);
     });
 
+    test('an envelope without any entry is damaged, never a new vault: '
+        'the unlock fails as unreadable and nothing is written', () async {
+      final (raw, _, ls) = await seeded();
+      raw.text = '${ls.first}\n';
+      await expectLater(
+        vaultOn(raw).unlock(pass),
+        throwsA(
+          isA<VaultFormatError>().having(
+            (e) => e.code,
+            'code',
+            'VAULT_HEADER_UNREADABLE',
+          ),
+        ),
+      );
+      expect(raw.text, '${ls.first}\n');
+    });
+
     test('a torn last write is closed before the next one, and the next '
         'entry survives a reload', () async {
       final (raw, me, ls) = await seeded();

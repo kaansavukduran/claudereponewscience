@@ -227,8 +227,18 @@ void main() {
     await launch(tester, disk, derive: slowDerive); // relaunch
     expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
     final before = disk.raw.text;
-    await type(tester, 'gate-passphrase', 'not the passphrase');
-    await tapKey(tester, 'gate-unlock');
+    final events = <String>[];
+    final previous = debugPrint;
+    debugPrint = (String? m, {int? wrapWidth}) => events.add('$m');
+    try {
+      await type(tester, 'gate-passphrase', 'not the passphrase');
+      await tapKey(tester, 'gate-unlock');
+    } finally {
+      debugPrint = previous;
+    }
+    expect(events, [
+      '[hhos] vault_unlock_failed error=CryptoFailure(NOT_AUTHENTIC)',
+    ], reason: 'the redacted event, nothing else');
     expect(textOf(tester, 'gate-error'), contains('did not open the vault'));
     expect(find.byKey(const ValueKey('vault-gate-unlock')), findsOneWidget);
     expect(disk.raw.text, before, reason: 'a failed unlock writes nothing');
@@ -247,10 +257,71 @@ void main() {
       isTrue,
       reason: 'still focused: the user can type again at once',
     );
-    await type(tester, 'gate-passphrase', pass);
-    await tapKey(tester, 'gate-unlock');
+    events.clear();
+    debugPrint = (String? m, {int? wrapWidth}) => events.add('$m');
+    try {
+      await type(tester, 'gate-passphrase', pass);
+      await tapKey(tester, 'gate-unlock');
+    } finally {
+      debugPrint = previous;
+    }
+    expect(events, ['[hhos] vault_unlocked warnings=0']);
     expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
     expect(latest(tester), '73.6 kg');
+  });
+
+  testWidgets('the key is right but the log inside cannot be used: explained '
+      'as unreadable, never overwritten; a damaged log may be set aside, data '
+      'from a newer app never', (tester) async {
+    // A vault whose sealed log header (entry 0) was removed.
+    final damaged = Disk();
+    await tester.runAsync(() async {
+      final g = await gateOn(damaged);
+      await g.vault.create(
+        passphrase: pass,
+        recoveryKey: newRecoveryKeyForTest,
+      );
+    });
+    final ls = damaged.raw.text!.split('\n')..removeAt(1);
+    damaged.raw.text = ls.join('\n');
+    final stored = damaged.raw.text;
+    await launch(tester, damaged);
+    await type(tester, 'gate-passphrase', pass);
+    await tapKey(tester, 'gate-unlock');
+    expect(find.byKey(const ValueKey('vault-gate-unreadable')), findsOneWidget);
+    expect(
+      textOf(tester, 'gate-unreadable-body'),
+      contains('VAULT_HEADER_UNREADABLE'),
+    );
+    expect(find.byKey(const ValueKey('gate-start-new')), findsOneWidget);
+    expect(damaged.raw.text, stored);
+
+    // A vault whose log was written by a newer app (format 2 inside).
+    final newer = Disk();
+    await tester.runAsync(() async {
+      final sink = EncryptedLogSink.forNewVault(
+        newer.raw,
+        passphrase: pass,
+        recoveryKey: newRecoveryKeyForTest,
+        derive: deriveInline,
+        newKdf: cheap,
+      );
+      await sink.create(
+        '{"format":"hhos-vault-log","format_version":2,"vault_id":"v-newer",'
+        '"created_at":"2026-10-01T00:00:00.000Z",'
+        '"encryption":"hhos-vault-enc-v1"}',
+      );
+    });
+    final newerStored = newer.raw.text;
+    await launch(tester, newer);
+    await type(tester, 'gate-passphrase', pass);
+    await tapKey(tester, 'gate-unlock');
+    expect(find.byKey(const ValueKey('vault-gate-unreadable')), findsOneWidget);
+    expect(textOf(tester, 'gate-unreadable-body'), contains('newer version'));
+    expect(find.byKey(const ValueKey('gate-start-new')), findsNothing);
+    await tapKey(tester, 'gate-memory-only');
+    expect(find.textContaining('written by a newer version'), findsOneWidget);
+    expect(newer.raw.text, newerStored);
   });
 
   testWidgets('RECOVERY: wrong and malformed keys are refused; the right key '

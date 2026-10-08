@@ -307,9 +307,16 @@ OpenedEnvelope openEnvelopeText(
       if (plain == null) pending++;
     }
   }
+  if (out.isEmpty) {
+    // An envelope is always created with its log header (sequence 0) in the
+    // same write, so one without any entry is damaged. Reported as a missing
+    // header, it is never mistaken for a new, empty vault.
+    out.add(missingEntryMarker);
+    missing++;
+  }
   final inner = out.join('\n');
   return OpenedEnvelope(
-    inner: out.isEmpty ? '' : (closed ? '$inner\n' : inner),
+    inner: closed ? '$inner\n' : inner,
     nextSeq: expected,
     unreadable: unreadable,
     missing: missing,

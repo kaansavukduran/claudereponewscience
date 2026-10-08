@@ -13,10 +13,19 @@ import '../../data/crypto/recovery_key.dart';
 import '../../data/crypto/vault_crypto.dart' show CryptoFailure;
 import '../../data/local/encrypted_vault.dart';
 import '../../data/local/vault_envelope.dart' show VaultEnvelopeError;
+import '../../data/local/vault_log.dart' show VaultFormatError;
 import '../../domain/ports/storage_status.dart';
 import '../../l10n/strings.dart';
 
 enum _Mode { create, recoveryKey, unlock, recover, keyLost, unreadable }
+
+/// Codes meaning "written by a newer Human OS": the data is fine, this app
+/// is too old. Such a vault is explained and never set aside.
+const Set<String> newerVaultCodes = {
+  'ENVELOPE_NEWER',
+  'VAULT_NEWER',
+  'RECORD_SCHEMA_NEWER',
+};
 
 class VaultGateScreen extends StatefulWidget {
   const VaultGateScreen({super.key, required this.gate, required this.onReady});
@@ -97,17 +106,24 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
     return null;
   }
 
+  /// Runs one gate step. [done] and [failed] name the redacted events it
+  /// logs (master §37: event, success or failure, error type and code).
   Future<void> _run(
     Future<AppServices> Function() action,
     S s, {
+    required String done,
+    required String failed,
     String? wrongSecret,
   }) async {
+    // One step at a time (Enter in a field while a key is derived).
+    if (_busy) return;
     setState(() {
       _busy = true;
       _error = null;
     });
     try {
       final services = await action();
+      logEvent(done, fields: {'warnings': services.loadWarnings.length});
       _newPassphrase = null;
       _recoveryKey = null;
       _pass.clear();
@@ -116,6 +132,7 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       if (mounted) widget.onReady(services);
       return;
     } on CryptoFailure catch (e) {
+      logEvent(failed, error: e);
       final wrong = e.code == 'NOT_AUTHENTIC' && wrongSecret != null;
       _error = wrong ? wrongSecret : s.gateFailed(e.code);
       // A wrong passphrase is cleared so the next try starts empty; a wrong
@@ -128,9 +145,17 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
           if (mounted) _passFocus.requestFocus();
         });
       }
-    } on RecoveryKeyFormatError {
+    } on RecoveryKeyFormatError catch (e) {
+      logEvent(failed, error: e);
       _error = s.recoveryKeyFormat;
+    } on VaultFormatError catch (e) {
+      // The key was right but the log inside cannot be used (written by a
+      // newer app, or its header is damaged): explain, never overwrite.
+      logEvent(failed, error: e);
+      _unreadableCode = e.code;
+      _mode = _Mode.unreadable;
     } on VaultEnvelopeError catch (e) {
+      logEvent(failed, error: e);
       if (e.code == 'VAULT_EXISTS') {
         // Another start created a vault meanwhile: it is never overwritten.
         _go(_Mode.unlock);
@@ -139,7 +164,7 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
         _mode = _Mode.unreadable;
       }
     } catch (e) {
-      logEvent('vault_gate_failed', error: e);
+      logEvent(failed, error: e);
       _error = s.gateFailed(errorCode(e) ?? e.runtimeType.toString());
     }
     if (mounted) setState(() => _busy = false);
@@ -158,6 +183,8 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
                   : null),
       ),
       s,
+      done: 'session_memory_only',
+      failed: 'session_memory_only_failed',
     );
   }
 
@@ -184,6 +211,7 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
     setState(() => _busy = true);
     try {
       final kept = await _vault.setAside();
+      logEvent('vault_set_aside');
       _keptAt = kept;
       _go(_Mode.create);
     } catch (e) {
@@ -331,6 +359,8 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
                 ),
               ),
               s,
+              done: 'vault_created',
+              failed: 'vault_create_failed',
             )
           : null,
     ),
@@ -341,6 +371,8 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
     void go() => _run(
       () async => widget.gate.open(await _vault.unlock(_pass.text)),
       s,
+      done: 'vault_unlocked',
+      failed: 'vault_unlock_failed',
       wrongSecret: s.wrongPassphrase,
     );
     return [
@@ -378,6 +410,8 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
           ),
         ),
         s,
+        done: 'vault_recovered',
+        failed: 'vault_recover_failed',
         wrongSecret: s.wrongRecoveryKey,
       );
     }
@@ -434,7 +468,7 @@ class _VaultGateScreenState extends State<VaultGateScreen> {
       _errorText(text),
       _secondary(s.gateMemoryOnly, 'gate-memory-only', () => _memoryOnly(s)),
       // A newer vault is the user's data for a newer app: never set aside.
-      if (_vault.canSetAside && code != 'ENVELOPE_NEWER')
+      if (_vault.canSetAside && !newerVaultCodes.contains(code))
         _secondary(s.startNewVault, 'gate-start-new', () => _startNew(s)),
     ];
   }

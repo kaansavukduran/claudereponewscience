@@ -44,10 +44,15 @@
       "IMPLEMENT: vault_crypto + recovery_key (D-016), vault_envelope (hhos-vault-enc v1), encrypted_vault (create/unlock/recover/set aside), storage policy (encrypted for staging/production/portable desktop), vault gate UI EN/TR, encrypted backups + restore with the backup key, export off for encrypted vaults, core/redact.dart + error handlers",
       "TEST: vault_crypto (RFC 8439, RFC 9106, argon2-cffi cross-check), encrypted_vault, encrypted_backup, vault gate widget, sensitive-data logging, encrypted fixture enc_v1_f006; 252 unit/widget + 7 Linux integration pass",
       "REPAIR (test): a two-digit '73' substring check failed in about half the runs (random ciphertext); replaced by strings that cannot occur by chance",
-      "REPAIR (product): after a wrong passphrase the field lost its focus on Linux (the platform closes the input connection while the key is derived); the field is cleared and refocused; found by the Linux integration test"
+      "REPAIR (product): after a wrong passphrase the field lost its focus on Linux (the platform closes the input connection while the key is derived); the field is cleared and refocused; found by the Linux integration test",
+      "IMPLEMENT: redacted gate events (vault_created, vault_unlocked, vault_recovered, vault_set_aside, session_memory_only and *_failed with error type and code only), used by the keyboard-driven Linux runtime smoke",
+      "REPAIR (product): an envelope without any entry was taken for a new, empty vault (refused with a StateError, nothing written); now reported as a missing log header, so the gate shows the unreadable state; found by a new widget test",
+      "REPAIR (product): a vault whose inner log is newer or damaged showed a generic error on the unlock screen; now the unreadable state, and data from a newer app is never offered to be set aside",
+      "MUTATION: S1-S16 caught at 87c00ec (S13 rewritten as a behavioural mutation after a compile error in the first version)",
+      "REVIEW: first adversarial review run (4 finders) stopped by the session limit before any finding; rerun on the final diff"
     ],
     "last_verified_gate": null,
-    "next_action": "MUTATION + REVIEW, then GATES",
+    "next_action": "REVIEW (rerun), then GATES",
     "files_touched": [],
     "migration_ids": [],
     "evidence_ids": [],
@@ -200,7 +205,7 @@
     "run_id": "F006@v0.32",
     "why": "master §39 ladder: local security hardening (reviewed key abstraction, encrypted vault for staging/production/portable, key-loss/recovery states, redacted logs, no plaintext fallback); last MVP Forge (D-014)"
   },
-  "updated_at": "2026-10-07T20:30:00Z",
+  "updated_at": "2026-10-08T08:08:45Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",

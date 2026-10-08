@@ -618,7 +618,12 @@ class S {
   );
   String get unreadableTitle =>
       _t('The saved vault cannot be opened', 'Kayıtlı kasa açılamıyor');
-  String unreadableBody(String code) => code == 'ENVELOPE_NEWER'
+  String unreadableBody(String code) =>
+      const {
+        'ENVELOPE_NEWER',
+        'VAULT_NEWER',
+        'RECORD_SCHEMA_NEWER',
+      }.contains(code)
       ? _t(
           'It was written by a newer version of Human OS. Update the app to open it. The file was not changed.',
           'Human OS\'un daha yeni bir sürümüyle yazılmış. Açmak için uygulamayı güncelle. Dosya değiştirilmedi.',
