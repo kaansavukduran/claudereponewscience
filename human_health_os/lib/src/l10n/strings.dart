@@ -52,8 +52,8 @@ class S {
     'Klinik karar için değil · STAGING DERLEMESİ · yalnız test',
   );
   String get todayIntro => _t(
-    'Human OS is being built to keep every part of your health on one timeline. Today it records body weight by hand; each entry keeps where it came from.',
-    'Human OS, sağlığının her parçasını tek bir zaman çizelgesinde tutmak için geliştiriliyor. Şu an kilo elle kaydediliyor; her kayıt nereden geldiğini saklar.',
+    'Human OS is being built to keep every part of your health on one timeline. Today it records body weight, blood pressure, resting heart rate and waist circumference by hand; each entry keeps where it came from.',
+    'Human OS, sağlığının her parçasını tek bir zaman çizelgesinde tutmak için geliştiriliyor. Şu an kilo, tansiyon, dinlenme nabzı ve bel çevresi elle kaydediliyor; her kayıt nereden geldiğini saklar.',
   );
   String get checkInsAndMissions => _t(
     'Check-ins and daily missions: not built yet.',
@@ -118,6 +118,40 @@ class S {
     'TARGET_NOT_CURRENT' => _t(
       'Only the current version can be changed; reopen the timeline.',
       'Yalnız güncel sürüm değiştirilebilir; zaman çizelgesini yeniden aç.',
+    ),
+    'TARGET_WRONG_KIND' => _t(
+      'This entry is of another kind; correct it from its own row.',
+      'Bu giriş başka bir türde; kendi satırından düzelt.',
+    ),
+    // Measurements (F007): 0 is never stored for a value not known.
+    'NOT_POSITIVE' || 'VALUE_NOT_POSITIVE' => _t(
+      'Enter a number greater than 0. Nothing was saved.',
+      'Sıfırdan büyük bir sayı gir. Hiçbir şey kaydedilmedi.',
+    ),
+    'BP_ORDER' => _t(
+      'The upper number (systolic) must be larger than the lower number (diastolic). Were the two swapped?',
+      'Büyük tansiyon (sistolik) küçük tansiyondan (diyastolik) büyük olmalı. İkisi yer mi değiştirdi?',
+    ),
+    'CONTEXT_TOO_LONG' => _t(
+      'Keep the note under 500 characters.',
+      'Notu 500 karakterin altında tut.',
+    ),
+    'CHECKPOINT_FAILED' => _t(
+      'Not saved: this first measurement changes the record format, and a backup of your earlier data could not be made first. Nothing was written; check the free space and try again.',
+      'Kaydedilmedi: bu ilk ölçüm kayıt biçimini değiştiriyor ve önceki verilerinin yedeği önce alınamadı. Hiçbir şey yazılmadı; boş alanı kontrol edip tekrar dene.',
+    ),
+    // Record rules the form cannot break; shown with their code if a bug
+    // ever lets one through.
+    'VALUE_NOT_FINITE' ||
+    'UNIT_NOT_SUPPORTED' ||
+    'KIND_NEEDS_NEWER_SCHEMA' ||
+    'FIELD_NEEDS_NEWER_SCHEMA' ||
+    'BP_HAS_NO_QUANTITY' ||
+    'DETAILS_MISMATCH' ||
+    'CONTEXT_NOT_SUPPORTED' ||
+    'CONTEXT_EMPTY' => _t(
+      'Not saved: this entry breaks a record rule ($code). Nothing was written.',
+      'Kaydedilmedi: bu giriş bir kayıt kuralını çiğniyor ($code). Hiçbir şey yazılmadı.',
     ),
     // Also after a restore that failed half-way: no promise of restored data.
     'RESTART_REQUIRED' => _t(
@@ -279,7 +313,75 @@ class S {
   String recordKind(RecordKind k) => switch (k) {
     RecordKind.bodyWeight => _t('Body weight', 'Vücut ağırlığı'),
     RecordKind.labResult => _t('Lab result', 'Lab sonucu'),
+    RecordKind.waistCircumference => _t('Waist circumference', 'Bel çevresi'),
+    RecordKind.restingHeartRate => _t('Resting heart rate', 'Dinlenme nabzı'),
+    RecordKind.bloodPressure => _t('Blood pressure', 'Tansiyon'),
   };
+
+  // Measurements (F007): kept exactly as typed, never judged.
+  String get measurementsTitle => _t('Measurements', 'Ölçümler');
+  String get measurementKind => _t('What did you measure?', 'Neyi ölçtün?');
+  String get systolicField => _t(
+    'Systolic, the upper number (mmHg)',
+    'Büyük tansiyon, sistolik (mmHg)',
+  );
+  String get diastolicField => _t(
+    'Diastolic, the lower number (mmHg)',
+    'Küçük tansiyon, diyastolik (mmHg)',
+  );
+  String measurementField(RecordKind k) => switch (k) {
+    RecordKind.restingHeartRate => _t(
+      'Resting heart rate (bpm)',
+      'Dinlenme nabzı (atım/dk)',
+    ),
+    RecordKind.waistCircumference => _t(
+      'Waist circumference (cm)',
+      'Bel çevresi (cm)',
+    ),
+    _ => recordKind(k),
+  };
+  String get contextField => _t(
+    'How it was measured (optional), e.g. sitting, left arm',
+    'Nasıl ölçüldü (isteğe bağlı), ör. oturarak, sol kol',
+  );
+  String get saveMeasurement => _t('Save measurement', 'Ölçümü kaydet');
+  String get measurementNotYet => _t(
+    'Not recorded yet. An empty field is never stored as 0.',
+    'Henüz kayıt yok. Boş alan asla 0 olarak saklanmaz.',
+  );
+  String get measurementsNote => _t(
+    'Saved exactly as typed, with the time you press Save and the source. Human OS does not judge these values or compare them with any range or target.',
+    'Yazdığın gibi, Kaydet\'e bastığın zaman ve kaynağıyla saklanır. Human OS bu değerleri yargılamaz, hiçbir aralık ya da hedefle karşılaştırmaz.',
+  );
+  String checkpointSaved(String where) => _t(
+    'Saved. Before this first measurement, a backup of your earlier data was saved at $where: older versions of Human OS cannot open the new record format.',
+    'Kaydedildi. Bu ilk ölçümden önce önceki verilerinin yedeği şuraya kaydedildi: $where. Human OS\'un eski sürümleri yeni kayıt biçimini açamaz.',
+  );
+  String get contextLabel => _t('note', 'not');
+
+  /// A unit as shown (storage keeps the canonical unit).
+  String unit(String u) => switch (u) {
+    'bpm' => _t('bpm', 'atım/dk'),
+    _ => u,
+  };
+
+  /// A unit as a screen reader should say it.
+  String spokenUnit(String u) => switch (u) {
+    'mmHg' => _t('millimetres of mercury', 'milimetre cıva'),
+    'bpm' => _t('beats per minute', 'dakikada atım'),
+    'cm' => _t('centimetres', 'santimetre'),
+    'kg' => _t('kilograms', 'kilogram'),
+    _ => u,
+  };
+  String spokenBloodPressure(String systolic, String diastolic) => _t(
+    'systolic $systolic, diastolic $diastolic',
+    'sistolik $systolic, diyastolik $diastolic',
+  );
+  String spokenLatest(String kind, String value, String when, String source) =>
+      _t(
+        '$kind: $value, measured $when, $source',
+        '$kind: $value, ölçüm zamanı $when, $source',
+      );
 
   // Labs (F004): everything is shown as the report printed it.
   String get labsNoInterpretation => _t(

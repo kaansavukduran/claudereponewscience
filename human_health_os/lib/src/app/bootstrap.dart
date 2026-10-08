@@ -175,6 +175,29 @@ Future<AppServices> servicesFor(
 }) async {
   final heartbeat = HeartbeatService(repo);
   final self = await heartbeat.ensureSelfProfile();
+  final makeBackup =
+      repo is LogRepository &&
+          repo.description.durability != StorageDurability.memoryOnly
+      ? _backupMaker(repo, config)
+      : null;
+  final checkpointSaved = ValueNotifier<String?>(null);
+  if (repo is LogRepository &&
+      makeBackup != null &&
+      files != null &&
+      files.canRestore) {
+    // Before the first record of a newer schema, keep a backup of the store
+    // as it is: older apps refuse it from then on (D-018). Browser builds
+    // cannot save a file unasked, so they keep none (G-47).
+    repo.beforeSchemaUpgrade = () async {
+      final now = heartbeat.clock.nowUtc();
+      final where = await files.save(
+        DataFileKind.backup,
+        backupFileName(repo.description.vaultId, now),
+        await makeBackup(now),
+      );
+      checkpointSaved.value = where;
+    };
+  }
   // Tests that hand in a repository without a reason get "not reported"
   // (null) for a memory store, never an invented cause.
   final status =
@@ -200,13 +223,10 @@ Future<AppServices> servicesFor(
     // backup is the way back. A backup copies the persisted store, so a
     // memory store offers none.
     dataFiles: files,
-    makeBackup:
-        repo is LogRepository &&
-            repo.description.durability != StorageDurability.memoryOnly
-        ? _backupMaker(repo, config)
-        : null,
+    makeBackup: makeBackup,
     lockStorage: repo is LogRepository ? repo.lock : null,
     restartRequired: ValueNotifier<bool>(false),
+    checkpointSaved: checkpointSaved,
     deriveKey: derive,
   );
 }

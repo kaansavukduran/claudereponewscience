@@ -1,6 +1,7 @@
 /// Record use cases: a local SELF profile, canonical body-weight observations
 /// (F002) and their timeline with corrections, withdrawals and deletions
-/// (F003), all through the [HealthRepository] port.
+/// (F003), lab results as printed (F004) and measurements typed by hand
+/// (F007), all through the [HealthRepository] port.
 library;
 
 import '../core/ids.dart';
@@ -10,14 +11,19 @@ import '../domain/profile/profile.dart';
 import '../domain/records/health_record.dart';
 
 class InputError implements Exception, CodedError {
-  const InputError(this.code);
+  const InputError(this.code, [this.field]);
 
   /// Stable code; the UI maps it to localized text.
   /// `EMPTY` · `NOT_A_NUMBER` · `OUT_OF_RANGE` · `FUTURE_TIME` ·
-  /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT` · `LAB_ANALYTE_EMPTY` ·
-  /// `DATE_INVALID` · `AMBIGUOUS_SEPARATOR`
+  /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT` · `TARGET_WRONG_KIND` ·
+  /// `LAB_ANALYTE_EMPTY` · `DATE_INVALID` · `AMBIGUOUS_SEPARATOR` ·
+  /// `NOT_POSITIVE` · `BP_ORDER` · `CONTEXT_TOO_LONG`
   @override
   final String code;
+
+  /// Which input the error belongs to, when a form has several
+  /// (`value`, `systolic`, `diastolic`, `context`); null otherwise.
+  final String? field;
 
   @override
   String toString() => 'InputError($code)';
@@ -74,6 +80,23 @@ DateTime parseSampleDate(String raw) {
     throw const InputError('DATE_INVALID');
   }
   return date;
+}
+
+/// What a person typed for one measurement (F007). A blood pressure reading
+/// uses [systolic] and [diastolic]; the other kinds use [value]. [context]
+/// is optional free text ("sitting, left arm"), kept exactly as typed.
+class MeasurementInput {
+  const MeasurementInput({
+    this.value = '',
+    this.systolic = '',
+    this.diastolic = '',
+    this.context = '',
+  });
+
+  final String value;
+  final String systolic;
+  final String diastolic;
+  final String context;
 }
 
 /// Like [parseDecimal], but refuses a value whose separator could be a
@@ -196,6 +219,9 @@ class HeartbeatService {
   }) async {
     final value = _weightKg(input);
     final target = await _currentTarget(profileId, targetId);
+    if (target.kind != RecordKind.bodyWeight) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
     final record = HealthRecord(
       id: _ids.newId(),
       profileId: profileId,
@@ -238,6 +264,7 @@ class HeartbeatService {
       supersedesId: target.id,
       amendReason: reason,
       deletedAt: reason == AmendReason.deleted ? now : null,
+      schemaVersion: HealthRecord.writeSchemaFor(target.kind),
     );
     await repository.appendRecord(marker);
     return marker;
@@ -314,9 +341,114 @@ class HeartbeatService {
   }) async {
     final target = await _currentTarget(profileId, targetId);
     if (target.kind != RecordKind.labResult) {
-      throw const InputError('TARGET_NOT_CURRENT');
+      throw const InputError('TARGET_WRONG_KIND');
     }
     final record = _labRecord(profileId, input, supersedesId: target.id);
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// Measurement entries of [kind], newest first (ladder F007).
+  Future<List<TimelineEntry>> measurementTimeline(
+    String profileId,
+    RecordKind kind,
+  ) async => buildTimeline(await repository.records(profileId, kind: kind));
+
+  /// A number typed for a measurement: a decimal comma is fine, a possible
+  /// thousands separator is refused, blank is EMPTY (never 0), and 0 or
+  /// less is refused (leave a value you do not know empty).
+  double _measurementNumber(String raw, String field) {
+    final double v;
+    try {
+      v = parseLabDecimal(raw);
+    } on InputError catch (e) {
+      throw InputError(e.code, field);
+    }
+    if (v <= 0) throw InputError('NOT_POSITIVE', field);
+    return v;
+  }
+
+  HealthRecord _measurementRecord(
+    String profileId,
+    RecordKind kind,
+    MeasurementInput input, {
+    HealthRecord? target,
+  }) {
+    if (!kind.isMeasurement) throw ArgumentError.value(kind, 'kind');
+    final context = input.context.trim();
+    if (context.length > HealthRecord.maxContextLength) {
+      throw const InputError('CONTEXT_TOO_LONG', 'context');
+    }
+    Quantity? quantity;
+    String? originalText;
+    BloodPressureDetails? details;
+    if (kind.isStructured) {
+      final systolic = _measurementNumber(input.systolic, 'systolic');
+      final diastolic = _measurementNumber(input.diastolic, 'diastolic');
+      // Checked at entry only: the upper number is larger by definition, so
+      // an equal or smaller one was mistyped or swapped (D-018).
+      if (systolic <= diastolic) throw const InputError('BP_ORDER', 'systolic');
+      details = BloodPressureDetails(
+        systolic: systolic,
+        diastolic: diastolic,
+        unit: kind.unit!,
+        systolicText: input.systolic.trim(),
+        diastolicText: input.diastolic.trim(),
+      );
+    } else {
+      quantity = Quantity(_measurementNumber(input.value, 'value'), kind.unit);
+      originalText = input.value.trim();
+    }
+    final now = clock.nowUtc();
+    return HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: kind,
+      state: RecordState.observed,
+      valueStatus: ValueStatus.present,
+      quantity: quantity,
+      originalText: originalText,
+      provenance: const Provenance.manual(),
+      // A correction is the same observation: it keeps its time.
+      observedAt: target?.observedAt ?? now,
+      recordedAt: now,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
+      context: context.isEmpty ? null : context,
+      details: details,
+      schemaVersion: HealthRecord.writeSchemaFor(kind),
+    );
+  }
+
+  /// Records a measurement typed by hand as an OBSERVED, manual fact at the
+  /// moment it is saved. Nothing is derived, averaged or judged.
+  Future<HealthRecord> recordMeasurement({
+    required String profileId,
+    required RecordKind kind,
+    required MeasurementInput input,
+  }) async {
+    final record = _measurementRecord(profileId, kind, input);
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// A better value for the same measurement (new version, same kind and
+  /// time). Another kind's record is refused.
+  Future<HealthRecord> correctMeasurement({
+    required String profileId,
+    required String targetId,
+    required MeasurementInput input,
+  }) async {
+    final target = await _currentTarget(profileId, targetId);
+    if (!target.kind.isMeasurement) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
+    final record = _measurementRecord(
+      profileId,
+      target.kind,
+      input,
+      target: target,
+    );
     await repository.appendRecord(record);
     return record;
   }

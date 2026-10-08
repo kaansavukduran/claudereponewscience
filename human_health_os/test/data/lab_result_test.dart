@@ -326,7 +326,7 @@ void main() {
       expect(all.map((e) => e.shown.id).toSet(), {fixed.id, w.id});
       await expectLater(
         svc.correctLab(profileId: me, targetId: w.id, input: li()),
-        input('TARGET_NOT_CURRENT'),
+        input('TARGET_WRONG_KIND'),
       );
     });
   });

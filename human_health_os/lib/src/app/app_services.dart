@@ -28,6 +28,7 @@ class AppServices {
     this.makeBackup,
     this.lockStorage,
     this.restartRequired,
+    this.checkpointSaved,
     this.deriveKey = deriveInline,
   });
 
@@ -67,4 +68,8 @@ class AppServices {
   /// True once the vault file was replaced in this session: every screen
   /// must stop offering writes, backups and exports until a restart.
   final ValueNotifier<bool>? restartRequired;
+
+  /// Where the upgrade checkpoint was saved in this session (a backup made
+  /// before the first record of a newer schema); null until then (F007).
+  final ValueNotifier<String?>? checkpointSaved;
 }

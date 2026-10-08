@@ -101,12 +101,23 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes vault format 1 (record schema 3 since F004), '
-        'reads format 1, never downgrades', () {
+    test('this app writes vault format 1, reads record schema 4 (F007) and '
+        'writes weight and lab results at 3, reads format 1, never '
+        'downgrades', () {
       expect(vaultFormatVersion, 1);
       expect(vaultOldestReadableVersion, 1);
       expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 3);
+      expect(HealthRecord.currentSchemaVersion, 4);
+      expect(HealthRecord.defaultWriteSchema, 3);
+      expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
+      expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
+      for (final k in [
+        RecordKind.waistCircumference,
+        RecordKind.restingHeartRate,
+        RecordKind.bloodPressure,
+      ]) {
+        expect(HealthRecord.writeSchemaFor(k), 4);
+      }
       expect(Profile.currentSchemaVersion, 1);
     });
 
@@ -172,7 +183,13 @@ void main() {
         vaultWith([
           header(),
           profileLine(),
-          encodeOp('record.append', weight('r1', patch: {'schema_version': 4})),
+          encodeOp(
+            'record.append',
+            weight(
+              'r1',
+              patch: {'schema_version': HealthRecord.currentSchemaVersion + 1},
+            ),
+          ),
         ]);
         await expectRefused('RECORD_SCHEMA_NEWER');
         vaultWith([header(), profileLine(schema: 2)]);

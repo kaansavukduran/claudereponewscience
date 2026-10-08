@@ -66,6 +66,14 @@ class LogRepository implements HealthRepository {
   /// True when [sink] seals what it stores (the encrypted vault). Set by
   /// whoever wires the sink, never read from the stored header.
   final bool encrypted;
+
+  /// Runs once, before the first record of a newer record schema is written
+  /// to a store that holds records but none of that schema: an upgrade
+  /// checkpoint (a backup of the store as it is), because older apps refuse
+  /// a store as soon as it holds a newer record (master §35, D-018). If it
+  /// throws, the write is refused (`CHECKPOINT_FAILED`) and nothing is
+  /// written. Null where no checkpoint can be kept.
+  Future<void> Function()? beforeSchemaUpgrade;
   VaultState? _state;
   bool _readOnly = false;
   String? _lockedCode;
@@ -174,9 +182,25 @@ class LogRepository implements HealthRepository {
       _s.apply('record.append', record.toJson());
       return;
     }
+    await _checkpointBefore(record);
     // Write first, then update memory: memory never shows unsaved data.
     await _append(encodeOp('record.append', record.toJson()));
     _s.apply('record.append', record.toJson());
+  }
+
+  Future<void> _checkpointBefore(HealthRecord record) async {
+    final checkpoint = beforeSchemaUpgrade;
+    if (checkpoint == null || _s.records.isEmpty) return;
+    var stored = 0;
+    for (final r in _s.records.values) {
+      if (r.schemaVersion > stored) stored = r.schemaVersion;
+    }
+    if (record.schemaVersion <= stored) return;
+    try {
+      await checkpoint();
+    } catch (_) {
+      throw const StorageWriteRefused('CHECKPOINT_FAILED');
+    }
   }
 
   @override
