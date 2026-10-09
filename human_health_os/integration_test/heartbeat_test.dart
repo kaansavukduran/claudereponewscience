@@ -63,6 +63,29 @@ Future<void> tapKey(WidgetTester tester, String key) async {
   await tester.pump();
 }
 
+/// Today is a lazy list: scroll until the measurements card is built.
+Future<void> revealMeasurements(WidgetTester tester) async {
+  await tester.scrollUntilVisible(
+    find.byKey(const ValueKey('measurements-card')),
+    300,
+    scrollable: find
+        .descendant(
+          of: find.byKey(const ValueKey('screen-today')),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await tester.pumpAndSettle();
+}
+
+Future<void> fillKey(WidgetTester tester, String key, String text) async {
+  final f = find.byKey(ValueKey(key));
+  await tester.ensureVisible(f);
+  await tester.pumpAndSettle();
+  await tester.enterText(f, text);
+  await tester.pump();
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -494,6 +517,199 @@ void main() {
     expect(file.existsSync(), isFalse);
     expect((await moved.inspect()).access, VaultAccess.create);
     root.deleteSync(recursive: true);
+  });
+
+  testWidgets('F007 on real files: measurements typed on Today and a '
+      'correction survive a relaunch; weight stays schema 3; the first '
+      'measurement keeps a backup of the earlier vault on disk', (
+    tester,
+  ) async {
+    if (!Platform.isLinux) return;
+    final data = Directory.systemTemp.createTempSync('hhos-it-f007-');
+    final env = {'XDG_DATA_HOME': data.path, 'HOME': data.path};
+    final exe = '${data.path}/bin/human_health_os';
+    Future<AppServices> launch() async {
+      final choice = await createPlatformRepository(
+        dev,
+        env: env,
+        executablePath: exe,
+      );
+      final report = await choice.repository.open();
+      expect(report.warnings, isEmpty);
+      final services = await servicesFor(
+        dev,
+        HostPlatform.linux,
+        choice.repository,
+        report: report,
+        files: choice.files,
+      );
+      await tester.pumpWidget(HumanOsApp(services: services));
+      await tester.pumpAndSettle();
+      await revealMeasurements(tester);
+      return services;
+    }
+
+    final s1 = await launch();
+    await s1.heartbeat.recordWeightKg(profileId: s1.self.id, input: '79,4');
+    final vault = File('${data.path}/human-health-os/$vaultFileName');
+    final beforeMeasurements = vault.readAsStringSync();
+
+    await tapKey(tester, 'measure-kind-vital.blood_pressure');
+    await tester.pumpAndSettle();
+    await fillKey(tester, 'measure-systolic', '128');
+    await fillKey(tester, 'measure-diastolic', '84');
+    await fillKey(tester, 'measure-context', 'sitting, left arm');
+    await tapKey(tester, 'measure-save');
+    await waitFor(tester, find.byKey(const ValueKey('measure-saved')));
+    final message = tester
+        .widget<Text>(find.byKey(const ValueKey('measure-saved')))
+        .data!;
+    expect(message, startsWith('Saved. Before this first measurement'));
+
+    // The checkpoint is the vault exactly as it was before the measurement.
+    final kept = (await s1.dataFiles!.backups()).single;
+    expect(kept.id, startsWith('${data.path}/human-health-os/backups/'));
+    expect(message, contains(kept.id));
+    final staged = stageRestore(await s1.dataFiles!.read(kept));
+    expect(staged.payload, beforeMeasurements);
+    expect(staged.manifest.recordSchemaVersions, [3]);
+
+    await tapKey(tester, 'measure-kind-vital.resting_heart_rate');
+    await tester.pumpAndSettle();
+    await fillKey(tester, 'measure-value', '57');
+    await tapKey(tester, 'measure-save');
+    await waitFor(tester, find.byKey(const ValueKey('measure-saved')));
+    expect(
+      tester.widget<Text>(find.byKey(const ValueKey('measure-saved'))).data,
+      'Saved',
+      reason: 'one checkpoint, before the first measurement only',
+    );
+    expect((await s1.dataFiles!.backups()).length, 1);
+
+    final reading = (await s1.heartbeat.measurementTimeline(
+      s1.self.id,
+      RecordKind.bloodPressure,
+    )).single.heads.single;
+    await s1.heartbeat.correctMeasurement(
+      profileId: s1.self.id,
+      targetId: reading.id,
+      input: const MeasurementInput(systolic: '124', diastolic: '82'),
+    );
+    await s1.heartbeat.recordMeasurement(
+      profileId: s1.self.id,
+      kind: RecordKind.waistCircumference,
+      input: const MeasurementInput(value: '84,25', context: 'standing'),
+    );
+    final state = parseVaultLog(vault.readAsStringSync());
+    expect(state.warnings, isEmpty);
+    expect(
+      [for (final id in state.order) state.records[id]!.schemaVersion],
+      [3, 4, 4, 4, 4],
+    );
+    expect(vault.readAsStringSync().startsWith(beforeMeasurements), isTrue);
+
+    await tester.pumpWidget(const SizedBox());
+    final s2 = await launch(); // relaunch on the same files
+    expect(s2.self.id, s1.self.id);
+    String latest(RecordKind k) => tester
+        .widget<Text>(find.byKey(ValueKey('measure-latest-value-${k.code}')))
+        .data!;
+    expect(latest(RecordKind.bloodPressure), '124/82 mmHg');
+    expect(latest(RecordKind.restingHeartRate), '57 bpm');
+    expect(latest(RecordKind.waistCircumference), '84.25 cm');
+    final versions = (await s2.heartbeat.measurementTimeline(
+      s2.self.id,
+      RecordKind.bloodPressure,
+    )).single;
+    expect(versions.heads.single.supersedesId, reading.id);
+    expect(versions.versions.length, 2, reason: 'the first reading is kept');
+    expect(
+      versions.versions.firstWhere((r) => r.id == reading.id).context,
+      'sitting, left arm',
+    );
+    data.deleteSync(recursive: true);
+  });
+
+  testWidgets('F007 in a production encrypted vault: measurements leave no '
+      'plaintext, the checkpoint backup is encrypted, and after a relaunch '
+      'the gate unlocks to the same readings', (tester) async {
+    if (!Platform.isLinux) return;
+    final data = Directory.systemTemp.createTempSync('hhos-it-f007b-');
+    final env = {'HHOS_DATA_DIR': data.path, 'HOME': data.path};
+    const pass = 'Mavi-Kedi 7 Ağaç Lamba!';
+
+    final choice = await createPlatformRepository(prod, env: env);
+    final opened = await choice.vault!.create(
+      passphrase: pass,
+      recoveryKey: newRecoveryKeyForIt(),
+    );
+    final s1 = await servicesFor(
+      prod,
+      HostPlatform.linux,
+      opened.repository,
+      report: opened.report,
+      files: opened.files,
+    );
+    await s1.heartbeat.recordWeightKg(profileId: s1.self.id, input: '74,2');
+    await s1.heartbeat.recordMeasurement(
+      profileId: s1.self.id,
+      kind: RecordKind.bloodPressure,
+      input: const MeasurementInput(
+        systolic: '131',
+        diastolic: '87',
+        context: 'sitting, left arm',
+      ),
+    );
+    await s1.heartbeat.recordMeasurement(
+      profileId: s1.self.id,
+      kind: RecordKind.waistCircumference,
+      input: const MeasurementInput(value: '84,75'),
+    );
+    expect(s1.checkpointSaved!.value, isNotNull);
+
+    final file = File('${data.path}/vault.hhosvault');
+    final stored = file.readAsStringSync();
+    for (final s in [
+      pass,
+      'vital.blood_pressure',
+      'body.waist_circumference',
+      'blood_pressure',
+      'sitting, left arm',
+      '84,75',
+      '74,2',
+    ]) {
+      expect(stored, isNot(contains(s)), reason: s);
+    }
+    final backups = Directory('${data.path}/backups').listSync();
+    expect(backups, hasLength(1));
+    final checkpoint = File(backups.single.path).readAsStringSync();
+    expect(checkpoint, contains(encryptionEnvelopeV1));
+    final staged = stageRestore(checkpoint);
+    expect(staged.manifest.encrypted, isTrue);
+    expect(staged.manifest.recordSchemaVersions, [3]);
+    for (final s in ['74,2', 'body.weight', 'blood_pressure']) {
+      expect(checkpoint, isNot(contains(s)), reason: s);
+    }
+
+    // Relaunch: the gate first, then the same readings.
+    final startup = await startApp(prod, HostPlatform.linux, env: env);
+    expect(startup.gate, isNotNull);
+    await tester.pumpWidget(HumanOsApp.start(startup));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(const ValueKey('gate-passphrase')), pass);
+    await tapKey(tester, 'gate-unlock');
+    await waitFor(tester, find.byKey(const ValueKey('screen-today')));
+    await revealMeasurements(tester);
+    String latest(RecordKind k) => tester
+        .widget<Text>(find.byKey(ValueKey('measure-latest-value-${k.code}')))
+        .data!;
+    expect(latest(RecordKind.bloodPressure), '131/87 mmHg');
+    expect(latest(RecordKind.waistCircumference), '84.75 cm');
+    expect(
+      latest(RecordKind.restingHeartRate),
+      startsWith('Not recorded yet.'),
+    );
+    data.deleteSync(recursive: true);
   });
 }
 
