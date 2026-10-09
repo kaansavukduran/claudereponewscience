@@ -74,11 +74,26 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   check(`${label}: development profile banner visible`, await page.getByText(banner).first().isVisible().catch(() => false));
   if (locale === 'en-US') {
     const flutterRow = page.getByText('Flutter', { exact: true }).first();
+    // Today is a lazy list: Flutter builds the row only once it scrolls
+    // near it, so wheel over the list padding (left of the heading) first.
+    const th = await today.boundingBox().catch(() => null);
+    const tx = th ? Math.max(2, th.x - 8) : viewport.width - 6;
+    for (let i = 0; i < 30 && (await flutterRow.count()) === 0; i++) {
+      await page.mouse.move(tx, viewport.height / 2);
+      await page.mouse.wheel(0, 400);
+      await page.waitForTimeout(200);
+    }
     await flutterRow.scrollIntoViewIfNeeded().catch(() => {});
     check(`${label}: build identity row (Flutter) present`, await flutterRow.isVisible().catch(() => false));
     if (expectFlutter) {
       check(`${label}: build identity shows Flutter ${expectFlutter}`, await page.getByText(expectFlutter, { exact: true }).first().isVisible().catch(() => false));
     }
+    for (let i = 0; i < 10; i++) {
+      await page.mouse.move(tx, viewport.height / 2);
+      await page.mouse.wheel(0, -2000);
+      await page.waitForTimeout(100);
+    }
+    await page.waitForTimeout(300);
   }
   await page.screenshot({ path: join(out, `flutter-web-${label}-today.png`) });
   // v0.31 F001: Today → Timeline → Labs.
@@ -156,21 +171,21 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     // layout (rail or bottom bar), never over a text field.
     const head = await heading(labsLabel).boundingBox().catch(() => null);
     const wheelX = head ? Math.max(2, head.x - 8) : viewport.width - 6;
-    const intoView = async (locator) => {
+    const intoView = async (locator, x = wheelX) => {
       for (let i = 0; i < 20; i++) {
         const b = await locator.boundingBox().catch(() => null);
         if (b && b.y >= 110 && b.y + b.height <= viewport.height - 90) return;
         const dy = b ? Math.max(-400, Math.min(400, b.y - viewport.height / 2)) : 300;
-        await page.mouse.move(wheelX, viewport.height / 2);
+        await page.mouse.move(x, viewport.height / 2);
         await page.mouse.wheel(0, dy);
         await page.waitForTimeout(250);
       }
     };
     // Flutter web moves its hidden DOM input when focus changes; keys typed
     // before that settles are dropped, so wait and type at a human pace.
-    const typeInto = async (name, text) => {
+    const typeInto = async (name, text, x = wheelX) => {
       const box = page.getByRole('textbox', { name }).first();
-      await intoView(box);
+      await intoView(box, x);
       await box.click({ timeout: 10_000 });
       await page.waitForTimeout(400);
       await page.keyboard.type(text, { delay: 60 });
@@ -189,14 +204,14 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       check(`${label}: lab form usable`, false, e.message.split('\n')[0]);
     }
     // On screen, not just present in the semantics tree.
-    const scrollTo = async (locator) => {
+    const scrollTo = async (locator, x = wheelX) => {
       await locator.waitFor({ state: 'attached', timeout: 5_000 }).catch(() => {});
       for (let i = 0; i < 25 && (await locator.count()) === 0; i++) {
-        await page.mouse.move(wheelX, viewport.height / 2);
+        await page.mouse.move(x, viewport.height / 2);
         await page.mouse.wheel(0, 300);
         await page.waitForTimeout(200);
       }
-      await intoView(locator);
+      await intoView(locator, x);
       const b = await locator.boundingBox().catch(() => null);
       return !!b && b.y >= 0 && b.y + b.height <= viewport.height;
     };
@@ -213,6 +228,56 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     check(`${label}: lab result survives reload`, await scrollTo(page.getByText('5,4 %').first()));
     check(`${label}: no "normal/abnormal" wording on Labs`, !(await page.getByText(/\b(abnormal|normal)\b/i).first().isVisible().catch(() => false)));
     await page.screenshot({ path: join(out, `flutter-web-${label}-labs-result.png`) });
+    // F007: a blood pressure reading typed on Today is one record with two
+    // numbers, shown as typed, never judged; it survives a reload and is
+    // listed on the Timeline.
+    const openToday = async () => {
+      await navItem(todayLabel).click().catch(() => {});
+      await heading(todayLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+      const h = await heading(todayLabel).boundingBox().catch(() => null);
+      return h ? Math.max(2, h.x - 8) : wheelX;
+    };
+    let todayX = await openToday();
+    const bpChip = page.getByRole('button', { name: 'Blood pressure', exact: true })
+      .or(page.getByRole('checkbox', { name: 'Blood pressure', exact: true }))
+      .or(page.getByRole('radio', { name: 'Blood pressure', exact: true })).first();
+    try {
+      await scrollTo(bpChip, todayX);
+      await bpChip.click({ timeout: 10_000 });
+      await page.waitForTimeout(300);
+      await typeInto(/Systolic, the upper number/, '118', todayX);
+      await typeInto(/Diastolic, the lower number/, '76', todayX);
+      const saveBp = page.getByRole('button', { name: 'Save measurement', exact: true }).first();
+      await intoView(saveBp, todayX);
+      await saveBp.click({ timeout: 10_000 });
+    } catch (e) {
+      check(`${label}: measurement form usable`, false, e.message.split('\n')[0]);
+      await writeFile(join(out, `flutter-web-${label}-a11y-today.json`), JSON.stringify(await page.accessibility.snapshot(), null, 1));
+    }
+    check(`${label}: blood pressure saved as typed (118/76 mmHg)`, await scrollTo(page.getByText('118/76 mmHg').first(), todayX));
+    check(`${label}: no judging words next to the reading`, !(await page.getByText(/\b(hypertension|hypotension|elevated|stage \d|normal|abnormal)\b/i).first().isVisible().catch(() => false)));
+    await page.screenshot({ path: join(out, `flutter-web-${label}-measurement.png`) });
+    await page.reload({ waitUntil: 'load' });
+    await page.waitForSelector('flutter-view', { state: 'attached', timeout: 60_000 });
+    for (let i = 0; i < 40 && (await page.locator('flt-semantics').count()) === 0; i++) {
+      await page.locator('flt-semantics-placeholder').dispatchEvent('click').catch(() => {});
+      await page.waitForTimeout(500);
+    }
+    todayX = await openToday();
+    check(`${label}: blood pressure survives reload`, await scrollTo(page.getByText('118/76 mmHg').first(), todayX));
+    let bpOnTimeline = true;
+    try {
+      await navItem(timelineLabel).click({ timeout: 10_000 });
+      await heading(timelineLabel).waitFor({ timeout: 15_000 });
+      await page.getByText(timelineText).first().waitFor({ timeout: 15_000 });
+      bpOnTimeline = !(await heading(todayLabel).isVisible().catch(() => false));
+    } catch {
+      bpOnTimeline = false;
+    }
+    const bpRow = page.getByText('118/76 mmHg').first();
+    await bpRow.waitFor({ timeout: 15_000 }).catch(() => {});
+    check(`${label}: blood pressure listed on the Timeline`, bpOnTimeline && (await bpRow.isVisible().catch(() => false)));
+    await page.screenshot({ path: join(out, `flutter-web-${label}-timeline-measurement.png`) });
     // F005: a backup downloads as a file (a local Blob, no network) whose
     // manifest checksum matches its payload.
     await navItem(todayLabel).click().catch(() => {});
@@ -244,6 +309,7 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       check(`${label}: backup downloads with a matching checksum`, bundle.manifest.payload_sha256 === digest && bundle.manifest.format === 'hhos-backup', `${download.suggestedFilename()}`);
       check(`${label}: backup holds the saved weight and lab result`, bundle.manifest.record_count >= 2 && bundle.payload.includes('"analyte_label":"HbA1c"'), `records=${bundle.manifest.record_count}`);
       check(`${label}: backup says it is not encrypted`, bundle.manifest.encryption === 'none-dev-only');
+      check(`${label}: backup holds the blood pressure reading as typed`, bundle.payload.includes('"kind":"vital.blood_pressure"') && bundle.payload.includes('"systolic_text":"118"') && bundle.payload.includes('"diastolic_text":"76"') && bundle.manifest.record_schema_versions.includes(4), `schemas=${bundle.manifest.record_schema_versions}`);
     } catch (e) {
       check(`${label}: backup downloads with a matching checksum`, false, e.message.split('\n')[0]);
     }
