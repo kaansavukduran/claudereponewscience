@@ -12,6 +12,7 @@ Normative source: `docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md`, se
 | `state` | `OBSERVED` · `REPORTED` · `PLANNED` · `COMPLETED` · `DERIVED` · `MODELLED` · `ASSUMED` · `UNKNOWN` |
 | `value` | Typed value: quantity (number + unit), text, code, or structured payload. May be absent. |
 | `value_status` | `PRESENT` · `NOT_REPORTED` · `NOT_MEASURED` · `NOT_APPLICABLE` · `UNKNOWN`. Missing is a status, never 0. |
+| `context`, `details` (record schema 4, measurement kinds) | `context`: optional free text as typed (at most 500 characters). `details`: a kind-tagged structured value, `{type: "blood_pressure", systolic, diastolic, unit, systolic_text, diastolic_text}`; a blood pressure reading has `details` and no `quantity`. PRESENT ⇒ `quantity`, or `details` for a structured kind (D-018). |
 | `original` | Original source representation (text, unit, precision) kept verbatim |
 | `provenance` | `MANUAL` · `DEVICE` · `PROVIDER` · `DOCUMENT` · `API` · `DERIVED` · `MODELLED` · `IMPORTED` · `UNKNOWN`, plus `source_id`, `source_version` and `device_id` when known |
 | `observed_at` / `effective_at` | When it happened or applies, with timezone semantics recorded |
@@ -25,7 +26,7 @@ Derived and modelled results are separate records (`ScoreResult`). Each carries 
 ## Entity families, in Forge order
 
 1. **Profile** (FORGE 002). `Profile{id, display_name, profile_type: SELF|REAL_OTHER|SYNTHETIC|SCENARIO, source_profile_id, timezone, locale, preferred_units, created_at}`. SYNTHETIC and SCENARIO profiles are labelled and kept apart from SELF data.
-2. **Generic observation** (FORGE 002). Body measurements (weight, height, waist), vitals (blood pressure, resting heart rate) and the mind check-in, all through the envelope.
+2. **Generic observation** (FORGE 002). Body measurements (weight, height, waist), vitals (blood pressure, resting heart rate) and the mind check-in, all through the envelope. *Built so far: body weight (F002, schema 3), waist circumference, resting heart rate and blood pressure (F007 slice 1, schema 4, D-018). Height, temperature, SpO2, respiratory rate and body composition are open (G-42).*
 3. **Labs** (FORGE 004). `LabSession` + `LabResult{analyte_code?, display_name, numeric_value?, text_value?, unit, specimen, method, laboratory, reference_interval_snapshot, source_flag, result_state: PRESENT|NOT_REPORTED|UNREADABLE}`. Interpretation (reference / critical / method / RCV / baseline) is a separate `LabInterpretationAssessment`.
 4. **Timeline** (FORGE 003/004). `TimelineEvent` is an **index** over canonical records, not a second source of truth.
 5. Medications and supplements: `ProductConcept`, `IngredientConcept`, `MedicationPlan`, `IntakeEvent` (requires `taken_at`), `InteractionAssessment`.
