@@ -270,6 +270,8 @@ class _EntrySheetState extends State<_EntrySheet> {
   final _context = TextEditingController();
   final _when = TextEditingController();
   final _more = ExpansibleController();
+  late TextEditingController _active = _value;
+  bool _pad = false;
   String? _errorCode;
   String? _errorField;
   bool _busy = false;
@@ -340,27 +342,117 @@ class _EntrySheetState extends State<_EntrySheet> {
     bool last = true,
   }) => Padding(
     padding: const EdgeInsets.only(top: 12),
-    child: TextField(
-      key: ValueKey(key),
-      controller: c,
-      autofocus: autofocus,
-      keyboardType: number
-          ? const TextInputType.numberWithOptions(decimal: true)
-          : TextInputType.text,
-      textInputAction: last ? TextInputAction.done : TextInputAction.next,
-      onSubmitted: last ? (_) => _busy ? null : _save() : null,
-      inputFormatters: field == 'context'
-          ? const [ContextLengthFormatter()]
-          : null,
-      decoration: InputDecoration(
-        labelText: label,
-        helperText: hint,
-        helperMaxLines: 3,
-        errorText: _errorFor(s, field),
-        errorMaxLines: 3,
+    child: Focus(
+      onFocusChange: (has) {
+        if (has) setState(() => _active = c);
+      },
+      child: TextField(
+        key: ValueKey(key),
+        controller: c,
+        autofocus: autofocus,
+        keyboardType: number
+            ? const TextInputType.numberWithOptions(decimal: true)
+            : TextInputType.text,
+        textInputAction: last ? TextInputAction.done : TextInputAction.next,
+        onSubmitted: last ? (_) => _busy ? null : _save() : null,
+        inputFormatters: field == 'context'
+            ? const [ContextLengthFormatter()]
+            : null,
+        decoration: InputDecoration(
+          labelText: label,
+          helperText: hint,
+          helperMaxLines: 3,
+          errorText: _errorFor(s, field),
+          errorMaxLines: 3,
+        ),
       ),
     ),
   );
+
+  String _stamp(DateTime d) {
+    String two(int n) => n.toString().padLeft(2, '0');
+    return '${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}';
+  }
+
+  Widget _presets(S s) {
+    final now = DateTime.now();
+    final today8 = DateTime(now.year, now.month, now.day, 8);
+    final yesterday20 = DateTime(now.year, now.month, now.day - 1, 20);
+    final options = <(String, String?, bool)>[
+      (s.presetNow, '', true),
+      (s.presetHourAgo, _stamp(now.subtract(const Duration(hours: 1))), true),
+      (s.presetMorning, _stamp(today8), today8.isBefore(now)),
+      (s.presetYesterdayEvening, _stamp(yesterday20), true),
+    ];
+    return Padding(
+      padding: const EdgeInsets.only(top: 12),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (final (label, value, enabled) in options)
+            ActionChip(
+              key: ValueKey('measure-preset-$label'),
+              label: Text(label),
+              onPressed: enabled
+                  ? () => setState(() => _when.text = value ?? '')
+                  : null,
+            ),
+        ],
+      ),
+    );
+  }
+
+  void _typeChar(String c) {
+    final ctl = _active;
+    setState(() => ctl.text = '${ctl.text}$c');
+    ctl.selection = TextSelection.collapsed(offset: ctl.text.length);
+  }
+
+  void _deleteChar() {
+    final ctl = _active;
+    if (ctl.text.isEmpty) return;
+    final runes = ctl.text.runes.toList()..removeLast();
+    setState(() => ctl.text = String.fromCharCodes(runes));
+    ctl.selection = TextSelection.collapsed(offset: ctl.text.length);
+  }
+
+  /// Digits for people who use only the mouse: nothing is pre-filled and the
+  /// keys only type into the field that was last chosen.
+  Widget _numberPad(S s) {
+    final sep = s.lang == AppLang.tr ? ',' : '.';
+    Widget key(String id, String label, String semantic, VoidCallback onTap) =>
+        SizedBox(
+          key: ValueKey('pad-$id'),
+          width: 64,
+          height: 48,
+          child: Semantics(
+            button: true,
+            label: semantic,
+            excludeSemantics: true,
+            child: OutlinedButton(
+              onPressed: onTap,
+              style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
+              child: Text(label),
+            ),
+          ),
+        );
+    return Padding(
+      key: const ValueKey('measure-pad'),
+      padding: const EdgeInsets.only(top: 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          for (var d = 1; d <= 9; d++)
+            key('$d', '$d', s.numberPadDigit(d), () => _typeChar('$d')),
+          key('dec', sep, s.numberPadDecimal, () => _typeChar(sep)),
+          key('0', '0', s.numberPadDigit(0), () => _typeChar('0')),
+          key('del', '⌫', s.numberPadDelete, _deleteChar),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -409,6 +501,15 @@ class _EntrySheetState extends State<_EntrySheet> {
                 hint: hint,
                 autofocus: true,
               ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const ValueKey('measure-pad-toggle'),
+                onPressed: () => setState(() => _pad = !_pad),
+                child: Text(_pad ? s.numberPadHide : s.numberPadShow),
+              ),
+            ),
+            if (_pad) _numberPad(s),
             const SizedBox(height: 8),
             Theme(
               data: Theme.of(context)
@@ -423,6 +524,7 @@ class _EntrySheetState extends State<_EntrySheet> {
                   style: text.labelLarge?.copyWith(color: scheme.primary),
                 ),
                 children: [
+                  _presets(s),
                   _field(
                     s,
                     _when,

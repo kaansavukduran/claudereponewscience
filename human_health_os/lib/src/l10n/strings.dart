@@ -419,6 +419,18 @@ class S {
   String get measurementNotYet => _t('Not recorded yet', 'Henüz kayıt yok');
   String get addMeasurement => _t('Add a measurement', 'Ölçüm ekle');
   String get moreDetails => _t('More details', 'Daha fazla ayrıntı');
+  String get timePresetsLabel => _t('Quick pick', 'Hızlı seçim');
+  String get presetNow => _t('Now', 'Şimdi');
+  String get presetHourAgo => _t('1 hour ago', '1 saat önce');
+  String get presetMorning => _t('This morning 08:00', 'Bu sabah 08:00');
+  String get presetYesterdayEvening => _t('Yesterday 20:00', 'Dün 20:00');
+  String get numberPadShow => _t('Show number pad', 'Sayı tuşlarını göster');
+  String get numberPadHide => _t('Hide number pad', 'Sayı tuşlarını gizle');
+  String get numberPadDelete =>
+      _t('Delete last character', 'Son karakteri sil');
+  String get numberPadDecimal => _t('Decimal separator', 'Ondalık ayırıcı');
+  String numberPadDigit(int d) => _t('Digit $d', '$d rakamı');
+  String get numberPadFor => _t('Typing into', 'Yazılan alan');
 
   /// The weekday and date shown at the top of Today.
   String dateLine(DateTime d) {
