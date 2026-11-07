@@ -1,0 +1,466 @@
+{
+  "ran_at": "2026-11-07T21:26:10.990Z",
+  "git_head": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+  "working_tree_dirty": false,
+  "build": "/home/user/claudereponewscience/human_health_os/build/web",
+  "main_dart_js_sha256": "cd3ebd47ab12dee09f5122537679a5e824bf130da5ce1abdee840ff7dc5054fd",
+  "browser": "chromium 153.0.8010.12",
+  "runs": [
+    {
+      "label": "desktop-en",
+      "viewport": {
+        "width": 1440,
+        "height": 900
+      },
+      "locale": "en-US"
+    },
+    {
+      "label": "phone-en",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "en-US"
+    },
+    {
+      "label": "phone-tr",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "locale": "tr-TR"
+    }
+  ],
+  "results": [
+    {
+      "name": "desktop-en: app starts and shows Today",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: build identity row (Flutter) present",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: build identity shows Flutter 3.47.6",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: navigates to Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: Timeline principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: Labs principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: navigates to Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: empty state says no weight (not 0)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: weight saved",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: weight survives reload (browser storage)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: storage honesty label shown",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: saved weight listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: Timeline does not say \"No records yet\"",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: lab result listed as printed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: lab flag labelled as the lab's",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: lab result survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no \"normal/abnormal\" wording on Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: blood pressure saved as typed (spoken summary 118/76)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: height saved with its measured time and the save time",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no judging words on the measurements",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: blood pressure survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: height survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: blood pressure listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: height listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: genetics page shows the notice before any file",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: genetics sample loaded (12 variants, none judged)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: genetics shows the invented pack label",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no judging words on the genetics page",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: backup downloads with a matching checksum",
+      "status": "PASS",
+      "detail": "human-os-backup-b84405e0-20261107T212426Z.hhosbackup.json"
+    },
+    {
+      "name": "desktop-en: backup holds the saved weight and lab result",
+      "status": "PASS",
+      "detail": "records=4"
+    },
+    {
+      "name": "desktop-en: backup says it is not encrypted",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: backup holds the blood pressure reading as typed",
+      "status": "PASS",
+      "detail": "schemas=3,4,5"
+    },
+    {
+      "name": "desktop-en: backup holds the height as typed, with its measured time, at schema 5",
+      "status": "PASS",
+      "detail": "schemas=3,4,5"
+    },
+    {
+      "name": "desktop-en: no external network requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no page errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no console errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no failed requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: app starts and shows Today",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: build identity row (Flutter) present",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: build identity shows Flutter 3.47.6",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: navigates to Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: Timeline principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: Labs principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: navigates to Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: empty state says no weight (not 0)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: weight saved",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: weight survives reload (browser storage)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: storage honesty label shown",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: saved weight listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: Timeline does not say \"No records yet\"",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: lab result listed as printed",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: lab flag labelled as the lab's",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: lab result survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no \"normal/abnormal\" wording on Labs",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: blood pressure saved as typed (spoken summary 118/76)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: height saved with its measured time and the save time",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no judging words on the measurements",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: blood pressure survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: height survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: blood pressure listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: height listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: genetics page shows the notice before any file",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: genetics sample loaded (12 variants, none judged)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: genetics shows the invented pack label",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no judging words on the genetics page",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: backup downloads with a matching checksum",
+      "status": "PASS",
+      "detail": "human-os-backup-3dbc6ed8-20261107T212608Z.hhosbackup.json"
+    },
+    {
+      "name": "phone-en: backup holds the saved weight and lab result",
+      "status": "PASS",
+      "detail": "records=4"
+    },
+    {
+      "name": "phone-en: backup says it is not encrypted",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: backup holds the blood pressure reading as typed",
+      "status": "PASS",
+      "detail": "schemas=3,4,5"
+    },
+    {
+      "name": "phone-en: backup holds the height as typed, with its measured time, at schema 5",
+      "status": "PASS",
+      "detail": "schemas=3,4,5"
+    },
+    {
+      "name": "phone-en: no external network requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no page errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no console errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no failed requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: app starts and shows Bugün",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: development profile banner visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: navigates to Zaman çizelgesi",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: Timeline principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: Labs principle visible",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: navigates to Lab",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no external network requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no page errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no console errors",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no failed requests",
+      "status": "PASS",
+      "detail": ""
+    }
+  ]
+}

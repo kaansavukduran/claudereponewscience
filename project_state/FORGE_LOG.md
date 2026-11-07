@@ -769,3 +769,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U009@v0.32 — summary for a visit, 2026-11-07 — U009_COMPLETE
 
 **Built** "Summary for a visit" on Today: weight, each measurement kind (newest 20, with "showing n of total") and lab results (newest 40), each value exactly as typed with the time it was measured, the person's note, and the lab's printed range and flag labelled as the lab's; a footer says the person recorded it and Human OS does not interpret or score. "Save as a page to print" writes a self-contained HTML page (inline style, no script, no link, every text escaped) where open files are allowed; encrypted builds show it on screen only (same rule as the JSON export). **Tests** 477 PASS in UTC, 478 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations caught. **Next** U010 your own quick notes.
+
+# FORGE U010@v0.32 — your own quick notes, 2026-11-07 — U010_COMPLETE
+
+**Built** under More details in every measurement sheet, the notes the person typed before come back as one-click chips (newest first, once each ignoring case and spaces, at most 8); a chip fills the note, nothing is saved until Save; no built-in vocabulary. **Tests** 481 PASS in UTC, 482 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations on dedup, order and the chip action caught. **Next** R001: an independent review of U001-U010 before more features (they were single-author slices).
