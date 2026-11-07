@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U001",
+    "contract": "v0.32",
+    "run_id": "U001@v0.32",
+    "slice": "mouse-only entry and a how-to page",
+    "goal": "A first-time user can enter every measurement with the mouse only and finds a plain guide to the app from Today.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "a932ada",
+    "started_at": "2026-11-07T18:20:00Z",
+    "scope": [
+      "number pad in the measurement sheet: closed by default, types into the field chosen last, decimal comma in Turkish, delete key; nothing pre-filled",
+      "quick-pick time chips under More details (Now, 1 hour ago, this morning 08:00 when past, yesterday 20:00), resolved by the typed-time rules at Save",
+      "How to use page from Today's Tools: six steps naming the real buttons, EN/TR, judging nothing"
+    ],
+    "out_of_scope": [
+      "a first-run wizard or passphrase flow (D13 in BRAINSTORM)",
+      "steppers that start from a guessed value (a start value would imply a norm)",
+      "weight card pad (the weight field keeps typed entry; recorded as a gap)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 The number pad types a value with the mouse only into the field chosen last; delete removes the last character; Turkish uses a comma; closed by default",
+      "AC-2 Time chips fill When with a local time the entry rules accept; Now empties it; a chip for a future time is disabled",
+      "AC-3 How to use opens from Today with the mouse; every step names a label that exists in the app (test), no judging word, EN and TR",
+      "AC-4 Tests bound to mutations; full suite in UTC and New York; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "number pad and time chips (0ce7eca)",
+      "How to use page"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

@@ -65,3 +65,4 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-58 | The "before you load a file" notice shows while no file is loaded; replacing a loaded file via Choose does not show it again (the person has seen it this visit) | OPEN | later genetics slice |
 | G-59 | Search is a substring scan per keystroke with 50-row paging; no page jump, sorting or debounce for 700,000-row files | OPEN | later genetics slice |
 | G-60 | Test adequacy review (G001) was cut short by an API limit: pack-safety, UI and string mutation probes were not run by the reviewer; the author's own mutations cover chr search, hidden-character removal, spoken label and row layout only | OPEN | G001 follow-up |
+| G-61 | The weight card has no number pad yet (measurement sheets have one); typing is still needed for weight with the mouse-only path | OPEN | U-series follow-up |
