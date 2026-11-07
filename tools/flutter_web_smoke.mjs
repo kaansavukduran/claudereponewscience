@@ -299,6 +299,27 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     check(`${label}: blood pressure listed on the Timeline`, bpOnTimeline && (await bpRow.isVisible().catch(() => false)));
     check(`${label}: height listed on the Timeline`, await page.getByText('172.5 cm').first().isVisible().catch(() => false));
     await page.screenshot({ path: join(out, `flutter-web-${label}-timeline-measurement.png`) });
+    // G001: the Genetics page opens from Today, shows the pre-load notice, and
+    // loads the invented sample (no native file dialog) with its invented pack.
+    try {
+      todayX = await openToday();
+      const toolTile = page.getByRole('button', { name: /Genetics/ }).first();
+      await scrollTo(toolTile, todayX);
+      await toolTile.click({ timeout: 10_000 });
+      await page.getByText('Before you load a file').first().waitFor({ timeout: 15_000 });
+      check(`${label}: genetics page shows the notice before any file`, await page.getByText(/identifies you for life/).first().isVisible().catch(() => false));
+      await page.getByRole('button', { name: 'Try an invented sample file' }).first().click({ timeout: 10_000 });
+      await page.getByText('Invented sample file: not a real person').first().waitFor({ timeout: 15_000 });
+      check(`${label}: genetics sample loaded (12 variants, none judged)`, await page.getByText(/Variants in the file: 12/).first().isVisible().catch(() => false));
+      check(`${label}: genetics shows the invented pack label`, await scrollTo(page.getByText(/INVENTED demonstration pack/).first(), 6));
+      check(`${label}: no judging words on the genetics page`, !(await page.getByText(/\b(risk|carrier|mutation|pathogenic|healthy)\b/i).first().isVisible().catch(() => false)));
+      await page.screenshot({ path: join(out, `flutter-web-${label}-genetics.png`) });
+      await page.getByRole('button', { name: /Back/ }).first().click({ timeout: 10_000 });
+    } catch (e) {
+      check(`${label}: genetics page usable`, false, e.message.split('\n')[0]);
+    }
+    await navItem(todayLabel).click().catch(() => {});
+    await heading(todayLabel).waitFor({ timeout: 15_000 }).catch(() => {});
     // F005: a backup downloads as a file (a local Blob, no network) whose
     // manifest checksum matches its payload.
     await navItem(todayLabel).click().catch(() => {});

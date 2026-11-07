@@ -116,6 +116,24 @@ Future<FakePicker> open(
   return picker;
 }
 
+/// Scrolls the lazy page until the [finder] is built and on screen.
+Future<void> reveal(WidgetTester tester, Finder finder) async {
+  if (finder.evaluate().isEmpty) {
+    await tester.scrollUntilVisible(
+      finder,
+      200,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('screen-genetics')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+  }
+  await tester.ensureVisible(finder);
+  await tester.pumpAndSettle();
+}
+
 Future<void> tap(WidgetTester tester, String key) async {
   final f = find.byKey(ValueKey(key));
   if (f.evaluate().isEmpty) {
@@ -177,7 +195,7 @@ void main() {
     expect(picker.releases, 1, reason: 'no cached copy is left behind');
     expect(find.text('Read from my-dna.txt'), findsOneWidget);
     expect(find.textContaining('Variants in the file: 120'), findsOneWidget);
-    expect(find.textContaining('Not read: 18'), findsOneWidget);
+    expect(find.textContaining('No call: 18'), findsOneWidget);
     expect(
       find.textContaining('Genome build: not stated in the file'),
       findsOneWidget,
@@ -185,7 +203,7 @@ void main() {
     expect(find.byKey(const ValueKey('genetics-notice')), findsNothing);
     expect(find.textContaining('Not saved by Human OS'), findsOneWidget);
     expect(find.byKey(const ValueKey('variant-rs100001-2')), findsOneWidget);
-    expect(find.text('not read'), findsWidgets);
+    expect(find.text('no call'), findsWidgets);
     await tap(tester, 'genetics-choose'); // cancelled
     expect(find.text('Read from my-dna.txt'), findsOneWidget);
   });
@@ -193,10 +211,13 @@ void main() {
   testWidgets('search, paging and Clear', (tester) async {
     await open(tester, FakePicker([('f.txt', utf8.encode(variantsFile(120)))]));
     await tap(tester, 'genetics-choose');
+    await reveal(tester, find.text('1–50 of 120'));
     expect(find.text('1–50 of 120'), findsOneWidget);
     await tap(tester, 'genetics-next');
+    await reveal(tester, find.text('51–100 of 120'));
     expect(find.text('51–100 of 120'), findsOneWidget);
     await tap(tester, 'genetics-next');
+    await reveal(tester, find.text('101–120 of 120'));
     expect(find.text('101–120 of 120'), findsOneWidget);
     expect(
       tester
@@ -209,6 +230,7 @@ void main() {
       'rs100005',
     );
     await settle(tester);
+    await reveal(tester, find.text('1–1 of 1'));
     expect(find.text('1–1 of 1'), findsOneWidget);
     await tester.enterText(find.byKey(const ValueKey('genetics-search')), '3');
     await settle(tester);
@@ -273,12 +295,13 @@ void main() {
       find.byKey(const ValueKey('match-rs9000001-100001')),
       findsOneWidget,
     );
+    expect(find.textContaining('The file lists allele'), findsNWidgets(2));
+    expect(find.textContaining('The file lists no '), findsWidgets);
     expect(
-      find.textContaining('contains the allele the source names'),
-      findsNWidgets(2),
+      find.textContaining('says nothing about other positions'),
+      findsWidgets,
     );
-    expect(find.textContaining('does not match this entry'), findsWidgets);
-    expect(find.textContaining('Not read in your file'), findsOneWidget);
+    expect(find.textContaining('No call at this position'), findsOneWidget);
     expect(
       find.textContaining('Cannot be told apart by strand'),
       findsOneWidget,
@@ -421,5 +444,53 @@ void main() {
         expect(judging.firstMatch(t)?.group(0), isNull, reason: '$lang "$t"');
       }
     }
+  });
+
+  testWidgets('"chr" and "chromosome" prefixes search a chromosome; the empty '
+      'state says what works', (tester) async {
+    await open(tester, FakePicker([null]));
+    await tap(tester, 'genetics-sample');
+    for (final q in ['chrX', 'CHR X', 'chromosome x', 'X']) {
+      await tester.enterText(find.byKey(const ValueKey('genetics-search')), q);
+      await settle(tester);
+      await reveal(tester, find.byKey(const ValueKey('genetics-range')));
+      expect(find.text('1–1 of 1'), findsOneWidget, reason: q);
+    }
+    await tester.enterText(
+      find.byKey(const ValueKey('genetics-search')),
+      'chr99',
+    );
+    await settle(tester);
+    await reveal(tester, find.byKey(const ValueKey('genetics-no-matches')));
+    expect(find.textContaining('part of an rsID'), findsOneWidget);
+  });
+
+  testWidgets('a match card names the allele the entry states', (tester) async {
+    await open(tester, FakePicker([null]));
+    await tap(tester, 'genetics-sample');
+    final card = find.byKey(const ValueKey('match-rs9000001-100001'));
+    await reveal(tester, card);
+    expect(
+      find.descendant(
+        of: card,
+        matching: find.text('The file lists allele G at this position'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('a variant row is spoken in the app language, not English', (
+    tester,
+  ) async {
+    await open(tester, FakePicker([null]), locale: const Locale('tr'));
+    await tap(tester, 'genetics-sample');
+    final row = find.byKey(const ValueKey('variant-rs9000001-100001'));
+    await reveal(tester, row);
+    final handle = tester.ensureSemantics();
+    expect(
+      find.bySemanticsLabel('rs9000001, kromozom 1, konum 100001, A, G'),
+      findsOneWidget,
+    );
+    handle.dispose();
   });
 }

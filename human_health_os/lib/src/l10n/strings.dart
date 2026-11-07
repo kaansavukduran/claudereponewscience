@@ -525,8 +525,8 @@ class S {
     'Ham bir DNA dosyasını (23andMe, AncestryDNA, MyHeritage, FamilyTreeDNA) bu cihazda oku',
   );
   String get geneticsIntro => _t(
-    'See which variants your raw DNA file contains. The file is read on this device and is not uploaded.',
-    'Ham DNA dosyanın hangi varyantları içerdiğini gör. Dosya bu cihazda okunur ve yüklenmez.',
+    'See which variants your raw DNA file contains. Everything stays on this device.',
+    'Ham DNA dosyanın hangi varyantları içerdiğini gör. Her şey bu cihazda kalır.',
   );
   String get geneticsNoticeTitle =>
       _t('Before you load a file', 'Dosyayı yüklemeden önce');
@@ -544,8 +544,8 @@ class S {
       'Human OS dosyayı kaydetmez. İşletim sistemin görmediğin kopyalar tutabilir: indirilenler, ekran görüntüleri, cihaz yedekleri.',
     ),
     _t(
-      'This is a list of what the file contains, not a medical result. Talk to a clinician or genetic counsellor before acting on anything.',
-      'Bu, dosyanın içerdiklerinin listesidir, tıbbi bir sonuç değildir. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş.',
+      'This is a list of what the file contains, not a medical result. A variant missing from a list says nothing about you. Talk to a clinician or genetic counsellor before acting on anything.',
+      'Bu, dosyanın içeriğinin dökümüdür, tıbbi bir sonuç değildir. Listede olmayan bir varyant senin hakkında bir şey söylemez. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş.',
     ),
   ];
   String get geneticsChoose => _t('Choose a DNA file', 'DNA dosyası seç');
@@ -569,24 +569,25 @@ class S {
       _t('not stated in the file', 'dosyada belirtilmemiş');
   String get geneticsTotal =>
       _t('Variants in the file', 'Dosyadaki varyantlar');
-  String get geneticsRead => _t('Read', 'Okunan');
-  String get geneticsNotRead => _t('Not read', 'Okunamayan');
+  String get geneticsRead => _t('Called', 'Belirlenen');
+  String get geneticsNotRead => _t('No call', 'Belirlenemeyen');
   String get geneticsUnreadableLines =>
       _t('Lines that could not be read', 'Okunamayan satırlar');
   String get geneticsRepeated => _t('Repeated ids', 'Tekrarlanan kimlikler');
   String get geneticsChromosomes => _t('By chromosome', 'Kromozoma göre');
-  String get geneticsSearchHint =>
-      _t('Search by rsID or chromosome', 'rsID ya da kromozomla ara');
-  String get geneticsNotReadShort => _t('not read', 'okunmadı');
+  String get geneticsSearchHint => _t(
+    'Search by rsID (part of it) or chromosome (1–22, X, Y, MT)',
+    'rsID (bir kısmı) ya da kromozomla ara (1–22, X, Y, MT)',
+  );
+  String get geneticsChromosomeShort => _t('chr', 'kr');
+  String get geneticsNotReadShort => _t('no call', 'belirlenemedi');
   String get geneticsPrev => _t('Previous', 'Önceki');
   String get geneticsNext => _t('Next', 'Sonraki');
   String geneticsRange(int from, int to, int total) =>
       _t('$from–$to of $total', '$from–$to / $total');
-  String get geneticsNoMatches =>
-      _t('No variants match your search.', 'Aramana uyan varyant yok.');
-  String get geneticsColumns => _t(
-    'rsID · chromosome · position · genotype',
-    'rsID · kromozom · konum · genotip',
+  String get geneticsNoMatches => _t(
+    'No variants match. Try part of an rsID such as rs12, or a chromosome such as 7, X or MT.',
+    'Eşleşen varyant yok. rsID’nin bir kısmını (rs12 gibi) ya da bir kromozomu (7, X, MT gibi) dene.',
   );
   String geneticsRefusal(String code) => switch (code) {
     'EMPTY' => _t('The file is empty.', 'Dosya boş.'),
@@ -661,16 +662,19 @@ class S {
     'NO_ROWS' => _t('The pack has no entries.', 'Paketin kaydı yok.'),
     _ => _t('The pack could not be read.', 'Paket okunamadı.'),
   };
-  String geneticsMatchKind(String kind) => switch (kind) {
+  String geneticsMatchKind(String kind, {String allele = ''}) => switch (kind) {
     'containsAllele' => _t(
-      'Your genotype contains the allele the source names',
-      'Genotipin kaynağın andığı aleli içeriyor',
+      'The file lists allele $allele at this position',
+      'Dosya bu konumda $allele alelini listeliyor',
     ),
     'doesNotMatch' => _t(
-      'Your genotype does not match this entry',
-      'Genotipin bu kayıtla eşleşmiyor',
+      'The file lists no $allele at this position. This says nothing about other positions.',
+      'Dosya bu konumda $allele alelini listelemiyor. Bu, başka konumlar hakkında bir şey söylemez.',
     ),
-    'notRead' => _t('Not read in your file', 'Dosyanda okunmamış'),
+    'notRead' => _t(
+      'No call at this position in your file',
+      'Dosyanda bu konum için çağrı yok',
+    ),
     _ => _t(
       'Cannot be told apart by strand (A/T or C/G), so nothing is claimed',
       'Şeride göre ayırt edilemez (A/T ya da C/G), bu yüzden bir şey öne sürülmez',
@@ -685,7 +689,16 @@ class S {
     _ => _t('Build not stated by the file', 'Sürüm dosyada belirtilmemiş'),
   };
   String geneticsGenotypeSpoken(String? call) =>
-      call == null ? _t('not read', 'okunmadı') : call.split('').join(', ');
+      call == null ? _t('no call', 'belirlenemedi') : call.split('').join(', ');
+  String geneticsRowSpoken(
+    String rsid,
+    String chr,
+    int pos,
+    String? call,
+  ) => _t(
+    '$rsid, chromosome $chr, position $pos, ${geneticsGenotypeSpoken(call)}',
+    '$rsid, kromozom $chr, konum $pos, ${geneticsGenotypeSpoken(call)}',
+  );
 
   // Labs (F004): everything is shown as the report printed it.
   String get labsNoInterpretation => _t(

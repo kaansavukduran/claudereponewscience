@@ -136,10 +136,13 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
   List<Variant> _filtered(GenomeFile f) {
     final q = _query.trim().toLowerCase();
     if (q.isEmpty) return f.variants;
+    // "chr7", "chromosome 7" and "7" all mean chromosome 7.
+    final chr = q
+        .replaceFirst(RegExp(r'^(chromosome|chr)\s*'), '')
+        .toUpperCase();
     return [
       for (final v in f.variants)
-        if (v.rsid.toLowerCase().contains(q) || v.chromosome.toLowerCase() == q)
-          v,
+        if (v.rsid.toLowerCase().contains(q) || v.chromosome == chr) v,
     ];
   }
 
@@ -198,7 +201,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
                   child: CircularProgressIndicator(strokeWidth: 2),
                 ),
                 const SizedBox(width: 12),
-                Text(s.geneticsReading),
+                Semantics(liveRegion: true, child: Text(s.geneticsReading)),
               ],
             ),
           ],
@@ -325,11 +328,6 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
         }),
       ),
       const SizedBox(height: 8),
-      Text(
-        s.geneticsColumns,
-        style: text.labelMedium?.copyWith(color: scheme.outline),
-      ),
-      const SizedBox(height: 4),
       if (rows.isEmpty)
         Padding(
           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -375,10 +373,17 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
 
   Widget _variantRow(S s, TextTheme text, ColorScheme scheme, Variant v) {
     final call = v.call;
+    final genotype = Text(
+      call ?? s.geneticsNotReadShort,
+      textAlign: TextAlign.end,
+      style: call == null
+          ? text.bodyMedium?.copyWith(color: scheme.outline)
+          : text.titleSmall?.copyWith(
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+    );
     return Semantics(
-      label:
-          '${v.rsid}, chromosome ${v.chromosome}, position ${v.position}, '
-          '${s.geneticsGenotypeSpoken(call)}',
+      label: s.geneticsRowSpoken(v.rsid, v.chromosome, v.position, call),
       excludeSemantics: true,
       child: Container(
         key: ValueKey('variant-${v.rsid}-${v.position}'),
@@ -386,21 +391,24 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
         decoration: BoxDecoration(
           border: Border(bottom: BorderSide(color: scheme.outlineVariant)),
         ),
-        child: Row(
+        // Two lines, not four cramped columns: the rsID and the genotype on
+        // the first, the place in the genome on the second. It holds at 320 dp
+        // and at large text, and reads the same on a wide window.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Expanded(flex: 3, child: Text(v.rsid)),
-            Expanded(flex: 1, child: Text(v.chromosome)),
-            Expanded(flex: 2, child: Text('${v.position}')),
-            Expanded(
-              flex: 2,
-              child: Text(
-                call ?? s.geneticsNotReadShort,
-                textAlign: TextAlign.end,
-                style: call == null
-                    ? text.bodyMedium?.copyWith(color: scheme.outline)
-                    : text.titleSmall?.copyWith(
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
+            Row(
+              children: [
+                Expanded(child: Text(v.rsid)),
+                const SizedBox(width: 12),
+                Flexible(child: genotype),
+              ],
+            ),
+            Text(
+              '${s.geneticsChromosomeShort} ${v.chromosome} · ${v.position}',
+              style: text.bodySmall?.copyWith(
+                color: scheme.outline,
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
           ],
@@ -489,7 +497,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
             ),
           ),
           const SizedBox(height: 4),
-          Text(s.geneticsMatchKind(m.kind.name)),
+          Text(s.geneticsMatchKind(m.kind.name, allele: e.allele)),
           const SizedBox(height: 4),
           Text('“${e.statement}”', style: text.bodyMedium),
           const SizedBox(height: 4),

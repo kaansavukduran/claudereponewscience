@@ -195,4 +195,30 @@ void main() {
       },
     );
   });
+
+  group('text from a pack is shown safely', () {
+    test('direction marks, zero-width marks and controls are removed', () {
+      expect(cleanPackText('a\u202Eb\u200Bc\u0007d\u2066e\uFEFFf'), 'abcdef');
+    });
+
+    test('long text is cut at the cap with an ellipsis, by characters', () {
+      final cut = cleanPackText('x' * 1000);
+      expect(cut.runes.length, maxPackFieldChars);
+      expect(cut.endsWith('…'), isTrue);
+      expect(cleanPackText('x' * maxPackFieldChars), 'x' * maxPackFieldChars);
+    });
+
+    test('a pack with hostile text is read with that text made safe', () {
+      final p = parsePack(
+        pack(
+          rows: ['rs1\tG\tG\t${'y' * 900}\u202Eevil\tSrc\tID\t2026\t'],
+          extra: '#note: x\n',
+        ).replaceFirst('Test pack', 'Na\u202Eme'),
+      );
+      expect(p.name, 'Name');
+      final s = p.entries.single.statement;
+      expect(s.runes.length, maxPackFieldChars);
+      expect(s.contains('\u202E'), isFalse);
+    });
+  });
 }

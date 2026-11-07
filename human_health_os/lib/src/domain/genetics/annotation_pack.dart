@@ -78,6 +78,25 @@ class AnnotationPack {
 
 final _bases = RegExp(r'^[ACGT]$');
 
+// Control characters and the invisible direction marks that can reorder or
+// hide text (bidi embeddings and isolates, zero-width marks, BOM).
+final _hiddenChars = RegExp(
+  r'[\u0000-\u001F\u007F-\u009F\u061C\u200B-\u200F\u2028-\u202E\u2060-\u206F\uFEFF]',
+);
+
+/// Longest text a pack may show for one field; longer text is cut with "…".
+const int maxPackFieldChars = 400;
+
+/// Text from a pack as it may be shown: hidden characters removed, length
+/// capped. A pack is a file from anywhere, so its words are data to display
+/// safely, never layout.
+String cleanPackText(String s, {int max = maxPackFieldChars}) {
+  final t = s.replaceAll(_hiddenChars, '').trim();
+  final runes = t.runes.toList();
+  if (runes.length <= max) return t;
+  return '${String.fromCharCodes(runes.take(max - 1))}…';
+}
+
 /// Reads a pack. Required header lines: `#name:`, `#licence:`, `#build:`,
 /// `#strand: plus`. Optional `#synthetic: yes`.
 AnnotationPack parsePack(String text) {
@@ -93,9 +112,10 @@ AnnotationPack parsePack(String text) {
     if (t.startsWith('#')) {
       final i = t.indexOf(':');
       if (i > 0) {
-        header[t.substring(1, i).trim().toLowerCase()] = t
-            .substring(i + 1)
-            .trim();
+        header[t.substring(1, i).trim().toLowerCase()] = cleanPackText(
+          t.substring(i + 1),
+          max: 120,
+        );
       }
       continue;
     }
@@ -106,7 +126,7 @@ AnnotationPack parsePack(String text) {
       }
       continue;
     }
-    final f = line.split('\t').map((e) => e.trim()).toList();
+    final f = line.split('\t').map(cleanPackText).toList();
     if (f.length != 8 ||
         f[0].isEmpty ||
         !_bases.hasMatch(f[2].toUpperCase()) ||
