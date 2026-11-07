@@ -7,6 +7,7 @@ import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
 import '../genetics/genetics_screen.dart';
+import '../help/how_to_screen.dart';
 import 'measurements_card.dart';
 import 'weight_card.dart';
 import 'your_data_card.dart';
@@ -42,8 +43,25 @@ class TodayScreen extends StatelessWidget {
         const SizedBox(height: 28),
         MeasurementsCard(services: services),
         const SizedBox(height: 28),
+        Semantics(
+          container: true,
+          header: true,
+          child: Text(s.geneticsToolsTitle, style: text.titleMedium),
+        ),
+        const SizedBox(height: 12),
+        _ToolTile(
+          key: const ValueKey('tool-howto'),
+          icon: Icons.help_outline,
+          title: s.howToTitle,
+          hint: s.howToTileHint,
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute<void>(builder: (_) => const HowToScreen())),
+        ),
+        const SizedBox(height: 8),
         _ToolTile(
           key: const ValueKey('tool-genetics'),
+          icon: Icons.biotech_outlined,
           title: s.geneticsTitle,
           hint: s.geneticsTileHint,
           onTap: () => Navigator.of(context).push(
@@ -214,29 +232,24 @@ class _KeyValue extends StatelessWidget {
 class _ToolTile extends StatelessWidget {
   const _ToolTile({
     super.key,
+    required this.icon,
     required this.title,
     required this.hint,
     required this.onTap,
   });
 
+  final IconData icon;
   final String title;
   final String hint;
   final VoidCallback onTap;
 
   @override
   Widget build(BuildContext context) {
-    final s = S.of(context);
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Semantics(
-          container: true,
-          header: true,
-          child: Text(s.geneticsToolsTitle, style: text.titleMedium),
-        ),
-        const SizedBox(height: 12),
         Material(
           color: scheme.surfaceContainerLowest,
           shape: RoundedRectangleBorder(
@@ -255,7 +268,7 @@ class _ToolTile extends StatelessWidget {
                 padding: const EdgeInsets.all(16),
                 child: Row(
                   children: [
-                    Icon(Icons.biotech_outlined, color: scheme.primary),
+                    Icon(icon, color: scheme.primary),
                     const SizedBox(width: 12),
                     Expanded(
                       child: Column(

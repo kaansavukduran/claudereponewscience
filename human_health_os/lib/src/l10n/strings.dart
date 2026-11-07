@@ -530,6 +530,60 @@ class S {
   );
 
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String get howToTitle =>
+      _t('How to use Human OS', 'Human OS nasıl kullanılır');
+  String get howToTileHint => _t(
+    'Six short steps, all with the mouse',
+    'Fareyle yapılan altı kısa adım',
+  );
+  List<(String, String)> get howToSteps => [
+    (
+      _t('Add a number', 'Bir sayı ekle'),
+      _t(
+        'On Today, click a tile such as Blood pressure. Type the value, or click "Show number pad" and click the digits. Click "Save measurement".',
+        'Bugün ekranında Tansiyon gibi bir kutuya tıkla. Değeri yaz ya da "Sayı tuşlarını göster"e tıklayıp rakamlara tıkla. "Ölçümü kaydet"e tıkla.',
+      ),
+    ),
+    (
+      _t('Say when it was measured', 'Ne zaman ölçüldüğünü söyle'),
+      _t(
+        'Open "More details" and click a quick pick such as "1 hour ago", or type the time. Empty means now.',
+        '"Daha fazla ayrıntı"yı aç ve "1 saat önce" gibi bir hızlı seçime tıkla ya da saati yaz. Boş bırakırsan şimdi sayılır.',
+      ),
+    ),
+    (
+      _t('Find it again', 'Yeniden bul'),
+      _t(
+        'Timeline lists everything you saved, with the time it was measured.',
+        'Zaman çizelgesi kaydettiğin her şeyi ölçüldüğü saatle listeler.',
+      ),
+    ),
+    (
+      _t('Fix a mistake', 'Bir hatayı düzelt'),
+      _t(
+        'On the Timeline, open the entry and click Correct. The old value is kept as history and the new one is shown.',
+        'Zaman çizelgesinde kaydı aç ve Düzelt\'e tıkla. Eski değer geçmiş olarak saklanır, yenisi gösterilir.',
+      ),
+    ),
+    (
+      _t('Add a lab result', 'Bir lab sonucu ekle'),
+      _t(
+        'On Labs, type the test name, value, unit and range exactly as the report prints them.',
+        'Lab ekranında test adını, değeri, birimi ve aralığı raporda yazdığı gibi gir.',
+      ),
+    ),
+    (
+      _t('Keep a copy', 'Bir kopya sakla'),
+      _t(
+        'Under "Your data" on Today, click "Create backup". Keep the file somewhere safe.',
+        'Bugün ekranındaki "Verilerin" bölümünde "Yedek oluştur"a tıkla. Dosyayı güvenli bir yerde sakla.',
+      ),
+    ),
+  ];
+  String get howToNote => _t(
+    'Human OS records what you enter and shows it back. It does not judge values or give medical advice.',
+    'Human OS girdiğini kaydeder ve sana geri gösterir. Değerleri yargılamaz, tıbbi tavsiye vermez.',
+  );
   String get geneticsTitle => _t('Genetics', 'Genetik');
   String get geneticsToolsTitle => _t('Tools', 'Araçlar');
   String get geneticsTileHint => _t(
