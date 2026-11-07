@@ -3,9 +3,63 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "FORGE_PLANNING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F007",
+    "contract": "v0.32",
+    "run_id": "F007-S2@v0.32",
+    "slice": "measurements, slice 2",
+    "goal": "Finish the measurement domain on the same canonical record: the person can say when a measurement was taken (G-44), four more FR-17 metrics (G-42: height, body temperature, SpO2, respiratory rate) and the weight entry rules (G-45). Master §39 F007: one bounded slice per Forge.",
+    "status": "FORGE_PLANNING",
+    "baseline_commit": "0617601",
+    "started_at": "2026-11-07T14:00:00Z",
+    "scope": [
+      "measurement time entry on the Measurements card: optional 'When' as YYYY-MM-DD HH:MM or HH:MM (today), local time, with an optional offset (Z or +03:00); empty means the time Save is pressed; observed_at is the typed instant (UTC), recorded_at stays the save time",
+      "entry refusals with their own field and text: TIME_FORMAT, FUTURE_TIME (more than 5 min ahead), TIME_TOO_OLD (before 1900), TIME_DOES_NOT_EXIST (clock-change gap), TIME_AMBIGUOUS (repeated hour: add the offset); the rules are entry rules only, stored records are not re-judged",
+      "record schema 5 (RS-005, additive): body.height (cm), vital.body_temperature (°C), vital.oxygen_saturation (%), vital.respiratory_rate (breaths/min), typed by hand with the same context and correction lineage; older records keep their exact JSON; schema 6 refused; F007-slice-1 and older builds refuse schema 5",
+      "entry-only definitional rule: SpO2 above 100 % is refused (OUT_OF_DEFINITION); no other bound and no clinical threshold",
+      "history rows and the detail sheet show the measured time and, when it differs from the save time by more than a minute, the save time too; the card note says so",
+      "automatic checkpoint backup before the first schema-5 record (the existing hook, wording 'this entry')",
+      "weight entry rules (G-45): AMBIGUOUS_SEPARATOR refused for weight, weight shown with the decimals typed (stored records unchanged, still written at schema 3)",
+      "EN/TR strings; no interpretation of any value; old-code check on main 0617601"
+    ],
+    "out_of_scope": [
+      "changing the time of an existing measurement in a correction, and 'not measured' entries from the screen (G-48)",
+      "body composition, sleep, activity, nutrition, subjective state (G-42 remainder)",
+      "BMI, waist-height ratio, trends, any derived result: F011",
+      "unit choice or conversion (°F, inches, lb), UCUM codes (G-43); structured context, devices, sessions (G-41); REVIEW tier and upper bounds (G-46)",
+      "web automatic checkpoint (G-47); weight card time entry; new primary destination; vault, envelope, backup or export format changes"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Time entry: a typed time (local, or with an offset) is stored as observed_at in UTC and shown back as typed local time; empty means the save time; recorded_at is always the save time; a correction keeps its observed_at; the four refusals TIME_FORMAT, FUTURE_TIME, TIME_TOO_OLD and the clock-change refusals TIME_DOES_NOT_EXIST and TIME_AMBIGUOUS (the last two proven in an America/New_York run) show on the 'When' field with their own EN/TR text and write nothing; a typed offset resolves a repeated hour",
+      "AC-2 Time on screen: rows and the detail sheet show the measured time, and the save time too when it differs by more than a minute; Latest and the Timeline order by measured time; the note on the card no longer says the time is only when Save is pressed",
+      "AC-3 Record schema 5 (RS-005): the four kinds exist only at schema >= 5 (KIND_NEEDS_NEWER_SCHEMA); canonical unit only (UNIT_NOT_SUPPORTED); finite numbers above 0; no upper bound or clinical threshold in the record rules; schema 1-4 records keep their exact JSON; the reader accepts 1-5 and refuses 6; each record is written with the oldest schema that holds it (weight and lab 3, slice-1 measurements 4, the new kinds 5)",
+      "AC-4 Entry: SpO2 above 100 is refused at entry (OUT_OF_DEFINITION) while a stored value above 100 is not re-judged; blank is EMPTY and 0 is NOT_POSITIVE for every new kind; each save is one OBSERVED manual record with its unit and the text typed",
+      "AC-5 Card and Timeline: seven kinds in the chooser, Latest per kind with a spoken summary, the optional note and 'When' fields, EN/TR, 320 dp at 2x text without overflow; kind-aware correction and entered-in-error for the new kinds; three primary destinations unchanged",
+      "AC-6 No interpretation: EN/TR scans (F004 lists, the slice-1 measurement list and new words: fever, febrile, hypoxia, hypoxemia, tachypnea, hipoksi, taşipne, ateşli) find nothing on the card, rows, sheet, error texts or notes; Turkish uses 'vücut sıcaklığı', never 'ateş', for the metric",
+      "AC-7 Weight (G-45): '7.500' and '1,234' are refused for weight (AMBIGUOUS_SEPARATOR), typed decimals are shown on Today and the Timeline ('77,50' as 77.50 kg), stored weights are unchanged and still schema 3",
+      "AC-8 Checkpoint: before the first schema-5 record in a vault whose newest stored schema is lower, a backup of the vault as it is is saved and named ('this entry'); a failed checkpoint refuses the save and writes nothing; no checkpoint for weight, lab or slice-1 measurements; unchanged otherwise",
+      "AC-9 Storage and privacy: same repository paths and formats; no new dependency; the vault file, backups and console output hold no kind code, typed value, note or time text",
+      "AC-10 Compatibility: on main 0617601 (F007 slice 1) the old code refuses the schema-5 fixtures (plaintext and encrypted) with RECORD_SCHEMA_NEWER, F007-slice-2 backups with VAULT_INCOMPATIBLE and a restore over them with RESTORE_TARGET_NEWER, leaves the bytes unchanged, and still opens a vault where slice 2 saved only slice-1 kinds and weight and the checkpoint backup",
+      "AC-11 Fixtures v1_f007s2_schema5 (plaintext, schemas 1-5) and enc_v1_f007s2 (encrypted): writer bytes, every field replayed, README rows, backup_test list",
+      "AC-12 Linux integration with real files: development and production encrypted vaults keep a typed time, the four new kinds and a correction across a relaunch; the schema-5 checkpoint lands on disk",
+      "AC-13 Web smoke: a height typed with a time in Chromium shows as typed on Today and the Timeline, survives a reload and is in the backup; no console errors",
+      "AC-14 Regression and close: F001-F007-S1 suites in UTC and New York, gates on a clean tree, mutations each caught, D-019, SOURCES, KNOWN_GAPS (G-48, G-42/G-44/G-45 updated), state and docs updated, one next Forge"
+    ],
+    "completed_steps": [
+      "ORIENT: state READY after F007@v0.32 slice 1 (main 0617601); next_recommended_forge selected",
+      "SPECIFY: scope and AC-1..AC-14 written (critique pending)"
+    ],
+    "last_verified_gate": null,
+    "next_action": "critique the spec, then IMPLEMENT",
+    "files_touched": [],
+    "migration_ids": [
+      "RS-005"
+    ],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -161,7 +215,7 @@
     "slice": "measurements, slice 2",
     "why": "finish the measurement domain before opening another one: the person cannot yet say when a measurement was taken (G-44, the time saved is when Save is pressed), and height, temperature, SpO2 and respiratory rate are missing (G-42); height is also the input F011 needs for BMI and waist-height ratio. Slice 2 adds measurement time entry (with future-time and correction rules), those four metrics on the same record schema 4 path, and the weight entry rules of G-45; nutrition, activity, sleep and subjective state follow as their own Forges"
   },
-  "updated_at": "2026-11-07T12:00:00Z",
+  "updated_at": "2026-11-07T14:00:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
