@@ -291,6 +291,85 @@ void main() {
     }
   });
 
+  testWidgets('a waist typed with more than 20 decimals is shown as typed and '
+      'does not break the card or the Timeline (also after a restart)', (
+    tester,
+  ) async {
+    final sink = MemoryLogSink();
+    await launch(tester, sink: sink);
+    await saveScalar(
+      tester,
+      RecordKind.waistCircumference,
+      '0.1234567890123456789012',
+    );
+    expect(find.byKey(const ValueKey('measurements-card')), findsOneWidget);
+    expect(
+      latestOf(tester, RecordKind.waistCircumference),
+      '0.1234567890123456789012 cm',
+    );
+    await tester.pumpWidget(const SizedBox());
+    await launch(tester, sink: sink);
+    expect(find.byKey(const ValueKey('measure-save')), findsOneWidget);
+    await openTimeline(tester);
+    expect(find.text('0.1234567890123456789012 cm'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('switching the kind clears what was typed for the other kind; '
+      'a screen reader hears a save error', (tester) async {
+    await launch(tester);
+    await tapKey(tester, 'measure-kind-vital.resting_heart_rate');
+    await fill(tester, 'measure-value', '57');
+    await fill(tester, 'measure-context', 'after a walk');
+    await tapKey(tester, 'measure-kind-body.waist_circumference');
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('measure-value')))
+          .controller!
+          .text,
+      isEmpty,
+    );
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('measure-context')))
+          .controller!
+          .text,
+      isEmpty,
+    );
+    await tapKey(tester, 'measure-save');
+    expect(find.text('Waist circumference (cm)'), findsWidgets);
+    expect(latestOf(tester, RecordKind.waistCircumference), startsWith('Not'));
+  });
+
+  testWidgets('Timeline: a correction can be cancelled and the three buttons '
+      'come back', (tester) async {
+    final s = await launch(tester);
+    await saveBp(tester, '128', '76');
+    await openTimeline(tester);
+    await tester.tap(find.text('128/76 mmHg'));
+    await settle(tester);
+    final head = (await tester.runAsync(
+      () =>
+          s.heartbeat.measurementTimeline(s.self.id, RecordKind.bloodPressure),
+    ))!.single.heads.single;
+    await tapKey(tester, 'action-correct-${head.id}');
+    expect(find.byKey(const ValueKey('correct-cancel')), findsOneWidget);
+    expect(find.byKey(ValueKey('action-correct-${head.id}')), findsNothing);
+    await tapKey(tester, 'correct-cancel');
+    expect(find.byKey(const ValueKey('correct-save')), findsNothing);
+    expect(find.byKey(ValueKey('action-correct-${head.id}')), findsOneWidget);
+    expect(
+      (await tester.runAsync(
+        () => s.heartbeat.measurementTimeline(
+          s.self.id,
+          RecordKind.bloodPressure,
+        ),
+      ))!.single.versions,
+      hasLength(1),
+      reason: 'cancel writes nothing',
+    );
+  });
+
   testWidgets('Timeline: correct a blood pressure (two fields, the note kept), '
       'withdraw a heart rate; both versions stay in history', (tester) async {
     final s = await launch(tester);
@@ -409,7 +488,7 @@ void main() {
       find.bySemanticsLabel(
         RegExp(
           r'^Blood pressure: systolic 118, diastolic 76 millimetres of '
-          r'mercury, measured \d{4}-\d{2}-\d{2} \d{2}:\d{2}, Manual entry$',
+          r'mercury, saved \d{4}-\d{2}-\d{2} \d{2}:\d{2}, Manual entry$',
         ),
       ),
       findsOneWidget,

@@ -364,6 +364,8 @@ class HeartbeatService {
     } on InputError catch (e) {
       throw InputError(e.code, field);
     }
+    // Hundreds of digits overflow to infinity: not a number a person measured.
+    if (!v.isFinite) throw InputError('NOT_A_NUMBER', field);
     if (v <= 0) throw InputError('NOT_POSITIVE', field);
     return v;
   }
@@ -376,7 +378,7 @@ class HeartbeatService {
   }) {
     if (!kind.isMeasurement) throw ArgumentError.value(kind, 'kind');
     final context = input.context.trim();
-    if (context.length > HealthRecord.maxContextLength) {
+    if (context.runes.length > HealthRecord.maxContextLength) {
       throw const InputError('CONTEXT_TOO_LONG', 'context');
     }
     Quantity? quantity;

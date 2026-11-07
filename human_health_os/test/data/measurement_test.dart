@@ -373,6 +373,14 @@ void main() {
       await expectLater(hr('0'), input('NOT_POSITIVE', 'value'));
       await expectLater(hr('1,234'), input('AMBIGUOUS_SEPARATOR', 'value'));
       await expectLater(hr('57 bpm'), input('NOT_A_NUMBER', 'value'));
+      // Hundreds of digits overflow to infinity: a field error, not a rule
+      // ("breaks a record rule") the person cannot act on.
+      await expectLater(hr('9' * 400), input('NOT_A_NUMBER', 'value'));
+      await expectLater(pr('9' * 400, '80'), input('NOT_A_NUMBER', 'systolic'));
+      await expectLater(
+        pr('118', '9' * 400),
+        input('NOT_A_NUMBER', 'diastolic'),
+      );
       await expectLater(pr('118', ''), input('EMPTY', 'diastolic'));
       await expectLater(pr('', '76'), input('EMPTY', 'systolic'));
       await expectLater(pr('118', '0'), input('NOT_POSITIVE', 'diastolic'));
@@ -385,6 +393,43 @@ void main() {
       expect(sink.text, before);
       expect(await repo.records(me), isEmpty);
     });
+
+    test(
+      'a note is counted in characters, not UTF-16 units: 500 emoji are '
+      'kept, 501 are refused, by the service and by the record rule',
+      () async {
+        final (repo, _, svc, me) = await fresh();
+        Future<HealthRecord> save(String note) => svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.restingHeartRate,
+          input: MeasurementInput(value: '57', context: note),
+        );
+        final kept = await save('\u{1F600}' * 500);
+        expect(kept.context!.runes.length, 500);
+        expect(kept.context!.length, 1000, reason: 'UTF-16 units');
+        await expectLater(
+          save('\u{1F600}' * 501),
+          input('CONTEXT_TOO_LONG', 'context'),
+        );
+        expect(
+          () => rec(
+            kind: RecordKind.restingHeartRate,
+            q: const Quantity(57, 'bpm'),
+            context: '\u{1F600}' * 500,
+          ).validate(),
+          returnsNormally,
+        );
+        expect(
+          () => rec(
+            kind: RecordKind.restingHeartRate,
+            q: const Quantity(57, 'bpm'),
+            context: '\u{1F600}' * 501,
+          ).validate(),
+          rule('CONTEXT_TOO_LONG'),
+        );
+        expect(await repo.records(me), hasLength(1));
+      },
+    );
 
     test('repeated readings are kept: two identical readings 30 s apart are '
         'two records and two entries; a same-id retry stays one', () async {
@@ -562,6 +607,79 @@ void main() {
         input: const MeasurementInput(value: '84'),
       );
       expect(calls2, 1);
+    });
+
+    test('a weight or a lab result never triggers it, also in a store whose '
+        'newest record is older than schema 3, and a checkpoint that cannot be '
+        'made does not stop such a save', () async {
+      final (repo, _, svc, me) = await fresh();
+      await repo.appendRecord(
+        HealthRecord(
+          id: 'old-weight',
+          profileId: me,
+          kind: RecordKind.bodyWeight,
+          state: RecordState.observed,
+          valueStatus: ValueStatus.present,
+          quantity: const Quantity(78, 'kg'),
+          originalText: '78',
+          provenance: const Provenance.manual(),
+          observedAt: DateTime.utc(2026, 10, 1),
+          recordedAt: DateTime.utc(2026, 10, 1),
+          schemaVersion: 2,
+        ),
+      );
+      var calls = 0;
+      repo.beforeSchemaUpgrade = () async {
+        calls++;
+        throw StateError('disk full');
+      };
+      await svc.recordWeightKg(profileId: me, input: '77,5');
+      await svc.recordLab(
+        profileId: me,
+        input: const LabInput(
+          analyte: 'HbA1c',
+          value: '5,4',
+          notReported: false,
+          unit: '%',
+          sampleDate: '2026-10-03',
+        ),
+      );
+      expect(calls, 0);
+      expect(await repo.records(me), hasLength(3));
+      await expectLater(
+        svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.restingHeartRate,
+          input: const MeasurementInput(value: '57'),
+        ),
+        throwsA(isA<StorageWriteRefused>()),
+      );
+      expect(calls, 1, reason: 'only the measurement asks for a checkpoint');
+    });
+
+    test('two first measurements started together make one checkpoint and '
+        'both are saved', () async {
+      final (repo, _, svc, me) = await fresh();
+      await svc.recordWeightKg(profileId: me, input: '70');
+      var calls = 0;
+      repo.beforeSchemaUpgrade = () async {
+        calls++;
+        await Future<void>.delayed(const Duration(milliseconds: 5));
+      };
+      await Future.wait([
+        svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.restingHeartRate,
+          input: const MeasurementInput(value: '57'),
+        ),
+        svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.waistCircumference,
+          input: const MeasurementInput(value: '84'),
+        ),
+      ]);
+      expect(calls, 1);
+      expect(await repo.records(me), hasLength(3));
     });
 
     test('a checkpoint that cannot be made refuses the save and writes '

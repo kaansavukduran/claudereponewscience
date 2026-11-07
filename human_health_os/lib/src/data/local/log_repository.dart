@@ -2,6 +2,8 @@
 /// tiny byte sink so the same logic serves memory, files and browser storage.
 library;
 
+import 'dart:async';
+
 import '../../core/ids.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/profile/profile.dart';
@@ -170,8 +172,22 @@ class LogRepository implements HealthRepository {
     _s.apply('profile.put', profile.toJson());
   }
 
+  /// The end of the writes in flight: check, checkpoint and append of one
+  /// record finish before the next record starts, so two first measurements
+  /// cannot both run the checkpoint.
+  Future<void> _recordWrites = Future<void>.value();
+
   @override
-  Future<void> appendRecord(HealthRecord record) async {
+  Future<void> appendRecord(HealthRecord record) {
+    final previous = _recordWrites;
+    final done = Completer<void>();
+    _recordWrites = done.future;
+    return previous.then((_) => _appendRecord(record)).whenComplete(() {
+      done.complete();
+    });
+  }
+
+  Future<void> _appendRecord(HealthRecord record) async {
     _checkWritable();
     // Every rule is checked before the write, so the file never receives a
     // line that replay would skip.
@@ -195,7 +211,13 @@ class LogRepository implements HealthRepository {
     for (final r in _s.records.values) {
       if (r.schemaVersion > stored) stored = r.schemaVersion;
     }
-    if (record.schemaVersion <= stored) return;
+    // Only a record older apps cannot read is worth a checkpoint: a weight
+    // or a lab result is still written at the schema they read (D-018), also
+    // in a store whose records are older still.
+    if (record.schemaVersion <= HealthRecord.defaultWriteSchema ||
+        record.schemaVersion <= stored) {
+      return;
+    }
     try {
       await checkpoint();
     } catch (_) {

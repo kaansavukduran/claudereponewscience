@@ -68,7 +68,9 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
   }
 
   Future<void> _save() async {
-    final before = widget.services.checkpointSaved?.value;
+    // Cleared first: a checkpoint made during this save (also a repeat of an
+    // earlier, failed attempt at the same place) is named for this save.
+    widget.services.checkpointSaved?.value = null;
     setState(() {
       _busy = true;
       _errorCode = null;
@@ -93,7 +95,7 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
       _context.clear();
       _justSaved = true;
       final after = widget.services.checkpointSaved?.value;
-      if (after != null && after != before) _checkpoint = after;
+      if (after != null) _checkpoint = after;
       await _reload();
     } on InputError catch (e) {
       _errorCode = e.code;
@@ -143,7 +145,7 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
       keyboardType: number
           ? const TextInputType.numberWithOptions(decimal: true)
           : TextInputType.text,
-      maxLength: number ? null : HealthRecord.maxContextLength,
+      inputFormatters: number ? null : const [ContextLengthFormatter()],
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
@@ -261,6 +263,14 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
                     onSelected: _busy
                         ? null
                         : (_) => setState(() {
+                            if (_kind != k) {
+                              // Nothing typed for one kind is saved under
+                              // another (57 bpm is not 57 cm).
+                              _value.clear();
+                              _systolic.clear();
+                              _diastolic.clear();
+                              _context.clear();
+                            }
                             _kind = k;
                             _errorCode = null;
                             _errorField = null;
@@ -308,11 +318,14 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
             ),
             if (_errorCode != null && _errorField == null) ...[
               const SizedBox(height: 6),
-              Text(
-                s.inputError(_errorCode!),
-                key: const ValueKey('measure-error'),
-                style: text.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
+              Semantics(
+                liveRegion: true,
+                child: Text(
+                  s.inputError(_errorCode!),
+                  key: const ValueKey('measure-error'),
+                  style: text.bodySmall?.copyWith(
+                    color: Theme.of(context).colorScheme.error,
+                  ),
                 ),
               ),
             ],

@@ -18,6 +18,10 @@ cleanup() {
 }
 trap cleanup EXIT
 
+if [ -n "$(git -C "$root" status --porcelain --untracked-files=no)" ]; then
+  echo "the working tree has uncommitted changes: the inputs would not be those of $new_rev" >&2
+  exit 1
+fi
 echo "inputs written by $new_rev"
 (cd "$root/human_health_os" && dart run tool/make_f007_compat_inputs.dart "$work/inputs")
 git -C "$root" worktree add --detach "$work/old" "$old_rev" >/dev/null 2>&1

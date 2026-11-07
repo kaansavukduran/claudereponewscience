@@ -4,6 +4,8 @@
 /// does not exist is named, never drawn as 0.
 library;
 
+import 'package:flutter/services.dart';
+
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 
@@ -14,9 +16,14 @@ String fmtMeasured(double v, String? typed) {
   if (t != null) {
     final m = RegExp(r'^\d+(?:[.,](\d+))?$').firstMatch(t);
     if (m != null && double.parse(t.replaceAll(',', '.')) == v) {
-      return v.toStringAsFixed(m[1]?.length ?? 0);
+      final decimals = m[1]?.length ?? 0;
+      // toStringAsFixed takes 0..20 decimals and switches to exponent form
+      // from 1e21; any such text is shown as typed (dot as decimal point).
+      if (decimals <= 20 && v.abs() < 1e21) return v.toStringAsFixed(decimals);
+      return t.replaceAll(',', '.');
     }
   }
+  if (v.abs() >= 1e21) return typed?.trim() ?? v.toString();
   return v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toString();
 }
 
@@ -72,3 +79,21 @@ TimelineEntry? latestWithValue(List<TimelineEntry> entries) =>
 bool hasMeasuredValue(HealthRecord r) =>
     r.valueStatus == ValueStatus.present &&
     (r.kind.isStructured ? r.details != null : r.quantity != null);
+
+/// Limits a note to [HealthRecord.maxContextLength] Unicode code points, the
+/// unit the record rule counts: the field stops where Save would refuse
+/// (the stock length limiter counts differently for emoji).
+class ContextLengthFormatter extends TextInputFormatter {
+  const ContextLengthFormatter();
+
+  @override
+  TextEditingValue formatEditUpdate(
+    TextEditingValue oldValue,
+    TextEditingValue newValue,
+  ) {
+    final runes = newValue.text.runes;
+    if (runes.length <= HealthRecord.maxContextLength) return newValue;
+    // Keep the old value: a paste that is too long is refused whole.
+    return oldValue;
+  }
+}

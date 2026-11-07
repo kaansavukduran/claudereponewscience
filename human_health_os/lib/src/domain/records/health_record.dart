@@ -253,7 +253,8 @@ class HealthRecord {
   static int writeSchemaFor(RecordKind kind) =>
       kind.minSchema > defaultWriteSchema ? kind.minSchema : defaultWriteSchema;
 
-  /// Longest measurement context kept, in characters.
+  /// Longest measurement context kept, in characters (Unicode code points,
+  /// never UTF-16 units: an emoji counts once).
   static const int maxContextLength = 500;
 
   final String id;
@@ -367,7 +368,7 @@ class HealthRecord {
           'An empty context is stored as none',
         );
       }
-      if (ctx.length > maxContextLength) {
+      if (ctx.runes.length > maxContextLength) {
         throw const RecordValidationError(
           'CONTEXT_TOO_LONG',
           'The measurement context is too long',

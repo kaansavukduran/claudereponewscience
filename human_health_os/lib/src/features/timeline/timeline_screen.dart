@@ -303,7 +303,7 @@ class _EntryDetailState extends State<_EntryDetail> {
       keyboardType: number
           ? const TextInputType.numberWithOptions(decimal: true)
           : TextInputType.text,
-      maxLength: number ? null : HealthRecord.maxContextLength,
+      inputFormatters: number ? null : const [ContextLengthFormatter()],
       decoration: InputDecoration(
         labelText: label,
         helperText: helper,
@@ -508,10 +508,27 @@ class _EntryDetailState extends State<_EntryDetail> {
                   ),
                 if (_correcting == head.id) ...[
                   ..._correctionFields(s, head),
-                  FilledButton(
-                    key: const ValueKey('correct-save'),
-                    onPressed: _busy ? null : () => _saveCorrection(head),
-                    child: Text(s.saveCorrection),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      FilledButton(
+                        key: const ValueKey('correct-save'),
+                        onPressed: _busy ? null : () => _saveCorrection(head),
+                        child: Text(s.saveCorrection),
+                      ),
+                      TextButton(
+                        key: const ValueKey('correct-cancel'),
+                        onPressed: _busy
+                            ? null
+                            : () => setState(() {
+                                _correcting = null;
+                                _errorCode = null;
+                                _errorField = null;
+                              }),
+                        child: Text(s.cancel),
+                      ),
+                    ],
                   ),
                 ] else
                   Wrap(

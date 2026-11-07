@@ -133,8 +133,8 @@ class S {
       'Büyük tansiyon (sistolik) küçük tansiyondan (diyastolik) büyük olmalı. İkisi yer mi değiştirdi?',
     ),
     'CONTEXT_TOO_LONG' => _t(
-      'Keep the note under 500 characters.',
-      'Notu 500 karakterin altında tut.',
+      'Keep the note to at most 500 characters.',
+      'Notu en fazla 500 karakterle sınırla.',
     ),
     'CHECKPOINT_FAILED' => _t(
       'Not saved: this first measurement changes the record format, and a backup of your earlier data could not be made first. Nothing was written; check the free space and try again.',
@@ -351,7 +351,7 @@ class S {
   );
   String get measurementsNote => _t(
     'Saved exactly as typed, with the time you press Save and the source. Human OS does not judge these values or compare them with any range or target.',
-    'Yazdığın gibi, Kaydet\'e bastığın zaman ve kaynağıyla saklanır. Human OS bu değerleri yargılamaz, hiçbir aralık ya da hedefle karşılaştırmaz.',
+    'Yazdığın gibi, Kaydet\'e bastığın zaman ve kaynağıyla saklanır. Human OS bu değerleri yorumlamaz, hiçbir aralık ya da hedefle karşılaştırmaz.',
   );
   String checkpointSaved(String where) => _t(
     'Saved. Before this first measurement, a backup of your earlier data was saved at $where: older versions of Human OS cannot open the new record format.',
@@ -379,8 +379,8 @@ class S {
   );
   String spokenLatest(String kind, String value, String when, String source) =>
       _t(
-        '$kind: $value, measured $when, $source',
-        '$kind: $value, ölçüm zamanı $when, $source',
+        '$kind: $value, saved $when, $source',
+        '$kind: $value, kaydedilme zamanı $when, $source',
       );
 
   // Labs (F004): everything is shown as the report printed it.

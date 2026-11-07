@@ -18,6 +18,8 @@ class FileDataFiles implements DataFiles {
 
   static Future<void> _renameFile(File file, String to) => file.rename(to);
 
+  static int _tmpCounter = 0;
+
   /// Moves a file (tests replace it to make a step fail).
   final Future<void> Function(File file, String to) _rename;
 
@@ -44,7 +46,8 @@ class FileDataFiles implements DataFiles {
     await dir.create(recursive: true);
     final target = File('${dir.path}$_sep$fileName');
     // Temp file + rename: a crash never leaves half a backup behind.
-    final tmp = File('${target.path}.tmp');
+    // A name of its own: two saves at once never share a temp file.
+    final tmp = File('${target.path}.${_tmpCounter++}.tmp');
     await tmp.writeAsString(text, flush: true);
     await tmp.rename(target.path);
     return target.path;
