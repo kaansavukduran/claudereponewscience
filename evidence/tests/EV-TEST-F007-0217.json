@@ -1,0 +1,56 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0217",
+  "kind": "TEST",
+  "forge_id": "U007@v0.32",
+  "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "pnpm test",
+  "argv": [
+    "pnpm",
+    "test"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-07T20:46:23.735Z",
+  "finished_at": "2026-11-07T20:46:26.628Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "apps/client test:       Tests  5 passed (5)",
+  "log_sha256": "6cd8618cd1aefb51dc09d5e6b93bde141ce3b6a773cb594272ea524ac1de38f1",
+  "log_lines": 44,
+  "log_tail": [
+    "services/api test:    Start at  20:46:25",
+    "services/api test:    Duration  416ms (transform 58%, tests 26%, import 15%, worker 1%)",
+    "services/api test: Done",
+    "apps/client test$ vitest run",
+    "apps/client test:  RUN  v5.0.3 /home/user/claudereponewscience/apps/client",
+    "apps/client test: (node:12662) ExperimentalWarning: SQLite is an experimental feature and might change at any time",
+    "apps/client test: (Use `node --trace-warnings ...` to show where the warning was created)",
+    "apps/client test:  Test Files  1 passed (1)",
+    "apps/client test:       Tests  5 passed (5)",
+    "apps/client test:    Start at  20:46:26",
+    "apps/client test:    Duration  422ms (transform 61%, tests 23%, import 15%, worker 1%)",
+    "apps/client test: Done"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "packages",
+    "apps",
+    "services",
+    "pnpm-lock.yaml"
+  ]
+}

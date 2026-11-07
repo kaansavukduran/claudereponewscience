@@ -3,44 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U007",
-    "contract": "v0.32",
-    "run_id": "U007@v0.32",
-    "slice": "more ways to make it yours",
-    "goal": "Brainstorm F: a number pad on the weight card (G-61), the start screen, comfortable or compact spacing, and stronger contrast; one click each.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "ccc2c17",
-    "started_at": "2026-11-07T21:05:00Z",
-    "scope": [
-      "shared NumberPad widget used by measurement sheets and the weight card",
-      "start screen Today/Timeline/Labs",
-      "density comfortable/compact",
-      "stronger contrast: ink black/white, outline text 7:1, edges 3:1",
-      "all saved with the appearance settings; Reset Today keeps them"
-    ],
-    "out_of_scope": [
-      "units and date style (need G-43)",
-      "per-profile looks"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Weight saved with the pad alone",
-      "AC-2 Start screen opens the chosen destination",
-      "AC-3 Compact and stronger contrast apply at once; contrast ratios tested in both modes",
-      "AC-4 Round-trip and Reset keep the new settings; words judge nothing; mutations; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -51,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U003@v0.32 (2026-11-07, source revision ccc2c17036e9)",
+  "last_completed_forge": "U007@v0.32 (2026-11-07, source revision cd07d5961efe)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -64,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0192",
+      "evidence_id": "EV-TEST-F007-0205",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0193",
+      "evidence_id": "EV-TEST-F007-0206",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0194",
+      "evidence_id": "EV-TEST-F007-0207",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (461 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0195",
+      "gate": "flutter test, TZ=UTC (467 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0208",
       "criterion": "AC-1..AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0196",
+      "evidence_id": "EV-TEST-F007-0209",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0197",
+      "evidence_id": "EV-BUILD-F007-0210",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0198",
+      "evidence_id": "EV-RUNTIME-F007-0211",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0199",
+      "evidence_id": "EV-TEST-F007-0212",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0200",
+      "evidence_id": "EV-BUILD-F007-0213",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0201",
+      "evidence_id": "EV-RUNTIME-F007-0214",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (462 PASS)",
-      "evidence_id": "EV-TEST-F007-0202",
+      "gate": "flutter test with TZ=America/New_York (468 PASS)",
+      "evidence_id": "EV-TEST-F007-0215",
       "criterion": "AC-1..AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0203",
+      "evidence_id": "EV-TEST-F007-0216",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0204",
+      "evidence_id": "EV-TEST-F007-0217",
       "criterion": "AC-4",
-      "source_revision": "ccc2c17036e9c6966378af841d94a25436c1fc63",
+      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
       "result": "PASS"
     }
   ],
@@ -183,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U007",
+    "forge_id": "U008",
     "contract": "v0.32",
-    "run_id": "U007@v0.32",
-    "slice": "more ways to make it yours",
-    "why": "Brainstorm F: number pad on the weight card (G-61), start screen choice, comfortable/compact spacing, high contrast; one click each, Reset keeps working.",
+    "run_id": "U008@v0.32",
+    "slice": "see your own numbers over time",
+    "why": "Brainstorm B6: a plain line per measurement over time with the actual points and gaps (never interpolated), a date range and the typed value on tap; no target bands or judging colours.",
     "depends_on": [
-      "U003"
+      "U007"
     ]
   },
-  "updated_at": "2026-11-07T21:00:00Z",
+  "updated_at": "2026-11-07T21:25:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -3282,6 +3247,186 @@
         }
       ],
       "review": "single-author slice; mutations on a kind link, a home step wording and the sheet link each caught"
+    },
+    "U007@v0.32": {
+      "forge_id": "U007",
+      "contract": "v0.32",
+      "run_id": "U007@v0.32",
+      "slice": "more ways to make it yours",
+      "goal": "Brainstorm F: a number pad on the weight card (G-61), the start screen, comfortable or compact spacing, and stronger contrast; one click each.",
+      "status": "DONE",
+      "baseline_commit": "ccc2c17",
+      "started_at": "2026-11-07T21:05:00Z",
+      "scope": [
+        "shared NumberPad widget used by measurement sheets and the weight card",
+        "start screen Today/Timeline/Labs",
+        "density comfortable/compact",
+        "stronger contrast: ink black/white, outline text 7:1, edges 3:1",
+        "all saved with the appearance settings; Reset Today keeps them"
+      ],
+      "out_of_scope": [
+        "units and date style (need G-43)",
+        "per-profile looks"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Weight saved with the pad alone",
+        "AC-2 Start screen opens the chosen destination",
+        "AC-3 Compact and stronger contrast apply at once; contrast ratios tested in both modes",
+        "AC-4 Round-trip and Reset keep the new settings; words judge nothing; mutations; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests",
+        "GATES: 13 receipts on clean tree cd07d59, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0217",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0197.json",
+        "evidence/builds/EV-BUILD-F007-0200.json",
+        "evidence/runtime/EV-RUNTIME-F007-0198.json",
+        "evidence/runtime/EV-RUNTIME-F007-0201.json",
+        "evidence/tests/EV-TEST-F007-0192.json",
+        "evidence/tests/EV-TEST-F007-0193.json",
+        "evidence/tests/EV-TEST-F007-0194.json",
+        "evidence/tests/EV-TEST-F007-0195.json",
+        "evidence/tests/EV-TEST-F007-0196.json",
+        "evidence/tests/EV-TEST-F007-0199.json",
+        "evidence/tests/EV-TEST-F007-0202.json",
+        "evidence/tests/EV-TEST-F007-0203.json",
+        "evidence/tests/EV-TEST-F007-0204.json",
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/navigation/app_shell.dart",
+        "human_health_os/lib/src/presentation/theme/human_os_theme.dart",
+        "human_health_os/lib/src/presentation/widgets/number_pad.dart",
+        "human_health_os/test/widget/u007_more_settings_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "project_state/KNOWN_GAPS.md",
+        "reports/runtime/flutter_web_smoke_ccc2c17036e9.json",
+        "reports/runtime/linux-u003/u003-dev-schema5-history.png",
+        "reports/runtime/linux-u003/u003-dev-schema5-measurements.png",
+        "reports/runtime/linux-u003/u003-dev-schema5-today.png",
+        "reports/runtime/linux-u003/u003-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0205",
+        "EV-TEST-F007-0206",
+        "EV-TEST-F007-0207",
+        "EV-TEST-F007-0208",
+        "EV-TEST-F007-0209",
+        "EV-BUILD-F007-0210",
+        "EV-RUNTIME-F007-0211",
+        "EV-TEST-F007-0212",
+        "EV-BUILD-F007-0213",
+        "EV-RUNTIME-F007-0214",
+        "EV-TEST-F007-0215",
+        "EV-TEST-F007-0216",
+        "EV-TEST-F007-0217"
+      ],
+      "blocker": null,
+      "result": "U007_COMPLETE",
+      "finished_at": "2026-11-07T21:25:00Z",
+      "app_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0205",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0206",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0207",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (467 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0208",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0209",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0210",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0211",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0212",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0213",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0214",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (468 PASS)",
+          "evidence_id": "EV-TEST-F007-0215",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0216",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0217",
+          "criterion": "AC-4",
+          "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on the start screen mapping, contrast ink and the weight pad target each caught"
     }
   },
   "forge_history_legacy_ids": {
