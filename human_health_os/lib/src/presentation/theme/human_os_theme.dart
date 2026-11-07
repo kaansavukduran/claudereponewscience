@@ -84,6 +84,8 @@ const Map<AccentChoice, (Color, Color)> accentTones = {
 ThemeData buildHumanOsTheme(
   Brightness brightness, {
   AccentChoice accentChoice = AccentChoice.teal,
+  bool highContrast = false,
+  bool compact = false,
 }) {
   final dark = brightness == Brightness.dark;
   final tones = accentTones[accentChoice]!;
@@ -95,8 +97,13 @@ ThemeData buildHumanOsTheme(
   );
   final surface = dark ? const Color(0xFF101819) : const Color(0xFFF6F8F8);
   final card = dark ? const Color(0xFF172224) : const Color(0xFFFFFFFF);
-  final hairline = dark ? const Color(0xFF2B3A3D) : const Color(0xFFDDE4E4);
-  final ink = dark ? const Color(0xFFE6EEEE) : const Color(0xFF1B2B2E);
+  // High contrast: pure ink, and edges as dark as the outline text.
+  final hairline = highContrast
+      ? (dark ? const Color(0xFFB8C8CA) : const Color(0xFF3E4F52))
+      : (dark ? const Color(0xFF2B3A3D) : const Color(0xFFDDE4E4));
+  final ink = highContrast
+      ? (dark ? Colors.white : Colors.black)
+      : (dark ? const Color(0xFFE6EEEE) : const Color(0xFF1B2B2E));
   final scheme =
       ColorScheme.fromSeed(
         seedColor: tones.$1,
@@ -125,7 +132,9 @@ ThemeData buildHumanOsTheme(
         surfaceContainerHighest: dark
             ? const Color(0xFF223234)
             : const Color(0xFFE8EDED),
-        outline: dark ? const Color(0xFF8AA0A3) : const Color(0xFF5E7275),
+        outline: highContrast
+            ? (dark ? const Color(0xFFD5E0E1) : const Color(0xFF2C3A3C))
+            : (dark ? const Color(0xFF8AA0A3) : const Color(0xFF5E7275)),
         outlineVariant: hairline,
         tertiaryContainer: dark
             ? const Color(0xFF223234)
@@ -162,7 +171,7 @@ ThemeData buildHumanOsTheme(
   return ThemeData(
     colorScheme: scheme,
     useMaterial3: true,
-    visualDensity: VisualDensity.standard,
+    visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
     scaffoldBackgroundColor: surface,
     textTheme: text,
     extensions: [dark ? HealthRoleColors.dark : HealthRoleColors.light],

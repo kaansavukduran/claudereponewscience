@@ -113,6 +113,41 @@ class SettingsScreen extends StatelessWidget {
               (v) => set(a.copyWith(textSize: v)),
             ),
           ),
+          section(
+            s.settingsSpacing,
+            choices(
+              'set-density',
+              [
+                (Density.comfortable, s.settingsComfortable),
+                (Density.compact, s.settingsCompact),
+              ],
+              a.density,
+              (v) => set(a.copyWith(density: v)),
+            ),
+          ),
+          section(
+            s.settingsContrast,
+            SwitchListTile(
+              key: const ValueKey('set-high-contrast'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(s.settingsHighContrast),
+              value: a.highContrast,
+              onChanged: (on) => set(a.copyWith(highContrast: on)),
+            ),
+          ),
+          section(
+            s.settingsStart,
+            choices(
+              'set-start',
+              [
+                (StartScreen.today, s.startScreenName(StartScreen.today)),
+                (StartScreen.timeline, s.startScreenName(StartScreen.timeline)),
+                (StartScreen.labs, s.startScreenName(StartScreen.labs)),
+              ],
+              a.startScreen,
+              (v) => set(a.copyWith(startScreen: v)),
+            ),
+          ),
           section(s.settingsToday, _TodayLayout(settings: a, onChange: set)),
           Text(
             controller?.saveFailed == true

@@ -587,6 +587,21 @@ class S {
     AccentChoice.green => _t('Green', 'Yeşil'),
     AccentChoice.graphite => _t('Graphite', 'Grafit'),
   };
+  String get settingsSpacing => _t('Spacing', 'Aralık');
+  String get settingsComfortable => _t('Comfortable', 'Rahat');
+  String get settingsCompact => _t('Compact', 'Sık');
+  String get settingsContrast => _t('Contrast', 'Karşıtlık');
+  String get settingsHighContrast => _t(
+    'Stronger contrast (darker text and edges)',
+    'Güçlü karşıtlık (daha koyu yazı ve kenarlar)',
+  );
+  String get settingsStart =>
+      _t('Open the app on', 'Uygulama şu ekranla açılsın');
+  String startScreenName(StartScreen x) => switch (x) {
+    StartScreen.today => _t('Today', 'Bugün'),
+    StartScreen.timeline => _t('Timeline', 'Zaman çizelgesi'),
+    StartScreen.labs => _t('Labs', 'Lab'),
+  };
   String get settingsToday => _t('Today screen', 'Bugün ekranı');
   String get settingsTiles => _t(
     'Measurement tiles: tick to show, arrows to reorder',

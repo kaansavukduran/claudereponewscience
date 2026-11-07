@@ -14,6 +14,12 @@ enum AccentChoice { teal, blue, purple, green, graphite }
 
 enum TextSizeChoice { system, larger, largest }
 
+/// The screen the app opens on.
+enum StartScreen { today, timeline, labs }
+
+/// Comfortable keeps the larger spacing; compact shows more on a laptop.
+enum Density { comfortable, compact }
+
 /// Today sections a person may hide. The weight and measurement areas are
 /// always there (they hold the person's numbers); Settings stays one click
 /// away in the top bar whatever is hidden.
@@ -29,6 +35,9 @@ class AppearanceSettings {
     this.hiddenTiles = const {},
     this.hiddenSections = const {},
     this.padOpen = false,
+    this.startScreen = StartScreen.today,
+    this.density = Density.comfortable,
+    this.highContrast = false,
   });
 
   final LanguageChoice language;
@@ -44,6 +53,12 @@ class AppearanceSettings {
 
   /// The number pad is open when a measurement sheet opens.
   final bool padOpen;
+
+  final StartScreen startScreen;
+  final Density density;
+
+  /// Darker text and stronger edges, on top of the device's own settings.
+  final bool highContrast;
 
   /// [defaults] in the chosen order, all of them (hidden ones included).
   List<String> ordered(List<String> defaults) => [
@@ -77,6 +92,9 @@ class AppearanceSettings {
     theme: theme,
     accent: accent,
     textSize: textSize,
+    startScreen: startScreen,
+    density: density,
+    highContrast: highContrast,
   );
 
   /// Multiplies the text size the system asks for.
@@ -95,6 +113,9 @@ class AppearanceSettings {
     Set<String>? hiddenTiles,
     Set<TodaySection>? hiddenSections,
     bool? padOpen,
+    StartScreen? startScreen,
+    Density? density,
+    bool? highContrast,
   }) => AppearanceSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -104,6 +125,9 @@ class AppearanceSettings {
     hiddenTiles: hiddenTiles ?? this.hiddenTiles,
     hiddenSections: hiddenSections ?? this.hiddenSections,
     padOpen: padOpen ?? this.padOpen,
+    startScreen: startScreen ?? this.startScreen,
+    density: density ?? this.density,
+    highContrast: highContrast ?? this.highContrast,
   );
 
   Map<String, Object?> toJson() => {
@@ -117,6 +141,9 @@ class AppearanceSettings {
     'hiddenTiles': hiddenTiles.toList()..sort(),
     'hiddenSections': [for (final s in hiddenSections) s.name]..sort(),
     'padOpen': padOpen,
+    'startScreen': startScreen.name,
+    'density': density.name,
+    'highContrast': highContrast,
   };
 
   /// Reads saved settings; anything unknown or missing falls back to the
@@ -158,6 +185,13 @@ class AppearanceSettings {
             if (s.name == n) s,
       },
       padOpen: json['padOpen'] == true,
+      startScreen: pick(
+        StartScreen.values,
+        json['startScreen'],
+        StartScreen.today,
+      ),
+      density: pick(Density.values, json['density'], Density.comfortable),
+      highContrast: json['highContrast'] == true,
     );
   }
 
@@ -171,7 +205,10 @@ class AppearanceSettings {
       _sameList(other.tileOrder, tileOrder) &&
       _sameSet(other.hiddenTiles, hiddenTiles) &&
       _sameSet(other.hiddenSections, hiddenSections) &&
-      other.padOpen == padOpen;
+      other.padOpen == padOpen &&
+      other.startScreen == startScreen &&
+      other.density == density &&
+      other.highContrast == highContrast;
 
   @override
   int get hashCode => Object.hash(
@@ -183,6 +220,7 @@ class AppearanceSettings {
     hiddenTiles.length,
     hiddenSections.length,
     padOpen,
+    Object.hash(startScreen, density, highContrast),
   );
 }
 

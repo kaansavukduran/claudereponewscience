@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../app/appearance_scope.dart';
+import '../../presentation/widgets/number_pad.dart';
+
 import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/ports/health_repository.dart';
@@ -23,6 +26,10 @@ class WeightCard extends StatefulWidget {
 
 class _WeightCardState extends State<WeightCard> {
   final _controller = TextEditingController();
+  bool? _padChoice;
+
+  bool get _pad =>
+      _padChoice ?? (AppearanceScope.maybeOf(context)?.value.padOpen ?? false);
   List<HealthRecord> _weights = const [];
   List<TimelineEntry> _entries = const [];
   String? _errorCode;
@@ -222,6 +229,21 @@ class _WeightCardState extends State<WeightCard> {
                 ),
               ],
             ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton(
+                key: const ValueKey('weight-pad-toggle'),
+                onPressed: () => setState(() => _padChoice = !_pad),
+                child: Text(_pad ? s.numberPadHide : s.numberPadShow),
+              ),
+            ),
+            if (_pad)
+              NumberPad(
+                key: const ValueKey('weight-pad'),
+                keyPrefix: 'wpad',
+                target: () => _controller,
+                onChanged: () => setState(() {}),
+              ),
             if (_justSaved) ...[
               const SizedBox(height: 6),
               Semantics(

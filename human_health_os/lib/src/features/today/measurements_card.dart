@@ -4,6 +4,7 @@ import '../../app/app_services.dart';
 import '../../app/appearance_scope.dart';
 import '../../domain/guide/glossary.dart';
 import '../../domain/settings/appearance.dart';
+import '../../presentation/widgets/number_pad.dart';
 import '../guide/glossary_screen.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/ports/health_repository.dart';
@@ -425,57 +426,6 @@ class _EntrySheetState extends State<_EntrySheet> {
     );
   }
 
-  void _typeChar(String c) {
-    final ctl = _active;
-    setState(() => ctl.text = '${ctl.text}$c');
-    ctl.selection = TextSelection.collapsed(offset: ctl.text.length);
-  }
-
-  void _deleteChar() {
-    final ctl = _active;
-    if (ctl.text.isEmpty) return;
-    final runes = ctl.text.runes.toList()..removeLast();
-    setState(() => ctl.text = String.fromCharCodes(runes));
-    ctl.selection = TextSelection.collapsed(offset: ctl.text.length);
-  }
-
-  /// Digits for people who use only the mouse: nothing is pre-filled and the
-  /// keys only type into the field that was last chosen.
-  Widget _numberPad(S s) {
-    final sep = s.lang == AppLang.tr ? ',' : '.';
-    Widget key(String id, String label, String semantic, VoidCallback onTap) =>
-        SizedBox(
-          key: ValueKey('pad-$id'),
-          width: 64,
-          height: 48,
-          child: Semantics(
-            button: true,
-            label: semantic,
-            excludeSemantics: true,
-            child: OutlinedButton(
-              onPressed: onTap,
-              style: OutlinedButton.styleFrom(padding: EdgeInsets.zero),
-              child: Text(label),
-            ),
-          ),
-        );
-    return Padding(
-      key: const ValueKey('measure-pad'),
-      padding: const EdgeInsets.only(top: 8),
-      child: Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        children: [
-          for (var d = 1; d <= 9; d++)
-            key('$d', '$d', s.numberPadDigit(d), () => _typeChar('$d')),
-          key('dec', sep, s.numberPadDecimal, () => _typeChar(sep)),
-          key('0', '0', s.numberPadDigit(0), () => _typeChar('0')),
-          key('del', '⌫', s.numberPadDelete, _deleteChar),
-        ],
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
@@ -545,7 +495,15 @@ class _EntrySheetState extends State<_EntrySheet> {
                 child: Text(_pad ? s.numberPadHide : s.numberPadShow),
               ),
             ),
-            if (_pad) _numberPad(s),
+            if (_pad)
+              Padding(
+                key: const ValueKey('measure-pad'),
+                padding: const EdgeInsets.only(top: 8),
+                child: NumberPad(
+                  target: () => _active,
+                  onChanged: () => setState(() {}),
+                ),
+              ),
             const SizedBox(height: 8),
             Theme(
               data: Theme.of(context)

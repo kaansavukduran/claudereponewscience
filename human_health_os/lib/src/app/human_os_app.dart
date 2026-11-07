@@ -77,8 +77,18 @@ class _HumanOsAppState extends State<HumanOsApp> {
       child: MaterialApp(
         title: 'Human OS',
         debugShowCheckedModeBanner: false,
-        theme: buildHumanOsTheme(Brightness.light, accentChoice: a.accent),
-        darkTheme: buildHumanOsTheme(Brightness.dark, accentChoice: a.accent),
+        theme: buildHumanOsTheme(
+          Brightness.light,
+          accentChoice: a.accent,
+          highContrast: a.highContrast,
+          compact: a.density == Density.compact,
+        ),
+        darkTheme: buildHumanOsTheme(
+          Brightness.dark,
+          accentChoice: a.accent,
+          highContrast: a.highContrast,
+          compact: a.density == Density.compact,
+        ),
         themeMode: switch (a.theme) {
           ThemeChoice.system => ThemeMode.system,
           ThemeChoice.light => ThemeMode.light,

@@ -7,6 +7,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../app/appearance_scope.dart';
+import '../domain/settings/appearance.dart';
 import '../features/settings/settings_screen.dart';
 
 import '../app/app_services.dart';
@@ -35,7 +37,14 @@ class AppShell extends StatefulWidget {
 }
 
 class _AppShellState extends State<AppShell> {
-  DestinationId _current = DestinationId.today;
+  late DestinationId _current = switch ((AppearanceScope.maybeOf(context)
+          ?.value
+          .startScreen) ??
+      StartScreen.today) {
+    StartScreen.today => DestinationId.today,
+    StartScreen.timeline => DestinationId.timeline,
+    StartScreen.labs => DestinationId.labs,
+  };
 
   void _go(DestinationId id) => setState(() => _current = id);
 

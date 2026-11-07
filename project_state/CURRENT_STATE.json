@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U007",
+    "contract": "v0.32",
+    "run_id": "U007@v0.32",
+    "slice": "more ways to make it yours",
+    "goal": "Brainstorm F: a number pad on the weight card (G-61), the start screen, comfortable or compact spacing, and stronger contrast; one click each.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "ccc2c17",
+    "started_at": "2026-11-07T21:05:00Z",
+    "scope": [
+      "shared NumberPad widget used by measurement sheets and the weight card",
+      "start screen Today/Timeline/Labs",
+      "density comfortable/compact",
+      "stronger contrast: ink black/white, outline text 7:1, edges 3:1",
+      "all saved with the appearance settings; Reset Today keeps them"
+    ],
+    "out_of_scope": [
+      "units and date style (need G-43)",
+      "per-profile looks"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Weight saved with the pad alone",
+      "AC-2 Start screen opens the chosen destination",
+      "AC-3 Compact and stronger contrast apply at once; contrast ratios tested in both modes",
+      "AC-4 Round-trip and Reset keep the new settings; words judge nothing; mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
