@@ -531,6 +531,35 @@ class S {
   );
 
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String get summaryTitle => _t('Summary for a visit', 'Muayene için özet');
+  String get summaryTileHint => _t(
+    'What you recorded, as typed, with dates: show it or save it to print',
+    'Kaydettiklerin, yazdığın gibi ve tarihleriyle: göster ya da yazdırmak için kaydet',
+  );
+  String summaryCreated(String when) => _t(
+    'Made with Human OS on $when',
+    'Human OS ile $when tarihinde hazırlandı',
+  );
+  String get summaryLabs => _t('Lab results', 'Lab sonuçları');
+  String get summaryFooterTyped => _t(
+    'Values are shown exactly as the person typed them, newest first, with the time each was measured.',
+    'Değerler kişinin yazdığı gibi, en yeniden başlayarak, ölçüldüğü saatle gösterilir.',
+  );
+  String get summaryFooterNotDiagnosis => _t(
+    'Recorded by the person, not by a clinic. Human OS does not interpret or score these values.',
+    'Kişinin kendisi kaydetti, bir klinik değil. Human OS bu değerleri yorumlamaz ve puanlamaz.',
+  );
+  String get summaryEmpty => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get summarySave =>
+      _t('Save as a page to print', 'Yazdırmak için sayfa olarak kaydet');
+  String get summarySaveNotHere => _t(
+    'This build keeps data encrypted, so the summary is shown here only and is not saved as an open file.',
+    'Bu derleme verileri şifreli tutar; bu yüzden özet yalnız burada gösterilir, açık bir dosya olarak kaydedilmez.',
+  );
+  String summaryMore(int shown, int total) => _t(
+    'Showing the newest $shown of $total.',
+    '$total kaydın en yeni $shown tanesi gösteriliyor.',
+  );
   String trendTitle(String kind) =>
       _t('$kind over time', '$kind, zaman içinde');
   String get seeOverTime => _t('See over time', 'Zaman içinde gör');

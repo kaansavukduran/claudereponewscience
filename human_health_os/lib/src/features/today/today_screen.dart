@@ -11,6 +11,7 @@ import '../../presentation/widgets/status_chip.dart';
 import '../genetics/genetics_screen.dart';
 import '../guide/body_guide_screen.dart';
 import '../guide/glossary_screen.dart';
+import '../report/summary_screen.dart';
 import '../help/how_to_screen.dart';
 import '../settings/settings_screen.dart';
 import 'measurements_card.dart';
@@ -76,6 +77,18 @@ class TodayScreen extends StatelessWidget {
             hint: s.howToTileHint,
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const HowToScreen()),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _ToolTile(
+            key: const ValueKey('tool-summary'),
+            icon: Icons.assignment_outlined,
+            title: s.summaryTitle,
+            hint: s.summaryTileHint,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => SummaryScreen(services: services),
+              ),
             ),
           ),
           const SizedBox(height: 8),

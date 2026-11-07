@@ -3,9 +3,43 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U009",
+    "contract": "v0.32",
+    "run_id": "U009@v0.32",
+    "slice": "summary for a visit",
+    "goal": "Brainstorm C12: what the person recorded, as typed and newest first, with dates, notes, printed lab ranges and flags; shown on screen everywhere, saved as a self-contained escaped HTML page to print where open files are allowed; no scores, no interpretation.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "38c1125",
+    "started_at": "2026-11-07T22:00:00Z",
+    "scope": [
+      "DoctorSummary: weight, each measurement kind (up to 20 newest), labs (up to 40), with 'showing n of total'",
+      "HTML page: inline style only, no script, no external link, every text escaped",
+      "not saved as a file in encrypted builds (same rule as the JSON export); a line says so"
+    ],
+    "out_of_scope": [
+      "PDF (needs a reviewed dependency)",
+      "choosing a date range for the summary",
+      "sharing directly from the app"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Readings shown as typed with their note; empty state; no page offered when empty",
+      "AC-2 Saved page escapes every text, has no script and no link",
+      "AC-3 Words judge and score nothing (EN/TR)",
+      "AC-4 Mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
