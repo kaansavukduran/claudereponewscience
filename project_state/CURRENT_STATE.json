@@ -3,68 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "FORGE_PLANNING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F007",
-    "contract": "v0.32",
-    "run_id": "F007-S2@v0.32",
-    "slice": "measurements, slice 2",
-    "goal": "Finish the measurement domain on the same canonical record: the person can say when a measurement was taken (G-44), four more FR-17 metrics (G-42: height, body temperature, SpO2, respiratory rate) and the weight entry rules (G-45). Master §39 F007: one bounded slice per Forge.",
-    "status": "FORGE_PLANNING",
-    "baseline_commit": "0617601",
-    "started_at": "2026-11-07T14:00:00Z",
-    "scope": [
-      "measurement time entry on the Measurements card: optional 'When' as YYYY-MM-DD HH:MM or HH:MM (today), local time, with an optional offset (Z or +03:00); empty means the time Save is pressed; observed_at is the typed instant (UTC), recorded_at stays the save time",
-      "entry refusals with their own field and text: TIME_FORMAT, FUTURE_TIME (more than 5 min ahead), TIME_TOO_OLD (before 1900), TIME_DOES_NOT_EXIST (clock-change gap), TIME_AMBIGUOUS (repeated hour: add the offset); the rules are entry rules only, stored records are not re-judged",
-      "record schema 5 (RS-005, additive): body.height (cm), vital.body_temperature (°C), vital.oxygen_saturation (%), vital.respiratory_rate (breaths/min), typed by hand with the same context and correction lineage; older records keep their exact JSON; schema 6 refused; F007-slice-1 and older builds refuse schema 5",
-      "entry-only definitional rule: SpO2 above 100 % is refused (OUT_OF_DEFINITION); no other bound and no clinical threshold",
-      "history rows and the detail sheet show the measured time and, when it differs from the save time by more than a minute, the save time too; the card note says so",
-      "automatic checkpoint backup before the first schema-5 record (the existing hook, wording 'this entry')",
-      "weight entry rules (G-45): AMBIGUOUS_SEPARATOR refused for weight, weight shown with the decimals typed (stored records unchanged, still written at schema 3)",
-      "EN/TR strings; no interpretation of any value; old-code check on main 0617601"
-    ],
-    "out_of_scope": [
-      "changing the time of an existing measurement in a correction, and 'not measured' entries from the screen (G-48)",
-      "body composition, sleep, activity, nutrition, subjective state (G-42 remainder)",
-      "BMI, waist-height ratio, trends, any derived result: F011",
-      "unit choice or conversion (°F, inches, lb), UCUM codes (G-43); structured context, devices, sessions (G-41); REVIEW tier and upper bounds (G-46)",
-      "web automatic checkpoint (G-47); weight card time entry; new primary destination; vault, envelope, backup or export format changes"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Time entry: a typed time (local, or with an offset) is stored as observed_at in UTC and shown back as typed local time; empty means the save time; recorded_at is always the save time; a correction keeps its observed_at; the four refusals TIME_FORMAT, FUTURE_TIME, TIME_TOO_OLD and the clock-change refusals TIME_DOES_NOT_EXIST and TIME_AMBIGUOUS (the last two proven in an America/New_York run) show on the 'When' field with their own EN/TR text and write nothing; a typed offset resolves a repeated hour",
-      "AC-2 Time on screen: rows and the detail sheet show the measured time, and the save time too when it differs by more than a minute; Latest and the Timeline order by measured time; the note on the card no longer says the time is only when Save is pressed",
-      "AC-3 Record schema 5 (RS-005): the four kinds exist only at schema >= 5 (KIND_NEEDS_NEWER_SCHEMA); canonical unit only (UNIT_NOT_SUPPORTED); finite numbers above 0; no upper bound or clinical threshold in the record rules; schema 1-4 records keep their exact JSON; the reader accepts 1-5 and refuses 6; each record is written with the oldest schema that holds it (weight and lab 3, slice-1 measurements 4, the new kinds 5)",
-      "AC-4 Entry: SpO2 above 100 is refused at entry (OUT_OF_DEFINITION) while a stored value above 100 is not re-judged; blank is EMPTY and 0 is NOT_POSITIVE for every new kind; each save is one OBSERVED manual record with its unit and the text typed",
-      "AC-5 Card and Timeline: seven kinds in the chooser, Latest per kind with a spoken summary, the optional note and 'When' fields, EN/TR, 320 dp at 2x text without overflow; kind-aware correction and entered-in-error for the new kinds; three primary destinations unchanged",
-      "AC-6 No interpretation: EN/TR scans (F004 lists, the slice-1 measurement list and new words: fever, febrile, hypoxia, hypoxemia, tachypnea, hipoksi, taşipne, ateşli) find nothing on the card, rows, sheet, error texts or notes; Turkish uses 'vücut sıcaklığı', never 'ateş', for the metric",
-      "AC-7 Weight (G-45): '7.500' and '1,234' are refused for weight (AMBIGUOUS_SEPARATOR), typed decimals are shown on Today and the Timeline ('77,50' as 77.50 kg), stored weights are unchanged and still schema 3",
-      "AC-8 Checkpoint: before the first schema-5 record in a vault whose newest stored schema is lower, a backup of the vault as it is is saved and named ('this entry'); a failed checkpoint refuses the save and writes nothing; no checkpoint for weight, lab or slice-1 measurements; unchanged otherwise",
-      "AC-9 Storage and privacy: same repository paths and formats; no new dependency; the vault file, backups and console output hold no kind code, typed value, note or time text",
-      "AC-10 Compatibility: on main 0617601 (F007 slice 1) the old code refuses the schema-5 fixtures (plaintext and encrypted) with RECORD_SCHEMA_NEWER, F007-slice-2 backups with VAULT_INCOMPATIBLE and a restore over them with RESTORE_TARGET_NEWER, leaves the bytes unchanged, and still opens a vault where slice 2 saved only slice-1 kinds and weight and the checkpoint backup",
-      "AC-11 Fixtures v1_f007s2_schema5 (plaintext, schemas 1-5) and enc_v1_f007s2 (encrypted): writer bytes, every field replayed, README rows, backup_test list",
-      "AC-12 Linux integration with real files: development and production encrypted vaults keep a typed time, the four new kinds and a correction across a relaunch; the schema-5 checkpoint lands on disk",
-      "AC-13 Web smoke: a height typed with a time in Chromium shows as typed on Today and the Timeline, survives a reload and is in the backup; no console errors",
-      "AC-14 Regression and close: F001-F007-S1 suites in UTC and New York, gates on a clean tree, mutations each caught, D-019, SOURCES, KNOWN_GAPS (G-48, G-42/G-44/G-45 updated), state and docs updated, one next Forge",
-      "AC-15 Time rules (from the spec critique): strict grammar ^(YYYY-MM-DD )?HH:MM( ?(Z|+-HH:MM))?$ with round-trip range checks (no seconds, no 24:00, no 2026-02-30), offset within +-14:00 in steps of 15 min; 'today' is the local date of the injected clock; a time later today stays FUTURE_TIME (no silent roll-back to yesterday); one shared helper with recordWeightKg for the 5-minute rule (exactly +5 min passes, +5 min 1 s fails); the typed instant is stored with seconds = 0; the gap and repeated-hour checks go through an injectable local-zone resolver (pure-function tests incl. a 30-minute shift) plus America/New_York runs; the rules live in the entry (service), never in HealthRecord.validate: a stored record with observed_at up to 5 min after recorded_at, in the future, or before 1900 still replays; no observed <= recorded rule is added; observed_at is resolved once, before the record is built (idempotent retry); measurements never set observedDateOnly",
-      "AC-16 Order and display: saving 10:00 then a back-dated 09:00 leaves Latest = 10:00 and the 09:00 reading in the history; markers and corrections sort with their target; the correction sheet shows the inherited measured time and offers no When field (a When typed anywhere on a correction is not read); 'differs' means |recorded - observed| > 60 s; spoken Latest, rows and sheet say 'measured <time>' and, when they differ, 'saved <time>' (EN/TR, tested); shown times are device-local and the card note says so",
-      "AC-17 Card UX: switching kind clears the value fields but keeps 'When' and the note; 'When' is never pre-filled and is parsed at Save; its hint reads 'YYYY-MM-DD HH:MM or HH:MM, local time. Empty = now'; the kind chooser has radio-group semantics and keeps the chosen kind visible at 320 dp, 2x text, in TR",
-      "AC-18 Measurands and wording: the unit stored is the canonical string (cm, °C, %, breaths/min; locked by fixtures, plaintext and encrypted), spoken as degrees Celsius / Celsius derece; a one-line neutral hint names the measurand (temperature: free-text note for the site; SpO2: pulse oximeter; arterial values are not stored here); a new height is a new record, not a correction (D-019); OUT_OF_DEFINITION says what is wrong with the entry, never with the body; the judging scan is extended (EN: fever, febrile, hypothermi*, hyperthermi*, hypoxi*, hypoxem*, tachypn*, bradypn*, apnea, dyspnea, low, high, normal, abnormal, healthy, warning, alert, critical, consult, doctor; TR: ateş, ateşli, hipotermi, hipertermi, hipoksi, hipoksemi, taşipne, bradipne, apne, dispne, düşük, yüksek, normal, anormal, sağlıklı, uyarı, kritik) and runs over every new string and every semantics label, not only rendered widgets; a stored SpO2 of 101 loads and shows",
-      "AC-19 Weight (G-45) prerequisites: confirm weight records already persist originalText; list and update the tests that type 80,50-style values; mutation for the typed-decimal display; the checkpoint test covers 4 -> 5 and 3 -> 5 with one checkpoint; the web smoke pins the browser time zone; TIME_* texts never echo the typed text and the typed time is stored nowhere as text"
-    ],
-    "completed_steps": [
-      "ORIENT: state READY after F007@v0.32 slice 1 (main 0617601); next_recommended_forge selected",
-      "SPECIFY: scope and AC-1..AC-19 (two independent spec critiques folded in: time/DST/compat, safety/wording/UX)"
-    ],
-    "last_verified_gate": null,
-    "next_action": "design direction (the user found the UI too plain and cluttered), then IMPLEMENT",
-    "files_touched": [],
-    "migration_ids": [
-      "RS-005"
-    ],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -75,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F007@v0.32 (2026-11-07, source revision e1aaf1705061)",
+  "last_completed_forge": "F007-S2@v0.32 (2026-11-07, source revision d7997095f614)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -88,100 +29,100 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0057",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-TEST-F007-0086",
+      "criterion": "AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0058",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-TEST-F007-0087",
+      "criterion": "AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0059",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-TEST-F007-0088",
+      "criterion": "AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (328 PASS): record rules, entry, lineage, checkpoint, fixtures, leak checks, widget tests EN/TR at 320 dp",
-      "evidence_id": "EV-TEST-F007-0060",
-      "criterion": "AC-1..AC-9, AC-11, AC-12",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "gate": "flutter test, TZ=UTC (372 PASS, 1 skipped: the host-zone clock-change test needs America/New_York)",
+      "evidence_id": "EV-TEST-F007-0089",
+      "criterion": "AC-1..AC-9, AC-11, AC-14, AC-15..AC-19",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0061",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-TEST-F007-0090",
+      "criterion": "AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0062",
-      "criterion": "AC-14",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
-      "result": "PASS"
-    },
-    {
-      "gate": "Playwright smoke in Chromium (70 checks): blood pressure typed, 118/76 mmHg on Today and Timeline, survives reload, in the backup; no console errors",
-      "evidence_id": "EV-RUNTIME-F007-0063",
-      "criterion": "AC-14",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
-      "result": "PASS"
-    },
-    {
-      "gate": "Linux integration on real files (9 PASS): development and encrypted vaults, checkpoint on disk, correction, relaunch",
-      "evidence_id": "EV-TEST-F007-0064",
+      "evidence_id": "EV-BUILD-F007-0091",
       "criterion": "AC-13",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "result": "PASS"
+    },
+    {
+      "gate": "Playwright smoke in Chromium (78 checks): blood pressure and a height with a typed time typed in the browser, tiles with spoken summaries, reload, Timeline, backup at schema 5; no console errors",
+      "evidence_id": "EV-RUNTIME-F007-0092",
+      "criterion": "AC-13",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "result": "PASS"
+    },
+    {
+      "gate": "Linux integration on real files (9 PASS): development and encrypted vaults, two checkpoints (3 to 4, 4 to 5) on disk, a time typed on the screen, correction, relaunch",
+      "evidence_id": "EV-TEST-F007-0093",
+      "criterion": "AC-12, AC-8",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0065",
-      "criterion": "AC-13",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-BUILD-F007-0094",
+      "criterion": "AC-12",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
-      "gate": "Linux release binary on the schema-4 fixture (Xvfb): measurements card with the stored values, vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0066",
-      "criterion": "AC-12, AC-13",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "gate": "Linux release binary on the schema-5 fixture (Xvfb): tiles with the stored values, vault file unchanged, no error events",
+      "evidence_id": "EV-RUNTIME-F007-0095",
+      "criterion": "AC-11, AC-12",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (328 PASS)",
-      "evidence_id": "EV-TEST-F007-0067",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "gate": "flutter test with TZ=America/New_York (373 PASS: clock-change gap and repeat on the device zone)",
+      "evidence_id": "EV-TEST-F007-0096",
+      "criterion": "AC-1, AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0068",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-TEST-F007-0097",
+      "criterion": "AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0069",
-      "criterion": "AC-15",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "evidence_id": "EV-TEST-F007-0098",
+      "criterion": "AC-14",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     },
     {
-      "gate": "old-code check on main 48c3c94 in a scratch worktree: schema-4 data refused unchanged, schema-3 data and checkpoints open",
-      "evidence_id": "EV-TEST-F007-0070",
+      "gate": "old-code check on main 0617601 (F007 slice 1) in a scratch worktree: schema-5 data refused unchanged, older-schema data and checkpoints open",
+      "evidence_id": "EV-TEST-F007-0099",
       "criterion": "AC-10",
-      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
       "result": "PASS"
     }
   ],
@@ -214,13 +155,13 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "F007",
+    "forge_id": "U001",
     "contract": "v0.32",
-    "run_id": "F007@v0.32",
-    "slice": "measurements, slice 2",
-    "why": "finish the measurement domain before opening another one: the person cannot yet say when a measurement was taken (G-44, the time saved is when Save is pressed), and height, temperature, SpO2 and respiratory rate are missing (G-42); height is also the input F011 needs for BMI and waist-height ratio. Slice 2 adds measurement time entry (with future-time and correction rules), those four metrics on the same record schema 4 path, and the weight entry rules of G-45; nutrition, activity, sleep and subjective state follow as their own Forges"
+    "run_id": "U001@v0.32",
+    "slice": "first-run experience, mouse-only entry",
+    "why": "The owner's direction after slice 2: a person who opens the app for the first time must understand it and enter everything with the mouse only, in a calm interface. U001 adds a short first-run (what Human OS is, what stays on this device, add one number), mouse-only entry controls (steppers, quick-pick chips, time presets) beside the typed fields, and a plain-language 'how to use' page; U002 follows with a clickable body and specialties guide written from open sources (WHO ICD-11, UEMS specialty list), U003 a glossary and measurement guide. Each runs the docs/DESIGN.md slop audit, an independent review and mutation checks"
   },
-  "updated_at": "2026-11-07T14:00:00Z",
+  "updated_at": "2026-11-07T16:00:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -2005,6 +1946,234 @@
         }
       ],
       "review": "adversarial review by four independent reviewers (domain, storage, UI, test adequacy), each in its own worktree and verifying by scratch tests and mutations; the first attempt failed (weekly limit) and returned nothing, so it was run again with the Agent tool. 4 reports: no blocker; 1 major (a typed number with more than 20 decimals made the Measurements card and the Timeline throw on every launch), 1 storage finding that mattered (the checkpoint also fired for a weight or lab result in a store whose newest record was older than schema 3), plus minors and nits; all real findings fixed with regression tests (50479f0, 5433632..; mutations T25-T31 bind the fixes, all caught); test-adequacy gaps M1-M3 and L1-L9 closed with tests bound to mutations T32-T43, all caught. Mutations in all: 43 (T1-T24 before the review, T25-T43 after), each caught; T20 was first NOT caught and led to a test. One regression of my own (a write lock built in the wrong zone hung f002 and f005) was found by the full suite and fixed before the gates."
+    },
+    "F007-S2@v0.32": {
+      "forge_id": "F007",
+      "contract": "v0.32",
+      "run_id": "F007-S2@v0.32",
+      "slice": "measurements, slice 2",
+      "goal": "Finish the measurement domain on the same canonical record: the person can say when a measurement was taken (G-44), four more FR-17 metrics (G-42: height, body temperature, SpO2, respiratory rate) and the weight entry rules (G-45). Master §39 F007: one bounded slice per Forge.",
+      "status": "DONE",
+      "baseline_commit": "0617601",
+      "started_at": "2026-11-07T14:00:00Z",
+      "scope": [
+        "measurement time entry on the Measurements card: optional 'When' as YYYY-MM-DD HH:MM or HH:MM (today), local time, with an optional offset (Z or +03:00); empty means the time Save is pressed; observed_at is the typed instant (UTC), recorded_at stays the save time",
+        "entry refusals with their own field and text: TIME_FORMAT, FUTURE_TIME (more than 5 min ahead), TIME_TOO_OLD (before 1900), TIME_DOES_NOT_EXIST (clock-change gap), TIME_AMBIGUOUS (repeated hour: add the offset); the rules are entry rules only, stored records are not re-judged",
+        "record schema 5 (RS-005, additive): body.height (cm), vital.body_temperature (°C), vital.oxygen_saturation (%), vital.respiratory_rate (breaths/min), typed by hand with the same context and correction lineage; older records keep their exact JSON; schema 6 refused; F007-slice-1 and older builds refuse schema 5",
+        "entry-only definitional rule: SpO2 above 100 % is refused (OUT_OF_DEFINITION); no other bound and no clinical threshold",
+        "history rows and the detail sheet show the measured time and, when it differs from the save time by more than a minute, the save time too; the card note says so",
+        "automatic checkpoint backup before the first schema-5 record (the existing hook, wording 'this entry')",
+        "weight entry rules (G-45): AMBIGUOUS_SEPARATOR refused for weight, weight shown with the decimals typed (stored records unchanged, still written at schema 3)",
+        "EN/TR strings; no interpretation of any value; old-code check on main 0617601"
+      ],
+      "out_of_scope": [
+        "changing the time of an existing measurement in a correction, and 'not measured' entries from the screen (G-48)",
+        "body composition, sleep, activity, nutrition, subjective state (G-42 remainder)",
+        "BMI, waist-height ratio, trends, any derived result: F011",
+        "unit choice or conversion (°F, inches, lb), UCUM codes (G-43); structured context, devices, sessions (G-41); REVIEW tier and upper bounds (G-46)",
+        "web automatic checkpoint (G-47); weight card time entry; new primary destination; vault, envelope, backup or export format changes"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Time entry: a typed time (local, or with an offset) is stored as observed_at in UTC and shown back as typed local time; empty means the save time; recorded_at is always the save time; a correction keeps its observed_at; the four refusals TIME_FORMAT, FUTURE_TIME, TIME_TOO_OLD and the clock-change refusals TIME_DOES_NOT_EXIST and TIME_AMBIGUOUS (the last two proven in an America/New_York run) show on the 'When' field with their own EN/TR text and write nothing; a typed offset resolves a repeated hour",
+        "AC-2 Time on screen: rows and the detail sheet show the measured time, and the save time too when it differs by more than a minute; Latest and the Timeline order by measured time; the note on the card no longer says the time is only when Save is pressed",
+        "AC-3 Record schema 5 (RS-005): the four kinds exist only at schema >= 5 (KIND_NEEDS_NEWER_SCHEMA); canonical unit only (UNIT_NOT_SUPPORTED); finite numbers above 0; no upper bound or clinical threshold in the record rules; schema 1-4 records keep their exact JSON; the reader accepts 1-5 and refuses 6; each record is written with the oldest schema that holds it (weight and lab 3, slice-1 measurements 4, the new kinds 5)",
+        "AC-4 Entry: SpO2 above 100 is refused at entry (OUT_OF_DEFINITION) while a stored value above 100 is not re-judged; blank is EMPTY and 0 is NOT_POSITIVE for every new kind; each save is one OBSERVED manual record with its unit and the text typed",
+        "AC-5 Card and Timeline: seven kinds in the chooser, Latest per kind with a spoken summary, the optional note and 'When' fields, EN/TR, 320 dp at 2x text without overflow; kind-aware correction and entered-in-error for the new kinds; three primary destinations unchanged",
+        "AC-6 No interpretation: EN/TR scans (F004 lists, the slice-1 measurement list and new words: fever, febrile, hypoxia, hypoxemia, tachypnea, hipoksi, taşipne, ateşli) find nothing on the card, rows, sheet, error texts or notes; Turkish uses 'vücut sıcaklığı', never 'ateş', for the metric",
+        "AC-7 Weight (G-45): '7.500' and '1,234' are refused for weight (AMBIGUOUS_SEPARATOR), typed decimals are shown on Today and the Timeline ('77,50' as 77.50 kg), stored weights are unchanged and still schema 3",
+        "AC-8 Checkpoint: before the first schema-5 record in a vault whose newest stored schema is lower, a backup of the vault as it is is saved and named ('this entry'); a failed checkpoint refuses the save and writes nothing; no checkpoint for weight, lab or slice-1 measurements; unchanged otherwise",
+        "AC-9 Storage and privacy: same repository paths and formats; no new dependency; the vault file, backups and console output hold no kind code, typed value, note or time text",
+        "AC-10 Compatibility: on main 0617601 (F007 slice 1) the old code refuses the schema-5 fixtures (plaintext and encrypted) with RECORD_SCHEMA_NEWER, F007-slice-2 backups with VAULT_INCOMPATIBLE and a restore over them with RESTORE_TARGET_NEWER, leaves the bytes unchanged, and still opens a vault where slice 2 saved only slice-1 kinds and weight and the checkpoint backup",
+        "AC-11 Fixtures v1_f007s2_schema5 (plaintext, schemas 1-5) and enc_v1_f007s2 (encrypted): writer bytes, every field replayed, README rows, backup_test list",
+        "AC-12 Linux integration with real files: development and production encrypted vaults keep a typed time, the four new kinds and a correction across a relaunch; the schema-5 checkpoint lands on disk",
+        "AC-13 Web smoke: a height typed with a time in Chromium shows as typed on Today and the Timeline, survives a reload and is in the backup; no console errors",
+        "AC-14 Regression and close: F001-F007-S1 suites in UTC and New York, gates on a clean tree, mutations each caught, D-019, SOURCES, KNOWN_GAPS (G-48, G-42/G-44/G-45 updated), state and docs updated, one next Forge",
+        "AC-15 Time rules (from the spec critique): strict grammar ^(YYYY-MM-DD )?HH:MM( ?(Z|+-HH:MM))?$ with round-trip range checks (no seconds, no 24:00, no 2026-02-30), offset within +-14:00 in steps of 15 min; 'today' is the local date of the injected clock; a time later today stays FUTURE_TIME (no silent roll-back to yesterday); one shared helper with recordWeightKg for the 5-minute rule (exactly +5 min passes, +5 min 1 s fails); the typed instant is stored with seconds = 0; the gap and repeated-hour checks go through an injectable local-zone resolver (pure-function tests incl. a 30-minute shift) plus America/New_York runs; the rules live in the entry (service), never in HealthRecord.validate: a stored record with observed_at up to 5 min after recorded_at, in the future, or before 1900 still replays; no observed <= recorded rule is added; observed_at is resolved once, before the record is built (idempotent retry); measurements never set observedDateOnly",
+        "AC-16 Order and display: saving 10:00 then a back-dated 09:00 leaves Latest = 10:00 and the 09:00 reading in the history; markers and corrections sort with their target; the correction sheet shows the inherited measured time and offers no When field (a When typed anywhere on a correction is not read); 'differs' means |recorded - observed| > 60 s; spoken Latest, rows and sheet say 'measured <time>' and, when they differ, 'saved <time>' (EN/TR, tested); shown times are device-local and the card note says so",
+        "AC-17 Card UX: switching kind clears the value fields but keeps 'When' and the note; 'When' is never pre-filled and is parsed at Save; its hint reads 'YYYY-MM-DD HH:MM or HH:MM, local time. Empty = now'; the kind chooser has radio-group semantics and keeps the chosen kind visible at 320 dp, 2x text, in TR",
+        "AC-18 Measurands and wording: the unit stored is the canonical string (cm, °C, %, breaths/min; locked by fixtures, plaintext and encrypted), spoken as degrees Celsius / Celsius derece; a one-line neutral hint names the measurand (temperature: free-text note for the site; SpO2: pulse oximeter; arterial values are not stored here); a new height is a new record, not a correction (D-019); OUT_OF_DEFINITION says what is wrong with the entry, never with the body; the judging scan is extended (EN: fever, febrile, hypothermi*, hyperthermi*, hypoxi*, hypoxem*, tachypn*, bradypn*, apnea, dyspnea, low, high, normal, abnormal, healthy, warning, alert, critical, consult, doctor; TR: ateş, ateşli, hipotermi, hipertermi, hipoksi, hipoksemi, taşipne, bradipne, apne, dispne, düşük, yüksek, normal, anormal, sağlıklı, uyarı, kritik) and runs over every new string and every semantics label, not only rendered widgets; a stored SpO2 of 101 loads and shows",
+        "AC-19 Weight (G-45) prerequisites: confirm weight records already persist originalText; list and update the tests that type 80,50-style values; mutation for the typed-decimal display; the checkpoint test covers 4 -> 5 and 3 -> 5 with one checkpoint; the web smoke pins the browser time zone; TIME_* texts never echo the typed text and the typed time is stored nowhere as text"
+      ],
+      "completed_steps": [
+        "ORIENT: state READY after F007@v0.32 slice 1 (main 0617601); next_recommended_forge selected",
+        "SPECIFY: scope and AC-1..AC-19 (two independent spec critiques folded in: time/DST/compat, safety/wording/UX)",
+        "GATES: 14 receipts on clean tree d799709, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0099",
+      "next_action": null,
+      "files_touched": [
+        "docs/BRAINSTORM.md",
+        "docs/DESIGN.md",
+        "downloads/Human-OS-web-335083487422.zip",
+        "downloads/Human-OS-web-335083487422.zip.sha256",
+        "evidence/tests/EV-TEST-F007-0072.json",
+        "evidence/tests/EV-TEST-F007-0073.json",
+        "evidence/tests/EV-TEST-F007-0074.json",
+        "human_health_os/integration_test/heartbeat_test.dart",
+        "human_health_os/lib/src/app/bootstrap.dart",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/application/input_error.dart",
+        "human_health_os/lib/src/application/measured_at.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/features/measurements/measurement_format.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/features/today/your_data_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/presentation/theme/human_os_theme.dart",
+        "human_health_os/lib/src/presentation/widgets/build_profile_banner.dart",
+        "human_health_os/lib/src/presentation/widgets/status_chip.dart",
+        "human_health_os/test/data/backup_test.dart",
+        "human_health_os/test/data/measured_at_test.dart",
+        "human_health_os/test/data/measurement_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/fixtures/vault/README.md",
+        "human_health_os/test/fixtures/vault/enc_v1_f007s2.hhosvault",
+        "human_health_os/test/fixtures/vault/v1_f007s2_schema5.hhoslog.jsonl",
+        "human_health_os/test/security/no_sensitive_logs_test.dart",
+        "human_health_os/test/unit/measurement_format_test.dart",
+        "human_health_os/test/unit/theme_contrast_test.dart",
+        "human_health_os/test/widget/f007_measurements_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "human_health_os/tool/make_f007s2_compat_inputs.dart",
+        "human_health_os/tool/make_f007s2_fixture.dart",
+        "packaging/web-local/Human-OS-baslat.bat",
+        "packaging/web-local/Human-OS-baslat.sh",
+        "packaging/web-local/OKU-BENI-README.txt",
+        "packaging/web-local/serve.ps1",
+        "packaging/web-local/serve.py",
+        "project_state/CURRENT_STATE.json",
+        "tools/compat/f007s2_old_code_check_test.dart",
+        "tools/compat/old_code_check.sh",
+        "tools/flutter_web_smoke.mjs",
+        "tools/package_web_local.sh"
+      ],
+      "migration_ids": [
+        "RS-005"
+      ],
+      "evidence_ids": [
+        "EV-TEST-F007-0086",
+        "EV-TEST-F007-0087",
+        "EV-TEST-F007-0088",
+        "EV-TEST-F007-0089",
+        "EV-TEST-F007-0090",
+        "EV-BUILD-F007-0091",
+        "EV-RUNTIME-F007-0092",
+        "EV-TEST-F007-0093",
+        "EV-BUILD-F007-0094",
+        "EV-RUNTIME-F007-0095",
+        "EV-TEST-F007-0096",
+        "EV-TEST-F007-0097",
+        "EV-TEST-F007-0098",
+        "EV-TEST-F007-0099"
+      ],
+      "blocker": null,
+      "result": "F007_COMPLETE",
+      "finished_at": "2026-11-07T16:00:00Z",
+      "app_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0086",
+          "criterion": "AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0087",
+          "criterion": "AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0088",
+          "criterion": "AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (372 PASS, 1 skipped: the host-zone clock-change test needs America/New_York)",
+          "evidence_id": "EV-TEST-F007-0089",
+          "criterion": "AC-1..AC-9, AC-11, AC-14, AC-15..AC-19",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0090",
+          "criterion": "AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0091",
+          "criterion": "AC-13",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (78 checks): blood pressure and a height with a typed time typed in the browser, tiles with spoken summaries, reload, Timeline, backup at schema 5; no console errors",
+          "evidence_id": "EV-RUNTIME-F007-0092",
+          "criterion": "AC-13",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS): development and encrypted vaults, two checkpoints (3 to 4, 4 to 5) on disk, a time typed on the screen, correction, relaunch",
+          "evidence_id": "EV-TEST-F007-0093",
+          "criterion": "AC-12, AC-8",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0094",
+          "criterion": "AC-12",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): tiles with the stored values, vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0095",
+          "criterion": "AC-11, AC-12",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (373 PASS: clock-change gap and repeat on the device zone)",
+          "evidence_id": "EV-TEST-F007-0096",
+          "criterion": "AC-1, AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0097",
+          "criterion": "AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0098",
+          "criterion": "AC-14",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        },
+        {
+          "gate": "old-code check on main 0617601 (F007 slice 1) in a scratch worktree: schema-5 data refused unchanged, older-schema data and checkpoints open",
+          "evidence_id": "EV-TEST-F007-0099",
+          "criterion": "AC-10",
+          "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+          "result": "PASS"
+        }
+      ],
+      "review": "three independent reviewers on e309ae3, each in its own worktree: time/domain/storage (no blocker or major; 2 misleading time texts, a US offset example and a bare 'HH:MM' offset hint, a 24-hour hint, a non-existent -14:00 offset: fixed), UI/design/accessibility (Save squeezed into a narrow strip at 320 dp and 2x text, a swipe or tap outside discarding typed numbers, the backup place shown once, no keyboard submit, no safe-area padding, input edges at 1.3:1, weak navigation cue, weight card led with storage chips, Turkish wording: all fixed), test adequacy (about 55 mutations; gaps in weight typed decimals, the saved caption threshold, Timeline saved/measured text, More details re-opening, Cancel, tile order, spoken labels, dark theme: closed with tests bound to mutations V1-V10). Own mutations: T1-T24 earlier, U1-U7 and V1-V10 here, each caught. Findings from the UI review that were not changed: tiles need two screens of scrolling at 2x text on a 320 dp phone (F7), reduced-motion handling (F11), about ten text styles on Today against 'four sizes' in docs/DESIGN.md."
     }
   },
   "forge_history_legacy_ids": {
@@ -2036,6 +2205,6 @@
   "git": {
     "branch": "claude/code-capabilities-kz21fr",
     "push": "OK (origin)",
-    "main": "F007@v0.32 close (D-017): the closed MVP F002-F006 plus F007 slice 1; advances only when a later Forge closes with receipts"
+    "main": "F007 slice 2 close (D-019) once pushed; main advances only when a Forge closes with receipts (D-017)"
   }
 }

@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-11-07T08:50:18.965Z",
-  "git_head": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+  "ran_at": "2026-11-07T11:42:52.164Z",
+  "git_head": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
   "working_tree_dirty": false,
   "build": "/home/user/claudereponewscience/human_health_os/build/web",
-  "main_dart_js_sha256": "5ac53c65f228ba65558ab6dd64ccce1006f398b7a84f0e6d24e6e521a2e7dabc",
+  "main_dart_js_sha256": "8e81f43f70d999293e3f63c495073ee567b4bc36345874711eed02dbcd94293a",
   "browser": "chromium 153.0.8010.12",
   "runs": [
     {
@@ -123,12 +123,17 @@
       "detail": ""
     },
     {
-      "name": "desktop-en: blood pressure saved as typed (118/76 mmHg)",
+      "name": "desktop-en: blood pressure saved as typed (spoken summary 118/76)",
       "status": "PASS",
       "detail": ""
     },
     {
-      "name": "desktop-en: no judging words next to the reading",
+      "name": "desktop-en: height saved with its measured time and the save time",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no judging words on the measurements",
       "status": "PASS",
       "detail": ""
     },
@@ -138,19 +143,29 @@
       "detail": ""
     },
     {
+      "name": "desktop-en: height survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "desktop-en: blood pressure listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: height listed on the Timeline",
       "status": "PASS",
       "detail": ""
     },
     {
       "name": "desktop-en: backup downloads with a matching checksum",
       "status": "PASS",
-      "detail": "human-os-backup-dd19deb9-20261107T084944Z.hhosbackup.json"
+      "detail": "human-os-backup-76c5f957-20261107T114220Z.hhosbackup.json"
     },
     {
       "name": "desktop-en: backup holds the saved weight and lab result",
       "status": "PASS",
-      "detail": "records=3"
+      "detail": "records=4"
     },
     {
       "name": "desktop-en: backup says it is not encrypted",
@@ -160,7 +175,12 @@
     {
       "name": "desktop-en: backup holds the blood pressure reading as typed",
       "status": "PASS",
-      "detail": "schemas=3,4"
+      "detail": "schemas=3,4,5"
+    },
+    {
+      "name": "desktop-en: backup holds the height as typed, with its measured time, at schema 5",
+      "status": "PASS",
+      "detail": "schemas=3,4,5"
     },
     {
       "name": "desktop-en: no external network requests",
@@ -273,12 +293,17 @@
       "detail": ""
     },
     {
-      "name": "phone-en: blood pressure saved as typed (118/76 mmHg)",
+      "name": "phone-en: blood pressure saved as typed (spoken summary 118/76)",
       "status": "PASS",
       "detail": ""
     },
     {
-      "name": "phone-en: no judging words next to the reading",
+      "name": "phone-en: height saved with its measured time and the save time",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no judging words on the measurements",
       "status": "PASS",
       "detail": ""
     },
@@ -288,19 +313,29 @@
       "detail": ""
     },
     {
+      "name": "phone-en: height survives reload",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "phone-en: blood pressure listed on the Timeline",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: height listed on the Timeline",
       "status": "PASS",
       "detail": ""
     },
     {
       "name": "phone-en: backup downloads with a matching checksum",
       "status": "PASS",
-      "detail": "human-os-backup-0576a6a8-20261107T085016Z.hhosbackup.json"
+      "detail": "human-os-backup-69188430-20261107T114249Z.hhosbackup.json"
     },
     {
       "name": "phone-en: backup holds the saved weight and lab result",
       "status": "PASS",
-      "detail": "records=3"
+      "detail": "records=4"
     },
     {
       "name": "phone-en: backup says it is not encrypted",
@@ -310,7 +345,12 @@
     {
       "name": "phone-en: backup holds the blood pressure reading as typed",
       "status": "PASS",
-      "detail": "schemas=3,4"
+      "detail": "schemas=3,4,5"
+    },
+    {
+      "name": "phone-en: backup holds the height as typed, with its measured time, at schema 5",
+      "status": "PASS",
+      "detail": "schemas=3,4,5"
     },
     {
       "name": "phone-en: no external network requests",

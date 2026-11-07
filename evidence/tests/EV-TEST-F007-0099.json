@@ -1,0 +1,56 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0099",
+  "kind": "TEST",
+  "forge_id": "F007-S2@v0.32",
+  "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "tools/compat/old_code_check.sh 0617601 f007s2",
+  "argv": [
+    "tools/compat/old_code_check.sh",
+    "0617601",
+    "f007s2"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-07T11:45:14.747Z",
+  "finished_at": "2026-11-07T11:45:27.144Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "OLD-CODE CHECK PASS (f007s2): code at 0617601b5d5508eab21f873f5157ec1a6b88d484 refuses the newer data unchanged and opens what the newer build wrote at the older schema, and its checkpoints (inputs from d7997095f61448d8ecd433b7c21b7b13e08535c3)",
+  "log_sha256": "d862d3d1a937bcc3410ec766b048c785ea5b3050c00ba29dc186491e96ee391c",
+  "log_lines": 40,
+  "log_tail": [
+    "00:00 +0: this is the older code: record schema 4 is its newest",
+    "00:00 +1: refuses F007 data and changes nothing schema-4 log fixture: RECORD_SCHEMA_NEWER",
+    "00:00 +2: refuses F007 data and changes nothing a development vault after an F007 measurement: the repository refuses it and the start explains it; the file is unchanged",
+    "00:00 +3: refuses F007 data and changes nothing encrypted schema-4 fixture and an encrypted vault after an F007 measurement: unlock refuses with RECORD_SCHEMA_NEWER; the gate keeps the file in place and says a newer version wrote it",
+    "00:00 +4: refuses F007 data and changes nothing F007 backups: VAULT_INCOMPATIBLE (plaintext at staging, encrypted once opened with its key)",
+    "00:00 +5: refuses F007 data and changes nothing a restore over the schema-4 log is refused: RESTORE_TARGET_NEWER",
+    "00:00 +6: still opens what F007 wrote at schema 3, and its checkpoints a development vault where slice 2 saved only a weight and a blood pressure opens with the same records, and the app starts on it",
+    "00:00 +7: still opens what F007 wrote at schema 3, and its checkpoints the checkpoint F007 kept restores into an empty place, byte for byte the vault before the first measurement",
+    "00:00 +8: still opens what F007 wrote at schema 3, and its checkpoints an encrypted vault where F007 saved only weight unlocks, and the encrypted checkpoint opens with its passphrase",
+    "00:01 +9: (tearDownAll)",
+    "00:01 +9: All tests passed!",
+    "OLD-CODE CHECK PASS (f007s2): code at 0617601b5d5508eab21f873f5157ec1a6b88d484 refuses the newer data unchanged and opens what the newer build wrote at the older schema, and its checkpoints (inputs from d7997095f61448d8ecd433b7c21b7b13e0853"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "tools/compat",
+    "human_health_os/tool/make_f007s2_compat_inputs.dart",
+    "human_health_os/lib"
+  ]
+}

@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0096",
+  "kind": "TEST",
+  "forge_id": "F007-S2@v0.32",
+  "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=America/New_York flutter test",
+  "argv": [
+    "env",
+    "TZ=America/New_York",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T11:44:12.899Z",
+  "finished_at": "2026-11-07T11:45:09.314Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "00:53 +373: All tests passed!",
+  "log_sha256": "6af92f42b3584c6c62b69739ae9bd7931413087690b2c59318735d2098b668e4",
+  "log_lines": 433,
+  "log_tail": [
+    "00:46 +362: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:47 +363: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a waist typed with more than 20 decimals is shown as typed and does not break the card or the Timeline (also after a restart)",
+    "00:47 +364: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a sheet starts empty for each kind and Cancel keeps nothing; a save error is announced to a screen reader",
+    "00:48 +365: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Timeline: a correction can be cancelled and the three buttons come back",
+    "00:49 +366: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Timeline: correct a blood pressure (two fields, the note kept), withdraw a heart rate; both versions stay in history",
+    "00:50 +367: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a heart-rate correction refuses a 0 on its field and keeps the version unchanged",
+    "00:51 +368: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: the first measurement in a vault of older records keeps a backup first and says where",
+    "00:51 +369: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:52 +370: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:52 +371: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:53 +372: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: every F007 error code has its own text in both languages, never the generic one",
+    "00:53 +373: All tests passed!"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

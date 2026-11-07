@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0089",
+  "kind": "TEST",
+  "forge_id": "F007-S2@v0.32",
+  "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T11:40:20.319Z",
+  "finished_at": "2026-11-07T11:41:14.875Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "00:51 +372 ~1: All tests passed!",
+  "log_sha256": "94999d14343390d8b3c20290b0afa310032c92e4493a9941c7d51d2d4839254a",
+  "log_lines": 436,
+  "log_tail": [
+    "00:44 +361 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a reading is never judged: no category, stage or range on the card, the Timeline rows or the detail sheet (EN and TR)",
+    "00:44 +362 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a waist typed with more than 20 decimals is shown as typed and does not break the card or the Timeline (also after a restart)",
+    "00:45 +363 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a sheet starts empty for each kind and Cancel keeps nothing; a save error is announced to a screen reader",
+    "00:46 +364 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Timeline: a correction can be cancelled and the three buttons come back",
+    "00:47 +365 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Timeline: correct a blood pressure (two fields, the note kept), withdraw a heart rate; both versions stay in history",
+    "00:48 +366 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: a heart-rate correction refuses a 0 on its field and keeps the version unchanged",
+    "00:49 +367 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: the first measurement in a vault of older records keeps a backup first and says where",
+    "00:50 +368 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:50 +369 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:51 +370 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:51 +371 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: every F007 error code has its own text in both languages, never the generic one",
+    "00:51 +372 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
