@@ -18,7 +18,8 @@ cleanup() {
 }
 trap cleanup EXIT
 
-if [ -n "$(git -C "$root" status --porcelain --untracked-files=no)" ]; then
+# Same rule as tools/evidence/run_gate.py: evidence outputs do not make the source dirty.
+if [ -n "$(git -C "$root" status --porcelain --untracked-files=no -- . ':!reports' ':!evidence')" ]; then
   echo "the working tree has uncommitted changes: the inputs would not be those of $new_rev" >&2
   exit 1
 fi
