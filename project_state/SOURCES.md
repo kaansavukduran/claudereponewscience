@@ -58,3 +58,7 @@ Repo-local work, in a separate namespace: R1 = "v0.25 connected TS implementatio
 
 ## U003 glossary (2026-11-07)
 - Home blood pressure steps: ESH practice guidance (2021), WHO HEARTS technical package. Waist site: WHO Expert Consultation on waist circumference (2008). Pulse oximeter notes: US FDA safety communication (2021, updated 2024). Steps are paraphrased for the project; no text copied. No entry gives a target or range to aim for.
+
+## G002 dbSNP Summary import (2026-11-07)
+- dbSNP (NCBI, ncbi.nlm.nih.gov/snp) is produced by the US National Library of Medicine; NCBI states its molecular databases are freely usable (US government work), with a request to cite NCBI. Human OS bundles no dbSNP data: the person downloads a Summary file for a gene (Send to → File → Format: Summary) and loads it; it is read on the device and kept only while the Genetics page is open. Clinical significance is shown as dbSNP's label, never recomputed or predicted by the app.
+- Owner request recorded: "clinical significance unknown → predict it yourself" is out of scope: an app-made pathogenicity prediction would be a diagnosis from a value (CLAUDE.md invariants). Kept as a decision, D-024.

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
 import '../../domain/genetics/annotation_pack.dart';
+import '../../domain/genetics/dbsnp_summary.dart';
 import '../../domain/genetics/raw_genome.dart';
 import '../../domain/genetics/sample_data.dart';
 import '../../l10n/strings.dart';
@@ -99,6 +100,38 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     }
   }
 
+  List<DbSnpVariant> _dbsnp = const [];
+  String? _dbsnpRefusal;
+  bool _onlyMissense = false;
+  bool _onlyClinical = false;
+
+  Future<void> _chooseDbSnp() async {
+    setState(() {
+      _busy = true;
+      _dbsnpRefusal = null;
+    });
+    try {
+      final picked = await _picker.pick(title: S.of(context).dbsnpLoad);
+      if (picked == null) return;
+      final Uint8List bytes;
+      try {
+        bytes = await picked.read();
+      } finally {
+        await _picker.release();
+      }
+      final variants = parseDbSnpSummary(
+        utf8.decode(bytes, allowMalformed: true),
+      );
+      if (mounted) setState(() => _dbsnp = variants);
+    } on DbSnpFormatError catch (e) {
+      if (mounted) setState(() => _dbsnpRefusal = e.code);
+    } catch (_) {
+      if (mounted) setState(() => _dbsnpRefusal = 'READ_FAILED');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _choosePack() async {
     setState(() {
       _busy = true;
@@ -138,6 +171,8 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     _matches = const [];
     _refusal = null;
     _packRefusal = null;
+    _dbsnp = const [];
+    _dbsnpRefusal = null;
     _query = '';
     _search.clear();
     _page = 0;
@@ -382,6 +417,8 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       ),
       const SizedBox(height: 24),
       ..._packSection(s, text, scheme),
+      const SizedBox(height: 24),
+      ..._dbsnpSection(s, text, scheme, f),
     ];
   }
 
@@ -481,6 +518,143 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
           for (final m in _matches) _matchCard(s, text, scheme, m, pack),
       ],
     ];
+  }
+
+  List<Widget> _dbsnpSection(
+    S s,
+    TextTheme text,
+    ColorScheme scheme,
+    GenomeFile f,
+  ) {
+    final byId = <String, Variant>{
+      for (final v in f.variants) v.rsid.toLowerCase(): v,
+    };
+    final matches = [
+      for (final d in _dbsnp)
+        if (byId.containsKey(d.rsid))
+          if ((!_onlyMissense || d.isMissense) &&
+              (!_onlyClinical || d.hasClinical))
+            compareWithDbSnp(d, byId[d.rsid]!.call),
+    ];
+    final inFile = _dbsnp.where((d) => byId.containsKey(d.rsid)).length;
+    return [
+      Semantics(
+        header: true,
+        child: Text(s.dbsnpTitle, style: text.titleMedium),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        s.dbsnpHow,
+        key: const ValueKey('dbsnp-how'),
+        style: text.bodySmall?.copyWith(color: scheme.outline),
+      ),
+      const SizedBox(height: 8),
+      OutlinedButton(
+        key: const ValueKey('dbsnp-load'),
+        onPressed: _busy ? null : _chooseDbSnp,
+        child: Text(s.dbsnpLoad),
+      ),
+      if (_dbsnpRefusal != null) ...[
+        const SizedBox(height: 8),
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            s.dbsnpRefusal(_dbsnpRefusal!),
+            key: const ValueKey('dbsnp-refusal'),
+            style: text.bodyMedium?.copyWith(color: scheme.error),
+          ),
+        ),
+      ],
+      if (_dbsnp.isNotEmpty) ...[
+        const SizedBox(height: 12),
+        Text(
+          s.dbsnpCounts(_dbsnp.length, inFile),
+          key: const ValueKey('dbsnp-counts'),
+          style: text.titleSmall,
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilterChip(
+              key: const ValueKey('dbsnp-only-missense'),
+              label: Text(s.dbsnpOnlyMissense),
+              selected: _onlyMissense,
+              onSelected: (v) => setState(() => _onlyMissense = v),
+            ),
+            FilterChip(
+              key: const ValueKey('dbsnp-only-clinical'),
+              label: Text(s.dbsnpOnlyClinical),
+              selected: _onlyClinical,
+              onSelected: (v) => setState(() => _onlyClinical = v),
+            ),
+          ],
+        ),
+        const SizedBox(height: 8),
+        Text(
+          s.dbsnpNote,
+          key: const ValueKey('dbsnp-note'),
+          style: text.bodySmall?.copyWith(color: scheme.outline),
+        ),
+        const SizedBox(height: 8),
+        if (matches.isEmpty)
+          Text(s.dbsnpNone, key: const ValueKey('dbsnp-none'))
+        else
+          for (final m in matches.take(200)) _dbsnpCard(s, text, scheme, m),
+        if (matches.length > 200) Text(s.dbsnpMore(200, matches.length)),
+      ],
+    ];
+  }
+
+  Widget _dbsnpCard(S s, TextTheme text, ColorScheme scheme, DbSnpMatch m) {
+    final v = m.variant;
+    return Container(
+      key: ValueKey('dbsnp-${v.rsid}'),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text([v.rsid, ...v.genes].join(' · '), style: text.titleSmall),
+          Text(
+            m.genotype ?? s.geneticsNotReadShort,
+            style: text.titleMedium?.copyWith(
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          const SizedBox(height: 4),
+          Text(s.dbsnpCall(m.call.name, m.alternatesListed.join(', '))),
+          if (v.reference != null)
+            Text(
+              s.dbsnpAlleles(v.reference!, v.alternates.join(', ')),
+              style: text.bodySmall,
+            ),
+          if (v.consequences.isNotEmpty)
+            Text(
+              s.dbsnpConsequence(v.consequences.join(', ')),
+              style: text.bodySmall,
+            ),
+          Text(
+            v.clinical.isEmpty
+                ? s.dbsnpNoClinical
+                : s.dbsnpClinical(v.clinical.join(', ')),
+            key: ValueKey('dbsnp-clinical-${v.rsid}'),
+            style: text.bodySmall,
+          ),
+          if (v.positions.isNotEmpty)
+            Text(
+              v.positions.join(' · '),
+              style: text.bodySmall?.copyWith(color: scheme.outline),
+            ),
+        ],
+      ),
+    );
   }
 
   Widget _matchCard(

@@ -864,6 +864,74 @@ class S {
   };
   String geneticsInvalidLine(int line, String reason) =>
       _t('Line $line: $reason', 'Satır $line: $reason');
+  String get dbsnpTitle =>
+      _t('Compare with a dbSNP file', 'Bir dbSNP dosyasıyla karşılaştır');
+  String get dbsnpHow => _t(
+    'On ncbi.nlm.nih.gov/snp search a gene (for example GABRB3), then Send to → File → Format: Summary → Create File. Load that file here: it is read on this device and compared with your file by rsID.',
+    'ncbi.nlm.nih.gov/snp sitesinde bir gen ara (örneğin GABRB3), sonra Send to → File → Format: Summary → Create File. O dosyayı buraya yükle: bu cihazda okunur ve dosyanla rsID üzerinden karşılaştırılır.',
+  );
+  String get dbsnpLoad =>
+      _t('Load a dbSNP Summary file', 'dbSNP Summary dosyası yükle');
+  String dbsnpRefusal(String code) => switch (code) {
+    'EMPTY' => _t('The file is empty.', 'Dosya boş.'),
+    'NOT_SUMMARY' => _t(
+      'This does not look like a dbSNP Summary file. Choose Format: Summary when you create it.',
+      'Bu bir dbSNP Summary dosyasına benzemiyor. Dosyayı oluştururken Format: Summary seç.',
+    ),
+    _ => _t('The file could not be read.', 'Dosya okunamadı.'),
+  };
+  String dbsnpCounts(int all, int inFile) => _t(
+    '$all variants in the dbSNP file; $inFile of them are in your DNA file.',
+    'dbSNP dosyasında $all varyant var; bunların $inFile tanesi DNA dosyanda bulunuyor.',
+  );
+  String get dbsnpOnlyMissense => _t(
+    'Only missense (changes an amino acid)',
+    'Yalnız missense (bir amino asidi değiştirir)',
+  );
+  String get dbsnpOnlyClinical => _t(
+    'Only with a clinical label in dbSNP',
+    'Yalnız dbSNP\'de klinik etiketi olanlar',
+  );
+  String get dbsnpNote => _t(
+    'Labels are dbSNP\'s words for the variant, from its sources. They are not a statement about you: what a variant means depends on both copies, inheritance and the rest of your health. Talk to a clinician or genetic counsellor before acting on anything. Human OS does not predict an effect where dbSNP gives none.',
+    'Etiketler dbSNP\'nin, kaynaklarına dayanarak varyant için kullandığı sözlerdir. Senin hakkında bir ifade değildir: bir varyantın ne anlama geldiği iki kopyaya, kalıtıma ve sağlığının geri kalanına bağlıdır. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş. dbSNP bir etki belirtmediğinde Human OS kendi tahminini yapmaz.',
+  );
+  String get dbsnpNone => _t(
+    'None of the shown variants are in your file.',
+    'Gösterilen varyantların hiçbiri dosyanda yok.',
+  );
+  String dbsnpMore(int shown, int total) => _t(
+    'Showing $shown of $total.',
+    '$total varyantın $shown tanesi gösteriliyor.',
+  );
+  String dbsnpCall(String call, String alts) => switch (call) {
+    'listsAlternate' => _t(
+      'Your file lists the alternate allele $alts',
+      'Dosyan alternatif alel $alts listeliyor',
+    ),
+    'referenceOnly' => _t(
+      'Your file lists only the reference allele',
+      'Dosyan yalnız referans aleli listeliyor',
+    ),
+    'noCall' => _t(
+      'No call at this position in your file',
+      'Dosyanda bu konum için çağrı yok',
+    ),
+    _ => _t(
+      'Not compared (an insertion or deletion, or A/T, C/G letters whose strand cannot be told apart)',
+      'Karşılaştırılmadı (bir ekleme ya da silme, ya da şeridi ayırt edilemeyen A/T, C/G harfleri)',
+    ),
+  };
+  String dbsnpAlleles(String ref, String alts) =>
+      _t('dbSNP alleles: $ref > $alts', 'dbSNP alelleri: $ref > $alts');
+  String dbsnpConsequence(String c) =>
+      _t('dbSNP consequence: $c', 'dbSNP işlevsel sonucu: $c');
+  String dbsnpClinical(String c) =>
+      _t('dbSNP clinical significance: $c', 'dbSNP klinik önem: $c');
+  String get dbsnpNoClinical => _t(
+    'dbSNP gives no clinical significance',
+    'dbSNP bir klinik önem belirtmiyor',
+  );
   String get geneticsPackTitle =>
       _t('Statements from a source pack', 'Bir kaynak paketinden ifadeler');
   String get geneticsPackNote => _t(

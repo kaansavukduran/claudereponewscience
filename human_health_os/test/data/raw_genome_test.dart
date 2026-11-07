@@ -486,4 +486,33 @@ void main() {
       expect(parseRawGenome(withHeader('# nothing')).vendorHint, isNull);
     });
   });
+
+  test('the MyHeritage header as delivered in 2024 (##fileformat, '
+      '##reference=build37, RSID,CHROMOSOME,POSITION,RESULT) is read', () {
+    const text =
+        '##fileformat=MyHeritage\n'
+        '##format=MHv1.0\n'
+        '##chip=GSA\n'
+        '##timestamp=2024-09-14 08:15:50 UTC\n'
+        '##reference=build37\n'
+        '#\n'
+        '# MyHeritage DNA raw data.\n'
+        '# The genotype is reported on the forward (+) strand with respect to the human reference build 37.\n'
+        'RSID,CHROMOSOME,POSITION,RESULT\n'
+        'rs547237130,1,72526,AA\n'
+        'rs3131972,1,752721,AG\n'
+        'rs12184325,1,754105,CT\n'
+        '"rs2710888","1","959842","CT"\n';
+    final g = parseRawGenome(text);
+    expect(g.vendorHint, 'MyHeritage');
+    expect(g.build, '37');
+    expect(g.total, 4);
+    expect(g.variants[1].call, 'AG');
+    expect(g.invalidCount, 0);
+    expect(
+      parseRawGenomeBytes(text.codeUnits).total,
+      4,
+      reason: 'not taken for a VCF',
+    );
+  });
 }

@@ -1,0 +1,37 @@
+1. rs20317 [Homo sapiens]
+Variant type:	SNV
+Alleles:	G>A,C,T [Show Flanks]
+Chromosome:	15:26773789 (GRCh38)
+15:27018937 (GRCh37)
+Canonical SPDI:	NC_000015.10:26773789:G:A,NC_000015.10:26773789:G:C,NC_000015.10:26773789:G:T
+Gene:	GABRB3 (Varview)
+Functional Consequence:	upstream_transcript_variant,2KB_upstream_variant
+Clinical significance:	benign
+Validated:	by frequency,by alfa,by cluster
+MAF:	T=0.0003/1 (1000Genomes)
+HGVS:	NC_000015.10:g.26773790G>A, NC_000015.10:g.26773790G>C
+
+2. rs9000101 [Homo sapiens]
+Variant type:	SNV
+Alleles:	C>T [Show Flanks]
+Chromosome:	15:26800000 (GRCh38)
+15:27045000 (GRCh37)
+Gene:	GABRB3 (Varview)
+Functional Consequence:	missense_variant,coding_sequence_variant
+Clinical significance:	uncertain-significance
+Validated:	by cluster
+
+3. rs9000102 [Homo sapiens]
+Variant type:	SNV
+Alleles:	A>T [Show Flanks]
+Chromosome:	15:26810000 (GRCh38)
+Gene:	GABRB3 (Varview)
+Functional Consequence:	missense_variant
+Clinical significance:	not provided
+
+4. rs9000103 [Homo sapiens]
+Variant type:	DELINS
+Alleles:	CT>C [Show Flanks]
+Chromosome:	15:26820000 (GRCh38)
+Gene:	GABRB3 (Varview)
+Functional Consequence:	intron_variant

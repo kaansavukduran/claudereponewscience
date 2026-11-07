@@ -3974,5 +3974,23 @@
     "branch": "claude/code-capabilities-kz21fr",
     "push": "OK (origin)",
     "main": "F007 slice 2 close (D-019) once pushed; main advances only when a Forge closes with receipts (D-017)"
-  }
+  },
+  "pending_forges": [
+    {
+      "forge_id": "R001",
+      "note": "review fixes committed (0a83ec4, 8c26d94); waiting for the test-adequacy reviewer before gates and close"
+    },
+    {
+      "forge_id": "G002",
+      "note": "dbSNP Summary import implemented with tests; gates after R001"
+    },
+    {
+      "forge_id": "U011",
+      "note": "owner request: font choice incl. a dyslexia-friendly font (needs a reviewed, bundled OFL font)"
+    },
+    {
+      "forge_id": "G003",
+      "note": "owner request: plant chemicals (USDA Dr. Duke's CSV/XLSX export) offline lookup"
+    }
+  ]
 }
