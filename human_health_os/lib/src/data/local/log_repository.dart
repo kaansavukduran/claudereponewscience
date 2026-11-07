@@ -175,16 +175,20 @@ class LogRepository implements HealthRepository {
   /// The end of the writes in flight: check, checkpoint and append of one
   /// record finish before the next record starts, so two first measurements
   /// cannot both run the checkpoint.
-  Future<void> _recordWrites = Future<void>.value();
+  /// Null while nothing is in flight: no future is created ahead of use, so
+  /// a repository built in one zone (a test's fake clock) never makes a write
+  /// in another wait on it.
+  Future<void>? _recordWrites;
 
   @override
   Future<void> appendRecord(HealthRecord record) {
     final previous = _recordWrites;
     final done = Completer<void>();
     _recordWrites = done.future;
-    return previous.then((_) => _appendRecord(record)).whenComplete(() {
-      done.complete();
-    });
+    final run = previous == null
+        ? _appendRecord(record)
+        : previous.then((_) => _appendRecord(record));
+    return run.whenComplete(done.complete);
   }
 
   Future<void> _appendRecord(HealthRecord record) async {
