@@ -116,9 +116,11 @@ String whenCaption(S s, HealthRecord r, String Function(DateTime) fmt) {
 /// (trimmed, compared without case), at most [max]. Their own words: no
 /// fixed vocabulary is added.
 List<String> previousNotes(List<HealthRecord> records, {int max = 8}) {
+  // Only the current version of entries still in use: a withdrawn, deleted
+  // or corrected-away note is not offered again.
   final sorted = [
-    for (final r in records)
-      if ((r.context ?? '').trim().isNotEmpty) r,
+    for (final e in buildTimeline(records))
+      if (e.isLive && (e.shown.context ?? '').trim().isNotEmpty) e.shown,
   ]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
   final seen = <String>{};
   final out = <String>[];

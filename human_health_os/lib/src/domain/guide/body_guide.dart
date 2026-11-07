@@ -172,7 +172,10 @@ const List<Specialty> specialties = [
   ),
   Specialty(
     id: 'infectious',
-    name: ('Infectious diseases', 'Enfeksiyon hastalıkları'),
+    name: (
+      'Infectious diseases',
+      'Enfeksiyon hastalıkları ve klinik mikrobiyoloji',
+    ),
     what: ('Infections and their prevention.', 'Enfeksiyonlar ve önlenmeleri.'),
   ),
   Specialty(
@@ -204,7 +207,7 @@ const List<Specialty> specialties = [
   ),
   Specialty(
     id: 'dermatology',
-    name: ('Dermatology', 'Dermatoloji'),
+    name: ('Dermatology', 'Deri ve zührevi hastalıkları (dermatoloji)'),
     what: ('The skin, hair and nails.', 'Deri, saç ve tırnaklar.'),
   ),
   Specialty(
@@ -335,7 +338,6 @@ const List<BodySystem> bodySystems = [
       ('Pancreas', 'Pankreas'),
     ],
     specialties: ['gastroenterology', 'general_surgery', 'internal'],
-    measurements: ['body.waist_circumference'],
   ),
   BodySystem(
     id: 'kidneys',
@@ -366,7 +368,6 @@ const List<BodySystem> bodySystems = [
       ('Pancreas (insulin)', 'Pankreas (insülin)'),
     ],
     specialties: ['endocrinology', 'internal'],
-    measurements: ['body.weight', 'body.height', 'body.waist_circumference'],
   ),
   BodySystem(
     id: 'blood',
@@ -382,7 +383,6 @@ const List<BodySystem> bodySystems = [
       ('Lymph nodes', 'Lenf düğümleri'),
     ],
     specialties: ['haematology', 'immunology', 'infectious'],
-    measurements: ['vital.body_temperature'],
   ),
   BodySystem(
     id: 'movement',
@@ -464,7 +464,7 @@ const List<Bilingual> guideSources = [
     'Avrupa Uzman Hekimler Birliği (UEMS): uzmanlık şubeleri ve kurulları listesi. uems.eu',
   ),
   (
-    'Türkiye: specialty-training branches named as in medical specialty training (TUS).',
-    'Türkiye: uzmanlık dalları tıpta uzmanlık eğitimindeki (TUS) adlarıyla.',
+    'Türkiye: specialty-training branches named as in medical specialty training (TUS); dentistry as in dental specialty training (DUS).',
+    'Türkiye: uzmanlık dalları tıpta uzmanlık eğitimindeki (TUS) adlarıyla; diş hekimliği diş hekimliğinde uzmanlık eğitimindeki (DUS) adıyla.',
   ),
 ];

@@ -14,8 +14,12 @@ class SummaryRow {
 }
 
 class SummarySection {
-  const SummarySection(this.title, this.rows, this.total);
+  const SummarySection(this.title, this.rows, this.total, [this.partNote = '']);
   final String title;
+
+  /// "Showing the newest n of total" when [rows] is shorter than [total];
+  /// printed on the page too, so a reader knows it is not everything.
+  final String partNote;
   final List<SummaryRow> rows;
 
   /// How many current readings exist (rows show at most [rowsPerSection]).
@@ -48,10 +52,15 @@ class DoctorSummary {
       ..sort((a, b) => b.observedAt.compareTo(a.observedAt));
     if (weights.isNotEmpty) {
       sections.add(
-        SummarySection(s.recordKind(RecordKind.bodyWeight), [
-          for (final r in weights.take(rowsPerSection))
-            SummaryRow(fmtWhen(r.observedAt), measurementValue(s, r)),
-        ], weights.length),
+        SummarySection(
+          s.recordKind(RecordKind.bodyWeight),
+          [
+            for (final r in weights.take(rowsPerSection))
+              SummaryRow(fmtWhen(r.observedAt), measurementValue(s, r)),
+          ],
+          weights.length,
+          _part(s, weights.length),
+        ),
       );
     }
 
@@ -62,14 +71,19 @@ class DoctorSummary {
       ]..sort((a, b) => b.observedAt.compareTo(a.observedAt));
       if (live.isEmpty) continue;
       sections.add(
-        SummarySection(s.recordKind(k), [
-          for (final r in live.take(rowsPerSection))
-            SummaryRow(
-              fmtWhen(r.observedAt),
-              measurementValue(s, r),
-              r.context ?? '',
-            ),
-        ], live.length),
+        SummarySection(
+          s.recordKind(k),
+          [
+            for (final r in live.take(rowsPerSection))
+              SummaryRow(
+                fmtWhen(r.observedAt),
+                measurementValue(s, r),
+                r.context ?? '',
+              ),
+          ],
+          live.length,
+          _part(s, live.length),
+        ),
       );
     }
 
@@ -79,9 +93,12 @@ class DoctorSummary {
     ]..sort((a, b) => b.observedAt.compareTo(a.observedAt));
     if (labs.isNotEmpty) {
       sections.add(
-        SummarySection(s.summaryLabs, [
-          for (final r in labs.take(rowsPerSection * 2)) _labRow(s, r),
-        ], labs.length),
+        SummarySection(
+          s.summaryLabs,
+          [for (final r in labs.take(rowsPerSection * 2)) _labRow(s, r)],
+          labs.length,
+          _part(s, labs.length, rowsPerSection * 2),
+        ),
       );
     }
 
@@ -94,12 +111,18 @@ class DoctorSummary {
     );
   }
 
+  static String _part(S s, int total, [int cap = rowsPerSection]) =>
+      total > cap ? s.summaryMore(cap, total) : '';
+
   static SummaryRow _labRow(S s, HealthRecord r) {
     final lab = r.lab;
     final unit = r.quantity?.unit ?? '';
-    final value = r.valueStatus == ValueStatus.present
-        ? '${r.originalText ?? ''} $unit'.trim()
-        : s.valueStatus(r.valueStatus);
+    final typed = r.originalText ?? '';
+    final value = r.valueStatus != ValueStatus.present
+        ? s.valueStatus(r.valueStatus)
+        : typed.isNotEmpty
+        ? '$typed ${unit.isEmpty ? s.unitNotGiven : unit}'
+        : measurementValue(s, r);
     final range = lab?.referenceText ?? '';
     final flag = lab?.sourceFlag ?? '';
     final notes = [
@@ -135,7 +158,11 @@ class DoctorSummary {
       ..writeln('<h1>${e(title)}</h1>')
       ..writeln('<p class="n">${e(createdAt)}</p>');
     for (final sec in sections) {
-      b.writeln('<h2>${e(sec.title)}</h2><table>');
+      b.writeln('<h2>${e(sec.title)}</h2>');
+      if (sec.partNote.isNotEmpty) {
+        b.writeln('<p class="n">${e(sec.partNote)}</p>');
+      }
+      b.writeln('<table>');
       for (final r in sec.rows) {
         b.writeln(
           '<tr><td>${e(r.when)}</td><td>${e(r.value)}</td>'

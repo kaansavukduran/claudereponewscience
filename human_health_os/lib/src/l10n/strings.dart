@@ -619,7 +619,7 @@ class S {
       _t('You can record here', 'Burada kaydedebileceklerin');
   String get guideNotAdvice => _t(
     'A general guide written for Human OS. It does not diagnose and does not replace a clinician.',
-    'Human OS için yazılmış genel bir rehber. Teşhis koymaz ve hekimin yerini tutmaz.',
+    'Human OS için yazılmış genel bir rehber. Tanı koymaz ve hekimin yerini tutmaz.',
   );
   String get guideSourcesTitle =>
       _t('Sources of the structure', 'Yapının kaynakları');
@@ -638,7 +638,7 @@ class S {
   String get settingsLarger => _t('Larger', 'Daha büyük');
   String get settingsLargest => _t('Largest', 'En büyük');
   String accentName(AccentChoice c) => switch (c) {
-    AccentChoice.teal => _t('Teal', 'Camgöbeği'),
+    AccentChoice.teal => _t('Teal', 'Petrol yeşili'),
     AccentChoice.blue => _t('Blue', 'Mavi'),
     AccentChoice.purple => _t('Purple', 'Mor'),
     AccentChoice.green => _t('Green', 'Yeşil'),
@@ -646,11 +646,11 @@ class S {
   };
   String get settingsSpacing => _t('Spacing', 'Aralık');
   String get settingsComfortable => _t('Comfortable', 'Rahat');
-  String get settingsCompact => _t('Compact', 'Sık');
-  String get settingsContrast => _t('Contrast', 'Karşıtlık');
+  String get settingsCompact => _t('Compact', 'Sıkışık');
+  String get settingsContrast => _t('Contrast', 'Kontrast');
   String get settingsHighContrast => _t(
     'Stronger contrast (darker text and edges)',
-    'Güçlü karşıtlık (daha koyu yazı ve kenarlar)',
+    'Güçlü kontrast (daha koyu yazı ve kenarlar)',
   );
   String get settingsStart =>
       _t('Open the app on', 'Uygulama şu ekranla açılsın');
@@ -664,8 +664,10 @@ class S {
     'Measurement tiles: tick to show, arrows to reorder',
     'Ölçüm kutuları: göstermek için işaretle, sırayı oklarla değiştir',
   );
-  String get settingsMoveUp => _t('Move up', 'Yukarı taşı');
-  String get settingsMoveDown => _t('Move down', 'Aşağı taşı');
+  String settingsMoveUp(String what) =>
+      _t('Move $what up', '$what yukarı taşı');
+  String settingsMoveDown(String what) =>
+      _t('Move $what down', '$what aşağı taşı');
   String get settingsSections => _t('Sections', 'Bölümler');
   String todaySectionName(TodaySection x) => switch (x) {
     TodaySection.tools => _t('Tools', 'Araçlar'),
@@ -674,7 +676,7 @@ class S {
   };
   String get settingsPadOpen => _t(
     'Open the number pad in every measurement',
-    'Her ölçümde sayı tuşlarını açık getir',
+    'Her ölçümde sayı tuşları açık başlasın',
   );
   String get settingsResetToday =>
       _t('Reset Today to default', 'Bugün ekranını varsayılana döndür');

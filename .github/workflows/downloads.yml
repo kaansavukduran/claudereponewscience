@@ -19,6 +19,12 @@ env:
 permissions:
   contents: write
 
+# One publish at a time: an overlapping run waits, so one run never deletes
+# the release another is creating.
+concurrency:
+  group: downloads-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   linux:
     # Ubuntu 22.04 keeps the glibc floor low (D-008).
@@ -80,7 +86,7 @@ jobs:
           gh release delete android-dev --yes --cleanup-tag || true
           gh release create android-dev dist/Human-OS-android.apk --prerelease --target "${{ github.sha }}" \
             --title "Human OS for Android (development build)" \
-            --notes "Built from ${{ github.sha }}. Open this page on the phone, tap Human-OS-android.apk, then allow installing from this source when Android asks. Signed with a development key, not from Google Play; a later build signed differently may need the old one removed first. Development build for testing: do not keep real health data you cannot lose. Not run on a phone by the build."
+            --notes "Built from ${{ github.sha }}. Open this page on the phone, tap Human-OS-android.apk, then allow installing from this source when Android asks. Signed with a development key that changes with every build, not from Google Play: to install a newer build, remove the old one first (its data on the phone is removed with it). Development build for testing: do not keep real health data you cannot lose. Not run on a phone by the build."
 
   macos:
     runs-on: macos-latest

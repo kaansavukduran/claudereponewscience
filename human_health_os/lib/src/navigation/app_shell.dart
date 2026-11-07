@@ -75,7 +75,7 @@ class _AppShellState extends State<AppShell> {
           // Always one click away, whatever language the device uses.
           IconButton(
             key: const ValueKey('open-settings'),
-            tooltip: s.settingsTileHint,
+            tooltip: s.settingsTitle,
             icon: const Icon(Icons.tune),
             onPressed: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),

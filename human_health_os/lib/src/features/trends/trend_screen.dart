@@ -111,6 +111,8 @@ class _TrendScreenState extends State<TrendScreen> {
                       size: box.biggest,
                       painter: _TrendPainter(
                         points: points,
+                        minSpan: minSpanFor(widget.kind),
+                        decimal: s.lang == AppLang.tr ? ',' : '.',
                         line: scheme.primary,
                         second: scheme.onSurface,
                         grid: scheme.outlineVariant,
@@ -166,7 +168,20 @@ class _TrendScreenState extends State<TrendScreen> {
   }
 }
 
-const double _left = 44, _right = 12, _top = 8, _bottom = 20;
+const double _left = 56, _right = 12, _top = 8, _bottom = 22;
+
+/// The smallest axis range per measure (in its stored unit).
+double minSpanFor(RecordKind k) => switch (k) {
+  RecordKind.bodyWeight => 5,
+  RecordKind.bloodPressure => 20,
+  RecordKind.restingHeartRate => 20,
+  RecordKind.bodyTemperature => 2,
+  RecordKind.oxygenSaturation => 10,
+  RecordKind.respiratoryRate => 10,
+  RecordKind.waistCircumference => 10,
+  RecordKind.height => 10,
+  _ => 1,
+};
 
 List<double> _xs(List<TrendPoint> points, Size size) {
   final t0 = points.first.at.millisecondsSinceEpoch.toDouble();
@@ -183,6 +198,8 @@ List<double> _xs(List<TrendPoint> points, Size size) {
 class _TrendPainter extends CustomPainter {
   _TrendPainter({
     required this.points,
+    required this.minSpan,
+    required this.decimal,
     required this.line,
     required this.second,
     required this.grid,
@@ -192,6 +209,11 @@ class _TrendPainter extends CustomPainter {
   });
 
   final List<TrendPoint> points;
+
+  /// The smallest value range the axis shows, so a tiny change does not
+  /// fill the chart and look like a steep rise.
+  final double minSpan;
+  final String decimal;
   final Color line, second, grid, label;
   final TrendPoint? picked;
   final TextStyle textStyle;
@@ -201,9 +223,10 @@ class _TrendPainter extends CustomPainter {
     final all = [for (final p in points) ...p.values];
     var lo = all.reduce((a, b) => a < b ? a : b);
     var hi = all.reduce((a, b) => a > b ? a : b);
-    if (hi == lo) {
-      hi += 1;
-      lo -= 1;
+    if (hi - lo < minSpan) {
+      final mid = (hi + lo) / 2;
+      hi = mid + minSpan / 2;
+      lo = mid - minSpan / 2;
     }
     final pad = (hi - lo) * 0.1;
     lo -= pad;
@@ -224,12 +247,32 @@ class _TrendPainter extends CustomPainter {
       );
       final tp = TextPainter(
         text: TextSpan(
-          text: v.toStringAsFixed(v.abs() >= 100 ? 0 : 1),
+          text: v
+              .toStringAsFixed(v.abs() >= 100 ? 0 : 1)
+              .replaceAll('.', decimal),
           style: textStyle.copyWith(color: label),
         ),
         textDirection: TextDirection.ltr,
-      )..layout(maxWidth: _left - 4);
+      )..layout();
       tp.paint(canvas, Offset(0, y(v) - tp.height / 2));
+    }
+    // First and last dates under the axis.
+    String day(DateTime t) {
+      final l = t.toLocal();
+      return '${l.year}-${l.month.toString().padLeft(2, '0')}-${l.day.toString().padLeft(2, '0')}';
+    }
+
+    for (final (i, align) in [(0, 0.0), (points.length - 1, 1.0)]) {
+      final tp = TextPainter(
+        text: TextSpan(
+          text: day(points[i].at),
+          style: textStyle.copyWith(color: label),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      final x = (xs[i] - tp.width * align).clamp(0.0, size.width - tp.width);
+      tp.paint(canvas, Offset(x, size.height - tp.height));
+      if (points.length == 1) break;
     }
 
     final series = points.first.values.length;

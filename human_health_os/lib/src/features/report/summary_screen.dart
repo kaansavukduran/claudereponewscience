@@ -109,9 +109,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
                     header: true,
                     child: Text(sec.title, style: text.titleMedium),
                   ),
-                  if (sec.total > sec.rows.length)
+                  if (sec.partNote.isNotEmpty)
                     Text(
-                      s.summaryMore(sec.rows.length, sec.total),
+                      sec.partNote,
                       style: text.bodySmall?.copyWith(color: scheme.outline),
                     ),
                   for (final r in sec.rows)

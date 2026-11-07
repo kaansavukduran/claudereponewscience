@@ -248,19 +248,30 @@ class _TodayLayout extends StatelessWidget {
           Row(
             key: ValueKey('set-tile-${order[i]}'),
             children: [
-              Checkbox(
-                key: ValueKey('set-tile-show-${order[i]}'),
-                value: !settings.hiddenTiles.contains(order[i]),
-                onChanged: (on) {
-                  final hidden = {...settings.hiddenTiles};
-                  on == true ? hidden.remove(order[i]) : hidden.add(order[i]);
-                  onChange(settings.copyWith(hiddenTiles: hidden));
-                },
+              // One node for the screen reader: "Blood pressure, checked".
+              Expanded(
+                child: MergeSemantics(
+                  child: Row(
+                    children: [
+                      Checkbox(
+                        key: ValueKey('set-tile-show-${order[i]}'),
+                        value: !settings.hiddenTiles.contains(order[i]),
+                        onChanged: (on) {
+                          final hidden = {...settings.hiddenTiles};
+                          on == true
+                              ? hidden.remove(order[i])
+                              : hidden.add(order[i]);
+                          onChange(settings.copyWith(hiddenTiles: hidden));
+                        },
+                      ),
+                      Expanded(child: Text(s.recordKind(kindOf(order[i])))),
+                    ],
+                  ),
+                ),
               ),
-              Expanded(child: Text(s.recordKind(kindOf(order[i])))),
               IconButton(
                 key: ValueKey('set-tile-up-${order[i]}'),
-                tooltip: s.settingsMoveUp,
+                tooltip: s.settingsMoveUp(s.recordKind(kindOf(order[i]))),
                 icon: const Icon(Icons.arrow_upward),
                 onPressed: i == 0
                     ? null
@@ -268,7 +279,7 @@ class _TodayLayout extends StatelessWidget {
               ),
               IconButton(
                 key: ValueKey('set-tile-down-${order[i]}'),
-                tooltip: s.settingsMoveDown,
+                tooltip: s.settingsMoveDown(s.recordKind(kindOf(order[i]))),
                 icon: const Icon(Icons.arrow_downward),
                 onPressed: i == order.length - 1
                     ? null

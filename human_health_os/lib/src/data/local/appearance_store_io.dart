@@ -46,7 +46,10 @@ Future<AppearanceStore> openAppearanceStore(
   Map<String, String>? env,
   String? executablePath,
 }) async {
-  if (config.profile != BuildProfile.development) {
+  // Portable mode writes only the encrypted vault next to the program
+  // (D-016); a development build in portable mode keeps settings in memory.
+  if (config.profile != BuildProfile.development ||
+      isPortableMode(executablePath: executablePath)) {
     return MemoryAppearanceStore();
   }
   final dir = resolveDataDirectory(

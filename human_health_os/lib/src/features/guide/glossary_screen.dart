@@ -6,6 +6,31 @@ import '../../l10n/strings.dart';
 
 String _pick(S s, Bilingual b) => s.lang == AppLang.tr ? b.$2 : b.$1;
 
+/// Lower case without Turkish dots and marks, so "NABIZ", "nabiz" and
+/// "nabız" all find "nabız" (Dart's toLowerCase maps I to i, not ı).
+String foldForSearch(String s) {
+  const map = {
+    'I': 'i',
+    'İ': 'i',
+    'ı': 'i',
+    'Ş': 's',
+    'ş': 's',
+    'Ğ': 'g',
+    'ğ': 'g',
+    'Ü': 'u',
+    'ü': 'u',
+    'Ö': 'o',
+    'ö': 'o',
+    'Ç': 'c',
+    'ç': 'c',
+  };
+  final b = StringBuffer();
+  for (final ch in s.split('')) {
+    b.write(map[ch] ?? ch.toLowerCase());
+  }
+  return b.toString();
+}
+
 /// Every term and measurement in plain words (U003), searchable.
 class GlossaryScreen extends StatefulWidget {
   const GlossaryScreen({super.key});
@@ -22,12 +47,12 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
     final scheme = Theme.of(context).colorScheme;
-    final q = _q.trim().toLowerCase();
+    final q = foldForSearch(_q.trim());
     final shown = [
       for (final e in glossary)
         if (q.isEmpty ||
-            e.term.$1.toLowerCase().contains(q) ||
-            e.term.$2.toLowerCase().contains(q))
+            foldForSearch(e.term.$1).contains(q) ||
+            foldForSearch(e.term.$2).contains(q))
           e,
     ];
     return Scaffold(
