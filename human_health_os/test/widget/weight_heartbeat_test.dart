@@ -91,7 +91,18 @@ void main() {
       await pumpWith(tester, launch());
       expect(find.byKey(const ValueKey('weight-latest')), findsOneWidget);
       expect(find.text('81.2 kg'), findsWidgets);
-      // The local storage capability is now real.
+      // The local storage capability is now real. Today is a lazy list:
+      // scroll until the capabilities card is built.
+      await tester.scrollUntilVisible(
+        find.text('Available'),
+        400,
+        scrollable: find
+            .descendant(
+              of: find.byKey(const ValueKey('screen-today')),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
       expect(find.text('Available'), findsOneWidget);
     },
   );
