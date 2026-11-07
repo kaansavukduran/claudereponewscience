@@ -1,0 +1,59 @@
+name: windows-exe
+
+# Builds the Windows app on a Windows host and publishes two downloads as
+# workflow artifacts: a portable ZIP (unzip, double-click human_health_os.exe)
+# and a Setup.exe installer. Development build: for testing, not for real
+# health data (see docs/PLATFORM_MATRIX.md). Not signed.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "human_health_os/**"
+      - "packaging/windows/**"
+      - ".github/workflows/windows-exe.yml"
+
+env:
+  FLUTTER_VERSION: "3.47.6"
+
+jobs:
+  windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - name: Build
+        working-directory: human_health_os
+        shell: bash
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter build windows --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=${{ github.sha }}
+      - name: Portable ZIP
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item human_health_os/build/windows/x64/runner/Release dist/Human-OS -Recurse
+          Set-Content dist/Human-OS/README.txt "Double-click human_health_os.exe. Development build for testing: do not store real health data you cannot lose."
+          Compress-Archive -Path dist/Human-OS -DestinationPath dist/Human-OS-windows-portable.zip
+      - name: Installer
+        shell: pwsh
+        run: |
+          choco install innosetup -y --no-progress
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/human_os.iss
+      - name: Check the executable starts
+        shell: pwsh
+        run: |
+          $p = Start-Process -FilePath "human_health_os/build/windows/x64/runner/Release/human_health_os.exe" -PassThru
+          Start-Sleep -Seconds 10
+          if ($p.HasExited) { throw "human_health_os.exe exited early with code $($p.ExitCode)" }
+          Stop-Process -Id $p.Id -Force
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Human-OS-windows
+          path: |
+            dist/Human-OS-windows-portable.zip
+            dist/Human-OS-Setup.exe
+          if-no-files-found: error
