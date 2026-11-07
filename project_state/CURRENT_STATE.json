@@ -3,44 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U001",
-    "contract": "v0.32",
-    "run_id": "U001@v0.32",
-    "slice": "mouse-only entry and a how-to page",
-    "goal": "A first-time user can enter every measurement with the mouse only and finds a plain guide to the app from Today.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "a932ada",
-    "started_at": "2026-11-07T18:20:00Z",
-    "scope": [
-      "number pad in the measurement sheet: closed by default, types into the field chosen last, decimal comma in Turkish, delete key; nothing pre-filled",
-      "quick-pick time chips under More details (Now, 1 hour ago, this morning 08:00 when past, yesterday 20:00), resolved by the typed-time rules at Save",
-      "How to use page from Today's Tools: six steps naming the real buttons, EN/TR, judging nothing"
-    ],
-    "out_of_scope": [
-      "a first-run wizard or passphrase flow (D13 in BRAINSTORM)",
-      "steppers that start from a guessed value (a start value would imply a norm)",
-      "weight card pad (the weight field keeps typed entry; recorded as a gap)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 The number pad types a value with the mouse only into the field chosen last; delete removes the last character; Turkish uses a comma; closed by default",
-      "AC-2 Time chips fill When with a local time the entry rules accept; Now empties it; a chip for a future time is disabled",
-      "AC-3 How to use opens from Today with the mouse; every step names a label that exists in the app (test), no judging word, EN and TR",
-      "AC-4 Tests bound to mutations; full suite in UTC and New York; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "number pad and time chips (0ce7eca)",
-      "How to use page"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -51,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "G001@v0.32 (2026-11-07, source revision 51a56e6c8786)",
+  "last_completed_forge": "U001@v0.32 (2026-11-07, source revision c164c690bc20)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -64,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0127",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0140",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0128",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0141",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0129",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0142",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (431 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0130",
-      "criterion": "AC-1..AC-8, AC-10..AC-12",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "gate": "flutter test, TZ=UTC (437 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0143",
+      "criterion": "AC-1..AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0131",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0144",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0132",
-      "criterion": "AC-13",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-BUILD-F007-0145",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
-      "gate": "Playwright smoke in Chromium: the Genetics tool opens from Today with the mouse, the notice shows, the invented sample loads without a native dialog (12 variants, invented pack, no judging words); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0133",
-      "criterion": "AC-13, AC-5",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+      "evidence_id": "EV-RUNTIME-F007-0146",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0134",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0147",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0135",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-BUILD-F007-0148",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0136",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-RUNTIME-F007-0149",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (432 PASS)",
-      "evidence_id": "EV-TEST-F007-0137",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "gate": "flutter test with TZ=America/New_York (438 PASS)",
+      "evidence_id": "EV-TEST-F007-0150",
+      "criterion": "AC-1..AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0138",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0151",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0139",
-      "criterion": "AC-7",
-      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "evidence_id": "EV-TEST-F007-0152",
+      "criterion": "AC-4",
+      "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
       "result": "PASS"
     }
   ],
@@ -183,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U001",
+    "forge_id": "U002",
     "contract": "v0.32",
-    "run_id": "U001@v0.32",
-    "slice": "first-run experience, mouse-only entry",
-    "why": "The owner's direction: a person who opens the app for the first time must understand it and enter everything with the mouse only, in a calm interface. U001 adds a short first-run (what Human OS is, what stays on this device, add one number), steppers, quick-pick chips and time presets beside the typed fields, a plain-language how-to page and the G-49 design leftovers. Then U002 (clickable body and specialties guide from open standards), U003 (glossary), and real annotation packs (G-53) when a licence review is done.",
+    "run_id": "U002@v0.32",
+    "slice": "clickable body and specialties guide from open standards",
+    "why": "The owner asked for a Human-Atlas-like guide and medical specialties; written for the project from open standards (WHO ICD-11 chapters, UEMS specialty list) with sources, never verbatim atlas text, never diagnosing.",
     "depends_on": [
-      "G001"
+      "U001"
     ]
   },
-  "updated_at": "2026-11-07T18:30:00Z",
+  "updated_at": "2026-11-07T18:45:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -2399,6 +2364,166 @@
       ],
       "review": "Three independent reviewers on ad53636 and 0ea1b50, each in its own worktree: UI/design/wording (10 findings: variant rows unusable at 320 dp and 2x, no live region on Reading, search too strict (chr prefix), no page jump, English spoken label in Turkish, allele not shown on match cards and wording that read as a personal finding, unsanitised pack text, 'not read' wording, Turkish wording, repeated promises: fixed except the page jump and debounce, G-59); parser/packs/privacy (14 findings: build regex took any two digits so 'build 2024' gave 20 and hg19 differed from 37, indel calls reported as 'does not match', trailing tab misdetected as AncestryDNA, a lone CR deleted from a genotype, 1-in-5 instead of 1-in-6 refusal, case-sensitive duplicate count, hex/sign accepted in numbers, release() skipped when the read threw, file name unsanitised, invisible characters, IME learning on the search field, counts recomputed per rebuild: fixed; strand ambiguity of a homozygous call and the notice shown only before the first file recorded as G-57, G-58); test adequacy (cut short by an API limit: about 120 mutation probes on the parser found survivors in header requirements, archive markers, thresholds, chromosome names, CSV quoting, build words and vendor hints: tests added; pack-safety/UI/string probes not run by the reviewer, G-60). The web smoke then found that the Genetics tile was not a button for assistive technology and the browser (found by a failing smoke, fixed with a semantic button and a mutation-bound test).",
       "verification": "13 gates on one clean revision"
+    },
+    "U001@v0.32": {
+      "forge_id": "U001",
+      "contract": "v0.32",
+      "run_id": "U001@v0.32",
+      "slice": "mouse-only entry and a how-to page",
+      "goal": "A first-time user can enter every measurement with the mouse only and finds a plain guide to the app from Today.",
+      "status": "DONE",
+      "baseline_commit": "a932ada",
+      "started_at": "2026-11-07T18:20:00Z",
+      "scope": [
+        "number pad in the measurement sheet: closed by default, types into the field chosen last, decimal comma in Turkish, delete key; nothing pre-filled",
+        "quick-pick time chips under More details (Now, 1 hour ago, this morning 08:00 when past, yesterday 20:00), resolved by the typed-time rules at Save",
+        "How to use page from Today's Tools: six steps naming the real buttons, EN/TR, judging nothing"
+      ],
+      "out_of_scope": [
+        "a first-run wizard or passphrase flow (D13 in BRAINSTORM)",
+        "steppers that start from a guessed value (a start value would imply a norm)",
+        "weight card pad (the weight field keeps typed entry; recorded as a gap)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 The number pad types a value with the mouse only into the field chosen last; delete removes the last character; Turkish uses a comma; closed by default",
+        "AC-2 Time chips fill When with a local time the entry rules accept; Now empties it; a chip for a future time is disabled",
+        "AC-3 How to use opens from Today with the mouse; every step names a label that exists in the app (test), no judging word, EN and TR",
+        "AC-4 Tests bound to mutations; full suite in UTC and New York; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "number pad and time chips (0ce7eca)",
+        "How to use page",
+        "GATES: 13 receipts on clean tree c164c69, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0152",
+      "next_action": null,
+      "files_touched": [
+        ".github/workflows/windows-exe.yml",
+        "human_health_os/lib/src/features/help/how_to_screen.dart",
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u001_entry_test.dart",
+        "human_health_os/test/widget/u001_howto_test.dart",
+        "packaging/windows/human_os.iss",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0140",
+        "EV-TEST-F007-0141",
+        "EV-TEST-F007-0142",
+        "EV-TEST-F007-0143",
+        "EV-TEST-F007-0144",
+        "EV-BUILD-F007-0145",
+        "EV-RUNTIME-F007-0146",
+        "EV-TEST-F007-0147",
+        "EV-BUILD-F007-0148",
+        "EV-RUNTIME-F007-0149",
+        "EV-TEST-F007-0150",
+        "EV-TEST-F007-0151",
+        "EV-TEST-F007-0152"
+      ],
+      "blocker": null,
+      "result": "U001_COMPLETE",
+      "finished_at": "2026-11-07T18:45:00Z",
+      "app_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0140",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0141",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0142",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (437 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0143",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0144",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0145",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0146",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0147",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0148",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0149",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (438 PASS)",
+          "evidence_id": "EV-TEST-F007-0150",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0151",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0152",
+          "criterion": "AC-4",
+          "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author Forge, no multi-agent review this time (small UI slice); mutations: focus tracking, decimal separator, delete key and the Now chip each caught by a test",
+      "windows_ci": "GitHub Actions windows-latest run 42400912303 on a5416ea: flutter build windows COMPILED, Inno Setup installer and portable ZIP PACKAGED (unsigned), the exe started and ran 10 s; published as pre-release windows-dev. CI evidence, not a local run_gate receipt."
     }
   },
   "forge_history_legacy_ids": {

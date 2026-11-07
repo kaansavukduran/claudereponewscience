@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-1143",
+  "kind": "TEST",
+  "forge_id": "U001@v0.32",
+  "source_revision": "c164c690bc20c5871a40e54421756540a8abcef5",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T18:22:18.376Z",
+  "finished_at": "2026-11-07T18:23:32.226Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:11 +437 ~1: All tests passed!",
+  "log_sha256": "7d072ce8ef3a9632f1a44469a0e8b3a55dff1bde3950b62f19152b85e93be2cc",
+  "log_lines": 489,
+  "log_tail": [
+    "01:09 +426 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:10 +427 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: every destination is reachable on desktop and none is blank",
+    "01:10 +428 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: non-production build shows its profile banner",
+    "01:10 +429 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: staging build shows its banner with the clinical disclaimer",
+    "01:10 +430 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: This build card shows the source revision",
+    "01:10 +431 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: production build hides the banner",
+    "01:10 +432 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Today states no weight yet, memory-only storage, network not required",
+    "01:11 +433 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: web registry never claims HealthKit/Health Connect",
+    "01:11 +434 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Turkish locale localizes navigation",
+    "01:11 +435 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: section headings are separate semantics nodes (not merged with body)",
+    "01:11 +436 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Turkish phone layout renders without overflow",
+    "01:11 +437 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

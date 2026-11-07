@@ -50,3 +50,6 @@ States: REQUIRED (target), SUPPORTED, PARTIAL, UNSUPPORTED_BY_PLATFORM, BLOCKED_
 | Native notifications | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED | NOT_IMPLEMENTED |
 | PWA install | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | NOT_TESTED | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM | UNSUPPORTED_BY_PLATFORM |
 
+
+
+Windows (U001/U004, 2026-11-07): GitHub Actions windows-latest run 42400912303 built the development profile (COMPILED), packaged an unsigned Inno Setup installer and a portable ZIP (PACKAGED), and started the exe for 10 s; download: the `windows-dev` pre-release. Not clicked through on Windows; not signed (SmartScreen warns).

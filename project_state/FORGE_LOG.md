@@ -719,3 +719,22 @@ G-52 no saved genome · G-53 no real annotation data (licence review) · G-54 la
 
 ## Next recommended Forge
 **U001 — the first-run experience and mouse-only entry** (D-020), then U002 (clickable body and specialties guide from open standards) and U003 (glossary).
+
+# FORGE U001@v0.32 — mouse-only entry and a how-to page, 2026-11-07 — U001_COMPLETE
+
+**Goal** a first-time user enters every measurement with the mouse only and finds a plain guide from Today (D-020). **Baseline** a932ada → 0ce7eca (number pad, time chips), how-to page, gates on the closing source revision.
+
+## What was built
+- Number pad in each measurement sheet: closed by default ("Show number pad"), types into the field chosen last (systolic, then diastolic), decimal comma in Turkish, a delete key; nothing is pre-filled, so no value suggests a norm.
+- Quick-pick time chips under More details: Now (empties the field), 1 hour ago, this morning 08:00 (disabled until it is past), yesterday 20:00; the typed-time rules still check the value at Save.
+- How to use Human OS: six steps naming the real buttons (a test checks every named label exists), EN/TR, reachable from Today's Tools.
+- Windows download (U004 groundwork): `.github/workflows/windows-exe.yml` builds on a GitHub Windows runner, makes `Human-OS-Setup.exe` (Inno Setup, `packaging/windows/human_os.iss`) and a portable ZIP, starts the exe for 10 s, and publishes the pre-release `windows-dev`. Run 42400912303 on a5416ea passed: COMPILED, PACKAGED (unsigned), started on Windows. This is CI evidence, not a local receipt; SmartScreen will warn because the build is not signed.
+
+## Tests / Builds / Runtime
+`flutter test` 437 PASS (1 skipped) in UTC and 438 in New York; Linux integration 9 PASS; web smoke PASS; Linux release COMPILED and RUNTIME_TESTED under Xvfb; tooling, contracts, pnpm PASS. Mutations on focus tracking, decimal separator, delete key and the Now chip were each caught.
+
+## Known limitations
+G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D13) · the Windows build is a development build (unencrypted log under %LOCALAPPDATA%), unsigned, and was only started, not clicked through, on Windows.
+
+## Next recommended Forge
+**U002 — clickable body and specialties guide from open standards** (WHO ICD-11 chapters, UEMS specialties), with sources, never verbatim atlas text, never diagnosing.
