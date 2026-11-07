@@ -554,17 +554,19 @@ void main() {
     final vault = File('${data.path}/human-health-os/$vaultFileName');
     final beforeMeasurements = vault.readAsStringSync();
 
-    await tapKey(tester, 'measure-kind-vital.blood_pressure');
+    await tapKey(tester, 'measure-tile-vital.blood_pressure');
     await tester.pumpAndSettle();
     await fillKey(tester, 'measure-systolic', '128');
     await fillKey(tester, 'measure-diastolic', '84');
+    await tapKey(tester, 'measure-more');
+    await tester.pumpAndSettle();
     await fillKey(tester, 'measure-context', 'sitting, left arm');
     await tapKey(tester, 'measure-save');
     await waitFor(tester, find.byKey(const ValueKey('measure-saved')));
     final message = tester
         .widget<Text>(find.byKey(const ValueKey('measure-saved')))
         .data!;
-    expect(message, startsWith('Saved. Before this first measurement'));
+    expect(message, startsWith('Saved. Before saving this entry'));
 
     // The checkpoint is the vault exactly as it was before the measurement.
     final kept = (await s1.dataFiles!.backups()).single;
@@ -574,7 +576,7 @@ void main() {
     expect(staged.payload, beforeMeasurements);
     expect(staged.manifest.recordSchemaVersions, [3]);
 
-    await tapKey(tester, 'measure-kind-vital.resting_heart_rate');
+    await tapKey(tester, 'measure-tile-vital.resting_heart_rate');
     await tester.pumpAndSettle();
     await fillKey(tester, 'measure-value', '57');
     await tapKey(tester, 'measure-save');
@@ -600,12 +602,35 @@ void main() {
       kind: RecordKind.waistCircumference,
       input: const MeasurementInput(value: '84,25', context: 'standing'),
     );
+    // Slice 2: a height with a time typed on the screen; the first schema-5
+    // record makes the second checkpoint, of the vault as it was then.
+    final beforeHeight = vault.readAsStringSync();
+    await tapKey(tester, 'measure-tile-body.height');
+    await tester.pumpAndSettle();
+    await fillKey(tester, 'measure-value', '172,5');
+    await tapKey(tester, 'measure-more');
+    await tester.pumpAndSettle();
+    await fillKey(tester, 'measure-when', '2026-10-01 08:00Z');
+    await tapKey(tester, 'measure-save');
+    await waitFor(tester, find.byKey(const ValueKey('measure-saved')));
+    expect(
+      tester.widget<Text>(find.byKey(const ValueKey('measure-saved'))).data,
+      startsWith('Saved. Before saving this entry'),
+    );
+    final backups = await s1.dataFiles!.backups();
+    expect(backups, hasLength(2));
+    final newest = stageRestore(await s1.dataFiles!.read(backups.first));
+    expect(newest.payload, beforeHeight);
+    expect(newest.manifest.recordSchemaVersions, [3, 4]);
     final state = parseVaultLog(vault.readAsStringSync());
     expect(state.warnings, isEmpty);
     expect(
       [for (final id in state.order) state.records[id]!.schemaVersion],
-      [3, 4, 4, 4, 4],
+      [3, 4, 4, 4, 4, 5],
     );
+    final height = state.records[state.order.last]!;
+    expect(height.observedAt, DateTime.utc(2026, 10, 1, 8));
+    expect(height.recordedAt.isAfter(DateTime.utc(2026, 11)), isTrue);
     expect(vault.readAsStringSync().startsWith(beforeMeasurements), isTrue);
 
     await tester.pumpWidget(const SizedBox());
@@ -617,6 +642,7 @@ void main() {
     expect(latest(RecordKind.bloodPressure), '124/82 mmHg');
     expect(latest(RecordKind.restingHeartRate), '57 bpm');
     expect(latest(RecordKind.waistCircumference), '84.25 cm');
+    expect(latest(RecordKind.height), '172.5 cm');
     final versions = (await s2.heartbeat.measurementTimeline(
       s2.self.id,
       RecordKind.bloodPressure,
@@ -675,6 +701,11 @@ void main() {
       targetId: hr.id,
       input: const MeasurementInput(value: '56'),
     );
+    await s1.heartbeat.recordMeasurement(
+      profileId: s1.self.id,
+      kind: RecordKind.height,
+      input: const MeasurementInput(value: '172,5', when: '2026-10-01 08:00Z'),
+    );
     expect(s1.checkpointSaved!.value, isNotNull);
 
     final file = File('${data.path}/vault.hhosvault');
@@ -687,19 +718,39 @@ void main() {
       'sitting, left arm',
       '84,75',
       '74,2',
+      'body.height',
+      '172,5',
+      '2026-10-01 08:00Z',
     ]) {
       expect(stored, isNot(contains(s)), reason: s);
     }
+    // Two checkpoints, one for each step of the record schema (3 to 4, then
+    // 4 to 5), both encrypted, neither replacing the other.
     final backups = Directory('${data.path}/backups').listSync();
-    expect(backups, hasLength(1));
-    final checkpoint = File(backups.single.path).readAsStringSync();
-    expect(checkpoint, contains(encryptionEnvelopeV1));
-    final staged = stageRestore(checkpoint);
-    expect(staged.manifest.encrypted, isTrue);
-    expect(staged.manifest.recordSchemaVersions, [3]);
-    for (final s in ['74,2', 'body.weight', 'blood_pressure']) {
-      expect(checkpoint, isNot(contains(s)), reason: s);
+    expect(backups, hasLength(2));
+    final schemas = <List<int>>[];
+    for (final b in backups) {
+      final checkpoint = File(b.path).readAsStringSync();
+      expect(checkpoint, contains(encryptionEnvelopeV1));
+      final staged = stageRestore(checkpoint);
+      expect(staged.manifest.encrypted, isTrue);
+      schemas.add(staged.manifest.recordSchemaVersions);
+      for (final s in [
+        '74,2',
+        'body.weight',
+        'blood_pressure',
+        'body.height',
+      ]) {
+        expect(checkpoint, isNot(contains(s)), reason: s);
+      }
     }
+    expect(
+      schemas,
+      containsAll([
+        [3],
+        [3, 4],
+      ]),
+    );
 
     // Relaunch: the gate first, then the same readings.
     final startup = await startApp(prod, HostPlatform.linux, env: env);
@@ -716,6 +767,7 @@ void main() {
     expect(latest(RecordKind.bloodPressure), '131/87 mmHg');
     expect(latest(RecordKind.waistCircumference), '84.75 cm');
     expect(latest(RecordKind.restingHeartRate), '56 bpm');
+    expect(latest(RecordKind.height), '172.5 cm');
     data.deleteSync(recursive: true);
   });
 }

@@ -79,8 +79,8 @@ class S {
   String get save => _t('Save', 'Kaydet');
   String get saved => _t('Saved', 'Kaydedildi');
   String get noWeightYet => _t(
-    'No weight recorded yet. An empty field is never stored as 0.',
-    'Henüz kilo kaydı yok. Boş alan asla 0 olarak saklanmaz.',
+    'No weight recorded yet.',
+    'Henüz kilo kaydı yok.',
   );
   String get latest => _t('Latest', 'Son');
   String get history => _t('History', 'Geçmiş');

@@ -239,24 +239,42 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       return h ? Math.max(2, h.x - 8) : wheelX;
     };
     let todayX = await openToday();
-    const bpChip = page.getByRole('button', { name: 'Blood pressure', exact: true })
-      .or(page.getByRole('checkbox', { name: 'Blood pressure', exact: true }))
-      .or(page.getByRole('radio', { name: 'Blood pressure', exact: true })).first();
+    // A tile is a button named by its spoken summary; a sheet holds one entry.
+    const tile = (kind) => page.getByRole('button', { name: new RegExp(`^${kind}`) }).first();
+    const spokenBp = /^Blood pressure: systolic 118, diastolic 76 millimetres of mercury, measured /;
+    const spokenHeight = /^Height: 172\.5 centimetres, measured \d{4}-\d{2}-\d{2} \d{2}:\d{2}, saved /;
+    const saveSheet = async () => {
+      const save = page.getByRole('button', { name: 'Save measurement', exact: true }).first();
+      await save.click({ timeout: 10_000 });
+      await page.getByText('Saved', { exact: false }).first().waitFor({ timeout: 10_000 }).catch(() => {});
+    };
     try {
-      await scrollTo(bpChip, todayX);
-      await bpChip.click({ timeout: 10_000 });
-      await page.waitForTimeout(300);
+      await scrollTo(tile('Blood pressure'), todayX);
+      await tile('Blood pressure').click({ timeout: 10_000 });
+      await page.waitForTimeout(500);
       await typeInto(/Systolic, the upper number/, '118', todayX);
       await typeInto(/Diastolic, the lower number/, '76', todayX);
-      const saveBp = page.getByRole('button', { name: 'Save measurement', exact: true }).first();
-      await intoView(saveBp, todayX);
-      await saveBp.click({ timeout: 10_000 });
+      await saveSheet();
     } catch (e) {
-      check(`${label}: measurement form usable`, false, e.message.split('\n')[0]);
+      check(`${label}: measurement sheet usable`, false, e.message.split('\n')[0]);
       await writeFile(join(out, `flutter-web-${label}-a11y-today.json`), JSON.stringify(await page.accessibility.snapshot(), null, 1));
     }
-    check(`${label}: blood pressure saved as typed (118/76 mmHg)`, await scrollTo(page.getByText('118/76 mmHg').first(), todayX));
-    check(`${label}: no judging words next to the reading`, !(await page.getByText(/\b(hypertension|hypotension|elevated|stage \d|normal|abnormal)\b/i).first().isVisible().catch(() => false)));
+    check(`${label}: blood pressure saved as typed (spoken summary 118/76)`, await scrollTo(tile('Blood pressure').filter({ hasText: spokenBp }), todayX));
+    // Slice 2: a height typed with a time (a measurement of an earlier day).
+    try {
+      await scrollTo(tile('Height'), todayX);
+      await tile('Height').click({ timeout: 10_000 });
+      await page.waitForTimeout(500);
+      await typeInto(/Height \(cm\)/, '172,5', todayX);
+      await page.getByRole('button', { name: 'More details' }).first().click({ timeout: 10_000 });
+      await page.waitForTimeout(500);
+      await typeInto(/When \(optional\)/, '2026-10-01 08:00Z', todayX);
+      await saveSheet();
+    } catch (e) {
+      check(`${label}: height with a time usable`, false, e.message.split('\n')[0]);
+    }
+    check(`${label}: height saved with its measured time and the save time`, await scrollTo(tile('Height').filter({ hasText: spokenHeight }), todayX));
+    check(`${label}: no judging words on the measurements`, !(await page.getByText(/\b(hypertension|hypotension|elevated|stage \d|normal|abnormal|fever|hypoxia)\b/i).first().isVisible().catch(() => false)));
     await page.screenshot({ path: join(out, `flutter-web-${label}-measurement.png`) });
     await page.reload({ waitUntil: 'load' });
     await page.waitForSelector('flutter-view', { state: 'attached', timeout: 60_000 });
@@ -265,7 +283,8 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       await page.waitForTimeout(500);
     }
     todayX = await openToday();
-    check(`${label}: blood pressure survives reload`, await scrollTo(page.getByText('118/76 mmHg').first(), todayX));
+    check(`${label}: blood pressure survives reload`, await scrollTo(tile('Blood pressure').filter({ hasText: spokenBp }), todayX));
+    check(`${label}: height survives reload`, await scrollTo(tile('Height').filter({ hasText: spokenHeight }), todayX));
     let bpOnTimeline = true;
     try {
       await navItem(timelineLabel).click({ timeout: 10_000 });
@@ -278,6 +297,7 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     const bpRow = page.getByText('118/76 mmHg').first();
     await bpRow.waitFor({ timeout: 15_000 }).catch(() => {});
     check(`${label}: blood pressure listed on the Timeline`, bpOnTimeline && (await bpRow.isVisible().catch(() => false)));
+    check(`${label}: height listed on the Timeline`, await page.getByText('172.5 cm').first().isVisible().catch(() => false));
     await page.screenshot({ path: join(out, `flutter-web-${label}-timeline-measurement.png`) });
     // F005: a backup downloads as a file (a local Blob, no network) whose
     // manifest checksum matches its payload.
@@ -311,6 +331,7 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       check(`${label}: backup holds the saved weight and lab result`, bundle.manifest.record_count >= 2 && bundle.payload.includes('"analyte_label":"HbA1c"'), `records=${bundle.manifest.record_count}`);
       check(`${label}: backup says it is not encrypted`, bundle.manifest.encryption === 'none-dev-only');
       check(`${label}: backup holds the blood pressure reading as typed`, bundle.payload.includes('"kind":"vital.blood_pressure"') && bundle.payload.includes('"systolic_text":"118"') && bundle.payload.includes('"diastolic_text":"76"') && bundle.manifest.record_schema_versions.includes(4), `schemas=${bundle.manifest.record_schema_versions}`);
+      check(`${label}: backup holds the height as typed, with its measured time, at schema 5`, bundle.payload.includes('"kind":"body.height"') && bundle.payload.includes('"original_text":"172,5"') && bundle.payload.includes('"observed_at":"2026-10-01T08:00:00.000Z"') && bundle.manifest.record_schema_versions.includes(5), `schemas=${bundle.manifest.record_schema_versions}`);
     } catch (e) {
       check(`${label}: backup downloads with a matching checksum`, false, e.message.split('\n')[0]);
     }

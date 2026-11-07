@@ -119,7 +119,7 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
                     constraints: BoxConstraints(
                       minWidth: width,
                       maxWidth: width,
-                      minHeight: 112,
+                      minHeight: 96,
                     ),
                     child: _Tile(
                       kind: k,

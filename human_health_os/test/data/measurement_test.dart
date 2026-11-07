@@ -755,6 +755,52 @@ void main() {
       expect(staged.payload, isNot(contains('vital.blood_pressure')));
     });
 
+    test('two checkpoints in the same second are two files: the earlier one '
+        'is never replaced', () async {
+      final repo = LogRepository(
+        sink: MemoryLogSink(),
+        durability: StorageDurability.localFile,
+        location: 'test',
+      );
+      await repo.open();
+      final files = MemoryDataFiles();
+      final s = await servicesFor(
+        const AppConfig(
+          profile: BuildProfile.development,
+          version: '0.1.0+1',
+          sourceRevision: 'test',
+        ),
+        HostPlatform.linux,
+        repo,
+        files: files,
+      );
+      await s.heartbeat.recordWeightKg(profileId: s.self.id, input: '70');
+      await s.heartbeat.recordMeasurement(
+        profileId: s.self.id,
+        kind: RecordKind.restingHeartRate,
+        input: const MeasurementInput(value: '57'),
+      );
+      final first = files.files.entries.single;
+      await s.heartbeat.recordMeasurement(
+        profileId: s.self.id,
+        kind: RecordKind.height,
+        input: const MeasurementInput(value: '172'),
+      );
+      expect(files.files, hasLength(2));
+      expect(files.files[first.key], first.value, reason: 'not replaced');
+      final versions = [
+        for (final v in files.files.values)
+          stageRestore(v).manifest.recordSchemaVersions,
+      ];
+      expect(
+        versions,
+        containsAll([
+          [3],
+          [3, 4],
+        ]),
+      );
+    });
+
     test(
       'a browser build (files that cannot restore) wires no checkpoint: '
       'the save goes through and nothing is downloaded unasked (G-47)',

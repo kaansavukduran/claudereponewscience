@@ -190,9 +190,17 @@ Future<AppServices> servicesFor(
     // cannot save a file unasked, so they keep none (G-47).
     repo.beforeSchemaUpgrade = () async {
       final now = heartbeat.clock.nowUtc();
+      // A checkpoint never replaces another backup: the name carries the
+      // time to the second, so a second checkpoint in the same second moves
+      // on until its name is free.
+      final taken = {for (final b in await files.backups()) b.name};
+      var stamp = now;
+      while (taken.contains(backupFileName(repo.description.vaultId, stamp))) {
+        stamp = stamp.add(const Duration(seconds: 1));
+      }
       final where = await files.save(
         DataFileKind.backup,
-        backupFileName(repo.description.vaultId, now),
+        backupFileName(repo.description.vaultId, stamp),
         await makeBackup(now),
       );
       checkpointSaved.value = where;
