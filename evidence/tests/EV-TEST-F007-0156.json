@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0156",
+  "kind": "TEST",
+  "forge_id": "U005@v0.32",
+  "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T19:14:19.244Z",
+  "finished_at": "2026-11-07T19:15:27.193Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:05 +443 ~1: All tests passed!",
+  "log_sha256": "cde5170817c537051b27953b653cd059b21fd7aaf24fb5d8ed3d1e9ffa1e872c",
+  "log_lines": 493,
+  "log_tail": [
+    "01:03 +432 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:04 +433 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:04 +434 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:04 +435 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:04 +436 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:04 +437 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:04 +438 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:05 +439 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: web registry never claims HealthKit/Health Connect",
+    "01:05 +440 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Turkish locale localizes navigation",
+    "01:05 +441 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: section headings are separate semantics nodes (not merged with body)",
+    "01:05 +442 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Turkish phone layout renders without overflow",
+    "01:05 +443 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

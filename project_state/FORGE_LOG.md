@@ -738,3 +738,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 
 ## Next recommended Forge
 **U002 — clickable body and specialties guide from open standards** (WHO ICD-11 chapters, UEMS specialties), with sources, never verbatim atlas text, never diagnosing.
+
+# FORGE U005@v0.32 — settings: language, theme, colour, text size, 2026-11-07 — U005_COMPLETE
+
+**Goal** the owner asked why the app was not in Turkish (it followed the device language with no switch) and for a changeable look. **Built** a Settings page opened from a top-bar icon on every screen and from Today: language Türkçe / English / device, light / dark / device, five accent colours (no red or amber; each tone tested at 4.5:1 on its surface), text size device / larger / largest; one click each, applied at once; saved in `appearance.json` by development desktop builds (D-023), kept for the session elsewhere (G-62). **Tests** 443 PASS in UTC, 444 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations on the language switch, dark mapping, text factor and the save call were each caught. **Downloads** Windows (`windows-dev`), Linux (`linux-dev`), Android (`android-dev`) and macOS (`macos-dev`) pre-releases are built by GitHub Actions on each platform's own host (CI evidence; not signed; iOS needs an Apple signing identity). **Next** U006 customisable Today.

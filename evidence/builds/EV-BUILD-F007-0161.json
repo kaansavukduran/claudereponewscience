@@ -1,0 +1,75 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-BUILD-F007-0161",
+  "kind": "BUILD",
+  "forge_id": "U005@v0.32",
+  "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env LANG=C.UTF-8 flutter build linux --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=e92891f45bae82484cb555f37cc030c7de12ce98",
+  "argv": [
+    "env",
+    "LANG=C.UTF-8",
+    "flutter",
+    "build",
+    "linux",
+    "--release",
+    "--dart-define=APP_ENV=development",
+    "--dart-define=APP_VERSION=0.1.0+1",
+    "--dart-define=SOURCE_REVISION=e92891f45bae82484cb555f37cc030c7de12ce98"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T19:20:16.933Z",
+  "finished_at": "2026-11-07T19:20:45.783Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "\u2713 Built build/linux/x64/release/bundle/human_health_os",
+  "log_sha256": "00f97d8271905532172174f6f692a3cf147370fb34ff62b4d70b61361340cc8c",
+  "log_lines": 6,
+  "log_tail": [
+    "   Woah! You appear to be trying to run flutter as root.",
+    "   We strongly recommend running the flutter tool without superuser privileges.",
+    "  /",
+    "\ud83d\udcce",
+    "Building Linux application...                                   ",
+    "\u2713 Built build/linux/x64/release/bundle/human_health_os"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ],
+  "target": "linux",
+  "arch": "x86_64",
+  "profile": "development",
+  "signing": "UNSIGNED",
+  "smoke_evidence": "EV-RUNTIME-F007-0162",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/linux/x64/release/bundle",
+      "type": "directory",
+      "files": 12,
+      "bytes": 25467090,
+      "sha256": "9f0e96c958b27f461aced0605ceb61dff1f4a7913e7be790d067962467bf85b1",
+      "digest_method": "sha256 of sorted '<relpath> <sha256>' lines"
+    },
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/linux/x64/release/bundle/lib/libapp.so",
+      "type": "file",
+      "bytes": 7209864,
+      "sha256": "670d2f0b371edbbeda10eab461569483eef3fff7d7b6ee0ec50ca8920306c7c5"
+    }
+  ]
+}
