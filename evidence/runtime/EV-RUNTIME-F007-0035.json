@@ -1,0 +1,71 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-F007-0035",
+  "kind": "RUNTIME",
+  "forge_id": "F007@v0.32",
+  "source_revision": "5979615760c866b76355b3b51df4c372623fa106",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env EXPECT_FLUTTER_VERSION=3.47.6 node tools/flutter_web_smoke.mjs",
+  "argv": [
+    "env",
+    "EXPECT_FLUTTER_VERSION=3.47.6",
+    "node",
+    "tools/flutter_web_smoke.mjs"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-07T08:40:17.806Z",
+  "finished_at": "2026-11-07T08:40:18.178Z",
+  "exit_code": 1,
+  "expected_exit_code": 0,
+  "result": "FAIL",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": null,
+  "log_sha256": "9bcddc7d613ad88ecf9968216088fbb377e774e60bc451ef31d260346ead9045",
+  "log_lines": 18,
+  "log_tail": [
+    "\u2551 Looks like Playwright Test or Playwright was just installed or updated. \u2551",
+    "\u2551 Please run the following command to download new browsers:              \u2551",
+    "\u2551                                                                         \u2551",
+    "\u2551     npx playwright install                                              \u2551",
+    "\u2551                                                                         \u2551",
+    "\u2551 <3 Playwright Team                                                      \u2551",
+    "\u255a\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u255d",
+    "    at /home/user/claudereponewscience/tools/flutter_web_smoke.mjs:37:32 {",
+    "  name: 'Error'",
+    "}",
+    "",
+    "Node.js v22.23.4"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/flutter_web_smoke.mjs"
+  ],
+  "target": "web",
+  "profile": "development",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/web/main.dart.js",
+      "type": "file",
+      "bytes": 3154599,
+      "sha256": "6f157c522d4836f12b51e90a5ee8a2aa8bc37ae9b94b337275fd40a65f6cc1c9"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/flutter_web_smoke_5979615760c8.json",
+      "type": "missing",
+      "sha256": null
+    }
+  ]
+}

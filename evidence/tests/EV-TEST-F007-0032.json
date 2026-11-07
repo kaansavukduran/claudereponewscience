@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0032",
+  "kind": "TEST",
+  "forge_id": "F007@v0.32",
+  "source_revision": "5979615760c866b76355b3b51df4c372623fa106",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T08:38:54.242Z",
+  "finished_at": "2026-11-07T08:39:41.124Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "00:44 +328: All tests passed!",
+  "log_sha256": "8120c305be278b0458d83f3a585a4b1e9f88507d8463cf023fbb4e42dbf5b076",
+  "log_lines": 416,
+  "log_tail": [
+    "00:42 +317: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:42 +318: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:42 +319: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +320: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +321: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +322: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +323: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +324: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +325: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:43 +326: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:43 +327: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:44 +328: All tests passed!"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

@@ -34,7 +34,8 @@ await mkdir(out, { recursive: true });
 
 const results = [];
 const check = (name, ok, detail = '') => { results.push({ name, status: ok ? 'PASS' : 'FAIL', detail }); };
-const browser = await chromium.launch();
+// CHROME_EXECUTABLE names a Chromium to use when Playwright's own browser build is not installed.
+const browser = await chromium.launch(process.env.CHROME_EXECUTABLE ? { executablePath: process.env.CHROME_EXECUTABLE } : {});
 const browserVersion = browser.version();
 // Explicit BCP-47 locales: a POSIX-locale container makes headless Chromium report
 // 'en-US@posix', which Flutter web rejects at startup (see project_state/RISKS.md R-11).
