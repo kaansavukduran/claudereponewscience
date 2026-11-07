@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0130",
+  "kind": "TEST",
+  "forge_id": "G001@v0.32",
+  "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T16:24:07.283Z",
+  "finished_at": "2026-11-07T16:25:04.361Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "00:54 +431 ~1: All tests passed!",
+  "log_sha256": "ff27bafaa3ad0abd4a4ffa187a06168e2d645352a4097c5fa71864c333be733c",
+  "log_lines": 483,
+  "log_tail": [
+    "00:52 +420 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:52 +421 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:52 +422 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:52 +423 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:53 +424 ~1: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: every F007 error code has its own text in both languages, never the generic one",
+    "00:53 +425 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: only core/redact.dart writes to the console",
+    "00:53 +426 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: an error is shown as its type and code, never its message",
+    "00:53 +427 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: log events keep safe fields only",
+    "00:53 +428 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "00:53 +429 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "00:53 +430 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:54 +431 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

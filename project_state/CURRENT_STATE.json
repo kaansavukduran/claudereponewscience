@@ -3,58 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "FORGE_PLANNING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "G001",
-    "contract": "v0.32",
-    "run_id": "G001@v0.32",
-    "slice": "genetics: raw DNA file import, offline",
-    "goal": "A person drops a raw DNA file from 23andMe, AncestryDNA, MyHeritage or FamilyTreeDNA onto the app and sees, offline and on their device only, what the file contains (a searchable list of variants with their genotypes), with missing never treated as normal; plus a way to match variants against a local annotation pack that cites its sources. User-directed track (D-020).",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "3e3c3b4",
-    "started_at": "2026-11-07T17:00:00Z",
-    "scope": [
-      "pure-Dart parser (no Flutter, IO or network) for 23andMe, AncestryDNA, MyHeritage and FamilyTreeDNA raw data, format detected from the header and the first data lines; unknown formats are refused with a reason",
-      "no-call and invalid-line handling: a no-call stays a no-call, every unreadable line is counted and the first ones listed with line numbers, duplicates are counted; nothing is dropped silently",
-      "summary: source, build if the header states it, totals (all, called, no-call), counts per chromosome, the vendor header kept as typed",
-      "Genetics screen, reachable with the mouse as a secondary destination: choose a file, summary, searchable paged list (rsID, chromosome, position, genotype), clear button; EN/TR; honest wording (a list of what the file contains, not a medical result)",
-      "annotation packs: a plain tab-separated file with rsID, gene, the association as its source states it, the allele, the source and its id; matches shown with genotype and source; the bundled pack is a SYNTHETIC demo, real packs from open sources (ClinVar, GWAS Catalog) are a later step",
-      "privacy: the data stays in session memory only, is never logged, written to disk or sent; the screen says so; Clear drops it"
-    ],
-    "out_of_scope": [
-      "saving a genome in the encrypted vault (G-52); real annotation data from ClinVar or GWAS Catalog and its licence review (G-53)",
-      "any risk score, ancestry estimate, health prediction, drug-response advice or statement of what a genotype means for the person",
-      "VCF or whole-genome sequencing files; building or lifting over genome builds",
-      "sharing, uploading or comparing genomes between people"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Each of the four formats is read from synthetic files that follow the vendor layout (23andMe tab with '# rsid chromosome position genotype'; AncestryDNA tab with allele1 allele2 and chromosome numbers 23-26; MyHeritage CSV with quoted RSID, CHROMOSOME, POSITION, RESULT; FamilyTreeDNA CSV); an unknown or empty file is refused with a stated reason and nothing is half-loaded",
-      "AC-2 Missing is not reference: '--', '-', '0' or an empty result is a no-call and is shown as 'not read', never as normal or as a base; indel markers (D, I, DD, II) are kept as typed; an unreadable line (wrong column count, bad chromosome, non-numeric position, odd genotype) is counted and listed with its line number, at most the first 20 listed; duplicate rsIDs are counted and kept",
-      "AC-3 Summary: source, build when the header states one, total, called, no-call, invalid and duplicate counts, per-chromosome counts (1-22, X, Y, XY, MT in order), the header lines as typed; a 700,000-line file parses in a few seconds",
-      "AC-4 Privacy: no network or disk use by the parser or the screen; genotypes never reach logs (redaction test with synthetic genotypes), the vault or backups; the screen states that the file is kept only until Clear or until the app closes",
-      "AC-5 Screen: reachable with the mouse; empty state; choose-file button; summary; search by rsID or chromosome; paging; Clear; a refused file shows its reason; EN/TR; 320 dp at 2x text without overflow; no interpretation or judging word (the judging-word scans cover every string)",
-      "AC-6 Annotation packs: a pack is parsed with the same care (bad lines counted); matches show rsID, the user's genotype, gene, the association as the source states it, source and source id; a variant not in the pack is not mentioned; the bundled pack is labelled SYNTHETIC; the screen says association is not cause and screening is not diagnosis once",
-      "AC-7 Every new rule has a test bound to a mutation; the F001-F007 suites pass in UTC and New York; gates on a clean tree; design audit items in docs/DESIGN.md pass or are recorded",
-      "AC-8 The only new dependency is a file chooser after a recorded review (D-021); the chooser sits behind an interface so tests and the web smoke do not need a native dialog",
-      "AC-9 Close: D-021, SOURCES, KNOWN_GAPS (G-52, G-53), state and docs updated, one next Forge",
-      "AC-10 (critique) File safety: archives (gzip, zip, bzip2), UTF-16 text, VCF, NUL-containing and oversized (>200 MB) files are refused by content with a code before parsing; a file where more than one line in six is unreadable is refused whole (MOSTLY_INVALID); a partial call (one allele read) is listed as PARTIAL, never turned into a base; errors carry a code and a line number, never a line's text",
-      "AC-11 (critique) Packs: a pack declares name, licence, build and the plus strand or is refused; a genotype is matched to the named allele without regard to order; A/T and C/G pairs are never matched (strand cannot be told apart); a mismatch reads 'does not match this entry', never 'no variant'; the build note says same, differs or not stated; every duplicate id is reported; the statement is shown verbatim with its source, id, date and evidence; the pack note says most of the genome is not covered",
-      "AC-12 (critique) Pre-load notice shown every time before a file is chosen (identifies for life, relatives, not saved by the app but the OS may keep copies, not a medical result); the chooser is released after the read (no cached copy); a refused file leaves an earlier loaded file untouched; the picker and the reader never write to the console (test over debugPrint)",
-      "AC-13 Dependency: file_picker 13.3.2 (MIT) with its transitive packages recorded in D-021; web smoke opens the screen and loads the invented sample in Chromium without a native dialog"
-    ],
-    "completed_steps": [
-      "ORIENT: state READY after F007-S2 (main 3e3c3b4); the owner asked for DNA raw-data import",
-      "SPECIFY: scope and AC-1..AC-9 written",
-      "SPECIFY (refined): independent critique on formats, privacy and licences folded in (AC-10..AC-13); parser, packs and screen implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "independent review, mutations, gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -65,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F007-S2@v0.32 (2026-11-07, source revision d7997095f614)",
+  "last_completed_forge": "G001@v0.32 (2026-11-07, source revision 51a56e6c8786)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -78,100 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0086",
-      "criterion": "AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-TEST-F007-0127",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0087",
-      "criterion": "AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-TEST-F007-0128",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0088",
-      "criterion": "AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-TEST-F007-0129",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (372 PASS, 1 skipped: the host-zone clock-change test needs America/New_York)",
-      "evidence_id": "EV-TEST-F007-0089",
-      "criterion": "AC-1..AC-9, AC-11, AC-14, AC-15..AC-19",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "gate": "flutter test, TZ=UTC (431 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0130",
+      "criterion": "AC-1..AC-8, AC-10..AC-12",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0090",
-      "criterion": "AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-TEST-F007-0131",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0091",
+      "evidence_id": "EV-BUILD-F007-0132",
       "criterion": "AC-13",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
-      "gate": "Playwright smoke in Chromium (78 checks): blood pressure and a height with a typed time typed in the browser, tiles with spoken summaries, reload, Timeline, backup at schema 5; no console errors",
-      "evidence_id": "EV-RUNTIME-F007-0092",
-      "criterion": "AC-13",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "gate": "Playwright smoke in Chromium: the Genetics tool opens from Today with the mouse, the notice shows, the invented sample loads without a native dialog (12 variants, invented pack, no judging words); no console errors, no external requests",
+      "evidence_id": "EV-RUNTIME-F007-0133",
+      "criterion": "AC-13, AC-5",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
-      "gate": "Linux integration on real files (9 PASS): development and encrypted vaults, two checkpoints (3 to 4, 4 to 5) on disk, a time typed on the screen, correction, relaunch",
-      "evidence_id": "EV-TEST-F007-0093",
-      "criterion": "AC-12, AC-8",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "gate": "Linux integration on real files (9 PASS)",
+      "evidence_id": "EV-TEST-F007-0134",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0094",
-      "criterion": "AC-12",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-BUILD-F007-0135",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
-      "gate": "Linux release binary on the schema-5 fixture (Xvfb): tiles with the stored values, vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0095",
-      "criterion": "AC-11, AC-12",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+      "evidence_id": "EV-RUNTIME-F007-0136",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (373 PASS: clock-change gap and repeat on the device zone)",
-      "evidence_id": "EV-TEST-F007-0096",
-      "criterion": "AC-1, AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "gate": "flutter test with TZ=America/New_York (432 PASS)",
+      "evidence_id": "EV-TEST-F007-0137",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0097",
-      "criterion": "AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-TEST-F007-0138",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0098",
-      "criterion": "AC-14",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
-      "result": "PASS"
-    },
-    {
-      "gate": "old-code check on main 0617601 (F007 slice 1) in a scratch worktree: schema-5 data refused unchanged, older-schema data and checkpoints open",
-      "evidence_id": "EV-TEST-F007-0099",
-      "criterion": "AC-10",
-      "source_revision": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+      "evidence_id": "EV-TEST-F007-0139",
+      "criterion": "AC-7",
+      "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
       "result": "PASS"
     }
   ],
@@ -208,9 +152,12 @@
     "contract": "v0.32",
     "run_id": "U001@v0.32",
     "slice": "first-run experience, mouse-only entry",
-    "why": "The owner's direction after slice 2: a person who opens the app for the first time must understand it and enter everything with the mouse only, in a calm interface. U001 adds a short first-run (what Human OS is, what stays on this device, add one number), mouse-only entry controls (steppers, quick-pick chips, time presets) beside the typed fields, and a plain-language 'how to use' page; U002 follows with a clickable body and specialties guide written from open sources (WHO ICD-11, UEMS specialty list), U003 a glossary and measurement guide. Each runs the docs/DESIGN.md slop audit, an independent review and mutation checks"
+    "why": "The owner's direction: a person who opens the app for the first time must understand it and enter everything with the mouse only, in a calm interface. U001 adds a short first-run (what Human OS is, what stays on this device, add one number), steppers, quick-pick chips and time presets beside the typed fields, a plain-language how-to page and the G-49 design leftovers. Then U002 (clickable body and specialties guide from open standards), U003 (glossary), and real annotation packs (G-53) when a licence review is done.",
+    "depends_on": [
+      "G001"
+    ]
   },
-  "updated_at": "2026-11-07T17:00:00Z",
+  "updated_at": "2026-11-07T18:30:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -2223,6 +2170,200 @@
         }
       ],
       "review": "three independent reviewers on e309ae3, each in its own worktree: time/domain/storage (no blocker or major; 2 misleading time texts, a US offset example and a bare 'HH:MM' offset hint, a 24-hour hint, a non-existent -14:00 offset: fixed), UI/design/accessibility (Save squeezed into a narrow strip at 320 dp and 2x text, a swipe or tap outside discarding typed numbers, the backup place shown once, no keyboard submit, no safe-area padding, input edges at 1.3:1, weak navigation cue, weight card led with storage chips, Turkish wording: all fixed), test adequacy (about 55 mutations; gaps in weight typed decimals, the saved caption threshold, Timeline saved/measured text, More details re-opening, Cancel, tile order, spoken labels, dark theme: closed with tests bound to mutations V1-V10). Own mutations: T1-T24 earlier, U1-U7 and V1-V10 here, each caught. Findings from the UI review that were not changed: tiles need two screens of scrolling at 2x text on a 320 dp phone (F7), reduced-motion handling (F11), about ten text styles on Today against 'four sizes' in docs/DESIGN.md."
+    },
+    "G001@v0.32": {
+      "forge_id": "G001",
+      "contract": "v0.32",
+      "run_id": "G001@v0.32",
+      "slice": "genetics: raw DNA file import, offline",
+      "goal": "A person drops a raw DNA file from 23andMe, AncestryDNA, MyHeritage or FamilyTreeDNA onto the app and sees, offline and on their device only, what the file contains (a searchable list of variants with their genotypes), with missing never treated as normal; plus a way to match variants against a local annotation pack that cites its sources. User-directed track (D-020).",
+      "status": "DONE",
+      "baseline_commit": "3e3c3b4",
+      "started_at": "2026-11-07T17:00:00Z",
+      "scope": [
+        "pure-Dart parser (no Flutter, IO or network) for 23andMe, AncestryDNA, MyHeritage and FamilyTreeDNA raw data, format detected from the header and the first data lines; unknown formats are refused with a reason",
+        "no-call and invalid-line handling: a no-call stays a no-call, every unreadable line is counted and the first ones listed with line numbers, duplicates are counted; nothing is dropped silently",
+        "summary: source, build if the header states it, totals (all, called, no-call), counts per chromosome, the vendor header kept as typed",
+        "Genetics screen, reachable with the mouse as a secondary destination: choose a file, summary, searchable paged list (rsID, chromosome, position, genotype), clear button; EN/TR; honest wording (a list of what the file contains, not a medical result)",
+        "annotation packs: a plain tab-separated file with rsID, gene, the association as its source states it, the allele, the source and its id; matches shown with genotype and source; the bundled pack is a SYNTHETIC demo, real packs from open sources (ClinVar, GWAS Catalog) are a later step",
+        "privacy: the data stays in session memory only, is never logged, written to disk or sent; the screen says so; Clear drops it"
+      ],
+      "out_of_scope": [
+        "saving a genome in the encrypted vault (G-52); real annotation data from ClinVar or GWAS Catalog and its licence review (G-53)",
+        "any risk score, ancestry estimate, health prediction, drug-response advice or statement of what a genotype means for the person",
+        "VCF or whole-genome sequencing files; building or lifting over genome builds",
+        "sharing, uploading or comparing genomes between people"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Each of the four formats is read from synthetic files that follow the vendor layout (23andMe tab with '# rsid chromosome position genotype'; AncestryDNA tab with allele1 allele2 and chromosome numbers 23-26; MyHeritage CSV with quoted RSID, CHROMOSOME, POSITION, RESULT; FamilyTreeDNA CSV); an unknown or empty file is refused with a stated reason and nothing is half-loaded",
+        "AC-2 Missing is not reference: '--', '-', '0' or an empty result is a no-call and is shown as 'not read', never as normal or as a base; indel markers (D, I, DD, II) are kept as typed; an unreadable line (wrong column count, bad chromosome, non-numeric position, odd genotype) is counted and listed with its line number, at most the first 20 listed; duplicate rsIDs are counted and kept",
+        "AC-3 Summary: source, build when the header states one, total, called, no-call, invalid and duplicate counts, per-chromosome counts (1-22, X, Y, XY, MT in order), the header lines as typed; a 700,000-line file parses in a few seconds",
+        "AC-4 Privacy: no network or disk use by the parser or the screen; genotypes never reach logs (redaction test with synthetic genotypes), the vault or backups; the screen states that the file is kept only until Clear or until the app closes",
+        "AC-5 Screen: reachable with the mouse; empty state; choose-file button; summary; search by rsID or chromosome; paging; Clear; a refused file shows its reason; EN/TR; 320 dp at 2x text without overflow; no interpretation or judging word (the judging-word scans cover every string)",
+        "AC-6 Annotation packs: a pack is parsed with the same care (bad lines counted); matches show rsID, the user's genotype, gene, the association as the source states it, source and source id; a variant not in the pack is not mentioned; the bundled pack is labelled SYNTHETIC; the screen says association is not cause and screening is not diagnosis once",
+        "AC-7 Every new rule has a test bound to a mutation; the F001-F007 suites pass in UTC and New York; gates on a clean tree; design audit items in docs/DESIGN.md pass or are recorded",
+        "AC-8 The only new dependency is a file chooser after a recorded review (D-021); the chooser sits behind an interface so tests and the web smoke do not need a native dialog",
+        "AC-9 Close: D-021, SOURCES, KNOWN_GAPS (G-52, G-53), state and docs updated, one next Forge",
+        "AC-10 (critique) File safety: archives (gzip, zip, bzip2), UTF-16 text, VCF, NUL-containing and oversized (>200 MB) files are refused by content with a code before parsing; a file where more than one line in six is unreadable is refused whole (MOSTLY_INVALID); a partial call (one allele read) is listed as PARTIAL, never turned into a base; errors carry a code and a line number, never a line's text",
+        "AC-11 (critique) Packs: a pack declares name, licence, build and the plus strand or is refused; a genotype is matched to the named allele without regard to order; A/T and C/G pairs are never matched (strand cannot be told apart); a mismatch reads 'does not match this entry', never 'no variant'; the build note says same, differs or not stated; every duplicate id is reported; the statement is shown verbatim with its source, id, date and evidence; the pack note says most of the genome is not covered",
+        "AC-12 (critique) Pre-load notice shown every time before a file is chosen (identifies for life, relatives, not saved by the app but the OS may keep copies, not a medical result); the chooser is released after the read (no cached copy); a refused file leaves an earlier loaded file untouched; the picker and the reader never write to the console (test over debugPrint)",
+        "AC-13 Dependency: file_picker 13.3.2 (MIT) with its transitive packages recorded in D-021; web smoke opens the screen and loads the invented sample in Chromium without a native dialog"
+      ],
+      "completed_steps": [
+        "ORIENT: state READY after F007-S2 (main 3e3c3b4); the owner asked for DNA raw-data import",
+        "SPECIFY: scope and AC-1..AC-9 written",
+        "SPECIFY (refined): independent critique on formats, privacy and licences folded in (AC-10..AC-13); parser, packs and screen implemented with tests",
+        "GATES: 13 receipts on clean tree 51a56e6, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0139",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0119.json",
+        "evidence/runtime/EV-RUNTIME-F007-0120.json",
+        "evidence/tests/EV-TEST-F007-0101.json",
+        "evidence/tests/EV-TEST-F007-0102.json",
+        "evidence/tests/EV-TEST-F007-0103.json",
+        "evidence/tests/EV-TEST-F007-0114.json",
+        "evidence/tests/EV-TEST-F007-0115.json",
+        "evidence/tests/EV-TEST-F007-0116.json",
+        "evidence/tests/EV-TEST-F007-0117.json",
+        "evidence/tests/EV-TEST-F007-0118.json",
+        "human_health_os/lib/src/app/app_services.dart",
+        "human_health_os/lib/src/app/bootstrap.dart",
+        "human_health_os/lib/src/domain/genetics/annotation_pack.dart",
+        "human_health_os/lib/src/domain/genetics/raw_genome.dart",
+        "human_health_os/lib/src/domain/genetics/sample_data.dart",
+        "human_health_os/lib/src/features/genetics/genetics_screen.dart",
+        "human_health_os/lib/src/features/genetics/genome_file_picker.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/macos/Flutter/GeneratedPluginRegistrant.swift",
+        "human_health_os/pubspec.lock",
+        "human_health_os/pubspec.yaml",
+        "human_health_os/test/data/annotation_pack_test.dart",
+        "human_health_os/test/data/raw_genome_test.dart",
+        "human_health_os/test/widget/g001_genetics_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/KNOWN_GAPS.md",
+        "reports/runtime/flutter_web_smoke_0b98e44dda01.json",
+        "tools/flutter_web_smoke.mjs"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0127",
+        "EV-TEST-F007-0128",
+        "EV-TEST-F007-0129",
+        "EV-TEST-F007-0130",
+        "EV-TEST-F007-0131",
+        "EV-BUILD-F007-0132",
+        "EV-RUNTIME-F007-0133",
+        "EV-TEST-F007-0134",
+        "EV-BUILD-F007-0135",
+        "EV-RUNTIME-F007-0136",
+        "EV-TEST-F007-0137",
+        "EV-TEST-F007-0138",
+        "EV-TEST-F007-0139"
+      ],
+      "blocker": null,
+      "result": "G001_COMPLETE",
+      "finished_at": "2026-11-07T18:30:00Z",
+      "app_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0127",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0128",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0129",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (431 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0130",
+          "criterion": "AC-1..AC-8, AC-10..AC-12",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0131",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0132",
+          "criterion": "AC-13",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium: the Genetics tool opens from Today with the mouse, the notice shows, the invented sample loads without a native dialog (12 variants, invented pack, no judging words); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0133",
+          "criterion": "AC-13, AC-5",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0134",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0135",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0136",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (432 PASS)",
+          "evidence_id": "EV-TEST-F007-0137",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0138",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0139",
+          "criterion": "AC-7",
+          "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+          "result": "PASS"
+        }
+      ],
+      "review": "Three independent reviewers on ad53636 and 0ea1b50, each in its own worktree: UI/design/wording (10 findings: variant rows unusable at 320 dp and 2x, no live region on Reading, search too strict (chr prefix), no page jump, English spoken label in Turkish, allele not shown on match cards and wording that read as a personal finding, unsanitised pack text, 'not read' wording, Turkish wording, repeated promises: fixed except the page jump and debounce, G-59); parser/packs/privacy (14 findings: build regex took any two digits so 'build 2024' gave 20 and hg19 differed from 37, indel calls reported as 'does not match', trailing tab misdetected as AncestryDNA, a lone CR deleted from a genotype, 1-in-5 instead of 1-in-6 refusal, case-sensitive duplicate count, hex/sign accepted in numbers, release() skipped when the read threw, file name unsanitised, invisible characters, IME learning on the search field, counts recomputed per rebuild: fixed; strand ambiguity of a homozygous call and the notice shown only before the first file recorded as G-57, G-58); test adequacy (cut short by an API limit: about 120 mutation probes on the parser found survivors in header requirements, archive markers, thresholds, chromosome names, CSV quoting, build words and vendor hints: tests added; pack-safety/UI/string probes not run by the reviewer, G-60). The web smoke then found that the Genetics tile was not a button for assistive technology and the browser (found by a failing smoke, fixed with a semantic button and a mutation-bound test).",
+      "verification": "13 gates on one clean revision"
     }
   },
   "forge_history_legacy_ids": {

@@ -689,3 +689,33 @@ G-41 structured context · G-42 body composition and other metrics · G-43 units
 
 ## Next recommended Forge
 **U001 — the first-run experience and mouse-only entry** (D-020). A short first-run (what Human OS is, what stays on this device, add one number), steppers, quick-pick chips and time presets beside the typed fields, a plain-language "how to use" page, and the G-49 design leftovers; then U002 (a clickable body and specialties guide written from open standards) and U003 (glossary and measurement guide).
+
+# FORGE G001@v0.32 — genetics: raw DNA file import, offline, 2026-11-07 — G001_COMPLETE
+
+**Goal** a person loads a raw DNA file from 23andMe, AncestryDNA, MyHeritage or FamilyTreeDNA and sees, offline and on their device only, what the file contains (a searchable list of variants and genotypes), with a way to match against a local annotation pack that cites its source. User-directed track (D-020). **Baseline** 3e3c3b4 → implementation 83ac459, ad53636 → review fixes 0ea1b50, e70d592, 0b98e44, 51a56e6 (gates on 51a56e6).
+
+## What was built
+- Pure-Dart reader (`lib/src/domain/genetics/raw_genome.dart`): layouts detected from the header and first data lines; a no-call (`--`, `-`, `0`, empty) stays a no-call, a partial call is never turned into a base, indel markers kept as typed; unreadable lines counted with a code and line number (first 20 listed, never the line's text); duplicates counted (case-folded); build only from a closed set (36/37/38, GRCh and hg forms mapped, anything else is not a build statement); byte-level refusals (gzip, zip, bzip2, 7z, UTF-16, VCF, NUL, over 200 MB) and a file with more than one line in six unreadable is refused whole.
+- Annotation packs (`annotation_pack.dart`): header with name, licence, build and plus strand or refused; statement shown as the source states it, with source, id and date; match kinds: the file lists the allele, lists no such allele (says nothing about other positions), no call, strand cannot be told apart, not comparable (insertion/deletion); text from a pack is made safe (control and direction characters removed, length capped). The bundled pack is invented and labelled so.
+- Genetics screen, opened with the mouse from a Tools tile on Today: notice before any file (identifies you for life, relatives, the OS may keep copies, not a medical result), choose a file or an invented sample, summary, search by rsID or chromosome (chr prefix accepted), paging, two-line variant rows that hold at 320 dp and 2x text, spoken labels in the app language, Clear. The file is held only while the page is open and is never written, logged or sent; `file_picker` sits behind an interface and the chooser's cache is released in a `finally` (D-021, D-022).
+
+## Multi-agent adversarial reviews (ultracode)
+Three reviewers in their own worktrees (UI/design/wording, parser/packs/privacy, test adequacy); the Workflow tool was off, so they ran with the Agent tool. Findings and repairs are in `CURRENT_STATE.json` (`review`). The test-adequacy reviewer was cut short by an API limit: its parser probes (about 120) found survivors that now have tests; its pack-safety, UI and string probes did not run (G-60). The web smoke then failed because the Genetics tile was not exposed as a button to assistive technology and the browser; fixed with a semantic button and a mutation-bound test.
+
+## Acceptance → evidence
+AC-1..AC-3, AC-10: `test/data/raw_genome_test.dart` · AC-4: `test/security/no_sensitive_logs_test.dart`, `test/widget/g001_genetics_test.dart` · AC-5: widget tests (search, paging, refusals, 320 dp at 2x in EN and TR, judging-word scan) · AC-6, AC-11: `test/data/annotation_pack_test.dart` · AC-7: mutations bound to chr search, hidden-character removal, spoken label, row layout, tile semantics, and the reviewed parser gaps; 13 gates · AC-8, AC-13: D-021, web smoke EV-RUNTIME-F007-0133 (opens the screen and loads the sample in Chromium) · AC-9: this entry. AC-11 and AC-12 are met in a narrower form than written: see G-57 (homozygous calls on A/T and C/G alleles) and G-58 (the notice is shown while no file is loaded).
+
+## Tests / Builds / Runtime (receipts on 51a56e6)
+- `flutter test` 431 PASS (1 skipped) in UTC and 432 PASS in `TZ=America/New_York`; Linux integration 9 PASS; tooling, contracts, `pnpm test` PASS; pub get, format 0 changed, analyze no issues. Web (development) COMPILED, smoke PASS (EV-RUNTIME-F007-0133). Linux (development) COMPILED, UNSIGNED, RUNTIME_TESTED under Xvfb on the schema-5 fixture (EV-RUNTIME-F007-0136; the DNA screen itself is exercised by widget tests and the web smoke, not by the Linux binary).
+- Earlier gate runs kept as history, not verified gates: EV-*-F007-0101…0103 (analyze info in my own test) and EV-*-F007-0114…0126 (web smoke failed on the Genetics tile as above). No old-code check was needed: no stored data or schema changed.
+- Not built here: Windows, macOS (BLOCKED_BY_HOST_OS), Android (BLOCKED_ENVIRONMENT), iOS (BLOCKED_BY_HOST_OS); the native file dialog was not exercised on any platform in this environment (the picker is faked in tests; G-55).
+
+## Failures found and repairs
+1. Product: see reviews; the Genetics tile semantics bug was found by the web smoke, not by a unit test.
+2. Process: the smoke appeared to hang for minutes when the tile could not be found (bounded loops with slow queries); fixed at the cause. The first reviewers hit API limits and were resumed.
+
+## Known limitations
+G-52 no saved genome · G-53 no real annotation data (licence review) · G-54 large-file parsing on the web main thread · G-55 file dialog needs a portal on Linux, no drag-and-drop · G-56 other layouts (Living DNA, VCF) · G-57 strand ambiguity of homozygous calls · G-58 notice only before the first file · G-59 search and paging at 700,000 rows · G-60 test-adequacy review incomplete. This feature lists what a file contains; it does not interpret it.
+
+## Next recommended Forge
+**U001 — the first-run experience and mouse-only entry** (D-020), then U002 (clickable body and specialties guide from open standards) and U003 (glossary).

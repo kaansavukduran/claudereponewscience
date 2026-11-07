@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0137",
+  "kind": "TEST",
+  "forge_id": "G001@v0.32",
+  "source_revision": "51a56e6c8786db5de3384c34549e75cb4b125302",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=America/New_York flutter test",
+  "argv": [
+    "env",
+    "TZ=America/New_York",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T16:30:43.665Z",
+  "finished_at": "2026-11-07T16:31:44.285Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "00:57 +432: All tests passed!",
+  "log_sha256": "665392cb1d2d3397eaa5f496d3eb071007c8636594d826c893f94d19858a3006",
+  "log_lines": 481,
+  "log_tail": [
+    "00:55 +421: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:55 +422: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:55 +423: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:56 +424: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:56 +425: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:56 +426: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:56 +427: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:56 +428: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:56 +429: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:56 +430: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:56 +431: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:57 +432: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
