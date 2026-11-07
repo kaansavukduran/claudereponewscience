@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R001",
+    "contract": "v0.32",
+    "run_id": "R001@v0.32",
+    "slice": "independent review of U001-U010, with G002 and U011 on the same gate run",
+    "goal": "Fix the verified findings of three independent reviews of the U-series, and close the owner's two follow-up requests (G002 dbSNP comparison, U011 reading fonts) on one gate run; each is logged on its own in FORGE_LOG.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "6fa7faa",
+    "started_at": "2026-11-07T21:30:00Z",
+    "scope": [
+      "R001: review fixes 0a83ec4, 8c26d94 (summary partial note, portable settings in memory, chart scale/labels, settings semantics, glossary folding, live notes, guide links, Turkish terms, workflow concurrency)",
+      "G002: dbSNP Summary import and comparison (c6682b8, D-024)",
+      "U011: reading fonts and wide spacing (480efa3, D-025)"
+    ],
+    "out_of_scope": [
+      "pathogenicity prediction (D-024)",
+      "plant chemicals lookup (G003)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Every review finding fixed or recorded with a reason; each fix has a test bound to a mutation (two mutations equivalent, recorded)",
+      "AC-2 G002: dbSNP file parsed and compared; missense/clinical filters; refusals; no app prediction",
+      "AC-3 U011: fonts bundled with licences and pinned hashes; font and spacing apply at once",
+      "AC-4 Gates on a clean tree"
+    ],
+    "completed_steps": [
+      "review fixes",
+      "G002",
+      "U011"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -3974,23 +4009,5 @@
     "branch": "claude/code-capabilities-kz21fr",
     "push": "OK (origin)",
     "main": "F007 slice 2 close (D-019) once pushed; main advances only when a Forge closes with receipts (D-017)"
-  },
-  "pending_forges": [
-    {
-      "forge_id": "R001",
-      "note": "review fixes committed (0a83ec4, 8c26d94); waiting for the test-adequacy reviewer before gates and close"
-    },
-    {
-      "forge_id": "G002",
-      "note": "dbSNP Summary import implemented with tests; gates after R001"
-    },
-    {
-      "forge_id": "U011",
-      "note": "owner request: font choice incl. a dyslexia-friendly font (needs a reviewed, bundled OFL font)"
-    },
-    {
-      "forge_id": "G003",
-      "note": "owner request: plant chemicals (USDA Dr. Duke's CSV/XLSX export) offline lookup"
-    }
-  ]
+  }
 }
