@@ -3,9 +3,43 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U002",
+    "contract": "v0.32",
+    "run_id": "U002@v0.32",
+    "slice": "clickable body and specialties guide",
+    "goal": "Owner request (Human Atlas, specialties): a first-time user clicks a body system and sees what it does, its main parts, which specialties care for it, what Human OS records for it, and where to go first; written for the project from open standards, never verbatim atlas text, never diagnosing.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "77fb392",
+    "started_at": "2026-11-07T20:05:00Z",
+    "scope": [
+      "13 body systems (grouping after ICD-11 chapters), 28 specialties (UEMS names, Türkiye TUS names)",
+      "each system: what it does, main parts, who looks after it, links to Human OS record kinds, first stop (family medicine) and 112",
+      "sources on the page; EN/TR; Today tool tile"
+    ],
+    "out_of_scope": [
+      "anatomical drawings or a 3D body (later)",
+      "symptom checker or any reasoning from the person's values",
+      "verbatim atlas or ICD text"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Every system names existing specialties and at least one part; ids unique",
+      "AC-2 Every linked measurement is a Human OS record kind",
+      "AC-3 No guide text diagnoses, judges or advises treatment (EN/TR scans)",
+      "AC-4 Today → guide → system works with the mouse; every system opens in Turkish at 320 dp and 2x text; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests (a29cfb0, e62a9b2)"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
