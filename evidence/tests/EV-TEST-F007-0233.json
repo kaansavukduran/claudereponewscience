@@ -1,0 +1,47 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0233",
+  "kind": "TEST",
+  "forge_id": "U009@v0.32",
+  "source_revision": "c0380ccaf24b9e90f442fbfbeb886b9fbe208e22",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter analyze",
+  "argv": [
+    "flutter",
+    "analyze"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T21:08:12.844Z",
+  "finished_at": "2026-11-07T21:08:14.439Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "No issues found! (ran in 1.0s)",
+  "log_sha256": "5d269f3d09b623caeb0a6051f3a5e53d315b4060cb52c049c5545b2e170e0fea",
+  "log_lines": 6,
+  "log_tail": [
+    "   Woah! You appear to be trying to run flutter as root.",
+    "   We strongly recommend running the flutter tool without superuser privileges.",
+    "  /",
+    "\ud83d\udcce",
+    "Analyzing human_health_os...                                    ",
+    "No issues found! (ran in 1.0s)"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
