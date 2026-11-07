@@ -588,6 +588,43 @@ class S {
     '$n kayıtlı ölçümün grafiği; her ölçüm aşağıda listelenmiştir.',
   );
   String get trendAllPoints => _t('Every reading', 'Tüm ölçümler');
+  String get phytoTitle => _t('Plant chemicals', 'Bitki maddeleri');
+  String get phytoTileHint => _t(
+    'Look up a table from the USDA plant-chemicals database, offline',
+    'USDA bitki maddeleri veritabanından bir tabloya internetsiz bak',
+  );
+  String get phytoHow => _t(
+    'On phytochem.nal.usda.gov open a chemical, an activity or a plant, then choose "Download these results as: CSV". Load that file here: it is read on this device and not saved.',
+    'phytochem.nal.usda.gov sitesinde bir madde, etki ya da bitki aç, sonra "Download these results as: CSV" seç. O dosyayı buraya yükle: bu cihazda okunur ve kaydedilmez.',
+  );
+  String get phytoLoad => _t('Load a CSV file', 'CSV dosyası yükle');
+  String phytoRefusal(String code) => switch (code) {
+    'EMPTY' => _t('The file is empty.', 'Dosya boş.'),
+    'XLSX' => _t(
+      'This is an Excel (XLSX) file. Download the CSV version instead, or save it as CSV.',
+      'Bu bir Excel (XLSX) dosyası. Bunun yerine CSV sürümünü indir ya da CSV olarak kaydet.',
+    ),
+    'TOO_LARGE' => _t(
+      'The file is larger than 50 MB.',
+      'Dosya 50 MB\'tan büyük.',
+    ),
+    'NOT_TABLE' => _t(
+      'This does not look like a table with a header row.',
+      'Bu, başlık satırı olan bir tabloya benzemiyor.',
+    ),
+    _ => _t('The file could not be read.', 'Dosya okunamadı.'),
+  };
+  String phytoLoaded(String name, int n) =>
+      _t('$name: $n rows', '$name: $n satır');
+  String phytoSkipped(int n) => _t(
+    '$n lines had a different number of columns and are not shown.',
+    '$n satırın sütun sayısı farklıydı, gösterilmiyor.',
+  );
+  String get phytoNote => _t(
+    'Every cell is shown as the database wrote it. Most doses come from animal or cell studies (the abbreviations are explained under each row) and are not doses for people. An activity in a lab test is not proof of an effect in a person. Talk to a clinician or pharmacist before taking any supplement.',
+    'Her hücre veritabanının yazdığı gibi gösterilir. Dozların çoğu hayvan ya da hücre çalışmalarından gelir (kısaltmalar her satırda açıklanır) ve insan için doz değildir. Laboratuvar testinde görülen bir etkinlik, bir insanda etkinin kanıtı değildir. Herhangi bir takviye almadan önce bir hekim ya da eczacıyla konuş.',
+  );
+  String get phytoSearch => _t('Search any column', 'Herhangi bir sütunda ara');
   String get glossaryTitle => _t('Glossary', 'Sözlük');
   String get glossaryTileHint => _t(
     'Every measurement and term in plain words, and how to measure at home',

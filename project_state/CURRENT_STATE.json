@@ -3,9 +3,43 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G003",
+    "contract": "v0.32",
+    "run_id": "G003@v0.32",
+    "slice": "plant chemicals offline",
+    "goal": "Owner request: load a CSV export of Dr. Duke's phytochemical database and search it on the device, with dose abbreviations explained, nothing advised.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "22c392a",
+    "started_at": "2026-11-07T22:40:00Z",
+    "scope": [
+      "CSV reader (quoted commas, doubled quotes, line breaks in quotes, BOM, CRLF); rows with a different column count counted, not guessed",
+      "refusals EMPTY, XLSX (ZIP magic), NOT_TABLE, TOO_LARGE (50 MB)",
+      "Plant chemicals tool on Today: load, search any column (Turkish folding), dose-term explanations per row, note that most doses are from animals or cells"
+    ],
+    "out_of_scope": [
+      "XLSX reading (needs a reviewed dependency)",
+      "bundling the database",
+      "any dose or supplement advice"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Cells as written; empty stays empty; short rows counted",
+      "AC-2 Refusals with reasons; a refused file keeps the loaded table",
+      "AC-3 Search and dose terms; words judge nothing",
+      "AC-4 Mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

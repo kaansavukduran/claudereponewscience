@@ -11,6 +11,7 @@ import '../../presentation/widgets/status_chip.dart';
 import '../genetics/genetics_screen.dart';
 import '../guide/body_guide_screen.dart';
 import '../guide/glossary_screen.dart';
+import '../phyto/phyto_screen.dart';
 import '../report/summary_screen.dart';
 import '../help/how_to_screen.dart';
 import '../settings/settings_screen.dart';
@@ -109,6 +110,18 @@ class TodayScreen extends StatelessWidget {
             hint: s.guideTileHint,
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(builder: (_) => const BodyGuideScreen()),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _ToolTile(
+            key: const ValueKey('tool-phyto'),
+            icon: Icons.eco_outlined,
+            title: s.phytoTitle,
+            hint: s.phytoTileHint,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => PhytoScreen(services: services),
+              ),
             ),
           ),
           const SizedBox(height: 8),

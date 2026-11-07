@@ -13,6 +13,7 @@ import 'package:human_health_os/src/data/local/appearance_store_io.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
 import 'package:human_health_os/src/domain/settings/appearance.dart';
+import 'package:human_health_os/src/features/genetics/genome_file_picker.dart';
 import 'package:human_health_os/src/l10n/strings.dart';
 import 'package:human_health_os/src/presentation/theme/human_os_theme.dart';
 
@@ -23,6 +24,7 @@ Future<AppearanceController> launchWith(
   WidgetTester tester, {
   AppearanceSettings initial = const AppearanceSettings(),
   MemoryAppearanceStore? store,
+  GenomeFilePicker? picker,
 }) async {
   tester.view.physicalSize = const Size(1280, 3200);
   tester.view.devicePixelRatio = 1.0;
@@ -34,7 +36,13 @@ Future<AppearanceController> launchWith(
       location: 'test',
     );
     final report = await repo.open();
-    return servicesFor(dev, HostPlatform.linux, repo, report: report);
+    return servicesFor(
+      dev,
+      HostPlatform.linux,
+      repo,
+      report: report,
+      genomePicker: picker,
+    );
   });
   final c = AppearanceController(store ?? MemoryAppearanceStore(), initial);
   await tester.pumpWidget(HumanOsApp(services: s!, appearance: c));
