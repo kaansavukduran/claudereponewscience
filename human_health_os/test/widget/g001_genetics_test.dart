@@ -53,10 +53,17 @@ String variantsFile(int n) {
   return b.toString();
 }
 
+/// Lets real I/O finish, then settles. While a file is being read the
+/// spinner animates forever, so wait (in real time, up to 5 s) until it is
+/// gone before pumpAndSettle; a busy machine can take longer than one tick.
 Future<void> settle(WidgetTester tester) async {
-  await tester.runAsync(
-    () => Future<void>.delayed(const Duration(milliseconds: 30)),
-  );
+  for (var i = 0; i < 100; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 50)),
+    );
+    await tester.pump();
+    if (find.byType(CircularProgressIndicator).evaluate().isEmpty) break;
+  }
   await tester.pumpAndSettle();
 }
 

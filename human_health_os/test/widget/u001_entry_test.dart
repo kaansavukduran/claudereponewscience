@@ -58,14 +58,14 @@ void main() {
     await launch(tester);
     await openSheet(tester, RecordKind.height);
     await tapKey(tester, 'measure-more');
-    await tapKey(tester, 'measure-preset-1 hour ago');
-    final hourAgo = DateTime.now().subtract(const Duration(hours: 1));
     String two(int n) => n.toString().padLeft(2, '0');
-    expect(
-      whenText(tester),
-      '${hourAgo.year}-${two(hourAgo.month)}-${two(hourAgo.day)} '
-      '${two(hourAgo.hour)}:${two(hourAgo.minute)}',
-    );
+    String stamp(DateTime d) =>
+        '${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}';
+    // The clock may pass a minute while the chip is tapped: either minute.
+    final before = stamp(DateTime.now().subtract(const Duration(hours: 1)));
+    await tapKey(tester, 'measure-preset-1 hour ago');
+    final after = stamp(DateTime.now().subtract(const Duration(hours: 1)));
+    expect([before, after], contains(whenText(tester)));
     await tapKey(tester, 'measure-preset-Now');
     expect(whenText(tester), '');
     await tapKey(tester, 'measure-preset-Yesterday 20:00');
