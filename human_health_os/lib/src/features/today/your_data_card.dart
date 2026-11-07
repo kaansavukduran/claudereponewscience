@@ -42,6 +42,14 @@ class _YourDataCardState extends State<YourDataCard> {
   void initState() {
     super.initState();
     _reload();
+    // A checkpoint made by a save elsewhere on Today shows up in the list.
+    widget.services.checkpointSaved?.addListener(_reload);
+  }
+
+  @override
+  void dispose() {
+    widget.services.checkpointSaved?.removeListener(_reload);
+    super.dispose();
   }
 
   Future<void> _reload() async {

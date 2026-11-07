@@ -342,7 +342,7 @@ class S {
       'Oxygen saturation (SpO2)',
       'Oksijen satürasyonu (SpO2)',
     ),
-    RecordKind.respiratoryRate => _t('Respiratory rate', 'Solunum sayısı'),
+    RecordKind.respiratoryRate => _t('Respiratory rate', 'Solunum hızı'),
   };
 
   // Measurements (F007): kept exactly as typed, never judged.
@@ -376,7 +376,7 @@ class S {
     ),
     RecordKind.respiratoryRate => _t(
       'Respiratory rate (breaths/min)',
-      'Solunum sayısı (soluk/dk)',
+      'Solunum hızı (soluk/dk)',
     ),
     _ => recordKind(k),
   };
@@ -398,16 +398,22 @@ class S {
     _ => null,
   };
 
+  /// Shown when a backup was made for an entry that was then not saved.
+  String checkpointKept(String where) => _t(
+    'Not saved. A backup of your earlier data was made first and is at $where.',
+    'Kaydedilmedi. Önce önceki verilerinin yedeği alındı, şurada: $where.',
+  );
+
   String get whenField => _t('When (optional)', 'Ne zaman (isteğe bağlı)');
   String get whenHint => _t(
     'YYYY-MM-DD HH:MM or HH:MM, your device\'s time. Empty = now.',
     'YYYY-AA-GG SS:DD ya da SS:DD, cihazının saati. Boş = şimdi.',
   );
-  String measuredAtLabel(String when) => _t('measured $when', 'ölçülen $when');
-  String savedAtLabel(String when) => _t('saved $when', 'kaydedilen $when');
+  String measuredAtLabel(String when) => _t('measured $when', 'ölçüm $when');
+  String savedAtLabel(String when) => _t('saved $when', 'kayıt $when');
   String get contextField => _t(
-    'How it was measured (optional), e.g. sitting, left arm',
-    'Nasıl ölçüldü (isteğe bağlı), ör. oturarak, sol kol',
+    'Note (optional), e.g. sitting, left arm',
+    'Not (isteğe bağlı), ör. oturarak, sol kol',
   );
   String get saveMeasurement => _t('Save measurement', 'Ölçümü kaydet');
   String get measurementNotYet => _t('Not recorded yet', 'Henüz kayıt yok');
@@ -491,7 +497,7 @@ class S {
     'bpm' => _t('beats per minute', 'dakikada atım'),
     'cm' => _t('centimetres', 'santimetre'),
     'kg' => _t('kilograms', 'kilogram'),
-    '°C' => _t('degrees Celsius', 'Celsius derece'),
+    '°C' => _t('degrees Celsius', 'santigrat derece'),
     '%' => _t('percent', 'yüzde'),
     'breaths/min' => _t('breaths per minute', 'dakikada soluk'),
     _ => u,

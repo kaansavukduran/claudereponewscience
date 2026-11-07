@@ -125,6 +125,10 @@ ThemeData buildHumanOsTheme(Brightness brightness) {
           color: ink,
         ),
       );
+  // Field boundaries need 3:1 against the surface (WCAG 1.4.11); card
+  // outlines stay hairline.
+  final fieldEdge = dark ? const Color(0xFF6C8386) : const Color(0xFF7B8E90);
+  final navIndicator = dark ? const Color(0xFF2E5F66) : const Color(0xFFBFE0E3);
   final radius = BorderRadius.circular(12);
   return ThemeData(
     colorScheme: scheme,
@@ -156,11 +160,11 @@ ThemeData buildHumanOsTheme(Brightness brightness) {
       fillColor: card,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: hairline),
+        borderSide: BorderSide(color: fieldEdge),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: hairline),
+        borderSide: BorderSide(color: fieldEdge),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
@@ -185,13 +189,26 @@ ThemeData buildHumanOsTheme(Brightness brightness) {
     ),
     navigationRailTheme: NavigationRailThemeData(
       backgroundColor: surface,
-      indicatorColor: scheme.primaryContainer,
+      indicatorColor: navIndicator,
       selectedIconTheme: IconThemeData(color: scheme.onPrimaryContainer),
+      selectedLabelTextStyle: TextStyle(
+        color: ink,
+        fontWeight: FontWeight.w700,
+      ),
     ),
     navigationBarTheme: NavigationBarThemeData(
       backgroundColor: card,
-      indicatorColor: scheme.primaryContainer,
+      indicatorColor: navIndicator,
       surfaceTintColor: Colors.transparent,
+      labelTextStyle: WidgetStateProperty.resolveWith(
+        (states) => TextStyle(
+          fontSize: 12,
+          color: ink,
+          fontWeight: states.contains(WidgetState.selected)
+              ? FontWeight.w700
+              : FontWeight.w500,
+        ),
+      ),
     ),
     bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: card,

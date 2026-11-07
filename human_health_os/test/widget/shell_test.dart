@@ -204,7 +204,8 @@ void main() {
   testWidgets('every destination is reachable on desktop and none is blank', (
     tester,
   ) async {
-    await pumpApp(tester, size: desktop);
+    // Tall: Today is a lazy list and its "planned" line is near the bottom.
+    await pumpApp(tester, size: desktopTall);
     for (final d in destinations) {
       await tester.tap(
         find.descendant(

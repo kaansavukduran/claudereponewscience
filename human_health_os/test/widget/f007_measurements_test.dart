@@ -518,6 +518,88 @@ void main() {
     );
   });
 
+  testWidgets('the sheet at 320 dp and 2x text: Save keeps a usable width, '
+      'a tap outside or a swipe does not close it, Done on the keyboard '
+      'saves', (tester) async {
+    await launch(tester, size: const Size(320, 2400), textScale: 2.0);
+    await openSheet(tester, RecordKind.restingHeartRate);
+    final save = tester.getSize(find.byKey(const ValueKey('measure-save')));
+    expect(save.width, greaterThan(220), reason: 'not a narrow strip');
+    expect(save.height, lessThan(160));
+    await fill(tester, 'measure-value', '57');
+    // Outside the sheet and a downward swipe: typed numbers are not lost.
+    await tester.tapAt(const Offset(10, 10));
+    await settle(tester);
+    expect(find.byKey(const ValueKey('measure-save')), findsOneWidget);
+    await tester.drag(
+      find.byKey(const ValueKey('measure-sheet-vital.resting_heart_rate')),
+      const Offset(0, 600),
+    );
+    await settle(tester);
+    expect(find.byKey(const ValueKey('measure-save')), findsOneWidget);
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('measure-value')))
+          .controller!
+          .text,
+      '57',
+    );
+    // Done on the keyboard is Save.
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await settle(tester);
+    expect(find.byKey(const ValueKey('measure-save')), findsNothing);
+    expect(latestOf(tester, RecordKind.restingHeartRate), '57 bpm');
+  });
+
+  testWidgets('blood pressure: Next on the keyboard goes from the upper to '
+      'the lower number', (tester) async {
+    await launch(tester);
+    await openSheet(tester, RecordKind.bloodPressure);
+    final sys = tester.widget<TextField>(
+      find.byKey(const ValueKey('measure-systolic')),
+    );
+    final dia = tester.widget<TextField>(
+      find.byKey(const ValueKey('measure-diastolic')),
+    );
+    expect(sys.textInputAction, TextInputAction.next);
+    expect(dia.textInputAction, TextInputAction.done);
+  });
+
+  testWidgets('a backup made for an entry that was then not saved is told '
+      'where it is; a checkpoint shows in "Your data" at once', (tester) async {
+    final files = MemoryDataFiles();
+    final s = await launch(tester, files: files);
+    await tester.runAsync(
+      () => s.heartbeat.recordWeightKg(profileId: s.self.id, input: '70'),
+    );
+    await openSheet(tester, RecordKind.restingHeartRate);
+    s.checkpointSaved!.value = 'memory:backup/x.hhosbackup.json';
+    await tapKey(tester, 'measure-cancel');
+    expect(
+      find.textContaining('A backup of your earlier data was made first'),
+      findsOneWidget,
+    );
+    await saveScalar(tester, RecordKind.restingHeartRate, '57');
+    await tester.ensureVisible(find.text('Backups on this device'));
+    await settle(tester);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('your-data-card')),
+        matching: find.textContaining('human-os-backup-'),
+      ),
+      findsOneWidget,
+      reason: 'listed without a restart',
+    );
+  });
+
+  testWidgets('the weight card leads with the number and the entry; where '
+      'the data is kept comes last', (tester) async {
+    await launch(tester);
+    final input = tester.getTopLeft(find.byKey(const ValueKey('weight-input')));
+    final chip = tester.getTopLeft(find.byKey(const ValueKey('storage-chip')));
+    expect(chip.dy, greaterThan(input.dy));
+  });
+
   testWidgets('errors are shown on their own field and nothing is saved; '
       'a typed 0, swapped numbers and a bad time are refused', (tester) async {
     final s = await launch(tester);

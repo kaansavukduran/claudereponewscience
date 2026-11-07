@@ -60,11 +60,29 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
     final saved = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
-      showDragHandle: true,
+      useSafeArea: true,
+      // Typed numbers are never lost to a stray swipe or tap outside: the
+      // sheet closes with Save or Cancel.
+      isDismissible: false,
+      enableDrag: false,
       builder: (_) => _EntrySheet(services: widget.services, kind: kind),
     );
-    if (saved != true) return;
     final checkpoint = widget.services.checkpointSaved?.value;
+    if (saved != true) {
+      // A backup may have been made for an entry that was then not saved:
+      // the person is told where it is.
+      if (checkpoint != null) {
+        messenger.hideCurrentSnackBar();
+        messenger.showSnackBar(
+          SnackBar(
+            content: Text(s.checkpointKept(checkpoint)),
+            duration: const Duration(seconds: 12),
+            showCloseIcon: true,
+          ),
+        );
+      }
+      return;
+    }
     messenger.hideCurrentSnackBar();
     messenger.showSnackBar(
       SnackBar(
@@ -319,6 +337,7 @@ class _EntrySheetState extends State<_EntrySheet> {
     bool number = true,
     String? hint,
     bool autofocus = false,
+    bool last = true,
   }) => Padding(
     padding: const EdgeInsets.only(top: 12),
     child: TextField(
@@ -328,6 +347,8 @@ class _EntrySheetState extends State<_EntrySheet> {
       keyboardType: number
           ? const TextInputType.numberWithOptions(decimal: true)
           : TextInputType.text,
+      textInputAction: last ? TextInputAction.done : TextInputAction.next,
+      onSubmitted: last ? (_) => _busy ? null : _save() : null,
       inputFormatters: field == 'context'
           ? const [ContextLengthFormatter()]
           : null,
@@ -369,6 +390,7 @@ class _EntrySheetState extends State<_EntrySheet> {
                 'measure-systolic',
                 'systolic',
                 autofocus: true,
+                last: false,
               ),
               _field(
                 s,
@@ -433,24 +455,18 @@ class _EntrySheetState extends State<_EntrySheet> {
               ),
             ],
             const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: FilledButton(
-                    key: const ValueKey('measure-save'),
-                    onPressed: _busy ? null : _save,
-                    child: Text(s.saveMeasurement),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                TextButton(
-                  key: const ValueKey('measure-cancel'),
-                  onPressed: _busy
-                      ? null
-                      : () => Navigator.of(context).pop(false),
-                  child: Text(s.cancel),
-                ),
-              ],
+            // Stacked, full width: at large text a side-by-side pair squeezed
+            // the Save label into a narrow strip.
+            FilledButton(
+              key: const ValueKey('measure-save'),
+              onPressed: _busy ? null : _save,
+              child: Text(s.saveMeasurement),
+            ),
+            const SizedBox(height: 4),
+            TextButton(
+              key: const ValueKey('measure-cancel'),
+              onPressed: _busy ? null : () => Navigator.of(context).pop(false),
+              child: Text(s.cancel),
             ),
           ],
         ),

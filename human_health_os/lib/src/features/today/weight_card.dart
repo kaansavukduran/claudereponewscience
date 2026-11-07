@@ -152,46 +152,6 @@ class _WeightCardState extends State<WeightCard> {
               child: Text(s.weightTitle, style: text.titleMedium),
             ),
             const SizedBox(height: 8),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                StatusChip(
-                  key: const ValueKey('storage-chip'),
-                  label: s.storageLabel(
-                    storage.durability.name,
-                    storage.encrypted,
-                  ),
-                  tone: storage.encrypted ? StatusTone.ok : StatusTone.info,
-                ),
-              ],
-            ),
-            if (notice != null) ...[
-              const SizedBox(height: 8),
-              Text(
-                notice,
-                key: const ValueKey('storage-notice'),
-                style: text.bodySmall,
-              ),
-            ],
-            for (final n in services.storageNotes) ...[
-              const SizedBox(height: 8),
-              Text(
-                s.storageNote(n),
-                key: ValueKey('storage-note-${n.kind.name}'),
-                style: text.bodySmall,
-              ),
-            ],
-            for (final w in services.loadWarnings) ...[
-              const SizedBox(height: 8),
-              Text(
-                s.loadWarning(w),
-                key: ValueKey('load-warning-${w.line}'),
-                style: text.bodySmall?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-            ],
             const SizedBox(height: 12),
             if (conflict)
               Text(
@@ -289,6 +249,48 @@ class _WeightCardState extends State<WeightCard> {
                     ],
                   ),
                 ),
+            ],
+            // Where the data lives is said last: the person's number first.
+            const SizedBox(height: 16),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                StatusChip(
+                  key: const ValueKey('storage-chip'),
+                  label: s.storageLabel(
+                    storage.durability.name,
+                    storage.encrypted,
+                  ),
+                  tone: storage.encrypted ? StatusTone.ok : StatusTone.info,
+                ),
+              ],
+            ),
+            if (notice != null) ...[
+              const SizedBox(height: 8),
+              Text(
+                notice,
+                key: const ValueKey('storage-notice'),
+                style: text.bodySmall,
+              ),
+            ],
+            for (final n in services.storageNotes) ...[
+              const SizedBox(height: 8),
+              Text(
+                s.storageNote(n),
+                key: ValueKey('storage-note-${n.kind.name}'),
+                style: text.bodySmall,
+              ),
+            ],
+            for (final w in services.loadWarnings) ...[
+              const SizedBox(height: 8),
+              Text(
+                s.loadWarning(w),
+                key: ValueKey('load-warning-${w.line}'),
+                style: text.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
             ],
           ],
         ),
