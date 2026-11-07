@@ -3,9 +3,41 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U008",
+    "contract": "v0.32",
+    "run_id": "U008@v0.32",
+    "slice": "your numbers over time",
+    "goal": "Brainstorm B6: each measurement and the weight over time as saved points, lines only between readings at most 7 days apart, a range to choose, every reading as text; no interpolation, averages, target bands or judging colours.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "cd07d59",
+    "started_at": "2026-11-07T21:30:00Z",
+    "scope": [
+      "pure trend functions (points from live entries with a value, range filter, segments split by gaps over 7 days)",
+      "chart screen from each measurement sheet and the weight card: CustomPainter, no new dependency; blood pressure as circles (systolic) and squares (diastolic); click shows a reading; full list of readings"
+    ],
+    "out_of_scope": [
+      "comparisons, averages, regression lines (F011 derived results)",
+      "user-drawn reference lines (BRAINSTORM 8)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Withdrawn, deleted and not-recorded readings are not drawn; a correction draws its newest version (timeline already hides them; isLive check is defence in depth: its mutation is equivalent)",
+      "AC-2 Segments split after more than 7 days; exactly 7 is joined",
+      "AC-3 Range chips filter; every reading listed; click shows one; no readings says so; series differ by shape, not colour only",
+      "AC-4 Words judge nothing; mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

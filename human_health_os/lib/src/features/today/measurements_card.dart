@@ -6,6 +6,7 @@ import '../../domain/guide/glossary.dart';
 import '../../domain/settings/appearance.dart';
 import '../../presentation/widgets/number_pad.dart';
 import '../guide/glossary_screen.dart';
+import '../trends/trend_screen.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
@@ -445,6 +446,20 @@ class _EntrySheetState extends State<_EntrySheet> {
             Semantics(
               header: true,
               child: Text(s.recordKind(kind), style: text.titleLarge),
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                key: const ValueKey('measure-trend'),
+                icon: const Icon(Icons.show_chart),
+                label: Text(s.seeOverTime),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) =>
+                        TrendScreen(services: widget.services, kind: kind),
+                  ),
+                ),
+              ),
             ),
             if (glossaryForKind(kind.code) case final entry?)
               Align(

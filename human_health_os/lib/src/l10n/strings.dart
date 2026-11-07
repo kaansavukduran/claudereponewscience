@@ -531,6 +531,30 @@ class S {
   );
 
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String trendTitle(String kind) =>
+      _t('$kind over time', '$kind, zaman içinde');
+  String get seeOverTime => _t('See over time', 'Zaman içinde gör');
+  String trendRange(String r) => switch (r) {
+    'days30' => _t('30 days', '30 gün'),
+    'days90' => _t('90 days', '90 gün'),
+    'year' => _t('1 year', '1 yıl'),
+    _ => _t('All', 'Tümü'),
+  };
+  String get trendNone =>
+      _t('Nothing saved in this period.', 'Bu dönemde kayıt yok.');
+  String get trendLegend => _t(
+    'Each dot is a saved reading. A break in the line means more than 7 days without one; nothing is drawn in between. Click the chart to see a reading.',
+    'Her nokta kaydedilmiş bir ölçümdür. Çizgideki kopukluk 7 günden uzun süre ölçüm olmadığını gösterir; arası doldurulmaz. Bir ölçümü görmek için grafiğe tıkla.',
+  );
+  String get trendLegendBp => _t(
+    'Circles: systolic. Squares: diastolic. A break in the line means more than 7 days without a reading; nothing is drawn in between. Click the chart to see a reading.',
+    'Daireler: sistolik. Kareler: diyastolik. Çizgideki kopukluk 7 günden uzun süre ölçüm olmadığını gösterir; arası doldurulmaz. Bir ölçümü görmek için grafiğe tıkla.',
+  );
+  String trendChartSpoken(int n) => _t(
+    'Chart of $n saved readings; every reading is listed after it.',
+    '$n kayıtlı ölçümün grafiği; her ölçüm aşağıda listelenmiştir.',
+  );
+  String get trendAllPoints => _t('Every reading', 'Tüm ölçümler');
   String get glossaryTitle => _t('Glossary', 'Sözlük');
   String get glossaryTileHint => _t(
     'Every measurement and term in plain words, and how to measure at home',

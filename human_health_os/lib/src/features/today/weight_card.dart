@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/appearance_scope.dart';
 import '../../presentation/widgets/number_pad.dart';
+import '../trends/trend_screen.dart';
 
 import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
@@ -228,6 +229,22 @@ class _WeightCardState extends State<WeightCard> {
                   ),
                 ),
               ],
+            ),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: TextButton.icon(
+                key: const ValueKey('weight-trend'),
+                icon: const Icon(Icons.show_chart),
+                label: Text(s.seeOverTime),
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => TrendScreen(
+                      services: widget.services,
+                      kind: RecordKind.bodyWeight,
+                    ),
+                  ),
+                ),
+              ),
             ),
             Align(
               alignment: Alignment.centerLeft,
