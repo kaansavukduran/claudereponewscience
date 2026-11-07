@@ -3,43 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U002",
-    "contract": "v0.32",
-    "run_id": "U002@v0.32",
-    "slice": "clickable body and specialties guide",
-    "goal": "Owner request (Human Atlas, specialties): a first-time user clicks a body system and sees what it does, its main parts, which specialties care for it, what Human OS records for it, and where to go first; written for the project from open standards, never verbatim atlas text, never diagnosing.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "77fb392",
-    "started_at": "2026-11-07T20:05:00Z",
-    "scope": [
-      "13 body systems (grouping after ICD-11 chapters), 28 specialties (UEMS names, Türkiye TUS names)",
-      "each system: what it does, main parts, who looks after it, links to Human OS record kinds, first stop (family medicine) and 112",
-      "sources on the page; EN/TR; Today tool tile"
-    ],
-    "out_of_scope": [
-      "anatomical drawings or a 3D body (later)",
-      "symptom checker or any reasoning from the person's values",
-      "verbatim atlas or ICD text"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Every system names existing specialties and at least one part; ids unique",
-      "AC-2 Every linked measurement is a Human OS record kind",
-      "AC-3 No guide text diagnoses, judges or advises treatment (EN/TR scans)",
-      "AC-4 Today → guide → system works with the mouse; every system opens in Turkish at 320 dp and 2x text; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests (a29cfb0, e62a9b2)"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -50,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U006@v0.32 (2026-11-07, source revision 77fb392a4eea)",
+  "last_completed_forge": "U002@v0.32 (2026-11-07, source revision 7233e17ca56f)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -63,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0166",
+      "evidence_id": "EV-TEST-F007-0179",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0167",
+      "evidence_id": "EV-TEST-F007-0180",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0168",
+      "evidence_id": "EV-TEST-F007-0181",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (451 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0169",
+      "gate": "flutter test, TZ=UTC (456 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0182",
       "criterion": "AC-1..AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0170",
+      "evidence_id": "EV-TEST-F007-0183",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0171",
+      "evidence_id": "EV-BUILD-F007-0184",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0172",
+      "evidence_id": "EV-RUNTIME-F007-0185",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0173",
+      "evidence_id": "EV-TEST-F007-0186",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0174",
+      "evidence_id": "EV-BUILD-F007-0187",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0175",
+      "evidence_id": "EV-RUNTIME-F007-0188",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (452 PASS)",
-      "evidence_id": "EV-TEST-F007-0176",
+      "gate": "flutter test with TZ=America/New_York (457 PASS)",
+      "evidence_id": "EV-TEST-F007-0189",
       "criterion": "AC-1..AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0177",
+      "evidence_id": "EV-TEST-F007-0190",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0178",
+      "evidence_id": "EV-TEST-F007-0191",
       "criterion": "AC-4",
-      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
       "result": "PASS"
     }
   ],
@@ -182,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U002",
+    "forge_id": "U003",
     "contract": "v0.32",
-    "run_id": "U002@v0.32",
-    "slice": "clickable body and specialties guide from open standards",
-    "why": "Owner request (Human Atlas, specialties); written for the project from WHO ICD-11 chapters and the UEMS specialty list with sources, never verbatim atlas text, never diagnosing.",
+    "run_id": "U003@v0.32",
+    "slice": "glossary and measurement guide",
+    "why": "Plain-language explanations of every measurement and lab term in the app (what it is, how it is measured at home, its unit), written for the project with sources; never a target or a judgement.",
     "depends_on": [
-      "U006"
+      "U002"
     ]
   },
-  "updated_at": "2026-11-07T20:10:00Z",
+  "updated_at": "2026-11-07T20:35:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -2922,6 +2888,191 @@
         }
       ],
       "review": "single-author slice; mutations on unlisted-code ordering, move bounds, section hiding and the pad preference each caught"
+    },
+    "U002@v0.32": {
+      "forge_id": "U002",
+      "contract": "v0.32",
+      "run_id": "U002@v0.32",
+      "slice": "clickable body and specialties guide",
+      "goal": "Owner request (Human Atlas, specialties): a first-time user clicks a body system and sees what it does, its main parts, which specialties care for it, what Human OS records for it, and where to go first; written for the project from open standards, never verbatim atlas text, never diagnosing.",
+      "status": "DONE",
+      "baseline_commit": "77fb392",
+      "started_at": "2026-11-07T20:05:00Z",
+      "scope": [
+        "13 body systems (grouping after ICD-11 chapters), 28 specialties (UEMS names, Türkiye TUS names)",
+        "each system: what it does, main parts, who looks after it, links to Human OS record kinds, first stop (family medicine) and 112",
+        "sources on the page; EN/TR; Today tool tile"
+      ],
+      "out_of_scope": [
+        "anatomical drawings or a 3D body (later)",
+        "symptom checker or any reasoning from the person's values",
+        "verbatim atlas or ICD text"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Every system names existing specialties and at least one part; ids unique",
+        "AC-2 Every linked measurement is a Human OS record kind",
+        "AC-3 No guide text diagnoses, judges or advises treatment (EN/TR scans)",
+        "AC-4 Today → guide → system works with the mouse; every system opens in Turkish at 320 dp and 2x text; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests (a29cfb0, e62a9b2)",
+        "GATES: 13 receipts on clean tree 7233e17, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0191",
+      "next_action": null,
+      "files_touched": [
+        ".gitattributes",
+        ".github/workflows/ci.yml",
+        "apps/client/package.json",
+        "apps/site/package.json",
+        "evidence/builds/EV-BUILD-F007-0171.json",
+        "evidence/builds/EV-BUILD-F007-0174.json",
+        "evidence/runtime/EV-RUNTIME-F007-0172.json",
+        "evidence/runtime/EV-RUNTIME-F007-0175.json",
+        "evidence/tests/EV-TEST-F007-0166.json",
+        "evidence/tests/EV-TEST-F007-0167.json",
+        "evidence/tests/EV-TEST-F007-0168.json",
+        "evidence/tests/EV-TEST-F007-0169.json",
+        "evidence/tests/EV-TEST-F007-0170.json",
+        "evidence/tests/EV-TEST-F007-0173.json",
+        "evidence/tests/EV-TEST-F007-0176.json",
+        "evidence/tests/EV-TEST-F007-0177.json",
+        "evidence/tests/EV-TEST-F007-0178.json",
+        "human_health_os/lib/src/domain/guide/body_guide.dart",
+        "human_health_os/lib/src/features/guide/body_guide_screen.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/architecture/imports_test.dart",
+        "human_health_os/test/data/backup_test.dart",
+        "human_health_os/test/data/repository_contract_test.dart",
+        "human_health_os/test/data/storage_policy_test.dart",
+        "human_health_os/test/security/no_sensitive_logs_test.dart",
+        "human_health_os/test/widget/u002_guide_test.dart",
+        "human_health_os/test/widget/weight_heartbeat_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "project_state/SOURCES.md",
+        "reports/runtime/flutter_web_smoke_77fb392a4eea.json",
+        "reports/runtime/linux-u006/u006-dev-schema5-history.png",
+        "reports/runtime/linux-u006/u006-dev-schema5-measurements.png",
+        "reports/runtime/linux-u006/u006-dev-schema5-today.png",
+        "reports/runtime/linux-u006/u006-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0179",
+        "EV-TEST-F007-0180",
+        "EV-TEST-F007-0181",
+        "EV-TEST-F007-0182",
+        "EV-TEST-F007-0183",
+        "EV-BUILD-F007-0184",
+        "EV-RUNTIME-F007-0185",
+        "EV-TEST-F007-0186",
+        "EV-BUILD-F007-0187",
+        "EV-RUNTIME-F007-0188",
+        "EV-TEST-F007-0189",
+        "EV-TEST-F007-0190",
+        "EV-TEST-F007-0191"
+      ],
+      "blocker": null,
+      "result": "U002_COMPLETE",
+      "finished_at": "2026-11-07T20:35:00Z",
+      "app_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0179",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0180",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0181",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (456 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0182",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0183",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0184",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0185",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0186",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0187",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0188",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (457 PASS)",
+          "evidence_id": "EV-TEST-F007-0189",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0190",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0191",
+          "criterion": "AC-4",
+          "source_revision": "7233e17ca56fbd8d54c99630f94178bf3cbb6ad1",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on a specialty id and a measurement link each caught",
+      "ci": "ci.yml run 42408840657 green on all five jobs (Linux/web, Windows tests and build, macOS/iOS build, Android, TS and Build Lab e2e) after the CI repair commits f074987, 13ef372, fa9febf"
     }
   },
   "forge_history_legacy_ids": {
