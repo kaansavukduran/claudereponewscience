@@ -3,44 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "R001",
-    "contract": "v0.32",
-    "run_id": "R001@v0.32",
-    "slice": "independent review of U001-U010, with G002 and U011 on the same gate run",
-    "goal": "Fix the verified findings of three independent reviews of the U-series, and close the owner's two follow-up requests (G002 dbSNP comparison, U011 reading fonts) on one gate run; each is logged on its own in FORGE_LOG.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "6fa7faa",
-    "started_at": "2026-11-07T21:30:00Z",
-    "scope": [
-      "R001: review fixes 0a83ec4, 8c26d94 (summary partial note, portable settings in memory, chart scale/labels, settings semantics, glossary folding, live notes, guide links, Turkish terms, workflow concurrency)",
-      "G002: dbSNP Summary import and comparison (c6682b8, D-024)",
-      "U011: reading fonts and wide spacing (480efa3, D-025)"
-    ],
-    "out_of_scope": [
-      "pathogenicity prediction (D-024)",
-      "plant chemicals lookup (G003)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Every review finding fixed or recorded with a reason; each fix has a test bound to a mutation (two mutations equivalent, recorded)",
-      "AC-2 G002: dbSNP file parsed and compared; missense/clinical filters; refusals; no app prediction",
-      "AC-3 U011: fonts bundled with licences and pinned hashes; font and spacing apply at once",
-      "AC-4 Gates on a clean tree"
-    ],
-    "completed_steps": [
-      "review fixes",
-      "G002",
-      "U011"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -51,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U010@v0.32 (2026-11-07, source revision 6fa7faad7fb4)",
+  "last_completed_forge": "R001@v0.32 (2026-11-07, source revision 22c392a1fe6c)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -64,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0244",
+      "evidence_id": "EV-TEST-F007-0257",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0245",
+      "evidence_id": "EV-TEST-F007-0258",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0246",
+      "evidence_id": "EV-TEST-F007-0259",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (481 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0247",
+      "gate": "flutter test, TZ=UTC (500 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0260",
       "criterion": "AC-1..AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0248",
+      "evidence_id": "EV-TEST-F007-0261",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0249",
+      "evidence_id": "EV-BUILD-F007-0262",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0250",
+      "evidence_id": "EV-RUNTIME-F007-0263",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0251",
+      "evidence_id": "EV-TEST-F007-0264",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0252",
+      "evidence_id": "EV-BUILD-F007-0265",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0253",
+      "evidence_id": "EV-RUNTIME-F007-0266",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (482 PASS)",
-      "evidence_id": "EV-TEST-F007-0254",
+      "gate": "flutter test with TZ=America/New_York (501 PASS)",
+      "evidence_id": "EV-TEST-F007-0267",
       "criterion": "AC-1..AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0255",
+      "evidence_id": "EV-TEST-F007-0268",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0256",
+      "evidence_id": "EV-TEST-F007-0269",
       "criterion": "AC-4",
-      "source_revision": "6fa7faad7fb4856094577bee3aa1f3b6b1276c68",
+      "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
       "result": "PASS"
     }
   ],
@@ -183,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "R001",
+    "forge_id": "G003",
     "contract": "v0.32",
-    "run_id": "R001@v0.32",
-    "slice": "independent review of the U-series",
-    "why": "U001-U010 were single-author slices; before more features, independent reviewers (UI/accessibility, wording/safety, test adequacy) check them on the current head and their findings are fixed.",
+    "run_id": "G003@v0.32",
+    "slice": "plant chemicals offline (USDA Dr. Duke's export)",
+    "why": "Owner request: load a CSV/XLSX export from phytochem.nal.usda.gov and look up chemicals, their reported activities and doses as the source states them (with study type and species), offline; no advice to take anything.",
     "depends_on": [
-      "U010"
+      "R001"
     ]
   },
-  "updated_at": "2026-11-07T22:45:00Z",
+  "updated_at": "2026-11-07T22:30:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -3977,6 +3942,210 @@
         }
       ],
       "review": "single-author slice; mutations on dedup, order and the chip action caught"
+    },
+    "R001@v0.32": {
+      "forge_id": "R001",
+      "contract": "v0.32",
+      "run_id": "R001@v0.32",
+      "slice": "independent review of U001-U010, with G002 and U011 on the same gate run",
+      "goal": "Fix the verified findings of three independent reviews of the U-series, and close the owner's two follow-up requests (G002 dbSNP comparison, U011 reading fonts) on one gate run; each is logged on its own in FORGE_LOG.",
+      "status": "DONE",
+      "baseline_commit": "6fa7faa",
+      "started_at": "2026-11-07T21:30:00Z",
+      "scope": [
+        "R001: review fixes 0a83ec4, 8c26d94 (summary partial note, portable settings in memory, chart scale/labels, settings semantics, glossary folding, live notes, guide links, Turkish terms, workflow concurrency)",
+        "G002: dbSNP Summary import and comparison (c6682b8, D-024)",
+        "U011: reading fonts and wide spacing (480efa3, D-025)"
+      ],
+      "out_of_scope": [
+        "pathogenicity prediction (D-024)",
+        "plant chemicals lookup (G003)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Every review finding fixed or recorded with a reason; each fix has a test bound to a mutation (two mutations equivalent, recorded)",
+        "AC-2 G002: dbSNP file parsed and compared; missense/clinical filters; refusals; no app prediction",
+        "AC-3 U011: fonts bundled with licences and pinned hashes; font and spacing apply at once",
+        "AC-4 Gates on a clean tree"
+      ],
+      "completed_steps": [
+        "review fixes",
+        "G002",
+        "U011",
+        "GATES: 13 receipts on clean tree 22c392a, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0269",
+      "next_action": null,
+      "files_touched": [
+        ".github/workflows/downloads.yml",
+        ".github/workflows/windows-exe.yml",
+        "evidence/builds/EV-BUILD-F007-0249.json",
+        "evidence/builds/EV-BUILD-F007-0252.json",
+        "evidence/runtime/EV-RUNTIME-F007-0250.json",
+        "evidence/runtime/EV-RUNTIME-F007-0253.json",
+        "evidence/tests/EV-TEST-F007-0244.json",
+        "evidence/tests/EV-TEST-F007-0245.json",
+        "evidence/tests/EV-TEST-F007-0246.json",
+        "evidence/tests/EV-TEST-F007-0247.json",
+        "evidence/tests/EV-TEST-F007-0248.json",
+        "evidence/tests/EV-TEST-F007-0251.json",
+        "evidence/tests/EV-TEST-F007-0254.json",
+        "evidence/tests/EV-TEST-F007-0255.json",
+        "evidence/tests/EV-TEST-F007-0256.json",
+        "human_health_os/assets/fonts/AtkinsonHyperlegibleNext-Bold.ttf",
+        "human_health_os/assets/fonts/AtkinsonHyperlegibleNext-OFL.txt",
+        "human_health_os/assets/fonts/AtkinsonHyperlegibleNext-Regular.ttf",
+        "human_health_os/assets/fonts/OpenDyslexic-Bold.otf",
+        "human_health_os/assets/fonts/OpenDyslexic-OFL.txt",
+        "human_health_os/assets/fonts/OpenDyslexic-Regular.otf",
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/data/local/appearance_store_io.dart",
+        "human_health_os/lib/src/domain/genetics/dbsnp_summary.dart",
+        "human_health_os/lib/src/domain/guide/body_guide.dart",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/genetics/genetics_screen.dart",
+        "human_health_os/lib/src/features/guide/glossary_screen.dart",
+        "human_health_os/lib/src/features/measurements/measurement_format.dart",
+        "human_health_os/lib/src/features/report/doctor_summary.dart",
+        "human_health_os/lib/src/features/report/summary_screen.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/trends/trend_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/navigation/app_shell.dart",
+        "human_health_os/lib/src/presentation/theme/human_os_theme.dart",
+        "human_health_os/pubspec.yaml",
+        "human_health_os/test/data/dbsnp_summary_test.dart",
+        "human_health_os/test/data/raw_genome_test.dart",
+        "human_health_os/test/fixtures/dbsnp/gabrb3_summary_synthetic.txt",
+        "human_health_os/test/widget/g001_genetics_test.dart",
+        "human_health_os/test/widget/g002_dbsnp_test.dart",
+        "human_health_os/test/widget/r001_review_fixes_test.dart",
+        "human_health_os/test/widget/u001_entry_test.dart",
+        "human_health_os/test/widget/u011_fonts_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/FORGE_LOG.md",
+        "project_state/SOURCES.md",
+        "reports/runtime/flutter_web_smoke_6fa7faad7fb4.json",
+        "reports/runtime/linux-u010/u010-dev-schema5-history.png",
+        "reports/runtime/linux-u010/u010-dev-schema5-measurements.png",
+        "reports/runtime/linux-u010/u010-dev-schema5-today.png",
+        "reports/runtime/linux-u010/u010-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0257",
+        "EV-TEST-F007-0258",
+        "EV-TEST-F007-0259",
+        "EV-TEST-F007-0260",
+        "EV-TEST-F007-0261",
+        "EV-BUILD-F007-0262",
+        "EV-RUNTIME-F007-0263",
+        "EV-TEST-F007-0264",
+        "EV-BUILD-F007-0265",
+        "EV-RUNTIME-F007-0266",
+        "EV-TEST-F007-0267",
+        "EV-TEST-F007-0268",
+        "EV-TEST-F007-0269"
+      ],
+      "blocker": null,
+      "result": "R001_COMPLETE",
+      "finished_at": "2026-11-07T22:30:00Z",
+      "app_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0257",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0258",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0259",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (500 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0260",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0261",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0262",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0263",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0264",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0265",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0266",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (501 PASS)",
+          "evidence_id": "EV-TEST-F007-0267",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0268",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0269",
+          "criterion": "AC-4",
+          "source_revision": "22c392a1fe6cacab5a1fa01596d11642cbb5adc8",
+          "result": "PASS"
+        }
+      ],
+      "review": "three reviewers (Sonnet, medium) on b135afd: UI/accessibility (6 findings), wording/safety (9), test adequacy (pending at close; its survivors become a follow-up). Fixed: saved summary marks partial sections; portable development builds keep settings in memory; chart minimum span, locale decimals, first/last dates; settings rows/arrows speak their tile; top-bar Settings name; Turkish-folding search; notes only from live entries; guide drops loose links; Turkish terms; workflow concurrency and Android key note. Not changed: lab sample dates stay calendar days (an ISO date, not a local time: a reviewer's suggestion would shift the day). Two mutations equivalent (timeline already hides withdrawn entries).",
+      "also_closed": "G002 dbSNP comparison (D-024) and U011 reading fonts (D-025) on this gate run"
     }
   },
   "forge_history_legacy_ids": {
