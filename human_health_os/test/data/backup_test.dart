@@ -52,6 +52,9 @@ String timelineSignature(String vault) {
   ].join('\n');
 }
 
+/// Paths compared with one separator: Windows mixes \ and / (CI on Windows).
+String norm(String p) => p.replaceAll('\\', '/');
+
 void main() {
   group('bundle and manifest (§36.2)', () {
     test('self-describing, deterministic, payload byte-identical', () {
@@ -222,10 +225,12 @@ void main() {
         name,
         bundleOf(original),
       );
-      expect(where, '${tmp.path}/backups/$name');
-      expect(Directory('${tmp.path}/backups').listSync().map((e) => e.path), [
-        '${tmp.path}/backups/$name',
-      ], reason: 'no temp file left behind');
+      expect(norm(where), norm('${tmp.path}/backups/$name'));
+      expect(
+        Directory('${tmp.path}/backups').listSync().map((e) => norm(e.path)),
+        [norm('${tmp.path}/backups/$name')],
+        reason: 'no temp file left behind',
+      );
 
       vaultFile.deleteSync(); // disaster
 

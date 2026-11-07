@@ -109,6 +109,9 @@ Iterable<File> dartFiles(String dir) =>
         .whereType<File>()
         .where((f) => f.path.endsWith('.dart'));
 
+/// Paths compared with one separator: Windows mixes \ and / (CI on Windows).
+String norm(String p) => p.replaceAll('\\', '/');
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
 
@@ -123,7 +126,7 @@ void main() {
     );
     final offenders = [
       for (final f in dartFiles('lib'))
-        if (!f.path.endsWith('core/redact.dart') &&
+        if (!norm(f.path).endsWith('core/redact.dart') &&
             writers.hasMatch(
               f
                   .readAsStringSync()

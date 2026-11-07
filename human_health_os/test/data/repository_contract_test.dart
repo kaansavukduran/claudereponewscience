@@ -205,11 +205,13 @@ void main() {
           '/home/u/.local/share/human-health-os',
         );
       }
+      // An absolute path on this host ('/custom' has no drive on Windows).
+      final customPath = '${tmp.path}${Platform.pathSeparator}custom';
       final custom = resolveDataDirectory(
-        env: const {'HHOS_DATA_DIR': '/custom'},
+        env: {'HHOS_DATA_DIR': customPath},
         executablePath: exe,
       );
-      expect(custom.dir!.path, '/custom');
+      expect(custom.dir!.path, customPath);
       expect(custom.legacy, isNull, reason: 'an override is never migrated');
     });
 

@@ -58,6 +58,9 @@ List<String> networkUses(String source) => [
     if (p.hasMatch(source)) p.pattern,
 ];
 
+/// Paths compared with one separator: Windows mixes \ and / (CI on Windows).
+String norm(String p) => p.replaceAll('\\', '/');
+
 void main() {
   test('the network guard catches every spelling it claims to', () {
     for (final sample in [
@@ -103,7 +106,7 @@ void main() {
     final offenders = [
       for (final f in dartFiles('lib'))
         if (f.readAsStringSync().contains("import 'dart:io'") &&
-            !nativeAdapters.any(f.path.endsWith))
+            !nativeAdapters.any(norm(f.path).endsWith))
           f.path,
     ];
     expect(offenders, isEmpty);
@@ -113,7 +116,7 @@ void main() {
     final importers = [
       for (final f in dartFiles('lib'))
         if (f.readAsStringSync().contains("data_files_io.dart'") &&
-            !f.path.endsWith('data/local/storage_io.dart'))
+            !norm(f.path).endsWith('data/local/storage_io.dart'))
           f.path,
     ];
     expect(importers, isEmpty);

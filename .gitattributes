@@ -1,0 +1,6 @@
+# Fixtures and golden vectors are compared byte for byte: keep them exactly as
+# committed on every host (a Windows checkout must not turn LF into CRLF).
+human_health_os/test/fixtures/** -text
+contracts/** -text
+# Scripts run on Linux and macOS hosts.
+*.sh text eol=lf

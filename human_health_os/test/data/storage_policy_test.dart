@@ -27,6 +27,9 @@ const prod = AppConfig(
   sourceRevision: 't',
 );
 
+/// Paths compared with one separator: Windows mixes \ and / (CI on Windows).
+String norm(String p) => p.replaceAll('\\', '/');
+
 void main() {
   late Directory tmp;
   setUp(() => tmp = Directory.systemTemp.createTempSync('hhos-policy-'));
@@ -43,8 +46,8 @@ void main() {
     );
     final vault = choice.vault!;
     expect(
-      vault.location,
-      '${appDir.path}/UserData/vault-development.hhosvault',
+      norm(vault.location),
+      norm('${appDir.path}/UserData/vault-development.hhosvault'),
     );
     expect(choice.files, isNull, reason: 'no plaintext backups beside the app');
     expect(
@@ -106,7 +109,7 @@ void main() {
     final file = File('${tmp.path}/data/vault.hhosvault');
     final bytes = file.readAsBytesSync();
     final kept = await vault.setAside();
-    expect(kept, startsWith('${file.path}.locked-'));
+    expect(norm(kept), startsWith(norm('${file.path}.locked-')));
     expect(File(kept).readAsBytesSync(), bytes);
     expect(file.existsSync(), isFalse);
     expect((await vault.inspect()).access, VaultAccess.create);
