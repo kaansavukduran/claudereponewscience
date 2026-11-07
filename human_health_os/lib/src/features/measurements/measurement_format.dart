@@ -111,3 +111,21 @@ String whenCaption(S s, HealthRecord r, String Function(DateTime) fmt) {
   final base = '${fmt(r.observedAt)} · ${s.provenanceKind(r.provenance.kind)}';
   return saved == null ? base : '$base · ${s.savedAtLabel(saved)}';
 }
+
+/// Notes the person typed on earlier measurements, newest first, each once
+/// (trimmed, compared without case), at most [max]. Their own words: no
+/// fixed vocabulary is added.
+List<String> previousNotes(List<HealthRecord> records, {int max = 8}) {
+  final sorted = [
+    for (final r in records)
+      if ((r.context ?? '').trim().isNotEmpty) r,
+  ]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+  final seen = <String>{};
+  final out = <String>[];
+  for (final r in sorted) {
+    final n = r.context!.trim();
+    if (seen.add(n.toLowerCase())) out.add(n);
+    if (out.length == max) break;
+  }
+  return out;
+}

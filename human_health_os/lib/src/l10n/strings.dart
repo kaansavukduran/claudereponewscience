@@ -419,6 +419,10 @@ class S {
   String get saveMeasurement => _t('Save measurement', 'Ölçümü kaydet');
   String get measurementNotYet => _t('Not recorded yet', 'Henüz kayıt yok');
   String get addMeasurement => _t('Add a measurement', 'Ölçüm ekle');
+  String get yourNotes => _t(
+    'Your earlier notes (click to use)',
+    'Önceki notların (kullanmak için tıkla)',
+  );
   String get moreDetails => _t('More details', 'Daha fazla ayrıntı');
   String get timePresetsLabel => _t('Quick pick', 'Hızlı seçim');
   String get presetNow => _t('Now', 'Şimdi');

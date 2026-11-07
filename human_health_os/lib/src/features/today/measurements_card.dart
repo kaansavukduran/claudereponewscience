@@ -300,6 +300,23 @@ class _EntrySheetState extends State<_EntrySheet> {
   String? _errorField;
   bool _busy = false;
 
+  /// Notes the person typed on earlier measurements, newest first.
+  List<String> _notes = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _loadNotes();
+  }
+
+  Future<void> _loadNotes() async {
+    final records = await widget.services.heartbeat.repository.records(
+      widget.services.self.id,
+    );
+    final notes = previousNotes(records);
+    if (mounted) setState(() => _notes = notes);
+  }
+
   @override
   void dispose() {
     _value.dispose();
@@ -551,6 +568,31 @@ class _EntrySheetState extends State<_EntrySheet> {
                     'context',
                     number: false,
                   ),
+                  if (_notes.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(s.yourNotes, style: text.labelMedium),
+                          const SizedBox(height: 4),
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: [
+                              for (var i = 0; i < _notes.length; i++)
+                                ActionChip(
+                                  key: ValueKey('measure-note-$i'),
+                                  label: Text(_notes[i]),
+                                  onPressed: () => setState(() {
+                                    _context.text = _notes[i];
+                                  }),
+                                ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
                 ],
               ),
             ),

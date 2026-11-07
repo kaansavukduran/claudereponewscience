@@ -3,9 +3,41 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U010",
+    "contract": "v0.32",
+    "run_id": "U010@v0.32",
+    "slice": "your own quick notes",
+    "goal": "Notes the person typed before come back as one-click chips under More details in every measurement sheet: their words, newest first, once each, at most 8; no fixed vocabulary.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c0380cc",
+    "started_at": "2026-11-07T22:25:00Z",
+    "scope": [
+      "previousNotes(records): trimmed, deduplicated ignoring case, newest first, max 8",
+      "chips fill the note field; nothing is saved until Save"
+    ],
+    "out_of_scope": [
+      "editing or deleting the note list (it is derived from records)",
+      "a built-in clinical tag list"
+    ],
+    "acceptance_criteria": [
+      "AC-1 No chips before any note",
+      "AC-2 Newest first, once each ignoring case and spaces",
+      "AC-3 One click fills the note; Save stores it",
+      "AC-4 Mutations on dedup, order and the chip action caught; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
