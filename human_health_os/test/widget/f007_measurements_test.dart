@@ -600,6 +600,95 @@ void main() {
     expect(chip.dy, greaterThan(input.dy));
   });
 
+  testWidgets('weight is shown with the decimals typed: 77,50 is 77.50 kg on '
+      'Today and on the Timeline', (tester) async {
+    await launch(tester);
+    await tester.enterText(find.byKey(const ValueKey('weight-input')), '77,50');
+    await tapKey(tester, 'weight-save');
+    expect(
+      tester.widget<Text>(find.byKey(const ValueKey('weight-latest'))).data,
+      '77.50 kg',
+    );
+    await openTimeline(tester);
+    expect(find.text('77.50 kg'), findsOneWidget);
+  });
+
+  testWidgets('Timeline: a back-dated height shows when it was measured and '
+      'when it was saved, on the row and in the sheet', (tester) async {
+    await launch(tester);
+    await saveScalar(
+      tester,
+      RecordKind.height,
+      '172',
+      when: '2026-10-01 08:00Z',
+    );
+    await openTimeline(tester);
+    final rows = textsUnder(
+      tester,
+      find.byWidgetPredicate(
+        (w) =>
+            w.key is ValueKey<String> &&
+            (w.key! as ValueKey<String>).value.startsWith('timeline-entry-'),
+      ),
+    ).join('\n');
+    expect(rows, contains('172 cm'));
+    expect(rows, contains('saved 2'), reason: 'the row says when it was saved');
+    await tester.tap(find.text('172 cm'));
+    await settle(tester);
+    final sheet = textsUnder(
+      tester,
+      find.byKey(const ValueKey('timeline-detail')),
+    ).join('\n');
+    expect(sheet, contains('measured 2'), reason: 'the sheet says measured');
+  });
+
+  testWidgets('a time error re-opens "More details" even when the person '
+      'closed it; Cancel saves and announces nothing', (tester) async {
+    await launch(tester);
+    await openSheet(tester, RecordKind.bodyTemperature);
+    await fill(tester, 'measure-value', '36,8');
+    await tapKey(tester, 'measure-more');
+    await fill(tester, 'measure-when', 'not a time');
+    await tester.tap(find.text('More details')); // closed again
+    await settle(tester);
+    expect(
+      find.byKey(const ValueKey('measure-when')).hitTestable(),
+      findsNothing,
+      reason: 'closed',
+    );
+    await tapKey(tester, 'measure-save');
+    expect(
+      find.byKey(const ValueKey('measure-when')).hitTestable(),
+      findsOneWidget,
+      reason: 'opened by the error',
+    );
+    expect(find.textContaining('24-hour clock'), findsOneWidget);
+    await tapKey(tester, 'measure-cancel');
+    expect(find.byKey(const ValueKey('measure-saved')), findsNothing);
+    expect(latestOf(tester, RecordKind.bodyTemperature), 'Not recorded yet');
+  });
+
+  testWidgets('the temperature tile is spoken in degrees Celsius; the dark '
+      'theme renders the whole of Today', (tester) async {
+    final handle = tester.ensureSemantics();
+    tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
+    addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
+    await launch(tester);
+    expect(
+      Theme.of(tester.element(find.byType(Scaffold).first)).brightness,
+      Brightness.dark,
+    );
+    await saveScalar(tester, RecordKind.bodyTemperature, '36,8');
+    expect(
+      find.bySemanticsLabel(
+        RegExp(r'^Body temperature: 36\.8 degrees Celsius, measured '),
+      ),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+    handle.dispose();
+  });
+
   testWidgets('errors are shown on their own field and nothing is saved; '
       'a typed 0, swapped numbers and a bad time are refused', (tester) async {
     final s = await launch(tester);
