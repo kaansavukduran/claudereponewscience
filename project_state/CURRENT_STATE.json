@@ -3,65 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F007",
-    "contract": "v0.32",
-    "run_id": "F007@v0.32",
-    "slice": "measurements",
-    "goal": "Daily domains, slice 1: measurements beyond body weight on the canonical record, timeline, correction lineage and encrypted vault (master §39 F007: one bounded slice per Forge)",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "48c3c94",
-    "started_at": "2026-10-08T21:34:05Z",
-    "scope": [
-      "record schema 4 (RS-004, additive): body.waist_circumference (cm), vital.resting_heart_rate (bpm), vital.blood_pressure (mmHg, structured systolic/diastolic); optional measurement context as typed; kind-tagged details slot",
-      "each record written with the oldest schema that holds it: weight and lab stay schema 3, so older apps are locked out only once a measurement is saved",
-      "automatic backup checkpoint of the earlier vault before its first schema-4 record (desktop development and encrypted vaults)",
-      "manual entry on Today (Measurements card), Timeline rows and kind-aware Correct, entered in error, delete; EN/TR",
-      "deterministic old-code check on main 48c3c94: the F006 code refuses schema-4 data and backups without changing them"
-    ],
-    "out_of_scope": [
-      "temperature, SpO2, height, respiratory rate, body composition (G-42)",
-      "derived results (BMI, waist-height ratio, trends, session summaries): F011",
-      "any interpretation: categories, stages, ranges, targets, alerts, education card",
-      "structured context, devices and calibration, measurement sessions (free-text context only) (G-41)",
-      "unit choice or conversion, UCUM codes, REVIEW plausibility tier and upper bounds (G-43, G-46)",
-      "entering the measurement time (the time saved is when Save is pressed, said on screen) (G-44)",
-      "automatic checkpoint on web development builds (G-47)",
-      "platform imports (F013); new primary destination; vault, envelope, backup or export format changes"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Record schema 4 (RS-004): the three kinds and the context and details keys exist only at schema >= 4 (KIND_NEEDS_NEWER_SCHEMA, FIELD_NEEDS_NEWER_SCHEMA); canonical unit only (UNIT_NOT_SUPPORTED); finite numbers; waist, heart rate and systolic > 0, diastolic >= 0; no upper bound or clinical threshold; schema 1-3 records keep their exact JSON; weight and lab are still written at schema 3",
-      "AC-2 Structured blood pressure: one record with kind-tagged details {type, systolic, diastolic, unit, systolic_text, diastolic_text} and no quantity; details only on a present, non-marker blood-pressure record; the checks run before the marker early return; entry refuses systolic <= diastolic (BP_ORDER) while stored records are not re-judged on that rule (domain rules only loosen)",
-      "AC-3 Missing is not zero: blank is EMPTY and writes nothing; a typed 0 is refused at entry; a not-measured record carries no number and shows its status, never 0; Latest skips it",
-      "AC-4 Source text and precision: typed text kept; shown with the typed decimals; blood pressure shown as 118/76 mmHg on Today, on the Timeline row and in the detail sheet's versions; no unit converted",
-      "AC-5 No interpretation: one record per save, nothing derived; EN/TR scans with the F004 lists plus a measurement list (hypertension, stage, tachycardia, obesity, category and Turkish forms) find nothing on the card, rows or sheet",
-      "AC-6 Repeated readings are kept (two identical readings 30 s apart are two records); a same-id retry is idempotent",
-      "AC-7 Correction lineage for all three kinds from the Timeline; every correct method refuses another kind's record (TARGET_WRONG_KIND), weight and lab included",
-      "AC-8 Today Measurements card: header, Latest per kind with value, time, source and a spoken summary, a kind chooser, entry form (two fields for blood pressure, optional context), the note that values are kept as typed and the time saved is when Save is pressed, a live-region Saved message, history; EN/TR; 320 dp at 2x text; three primary destinations unchanged",
-      "AC-9 Storage and privacy: same repository paths (development log, encrypted vault, backups, export); formats unchanged; no new dependency; the vault file, backups and console output hold no kind codes, typed values or context text",
-      "AC-10 Compatibility: this build reads schemas 1-4 and refuses 5; on main 48c3c94 the F006 code (scratch worktree, deterministic test) refuses the schema-4 fixture and the encrypted schema-4 fixture with RECORD_SCHEMA_NEWER, refuses F007 backups with VAULT_INCOMPATIBLE and a restore over them with RESTORE_TARGET_NEWER, leaves the bytes unchanged, and still opens a vault where F007 saved only weight (schema 3) and the F007 checkpoint backup",
-      "AC-11 Checkpoint: before the first schema-4 record is appended to a vault that holds records but none of schema 4, a backup of that vault is saved and named on screen; if it cannot be written the save is refused (CHECKPOINT_FAILED) and nothing is written",
-      "AC-12 Fixtures v1_f007_schema4 (plaintext, schemas 1-4) and enc_v1_f007 (encrypted): writer bytes, every field replayed, README rows, backup_test list",
-      "AC-13 Linux integration with real files: development and production encrypted vaults keep the three kinds and a correction across a relaunch; the checkpoint lands on disk",
-      "AC-14 Web smoke: a blood pressure typed in Chromium shows 118/76 mmHg on Today and the Timeline, survives a reload and is in the backup download; no console errors",
-      "AC-15 Regression and close: F001-F006 suites in UTC and New York, gates on a clean tree, mutations each caught, state and docs updated (D-018, SOURCES C-10/C-11, git.main repaired), one next Forge"
-    ],
-    "completed_steps": [
-      "ORIENT: state READY after F006@v0.32; main created at 48c3c94 (D-017); ladder F007 slice 1 selected (next_recommended_forge)",
-      "SPECIFY: workflow wf_1e0a46f9-0ea (4 readers, a specifier, a skeptic; 6 agents): draft spec and 16 critique issues (5 major); decisions: per-record minimum schema, free-text context and kind-tagged details in schema 4, automatic checkpoint before the first schema-4 record, deterministic old-code check instead of an old-binary screenshot, measurement-specific interpretation scan, BP ordering as an entry rule only",
-      "REPAIR (state): git.main said 'not created' after main was pushed at 48c3c94; repository reality recorded (master §31.3)"
-    ],
-    "last_verified_gate": null,
-    "next_action": "IMPLEMENT",
-    "files_touched": [],
-    "migration_ids": [
-      "RS-004"
-    ],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -72,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F006@v0.32 (2026-10-08, source revision 9b8217dfb794)",
+  "last_completed_forge": "F007@v0.32 (2026-11-07, source revision e1aaf1705061)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -84,101 +28,101 @@
   },
   "verified_gates": [
     {
-      "gate": "flutter pub get (pointycastle 4.0.0 added, D-016)",
-      "evidence_id": "EV-TEST-F006-0019",
-      "criterion": "AC-9",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "gate": "flutter pub get",
+      "evidence_id": "EV-TEST-F007-0057",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F006-0020",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "evidence_id": "EV-TEST-F007-0058",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F006-0021",
+      "evidence_id": "EV-TEST-F007-0059",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "flutter test, TZ=UTC (328 PASS): record rules, entry, lineage, checkpoint, fixtures, leak checks, widget tests EN/TR at 320 dp",
+      "evidence_id": "EV-TEST-F007-0060",
+      "criterion": "AC-1..AC-9, AC-11, AC-12",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "state/evidence tooling unit tests",
+      "evidence_id": "EV-TEST-F007-0061",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+      "evidence_id": "EV-BUILD-F007-0062",
+      "criterion": "AC-14",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "Playwright smoke in Chromium (70 checks): blood pressure typed, 118/76 mmHg on Today and Timeline, survives reload, in the backup; no console errors",
+      "evidence_id": "EV-RUNTIME-F007-0063",
+      "criterion": "AC-14",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "Linux integration on real files (9 PASS): development and encrypted vaults, checkpoint on disk, correction, relaunch",
+      "evidence_id": "EV-TEST-F007-0064",
+      "criterion": "AC-13",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "flutter build linux --release (development profile) COMPILED",
+      "evidence_id": "EV-BUILD-F007-0065",
+      "criterion": "AC-13",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "Linux release binary on the schema-4 fixture (Xvfb): measurements card with the stored values, vault file unchanged, no error events",
+      "evidence_id": "EV-RUNTIME-F007-0066",
+      "criterion": "AC-12, AC-13",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "flutter test with TZ=America/New_York (328 PASS)",
+      "evidence_id": "EV-TEST-F007-0067",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "contracts verification (TS reference)",
+      "evidence_id": "EV-TEST-F007-0068",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "pnpm test",
+      "evidence_id": "EV-TEST-F007-0069",
+      "criterion": "AC-15",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "result": "PASS"
+    },
+    {
+      "gate": "old-code check on main 48c3c94 in a scratch worktree: schema-4 data refused unchanged, schema-3 data and checkpoints open",
+      "evidence_id": "EV-TEST-F007-0070",
       "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter test (crypto known answers, envelope integrity, key states, encrypted backups, vault gate, sensitive-data logging, review regressions, F001-F005 suites)",
-      "evidence_id": "EV-TEST-F006-0022",
-      "criterion": "AC-1..AC-7, AC-9, AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "evidence and state tooling unit tests",
-      "evidence_id": "EV-TEST-F006-0023",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter build web --release --no-web-resources-cdn (development)",
-      "evidence_id": "EV-BUILD-F006-0005",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "web runtime smoke (development: Today, Timeline, Labs, backup download; no console errors)",
-      "evidence_id": "EV-RUNTIME-F006-0007",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "integration_test on Linux with real files (production vault: create, save, relaunch, unlock; recovery; key lost; F002-F005 drills)",
-      "evidence_id": "EV-TEST-F006-0024",
-      "criterion": "AC-4, AC-5, AC-8",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter build linux --release (production profile)",
-      "evidence_id": "EV-BUILD-F006-0006",
-      "criterion": "AC-8",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "Linux production first start on an empty home: vault gate, nothing written (Ubuntu 24.04, Xvfb X11)",
-      "evidence_id": "EV-RUNTIME-F006-0008",
-      "criterion": "AC-5, AC-8",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "Linux production unlock by keyboard on the encrypted fixture: wrong passphrase refused, right one opens, vault unchanged, only the vault in the data folder, no passphrase in the output",
-      "evidence_id": "EV-RUNTIME-F006-0009",
-      "criterion": "AC-4, AC-7, AC-8",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "flutter test with TZ=America/New_York",
-      "evidence_id": "EV-TEST-F006-0025",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "golden-vector contract check",
-      "evidence_id": "EV-TEST-F006-0026",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-      "result": "PASS"
-    },
-    {
-      "gate": "pnpm test (TS reference, Build Lab)",
-      "evidence_id": "EV-TEST-F006-0027",
-      "criterion": "AC-10",
-      "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
+      "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
       "result": "PASS"
     }
   ],
@@ -214,10 +158,10 @@
     "forge_id": "F007",
     "contract": "v0.32",
     "run_id": "F007@v0.32",
-    "slice": "measurements",
-    "why": "master §39 ladder after the MVP (D-014, F002-F006 closed): daily domains, one bounded slice per Forge; the first slice is measurements beyond body weight on the same canonical record, timeline, correction lineage and encrypted vault"
+    "slice": "measurements, slice 2",
+    "why": "finish the measurement domain before opening another one: the person cannot yet say when a measurement was taken (G-44, the time saved is when Save is pressed), and height, temperature, SpO2 and respiratory rate are missing (G-42); height is also the input F011 needs for BMI and waist-height ratio. Slice 2 adds measurement time entry (with future-time and correction rules), those four metrics on the same record schema 4 path, and the weight entry rules of G-45; nutrition, activity, sleep and subjective state follow as their own Forges"
   },
-  "updated_at": "2026-10-08T21:34:05Z",
+  "updated_at": "2026-11-07T12:00:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -1768,6 +1712,240 @@
         }
       ],
       "review": "two multi-agent adversarial reviews: wf_630e488a-5de over b1aeae6..c69dadf (4 lenses + 4 skeptics; 15 confirmed reports = 11 distinct findings, 2 major; 6 refuted, 5 of them acted on anyway, G-39 recorded) fixed in ff37108, 82c9523, d81c5db with regression tests (mutations S17-S31); fix-round review wf_d07eadb1-87a over c69dadf..82c9523 (3 lenses + skeptics for the 6 most severe, 9 agents; 4 verifications did not run: session limit): 10 reports = 6 distinct findings, incl. FIXES-1 (two windows on one vault, verified major), all fixed in e2463a6 and 98ac39e (mutations S32-S38); two tests added in 9b8217d so all 38 mutations are caught; G-40 recorded"
+    },
+    "F007@v0.32": {
+      "forge_id": "F007",
+      "contract": "v0.32",
+      "run_id": "F007@v0.32",
+      "slice": "measurements",
+      "goal": "Daily domains, slice 1: measurements beyond body weight on the canonical record, timeline, correction lineage and encrypted vault (master §39 F007: one bounded slice per Forge)",
+      "status": "DONE",
+      "baseline_commit": "48c3c94",
+      "started_at": "2026-10-08T21:34:05Z",
+      "scope": [
+        "record schema 4 (RS-004, additive): body.waist_circumference (cm), vital.resting_heart_rate (bpm), vital.blood_pressure (mmHg, structured systolic/diastolic); optional measurement context as typed; kind-tagged details slot",
+        "each record written with the oldest schema that holds it: weight and lab stay schema 3, so older apps are locked out only once a measurement is saved",
+        "automatic backup checkpoint of the earlier vault before its first schema-4 record (desktop development and encrypted vaults)",
+        "manual entry on Today (Measurements card), Timeline rows and kind-aware Correct, entered in error, delete; EN/TR",
+        "deterministic old-code check on main 48c3c94: the F006 code refuses schema-4 data and backups without changing them"
+      ],
+      "out_of_scope": [
+        "temperature, SpO2, height, respiratory rate, body composition (G-42)",
+        "derived results (BMI, waist-height ratio, trends, session summaries): F011",
+        "any interpretation: categories, stages, ranges, targets, alerts, education card",
+        "structured context, devices and calibration, measurement sessions (free-text context only) (G-41)",
+        "unit choice or conversion, UCUM codes, REVIEW plausibility tier and upper bounds (G-43, G-46)",
+        "entering the measurement time (the time saved is when Save is pressed, said on screen) (G-44)",
+        "automatic checkpoint on web development builds (G-47)",
+        "platform imports (F013); new primary destination; vault, envelope, backup or export format changes"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Record schema 4 (RS-004): the three kinds and the context and details keys exist only at schema >= 4 (KIND_NEEDS_NEWER_SCHEMA, FIELD_NEEDS_NEWER_SCHEMA); canonical unit only (UNIT_NOT_SUPPORTED); finite numbers; waist, heart rate and systolic > 0, diastolic >= 0; no upper bound or clinical threshold; schema 1-3 records keep their exact JSON; weight and lab are still written at schema 3",
+        "AC-2 Structured blood pressure: one record with kind-tagged details {type, systolic, diastolic, unit, systolic_text, diastolic_text} and no quantity; details only on a present, non-marker blood-pressure record; the checks run before the marker early return; entry refuses systolic <= diastolic (BP_ORDER) while stored records are not re-judged on that rule (domain rules only loosen)",
+        "AC-3 Missing is not zero: blank is EMPTY and writes nothing; a typed 0 is refused at entry; a not-measured record carries no number and shows its status, never 0; Latest skips it",
+        "AC-4 Source text and precision: typed text kept; shown with the typed decimals; blood pressure shown as 118/76 mmHg on Today, on the Timeline row and in the detail sheet's versions; no unit converted",
+        "AC-5 No interpretation: one record per save, nothing derived; EN/TR scans with the F004 lists plus a measurement list (hypertension, stage, tachycardia, obesity, category and Turkish forms) find nothing on the card, rows or sheet",
+        "AC-6 Repeated readings are kept (two identical readings 30 s apart are two records); a same-id retry is idempotent",
+        "AC-7 Correction lineage for all three kinds from the Timeline; every correct method refuses another kind's record (TARGET_WRONG_KIND), weight and lab included",
+        "AC-8 Today Measurements card: header, Latest per kind with value, time, source and a spoken summary, a kind chooser, entry form (two fields for blood pressure, optional context), the note that values are kept as typed and the time saved is when Save is pressed, a live-region Saved message, history; EN/TR; 320 dp at 2x text; three primary destinations unchanged",
+        "AC-9 Storage and privacy: same repository paths (development log, encrypted vault, backups, export); formats unchanged; no new dependency; the vault file, backups and console output hold no kind codes, typed values or context text",
+        "AC-10 Compatibility: this build reads schemas 1-4 and refuses 5; on main 48c3c94 the F006 code (scratch worktree, deterministic test) refuses the schema-4 fixture and the encrypted schema-4 fixture with RECORD_SCHEMA_NEWER, refuses F007 backups with VAULT_INCOMPATIBLE and a restore over them with RESTORE_TARGET_NEWER, leaves the bytes unchanged, and still opens a vault where F007 saved only weight (schema 3) and the F007 checkpoint backup",
+        "AC-11 Checkpoint: before the first schema-4 record is appended to a vault that holds records but none of schema 4, a backup of that vault is saved and named on screen; if it cannot be written the save is refused (CHECKPOINT_FAILED) and nothing is written",
+        "AC-12 Fixtures v1_f007_schema4 (plaintext, schemas 1-4) and enc_v1_f007 (encrypted): writer bytes, every field replayed, README rows, backup_test list",
+        "AC-13 Linux integration with real files: development and production encrypted vaults keep the three kinds and a correction across a relaunch; the checkpoint lands on disk",
+        "AC-14 Web smoke: a blood pressure typed in Chromium shows 118/76 mmHg on Today and the Timeline, survives a reload and is in the backup download; no console errors",
+        "AC-15 Regression and close: F001-F006 suites in UTC and New York, gates on a clean tree, mutations each caught, state and docs updated (D-018, SOURCES C-10/C-11, git.main repaired), one next Forge"
+      ],
+      "completed_steps": [
+        "ORIENT: state READY after F006@v0.32; main created at 48c3c94 (D-017); ladder F007 slice 1 selected (next_recommended_forge)",
+        "SPECIFY: workflow wf_1e0a46f9-0ea (4 readers, a specifier, a skeptic; 6 agents): draft spec and 16 critique issues (5 major); decisions: per-record minimum schema, free-text context and kind-tagged details in schema 4, automatic checkpoint before the first schema-4 record, deterministic old-code check instead of an old-binary screenshot, measurement-specific interpretation scan, BP ordering as an entry rule only",
+        "REPAIR (state): git.main said 'not created' after main was pushed at 48c3c94; repository reality recorded (master §31.3)",
+        "GATES: 14 receipts on clean tree e1aaf17, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0070",
+      "next_action": null,
+      "files_touched": [
+        "docs/DATA_MODEL.md",
+        "evidence/builds/EV-BUILD-F007-0034.json",
+        "evidence/builds/EV-BUILD-F007-0048.json",
+        "evidence/builds/EV-BUILD-F007-0051.json",
+        "evidence/runtime/EV-RUNTIME-F007-0035.json",
+        "evidence/runtime/EV-RUNTIME-F007-0049.json",
+        "evidence/runtime/EV-RUNTIME-F007-0052.json",
+        "evidence/tests/EV-TEST-F007-0029.json",
+        "evidence/tests/EV-TEST-F007-0030.json",
+        "evidence/tests/EV-TEST-F007-0031.json",
+        "evidence/tests/EV-TEST-F007-0032.json",
+        "evidence/tests/EV-TEST-F007-0033.json",
+        "evidence/tests/EV-TEST-F007-0043.json",
+        "evidence/tests/EV-TEST-F007-0044.json",
+        "evidence/tests/EV-TEST-F007-0045.json",
+        "evidence/tests/EV-TEST-F007-0046.json",
+        "evidence/tests/EV-TEST-F007-0047.json",
+        "evidence/tests/EV-TEST-F007-0050.json",
+        "evidence/tests/EV-TEST-F007-0053.json",
+        "evidence/tests/EV-TEST-F007-0054.json",
+        "evidence/tests/EV-TEST-F007-0055.json",
+        "evidence/tests/EV-TEST-F007-0056.json",
+        "human_health_os/integration_test/heartbeat_test.dart",
+        "human_health_os/lib/src/app/app_services.dart",
+        "human_health_os/lib/src/app/bootstrap.dart",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/data/backup/data_files_io.dart",
+        "human_health_os/lib/src/data/local/log_repository.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/domain/records/record_details.dart",
+        "human_health_os/lib/src/features/measurements/measurement_format.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/data/backup_test.dart",
+        "human_health_os/test/data/encrypted_vault_test.dart",
+        "human_health_os/test/data/lab_result_test.dart",
+        "human_health_os/test/data/measurement_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/fixtures/vault/README.md",
+        "human_health_os/test/fixtures/vault/enc_v1_f007.hhosvault",
+        "human_health_os/test/fixtures/vault/v1_f007_schema4.hhoslog.jsonl",
+        "human_health_os/test/security/no_sensitive_logs_test.dart",
+        "human_health_os/test/widget/f007_measurements_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "human_health_os/tool/make_f007_compat_inputs.dart",
+        "human_health_os/tool/make_f007_fixture.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/KNOWN_GAPS.md",
+        "project_state/SOURCES.md",
+        "tools/compat/f007_old_code_check_test.dart",
+        "tools/compat/old_code_check.sh",
+        "tools/flutter_web_smoke.mjs",
+        "tools/linux/measurements_smoke.sh"
+      ],
+      "migration_ids": [
+        "RS-004"
+      ],
+      "evidence_ids": [
+        "EV-TEST-F007-0057",
+        "EV-TEST-F007-0058",
+        "EV-TEST-F007-0059",
+        "EV-TEST-F007-0060",
+        "EV-TEST-F007-0061",
+        "EV-BUILD-F007-0062",
+        "EV-RUNTIME-F007-0063",
+        "EV-TEST-F007-0064",
+        "EV-BUILD-F007-0065",
+        "EV-RUNTIME-F007-0066",
+        "EV-TEST-F007-0067",
+        "EV-TEST-F007-0068",
+        "EV-TEST-F007-0069",
+        "EV-TEST-F007-0070"
+      ],
+      "blocker": null,
+      "result": "F007_COMPLETE",
+      "finished_at": "2026-11-07T12:00:00Z",
+      "app_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0057",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0058",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0059",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (328 PASS): record rules, entry, lineage, checkpoint, fixtures, leak checks, widget tests EN/TR at 320 dp",
+          "evidence_id": "EV-TEST-F007-0060",
+          "criterion": "AC-1..AC-9, AC-11, AC-12",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0061",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0062",
+          "criterion": "AC-14",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (70 checks): blood pressure typed, 118/76 mmHg on Today and Timeline, survives reload, in the backup; no console errors",
+          "evidence_id": "EV-RUNTIME-F007-0063",
+          "criterion": "AC-14",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS): development and encrypted vaults, checkpoint on disk, correction, relaunch",
+          "evidence_id": "EV-TEST-F007-0064",
+          "criterion": "AC-13",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0065",
+          "criterion": "AC-13",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-4 fixture (Xvfb): measurements card with the stored values, vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0066",
+          "criterion": "AC-12, AC-13",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (328 PASS)",
+          "evidence_id": "EV-TEST-F007-0067",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0068",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0069",
+          "criterion": "AC-15",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "old-code check on main 48c3c94 in a scratch worktree: schema-4 data refused unchanged, schema-3 data and checkpoints open",
+          "evidence_id": "EV-TEST-F007-0070",
+          "criterion": "AC-10",
+          "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+          "result": "PASS"
+        }
+      ],
+      "review": "adversarial review by four independent reviewers (domain, storage, UI, test adequacy), each in its own worktree and verifying by scratch tests and mutations; the first attempt failed (weekly limit) and returned nothing, so it was run again with the Agent tool. 4 reports: no blocker; 1 major (a typed number with more than 20 decimals made the Measurements card and the Timeline throw on every launch), 1 storage finding that mattered (the checkpoint also fired for a weight or lab result in a store whose newest record was older than schema 3), plus minors and nits; all real findings fixed with regression tests (50479f0, 5433632..; mutations T25-T31 bind the fixes, all caught); test-adequacy gaps M1-M3 and L1-L9 closed with tests bound to mutations T32-T43, all caught. Mutations in all: 43 (T1-T24 before the review, T25-T43 after), each caught; T20 was first NOT caught and led to a test. One regression of my own (a write lock built in the wrong zone hung f002 and f005) was found by the full suite and fixed before the gates."
     }
   },
   "forge_history_legacy_ids": {
@@ -1799,6 +1977,6 @@
   "git": {
     "branch": "claude/code-capabilities-kz21fr",
     "push": "OK (origin)",
-    "main": "48c3c94 (D-017): the closed MVP F002-F006; advances only when a later Forge closes with receipts"
+    "main": "F007@v0.32 close (D-017): the closed MVP F002-F006 plus F007 slice 1; advances only when a later Forge closes with receipts"
   }
 }

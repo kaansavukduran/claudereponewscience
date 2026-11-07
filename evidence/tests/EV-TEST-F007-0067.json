@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0067",
+  "kind": "TEST",
+  "forge_id": "F007@v0.32",
+  "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=America/New_York flutter test",
+  "argv": [
+    "env",
+    "TZ=America/New_York",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T08:51:37.593Z",
+  "finished_at": "2026-11-07T08:52:24.629Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "00:44 +328: All tests passed!",
+  "log_sha256": "6e04d4798bff563ae749974b4af6e002538835d992a76108fdf951608dbc9212",
+  "log_lines": 414,
+  "log_tail": [
+    "00:42 +317: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: the first measurement in a vault of older records keeps a backup first and says where",
+    "00:42 +318: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:42 +319: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:42 +320: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:42 +321: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:43 +322: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: accessibility: the card has a header, each latest value is one spoken summary, the save message is a live region",
+    "00:43 +323: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "00:43 +324: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: 320 dp wide at 2x text: no overflow (EN and TR)",
+    "00:43 +325: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "00:44 +326: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: Turkish: labels, unit and errors are Turkish",
+    "00:44 +327: /home/user/claudereponewscience/human_health_os/test/widget/f007_measurements_test.dart: every F007 error code has its own text in both languages, never the generic one",
+    "00:44 +328: All tests passed!"
+  ],
+  "lockfile_sha256": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "7a4e62976f91b4e06f044ff37eed08b855da904b7507b62aad7dab7aca21fe08",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

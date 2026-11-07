@@ -2,21 +2,22 @@
   "manifest": {
     "format": "hhos-backup",
     "format_version": 1,
-    "created_at": "2026-10-08T21:17:57.212Z",
+    "created_at": "2026-11-07T08:50:16.590Z",
     "source_app_version": "0.1.0+1",
-    "source_revision": "9b8217dfb794941f3df3fd6917fb7f70d8f72ab5",
-    "vault_id": "fd8c8f68-c280-4ea1-88f1-6d08f1b5a6c8",
+    "source_revision": "e1aaf17050618aafc109aaf01f7debc4c05324fc",
+    "vault_id": "0576a6a8-c28e-4417-b4d5-1c4dc9797ddd",
     "vault_format_version": 1,
     "record_schema_versions": [
-      3
+      3,
+      4
     ],
     "profile_count": 1,
-    "record_count": 2,
+    "record_count": 3,
     "skipped_entries": 0,
-    "payload_sha256": "d6b6f7be3e99eab3ad8ee99df8ddf8ac075f628b57f1976bebcaef0629d3d941",
-    "payload_bytes": 1343,
+    "payload_sha256": "d3fd123eb8eaf7c880acb5e923a017a64f78f0ad0bba62b8791c61b16b35de1b",
+    "payload_bytes": 1923,
     "encryption": "none-dev-only",
     "attachments": []
   },
-  "payload": "{\"format\":\"hhos-vault-log\",\"format_version\":1,\"vault_id\":\"fd8c8f68-c280-4ea1-88f1-6d08f1b5a6c8\",\"created_at\":\"2026-10-08T21:17:38.775Z\",\"encryption\":\"none-dev-only\"}\n{\"op\":\"profile.put\",\"data\":{\"schema_version\":1,\"id\":\"8f6ec504-f940-442d-905d-4814ecea4110\",\"type\":\"self\",\"created_at\":\"2026-10-08T21:17:38.775Z\",\"display_name\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"044d5978-cfc9-405f-a27e-5b73dfd07353\",\"profile_id\":\"8f6ec504-f940-442d-905d-4814ecea4110\",\"kind\":\"body.weight\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":78.4,\"unit\":\"kg\"},\"original_text\":\"78,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-08T21:17:41.407Z\",\"recorded_at\":\"2026-10-08T21:17:41.407Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"50d06d65-dfbb-49d1-8fda-da9ff5005f18\",\"profile_id\":\"8f6ec504-f940-442d-905d-4814ecea4110\",\"kind\":\"lab.result\",\"state\":\"reported\",\"value_status\":\"present\",\"quantity\":{\"value\":5.4,\"unit\":\"%\"},\"original_text\":\"5,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-08T00:00:00.000Z\",\"recorded_at\":\"2026-10-08T21:17:48.949Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":{\"analyte_label\":\"HbA1c\",\"specimen\":null,\"laboratory\":null,\"source_flag\":\"H\",\"reference_text\":\"4.0 - 6.0\"}}}\n"
+  "payload": "{\"format\":\"hhos-vault-log\",\"format_version\":1,\"vault_id\":\"0576a6a8-c28e-4417-b4d5-1c4dc9797ddd\",\"created_at\":\"2026-11-07T08:49:45.668Z\",\"encryption\":\"none-dev-only\"}\n{\"op\":\"profile.put\",\"data\":{\"schema_version\":1,\"id\":\"6e6d8259-9681-41b0-aee6-8e49e88dedcf\",\"type\":\"self\",\"created_at\":\"2026-11-07T08:49:45.669Z\",\"display_name\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"38c2c3fc-f334-425f-b083-e079c5be9025\",\"profile_id\":\"6e6d8259-9681-41b0-aee6-8e49e88dedcf\",\"kind\":\"body.weight\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":78.4,\"unit\":\"kg\"},\"original_text\":\"78,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-11-07T08:49:50.093Z\",\"recorded_at\":\"2026-11-07T08:49:50.093Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"ef18f6e4-df1d-4228-9cdb-d1098dd7d813\",\"profile_id\":\"6e6d8259-9681-41b0-aee6-8e49e88dedcf\",\"kind\":\"lab.result\",\"state\":\"reported\",\"value_status\":\"present\",\"quantity\":{\"value\":5.4,\"unit\":\"%\"},\"original_text\":\"5,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-11-07T00:00:00.000Z\",\"recorded_at\":\"2026-11-07T08:49:57.309Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":{\"analyte_label\":\"HbA1c\",\"specimen\":null,\"laboratory\":null,\"source_flag\":\"H\",\"reference_text\":\"4.0 - 6.0\"}}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":4,\"id\":\"3c8670f5-2f19-447f-819a-5596ffc42d9a\",\"profile_id\":\"6e6d8259-9681-41b0-aee6-8e49e88dedcf\",\"kind\":\"vital.blood_pressure\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":null,\"original_text\":null,\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-11-07T08:50:08.025Z\",\"recorded_at\":\"2026-11-07T08:50:08.025Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null,\"context\":null,\"details\":{\"type\":\"blood_pressure\",\"systolic\":118,\"diastolic\":76,\"unit\":\"mmHg\",\"systolic_text\":\"118\",\"diastolic_text\":\"76\"}}}\n"
 }
