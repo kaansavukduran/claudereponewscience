@@ -517,6 +517,176 @@ class S {
     '$kind: $value, ölçüm zamanı $when${saved == null ? '' : ', kaydedilme zamanı $saved'}, $source',
   );
 
+  // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String get geneticsTitle => _t('Genetics', 'Genetik');
+  String get geneticsToolsTitle => _t('Tools', 'Araçlar');
+  String get geneticsTileHint => _t(
+    'Read a raw DNA file (23andMe, AncestryDNA, MyHeritage, FamilyTreeDNA) on this device',
+    'Ham bir DNA dosyasını (23andMe, AncestryDNA, MyHeritage, FamilyTreeDNA) bu cihazda oku',
+  );
+  String get geneticsIntro => _t(
+    'See which variants your raw DNA file contains. The file is read on this device and is not uploaded.',
+    'Ham DNA dosyanın hangi varyantları içerdiğini gör. Dosya bu cihazda okunur ve yüklenmez.',
+  );
+  String get geneticsNoticeTitle =>
+      _t('Before you load a file', 'Dosyayı yüklemeden önce');
+  List<String> get geneticsNotices => [
+    _t(
+      'Your genome identifies you for life and cannot be changed like a password.',
+      'Genomun seni ömür boyu tanımlar ve bir şifre gibi değiştirilemez.',
+    ),
+    _t(
+      'It also says things about relatives who did not choose to share it.',
+      'Paylaşmayı seçmemiş akrabaların hakkında da bilgi verir.',
+    ),
+    _t(
+      'Human OS does not save the file. Your operating system may keep copies you cannot see: downloads, screenshots, device backups.',
+      'Human OS dosyayı kaydetmez. İşletim sistemin görmediğin kopyalar tutabilir: indirilenler, ekran görüntüleri, cihaz yedekleri.',
+    ),
+    _t(
+      'This is a list of what the file contains, not a medical result. Talk to a clinician or genetic counsellor before acting on anything.',
+      'Bu, dosyanın içerdiklerinin listesidir, tıbbi bir sonuç değildir. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş.',
+    ),
+  ];
+  String get geneticsChoose => _t('Choose a DNA file', 'DNA dosyası seç');
+  String get geneticsSample =>
+      _t('Try an invented sample file', 'Uydurma bir örnek dosya dene');
+  String get geneticsReading => _t('Reading the file…', 'Dosya okunuyor…');
+  String geneticsLoadedFrom(String name) =>
+      _t('Read from $name', '$name dosyasından okundu');
+  String get geneticsSampleLoaded => _t(
+    'Invented sample file: not a real person',
+    'Uydurma örnek dosya: gerçek bir kişi değil',
+  );
+  String get geneticsKeptOnly => _t(
+    'Kept only while this page is open, or until you clear it. Not saved by Human OS.',
+    'Yalnız bu sayfa açıkken ya da sen temizleyene kadar tutulur. Human OS kaydetmez.',
+  );
+  String get geneticsClear => _t('Clear', 'Temizle');
+  String get geneticsFormat => _t('Format', 'Biçim');
+  String get geneticsBuild => _t('Genome build', 'Genom sürümü');
+  String get geneticsBuildNotStated =>
+      _t('not stated in the file', 'dosyada belirtilmemiş');
+  String get geneticsTotal =>
+      _t('Variants in the file', 'Dosyadaki varyantlar');
+  String get geneticsRead => _t('Read', 'Okunan');
+  String get geneticsNotRead => _t('Not read', 'Okunamayan');
+  String get geneticsUnreadableLines =>
+      _t('Lines that could not be read', 'Okunamayan satırlar');
+  String get geneticsRepeated => _t('Repeated ids', 'Tekrarlanan kimlikler');
+  String get geneticsChromosomes => _t('By chromosome', 'Kromozoma göre');
+  String get geneticsSearchHint =>
+      _t('Search by rsID or chromosome', 'rsID ya da kromozomla ara');
+  String get geneticsNotReadShort => _t('not read', 'okunmadı');
+  String get geneticsPrev => _t('Previous', 'Önceki');
+  String get geneticsNext => _t('Next', 'Sonraki');
+  String geneticsRange(int from, int to, int total) =>
+      _t('$from–$to of $total', '$from–$to / $total');
+  String get geneticsNoMatches =>
+      _t('No variants match your search.', 'Aramana uyan varyant yok.');
+  String get geneticsColumns => _t(
+    'rsID · chromosome · position · genotype',
+    'rsID · kromozom · konum · genotip',
+  );
+  String geneticsRefusal(String code) => switch (code) {
+    'EMPTY' => _t('The file is empty.', 'Dosya boş.'),
+    'UNKNOWN_FORMAT' => _t(
+      'This does not look like a raw data file from 23andMe, AncestryDNA, MyHeritage or FamilyTreeDNA.',
+      'Bu, 23andMe, AncestryDNA, MyHeritage ya da FamilyTreeDNA ham veri dosyasına benzemiyor.',
+    ),
+    'NO_VARIANTS' => _t(
+      'The file has a header but no readable variants.',
+      'Dosyada başlık var ama okunabilir varyant yok.',
+    ),
+    'MOSTLY_INVALID' => _t(
+      'Most lines could not be read, so the file was not loaded.',
+      'Satırların çoğu okunamadığı için dosya yüklenmedi.',
+    ),
+    'COMPRESSED' => _t(
+      'This is a compressed file (zip or gzip). Extract it first and choose the text file inside.',
+      'Bu sıkıştırılmış bir dosya (zip ya da gzip). Önce çıkar, içindeki metin dosyasını seç.',
+    ),
+    'NOT_TEXT' => _t(
+      'This is not a plain text file.',
+      'Bu düz metin bir dosya değil.',
+    ),
+    'TOO_LARGE' => _t(
+      'The file is too large (more than 200 MB).',
+      'Dosya çok büyük (200 MB üzeri).',
+    ),
+    'VCF' => _t(
+      'VCF files are not supported yet. Choose a raw data file from a consumer service.',
+      'VCF dosyaları henüz desteklenmiyor. Bir tüketici servisinden ham veri dosyası seç.',
+    ),
+    _ => _t('The file could not be read.', 'Dosya okunamadı.'),
+  };
+  String geneticsInvalidReason(String code) => switch (code) {
+    'COLUMNS' => _t('wrong number of columns', 'sütun sayısı yanlış'),
+    'CHROMOSOME' => _t('unknown chromosome', 'bilinmeyen kromozom'),
+    'POSITION' => _t('position is not a number', 'konum bir sayı değil'),
+    'ID' => _t('unreadable id', 'okunamayan kimlik'),
+    'GENOTYPE' => _t('unreadable genotype', 'okunamayan genotip'),
+    'PARTIAL' => _t('only one allele was read', 'yalnız bir alel okunmuş'),
+    _ => code,
+  };
+  String geneticsInvalidLine(int line, String reason) =>
+      _t('Line $line: $reason', 'Satır $line: $reason');
+  String get geneticsPackTitle =>
+      _t('Statements from a source pack', 'Bir kaynak paketinden ifadeler');
+  String get geneticsPackNote => _t(
+    'A pack states what its source says. An association is not a cause, and a list like this is not a diagnosis. Most of the genome is not covered: no entry here means nothing.',
+    'Bir paket kaynağının söylediğini aktarır. Bir ilişki bir neden değildir ve böyle bir liste tanı değildir. Genomun çoğu kapsanmıyor: burada kayıt olmaması bir şey ifade etmez.',
+  );
+  String get geneticsPackSynthetic => _t(
+    'INVENTED demonstration pack: not real knowledge',
+    'UYDURMA gösterim paketi: gerçek bilgi değil',
+  );
+  String get geneticsPackSource => _t('Source', 'Kaynak');
+  String get geneticsPackLicence => _t('Licence', 'Lisans');
+  String get geneticsPackLoad => _t('Load a pack file', 'Paket dosyası yükle');
+  String get geneticsPackNone => _t(
+    'No pack entry mentions a variant in this file.',
+    'Hiçbir paket kaydı bu dosyadaki bir varyanttan söz etmiyor.',
+  );
+  String geneticsPackRefusal(String code) => switch (code) {
+    'EMPTY' => _t('The pack file is empty.', 'Paket dosyası boş.'),
+    'HEADER' => _t(
+      'The pack must state its name, licence, build and strand in its header.',
+      'Paket, başlığında adını, lisansını, sürümünü ve şeridini belirtmeli.',
+    ),
+    'STRAND' => _t(
+      'Only packs on the plus strand are read.',
+      'Yalnız artı şeridindeki paketler okunur.',
+    ),
+    'NO_ROWS' => _t('The pack has no entries.', 'Paketin kaydı yok.'),
+    _ => _t('The pack could not be read.', 'Paket okunamadı.'),
+  };
+  String geneticsMatchKind(String kind) => switch (kind) {
+    'containsAllele' => _t(
+      'Your genotype contains the allele the source names',
+      'Genotipin kaynağın andığı aleli içeriyor',
+    ),
+    'doesNotMatch' => _t(
+      'Your genotype does not match this entry',
+      'Genotipin bu kayıtla eşleşmiyor',
+    ),
+    'notRead' => _t('Not read in your file', 'Dosyanda okunmamış'),
+    _ => _t(
+      'Cannot be told apart by strand (A/T or C/G), so nothing is claimed',
+      'Şeride göre ayırt edilemez (A/T ya da C/G), bu yüzden bir şey öne sürülmez',
+    ),
+  };
+  String geneticsBuildNote(String note, String build) => switch (note) {
+    'same' => _t('Build $build in both', 'İkisinde de sürüm $build'),
+    'differs' => _t(
+      'The file and the pack state different builds',
+      'Dosya ve paket farklı sürümler belirtiyor',
+    ),
+    _ => _t('Build not stated by the file', 'Sürüm dosyada belirtilmemiş'),
+  };
+  String geneticsGenotypeSpoken(String? call) =>
+      call == null ? _t('not read', 'okunmadı') : call.split('').join(', ');
+
   // Labs (F004): everything is shown as the report printed it.
   String get labsNoInterpretation => _t(
     'Values, flags and ranges are shown exactly as the lab printed them. Human OS does not interpret lab results or say whether they are good or bad.',

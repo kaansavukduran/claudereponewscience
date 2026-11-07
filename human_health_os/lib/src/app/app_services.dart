@@ -12,6 +12,7 @@ import '../core/capabilities.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
 import '../domain/profile/profile.dart';
+import '../features/genetics/genome_file_picker.dart';
 
 class AppServices {
   const AppServices({
@@ -29,6 +30,7 @@ class AppServices {
     this.lockStorage,
     this.restartRequired,
     this.checkpointSaved,
+    this.genomePicker,
     this.deriveKey = deriveInline,
   });
 
@@ -72,4 +74,8 @@ class AppServices {
   /// Where the upgrade checkpoint was saved in this session (a backup made
   /// before the first record of a newer schema); null until then (F007).
   final ValueNotifier<String?>? checkpointSaved;
+
+  /// Chooses a raw DNA file (G001); null means the system dialog. Tests and
+  /// the browser smoke put a fake here instead of a native dialog.
+  final GenomeFilePicker? genomePicker;
 }

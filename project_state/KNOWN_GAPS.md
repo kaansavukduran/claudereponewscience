@@ -55,4 +55,9 @@ Status: OPEN, PARTIAL or CLOSED (with the FORGE and evidence that closed it).
 | G-49 | At 2x text on a 320 dp phone the first measurement tile is about two screens down (single-column tiles or Measurements above the weight card would help); reduced-motion preference is not honoured; Today uses about ten text styles against the four of docs/DESIGN.md | OPEN | U001 design pass |
 | G-50 | The local web package opens in a browser and is a development build: data is unencrypted in the browser and tied to the address and browser; a real Windows installer (.exe) needs a Windows build host | OPEN | U004 / F015 |
 | G-51 | `tools/package_web_local.sh` and `serve.ps1` (Windows launcher) were not run on Windows here; the Python launcher was tested on Linux | OPEN | first run on a Windows computer |
+| G-52 | A loaded genome is kept only while the Genetics page is open: it cannot be saved in the encrypted vault, so it must be loaded again each time | OPEN | later genetics slice (a sealed file beside the vault, never plaintext) |
+| G-53 | No real annotation data is bundled: ClinVar, dbSNP and the GWAS Catalog need a licence review, a build/strand check and a pack builder before a real pack ships; matching uses the rsID only (rsIDs can be merged) | OPEN | later genetics slice |
+| G-54 | A 700,000-line file is parsed in an isolate on native builds but on the main thread in the browser (it can freeze the tab for seconds) and held as one object per variant (memory); a chunked, cancellable, compact reader is needed for phones and the web | OPEN | later genetics slice |
+| G-55 | The file dialog needs a desktop portal or zenity on Linux; without one, a path field or drag-and-drop would be needed. Drag-and-drop is not built | OPEN | later genetics slice |
+| G-56 | Living DNA, VCF and other layouts are not read: a Living DNA file may be taken for 23andMe; the format is shown as detected, never confirmed with the vendor | OPEN | later genetics slice |
 

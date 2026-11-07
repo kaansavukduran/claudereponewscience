@@ -17,6 +17,7 @@ import '../data/local/log_repository.dart';
 import '../data/local/storage.dart';
 import '../data/local/vault_envelope.dart';
 import '../domain/ports/health_repository.dart';
+import '../features/genetics/genome_file_picker.dart';
 import 'app_services.dart';
 
 /// What `main()` shows first: the app, or the vault gate.
@@ -171,6 +172,7 @@ Future<AppServices> servicesFor(
   List<StorageNote> notes = const [],
   LoadReport report = const LoadReport(warnings: []),
   DataFiles? files,
+  GenomeFilePicker? genomePicker,
   KeyDeriver derive = deriveInline,
 }) async {
   final heartbeat = HeartbeatService(repo);
@@ -235,6 +237,7 @@ Future<AppServices> servicesFor(
     lockStorage: repo is LogRepository ? repo.lock : null,
     restartRequired: ValueNotifier<bool>(false),
     checkpointSaved: checkpointSaved,
+    genomePicker: genomePicker,
     deriveKey: derive,
   );
 }

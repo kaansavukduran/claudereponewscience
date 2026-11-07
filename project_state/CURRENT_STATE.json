@@ -11,7 +11,7 @@
     "run_id": "G001@v0.32",
     "slice": "genetics: raw DNA file import, offline",
     "goal": "A person drops a raw DNA file from 23andMe, AncestryDNA, MyHeritage or FamilyTreeDNA onto the app and sees, offline and on their device only, what the file contains (a searchable list of variants with their genotypes), with missing never treated as normal; plus a way to match variants against a local annotation pack that cites its sources. User-directed track (D-020).",
-    "status": "FORGE_PLANNING",
+    "status": "IMPLEMENTING",
     "baseline_commit": "3e3c3b4",
     "started_at": "2026-11-07T17:00:00Z",
     "scope": [
@@ -37,14 +37,19 @@
       "AC-6 Annotation packs: a pack is parsed with the same care (bad lines counted); matches show rsID, the user's genotype, gene, the association as the source states it, source and source id; a variant not in the pack is not mentioned; the bundled pack is labelled SYNTHETIC; the screen says association is not cause and screening is not diagnosis once",
       "AC-7 Every new rule has a test bound to a mutation; the F001-F007 suites pass in UTC and New York; gates on a clean tree; design audit items in docs/DESIGN.md pass or are recorded",
       "AC-8 The only new dependency is a file chooser after a recorded review (D-021); the chooser sits behind an interface so tests and the web smoke do not need a native dialog",
-      "AC-9 Close: D-021, SOURCES, KNOWN_GAPS (G-52, G-53), state and docs updated, one next Forge"
+      "AC-9 Close: D-021, SOURCES, KNOWN_GAPS (G-52, G-53), state and docs updated, one next Forge",
+      "AC-10 (critique) File safety: archives (gzip, zip, bzip2), UTF-16 text, VCF, NUL-containing and oversized (>200 MB) files are refused by content with a code before parsing; a file where more than one line in six is unreadable is refused whole (MOSTLY_INVALID); a partial call (one allele read) is listed as PARTIAL, never turned into a base; errors carry a code and a line number, never a line's text",
+      "AC-11 (critique) Packs: a pack declares name, licence, build and the plus strand or is refused; a genotype is matched to the named allele without regard to order; A/T and C/G pairs are never matched (strand cannot be told apart); a mismatch reads 'does not match this entry', never 'no variant'; the build note says same, differs or not stated; every duplicate id is reported; the statement is shown verbatim with its source, id, date and evidence; the pack note says most of the genome is not covered",
+      "AC-12 (critique) Pre-load notice shown every time before a file is chosen (identifies for life, relatives, not saved by the app but the OS may keep copies, not a medical result); the chooser is released after the read (no cached copy); a refused file leaves an earlier loaded file untouched; the picker and the reader never write to the console (test over debugPrint)",
+      "AC-13 Dependency: file_picker 13.3.2 (MIT) with its transitive packages recorded in D-021; web smoke opens the screen and loads the invented sample in Chromium without a native dialog"
     ],
     "completed_steps": [
       "ORIENT: state READY after F007-S2 (main 3e3c3b4); the owner asked for DNA raw-data import",
-      "SPECIFY: scope and AC-1..AC-9 written"
+      "SPECIFY: scope and AC-1..AC-9 written",
+      "SPECIFY (refined): independent critique on formats, privacy and licences folded in (AC-10..AC-13); parser, packs and screen implemented with tests"
     ],
     "last_verified_gate": null,
-    "next_action": "IMPLEMENT the parser (pure Dart) first",
+    "next_action": "independent review, mutations, gates",
     "files_touched": [],
     "migration_ids": [],
     "evidence_ids": [],

@@ -6,6 +6,7 @@ import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
+import '../genetics/genetics_screen.dart';
 import 'measurements_card.dart';
 import 'weight_card.dart';
 import 'your_data_card.dart';
@@ -40,6 +41,17 @@ class TodayScreen extends StatelessWidget {
         WeightCard(services: services),
         const SizedBox(height: 28),
         MeasurementsCard(services: services),
+        const SizedBox(height: 28),
+        _ToolTile(
+          key: const ValueKey('tool-genetics'),
+          title: s.geneticsTitle,
+          hint: s.geneticsTileHint,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => GeneticsScreen(services: services),
+            ),
+          ),
+        ),
         const SizedBox(height: 28),
         YourDataCard(services: services),
         const SizedBox(height: 28),
@@ -194,6 +206,72 @@ class _KeyValue extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+/// A way into a tool that is not a daily number (G001).
+class _ToolTile extends StatelessWidget {
+  const _ToolTile({
+    super.key,
+    required this.title,
+    required this.hint,
+    required this.onTap,
+  });
+
+  final String title;
+  final String hint;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          header: true,
+          child: Text(s.geneticsToolsTitle, style: text.titleMedium),
+        ),
+        const SizedBox(height: 12),
+        Material(
+          color: scheme.surfaceContainerLowest,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: scheme.outlineVariant),
+          ),
+          child: InkWell(
+            borderRadius: BorderRadius.circular(12),
+            onTap: onTap,
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Row(
+                children: [
+                  Icon(Icons.biotech_outlined, color: scheme.primary),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(title, style: text.titleSmall),
+                        Text(
+                          hint,
+                          style: text.bodySmall?.copyWith(
+                            color: scheme.outline,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(Icons.chevron_right, color: scheme.outline),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }
