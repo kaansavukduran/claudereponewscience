@@ -114,6 +114,31 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           section(
+            s.settingsFont,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                choices(
+                  'set-font',
+                  [
+                    (FontChoice.system, s.settingsSystem),
+                    (FontChoice.legible, s.fontLegible),
+                    (FontChoice.dyslexic, s.fontDyslexic),
+                  ],
+                  a.font,
+                  (v) => set(a.copyWith(font: v)),
+                ),
+                SwitchListTile(
+                  key: const ValueKey('set-wide-spacing'),
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(s.settingsWideSpacing),
+                  value: a.wideSpacing,
+                  onChanged: (on) => set(a.copyWith(wideSpacing: on)),
+                ),
+              ],
+            ),
+          ),
+          section(
             s.settingsSpacing,
             choices(
               'set-density',

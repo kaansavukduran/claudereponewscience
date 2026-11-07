@@ -82,12 +82,16 @@ class _HumanOsAppState extends State<HumanOsApp> {
           accentChoice: a.accent,
           highContrast: a.highContrast,
           compact: a.density == Density.compact,
+          fontFamily: fontFamilyFor(a.font),
+          wideSpacing: a.wideSpacing,
         ),
         darkTheme: buildHumanOsTheme(
           Brightness.dark,
           accentChoice: a.accent,
           highContrast: a.highContrast,
           compact: a.density == Density.compact,
+          fontFamily: fontFamilyFor(a.font),
+          wideSpacing: a.wideSpacing,
         ),
         themeMode: switch (a.theme) {
           ThemeChoice.system => ThemeMode.system,
@@ -122,6 +126,13 @@ class _HumanOsAppState extends State<HumanOsApp> {
     );
   }
 }
+
+/// The bundled family for a font choice; null keeps the device font.
+String? fontFamilyFor(FontChoice f) => switch (f) {
+  FontChoice.system => null,
+  FontChoice.legible => 'AtkinsonHyperlegibleNext',
+  FontChoice.dyslexic => 'OpenDyslexic',
+};
 
 class _Scaled extends TextScaler {
   const _Scaled(this.base, this.factor);

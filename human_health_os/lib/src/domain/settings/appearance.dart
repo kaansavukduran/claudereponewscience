@@ -20,6 +20,11 @@ enum StartScreen { today, timeline, labs }
 /// Comfortable keeps the larger spacing; compact shows more on a laptop.
 enum Density { comfortable, compact }
 
+/// The reading font: the device's own, a highly legible face for low
+/// vision (Atkinson Hyperlegible Next) or a face designed for dyslexia
+/// (OpenDyslexic). Both are bundled (D-025).
+enum FontChoice { system, legible, dyslexic }
+
 /// Today sections a person may hide. The weight and measurement areas are
 /// always there (they hold the person's numbers); Settings stays one click
 /// away in the top bar whatever is hidden.
@@ -38,6 +43,8 @@ class AppearanceSettings {
     this.startScreen = StartScreen.today,
     this.density = Density.comfortable,
     this.highContrast = false,
+    this.font = FontChoice.system,
+    this.wideSpacing = false,
   });
 
   final LanguageChoice language;
@@ -59,6 +66,11 @@ class AppearanceSettings {
 
   /// Darker text and stronger edges, on top of the device's own settings.
   final bool highContrast;
+
+  final FontChoice font;
+
+  /// More space between letters, words and lines.
+  final bool wideSpacing;
 
   /// [defaults] in the chosen order, all of them (hidden ones included).
   List<String> ordered(List<String> defaults) => [
@@ -95,6 +107,8 @@ class AppearanceSettings {
     startScreen: startScreen,
     density: density,
     highContrast: highContrast,
+    font: font,
+    wideSpacing: wideSpacing,
   );
 
   /// Multiplies the text size the system asks for.
@@ -116,6 +130,8 @@ class AppearanceSettings {
     StartScreen? startScreen,
     Density? density,
     bool? highContrast,
+    FontChoice? font,
+    bool? wideSpacing,
   }) => AppearanceSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -128,6 +144,8 @@ class AppearanceSettings {
     startScreen: startScreen ?? this.startScreen,
     density: density ?? this.density,
     highContrast: highContrast ?? this.highContrast,
+    font: font ?? this.font,
+    wideSpacing: wideSpacing ?? this.wideSpacing,
   );
 
   Map<String, Object?> toJson() => {
@@ -144,6 +162,8 @@ class AppearanceSettings {
     'startScreen': startScreen.name,
     'density': density.name,
     'highContrast': highContrast,
+    'font': font.name,
+    'wideSpacing': wideSpacing,
   };
 
   /// Reads saved settings; anything unknown or missing falls back to the
@@ -192,6 +212,8 @@ class AppearanceSettings {
       ),
       density: pick(Density.values, json['density'], Density.comfortable),
       highContrast: json['highContrast'] == true,
+      font: pick(FontChoice.values, json['font'], FontChoice.system),
+      wideSpacing: json['wideSpacing'] == true,
     );
   }
 
@@ -208,7 +230,9 @@ class AppearanceSettings {
       other.padOpen == padOpen &&
       other.startScreen == startScreen &&
       other.density == density &&
-      other.highContrast == highContrast;
+      other.highContrast == highContrast &&
+      other.font == font &&
+      other.wideSpacing == wideSpacing;
 
   @override
   int get hashCode => Object.hash(
@@ -220,7 +244,7 @@ class AppearanceSettings {
     hiddenTiles.length,
     hiddenSections.length,
     padOpen,
-    Object.hash(startScreen, density, highContrast),
+    Object.hash(startScreen, density, highContrast, font, wideSpacing),
   );
 }
 

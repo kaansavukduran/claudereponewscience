@@ -645,6 +645,17 @@ class S {
     AccentChoice.graphite => _t('Graphite', 'Grafit'),
   };
   String get settingsSpacing => _t('Spacing', 'Aralık');
+  String get settingsFont => _t('Font', 'Yazı tipi');
+  String get fontLegible => _t(
+    'Easy to read (Atkinson Hyperlegible)',
+    'Kolay okunur (Atkinson Hyperlegible)',
+  );
+  String get fontDyslexic =>
+      _t('For dyslexia (OpenDyslexic)', 'Disleksi için (OpenDyslexic)');
+  String get settingsWideSpacing => _t(
+    'More space between letters, words and lines',
+    'Harfler, sözcükler ve satırlar arasında daha fazla boşluk',
+  );
   String get settingsComfortable => _t('Comfortable', 'Rahat');
   String get settingsCompact => _t('Compact', 'Sıkışık');
   String get settingsContrast => _t('Contrast', 'Kontrast');

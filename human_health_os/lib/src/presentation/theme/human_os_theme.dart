@@ -86,6 +86,8 @@ ThemeData buildHumanOsTheme(
   AccentChoice accentChoice = AccentChoice.teal,
   bool highContrast = false,
   bool compact = false,
+  String? fontFamily,
+  bool wideSpacing = false,
 }) {
   final dark = brightness == Brightness.dark;
   final tones = accentTones[accentChoice]!;
@@ -142,8 +144,8 @@ ThemeData buildHumanOsTheme(
         onTertiaryContainer: ink,
       );
   final base = ThemeData(brightness: brightness, useMaterial3: true);
-  final text = base.textTheme
-      .apply(bodyColor: ink, displayColor: ink)
+  final styled = base.textTheme
+      .apply(bodyColor: ink, displayColor: ink, fontFamily: fontFamily)
       .copyWith(
         headlineSmall: base.textTheme.headlineSmall?.copyWith(
           fontWeight: FontWeight.w600,
@@ -157,8 +159,35 @@ ThemeData buildHumanOsTheme(
         titleSmall: base.textTheme.titleSmall?.copyWith(
           fontWeight: FontWeight.w600,
           color: ink,
+          fontFamily: fontFamily,
         ),
       );
+  // Wide spacing: more room between letters, words and lines (WCAG 1.4.12
+  // text-spacing values as a guide).
+  TextStyle? spaced(TextStyle? s) => s?.copyWith(
+    letterSpacing: (s.fontSize ?? 14) * 0.12,
+    wordSpacing: (s.fontSize ?? 14) * 0.16,
+    height: 1.5,
+  );
+  final text = !wideSpacing
+      ? styled
+      : styled.copyWith(
+          displayLarge: spaced(styled.displayLarge),
+          displayMedium: spaced(styled.displayMedium),
+          displaySmall: spaced(styled.displaySmall),
+          headlineLarge: spaced(styled.headlineLarge),
+          headlineMedium: spaced(styled.headlineMedium),
+          headlineSmall: spaced(styled.headlineSmall),
+          titleLarge: spaced(styled.titleLarge),
+          titleMedium: spaced(styled.titleMedium),
+          titleSmall: spaced(styled.titleSmall),
+          bodyLarge: spaced(styled.bodyLarge),
+          bodyMedium: spaced(styled.bodyMedium),
+          bodySmall: spaced(styled.bodySmall),
+          labelLarge: spaced(styled.labelLarge),
+          labelMedium: spaced(styled.labelMedium),
+          labelSmall: spaced(styled.labelSmall),
+        );
   // Field boundaries need 3:1 against the surface (WCAG 1.4.11); card
   // outlines stay hairline.
   final fieldEdge = dark ? const Color(0xFF6C8386) : const Color(0xFF7B8E90);
@@ -174,6 +203,7 @@ ThemeData buildHumanOsTheme(
     visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
     scaffoldBackgroundColor: surface,
     textTheme: text,
+    fontFamily: fontFamily,
     extensions: [dark ? HealthRoleColors.dark : HealthRoleColors.light],
     appBarTheme: AppBarTheme(
       backgroundColor: surface,

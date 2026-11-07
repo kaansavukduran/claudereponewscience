@@ -27,3 +27,16 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Reading fonts (U011, D-025): SIL Open Font License 1.1, licence texts
+  # beside the files; bundled so they work offline.
+  fonts:
+    - family: OpenDyslexic
+      fonts:
+        - asset: assets/fonts/OpenDyslexic-Regular.otf
+        - asset: assets/fonts/OpenDyslexic-Bold.otf
+          weight: 700
+    - family: AtkinsonHyperlegibleNext
+      fonts:
+        - asset: assets/fonts/AtkinsonHyperlegibleNext-Regular.ttf
+        - asset: assets/fonts/AtkinsonHyperlegibleNext-Bold.ttf
+          weight: 700
