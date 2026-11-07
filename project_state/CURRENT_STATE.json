@@ -3,9 +3,42 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U003",
+    "contract": "v0.32",
+    "run_id": "U003@v0.32",
+    "slice": "glossary and measurement guide",
+    "goal": "Every measurement and term in plain words with its unit and home steps; reachable from Today and from each measurement sheet; never a target or a judgement.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "7233e17",
+    "started_at": "2026-11-07T20:40:00Z",
+    "scope": [
+      "13 entries: the eight measured kinds, reference interval, lab flag, unit, correction, variant/genotype",
+      "searchable glossary on Today; 'About this measurement' in every measurement sheet",
+      "sources in SOURCES.md and on the entries"
+    ],
+    "out_of_scope": [
+      "lab analyte encyclopaedia (later)",
+      "targets, ranges to aim for or interpretations"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Every Today measurement and weight have an entry with a unit and home steps; links are real kinds",
+      "AC-2 No entry gives a target, diagnoses or judges (EN/TR scans; the two range definitions are checked for targets and diagnosis only)",
+      "AC-3 Sheet link and search work with the mouse; every entry opens in Turkish at 320 dp 2x",
+      "AC-4 Tests bound to mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

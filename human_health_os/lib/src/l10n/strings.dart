@@ -531,6 +531,17 @@ class S {
   );
 
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String get glossaryTitle => _t('Glossary', 'Sözlük');
+  String get glossaryTileHint => _t(
+    'Every measurement and term in plain words, and how to measure at home',
+    'Her ölçüm ve terim sade bir dille; evde nasıl ölçülür',
+  );
+  String get glossarySearch => _t('Search a term', 'Bir terim ara');
+  String get glossaryNone => _t('No term matches.', 'Eşleşen terim yok.');
+  String get glossaryUnit => _t('Unit', 'Birim');
+  String get glossaryHow => _t('How to measure at home', 'Evde nasıl ölçülür');
+  String get aboutMeasurement =>
+      _t('About this measurement', 'Bu ölçüm hakkında');
   String get guideTitle =>
       _t('Body and specialties', 'Vücut ve uzmanlık alanları');
   String get guideTileHint => _t(

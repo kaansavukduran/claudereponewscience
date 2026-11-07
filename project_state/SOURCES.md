@@ -55,3 +55,6 @@ Repo-local work, in a separate namespace: R1 = "v0.25 connected TS implementatio
 - WHO ICD-11 MMS chapter structure (icd.who.int): used for the grouping by body system only; no ICD text or codes are copied.
 - UEMS sections and boards (uems.eu) and Türkiye's specialty-training branch names (TUS): specialty names only.
 - All descriptions are written for Human OS in plain words; no atlas text from the owner's Drive is copied (licence unknown). The guide never diagnoses and never reads the person's values.
+
+## U003 glossary (2026-11-07)
+- Home blood pressure steps: ESH practice guidance (2021), WHO HEARTS technical package. Waist site: WHO Expert Consultation on waist circumference (2008). Pulse oximeter notes: US FDA safety communication (2021, updated 2024). Steps are paraphrased for the project; no text copied. No entry gives a target or range to aim for.

@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
 import '../../app/appearance_scope.dart';
+import '../../domain/guide/glossary.dart';
 import '../../domain/settings/appearance.dart';
+import '../guide/glossary_screen.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
@@ -494,6 +496,20 @@ class _EntrySheetState extends State<_EntrySheet> {
               header: true,
               child: Text(s.recordKind(kind), style: text.titleLarge),
             ),
+            if (glossaryForKind(kind.code) case final entry?)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  key: const ValueKey('measure-about'),
+                  icon: const Icon(Icons.info_outline),
+                  label: Text(s.aboutMeasurement),
+                  onPressed: () => Navigator.of(context).push(
+                    MaterialPageRoute<void>(
+                      builder: (_) => GlossaryEntryScreen(entry: entry),
+                    ),
+                  ),
+                ),
+              ),
             if (kind.isStructured) ...[
               _field(
                 s,
