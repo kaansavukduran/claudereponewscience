@@ -133,11 +133,14 @@ void main() {
       },
     );
 
-    test('a call that is not a base (an indel) does not match', () {
-      expect(
-        matchPack(genome('rs1\t1\t10\tDD\n'), p).single.kind,
-        MatchKind.doesNotMatch,
-      );
+    test('a call that is not a base (an indel) is not compared', () {
+      for (final c in ['DD', 'II', 'DI']) {
+        expect(
+          matchPack(genome('rs1\t1\t10\t$c\n'), p).single.kind,
+          MatchKind.notComparable,
+          reason: c,
+        );
+      }
     });
 
     test('ids match without regard to case; duplicates are all reported', () {
@@ -219,6 +222,62 @@ void main() {
       final s = p.entries.single.statement;
       expect(s.runes.length, maxPackFieldChars);
       expect(s.contains('\u202E'), isFalse);
+    });
+  });
+
+  group('the header is the provenance gate', () {
+    String withHeader(Map<String, String> h) =>
+        '${h.entries.map((e) => '#${e.key}: ${e.value}\n').join()}'
+        'rsid\tgene\tallele\tstatement\tsource\tsource_id\tsource_date\tevidence\n'
+        '${row('rs1', 'G')}\n';
+    const full = {'name': 'N', 'licence': 'L', 'build': '37', 'strand': 'plus'};
+
+    test('each required line is needed on its own', () {
+      for (final k in full.keys) {
+        final h = {...full}..remove(k);
+        expect(
+          () => parsePack(withHeader(h)),
+          throwsA(isA<PackFormatError>()),
+          reason: 'without $k',
+        );
+      }
+    });
+
+    test('an empty value is as good as missing', () {
+      for (final k in full.keys) {
+        expect(
+          () => parsePack(withHeader({...full, k: ''})),
+          throwsA(isA<PackFormatError>()),
+          reason: 'empty $k',
+        );
+      }
+    });
+
+    test('the strand word may be any case; minus is refused', () {
+      expect(
+        parsePack(withHeader({...full, 'strand': 'PLUS'})).entries,
+        hasLength(1),
+      );
+      expect(
+        () => parsePack(withHeader({...full, 'strand': 'minus'})),
+        throwsA(isA<PackFormatError>()),
+      );
+    });
+
+    test('GRCh37, hg19 and 37 are the same build; others are not', () {
+      for (final b in ['GRCh37', 'hg19', 'build 37', '37.1']) {
+        final pk = parsePack(withHeader({...full, 'build': b}));
+        expect(pk.build, '37', reason: b);
+        expect(
+          matchPack(genome('rs1\t1\t10\tGG\n'), pk).single.buildNote,
+          'same',
+        );
+      }
+      final other = parsePack(withHeader({...full, 'build': 'GRCh38'}));
+      expect(
+        matchPack(genome('rs1\t1\t10\tGG\n'), other).single.buildNote,
+        'differs',
+      );
     });
   });
 }

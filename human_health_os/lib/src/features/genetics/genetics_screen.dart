@@ -76,13 +76,19 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     try {
       final picked = await _picker.pick(title: S.of(context).geneticsChoose);
       if (picked == null) return;
-      final bytes = await picked.read();
-      await _picker.release();
+      final Uint8List bytes;
+      try {
+        bytes = await picked.read();
+      } finally {
+        await _picker.release();
+      }
       final parse = widget.parse;
       final file = parse != null
           ? parse(bytes)
           : await compute(_parseBytes, bytes);
-      if (mounted) _use(file, picked.name, sample: false);
+      if (mounted) {
+        _use(file, cleanPackText(picked.name, max: 120), sample: false);
+      }
     } on GenomeFormatError catch (e) {
       // The file already loaded, if any, stays as it was.
       if (mounted) setState(() => _refusal = e.code);
@@ -101,8 +107,12 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     try {
       final picked = await _picker.pick(title: S.of(context).geneticsPackLoad);
       if (picked == null) return;
-      final bytes = await picked.read();
-      await _picker.release();
+      final Uint8List bytes;
+      try {
+        bytes = await picked.read();
+      } finally {
+        await _picker.release();
+      }
       final pack = parsePack(utf8.decode(bytes, allowMalformed: true));
       final file = _file;
       if (mounted && file != null) {
@@ -318,6 +328,10 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       TextField(
         key: const ValueKey('genetics-search'),
         controller: _search,
+        // Typed ids stay out of the keyboard's learned words.
+        autocorrect: false,
+        enableSuggestions: false,
+        enableIMEPersonalizedLearning: false,
         decoration: InputDecoration(
           labelText: s.geneticsSearchHint,
           prefixIcon: const Icon(Icons.search),

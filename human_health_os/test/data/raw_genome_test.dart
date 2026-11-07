@@ -1,6 +1,8 @@
 // G001: raw DNA files from consumer services, read offline. The files below
 // are synthetic and follow the vendors' layouts; nothing here is a real
 // genome.
+import 'dart:typed_data';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/genetics/raw_genome.dart';
 
@@ -56,6 +58,11 @@ String filler(int n) {
   final rows = [for (var i = 0; i < n; i++) 'rsF$i\t1\t${i + 1}\tAA'];
   return '${rows.join('\n')}\n';
 }
+
+final _pad = List.generate(
+  30,
+  (i) => 'rs${5000 + i}\t2\t${i + 1}\tAG',
+).join('\n');
 
 void main() {
   group('the four layouts', () {
@@ -326,6 +333,153 @@ void main() {
       expect(g.total, 700000);
       expect(g.noCallCount, 116666, reason: 'one in six is "--"');
       expect(watch.elapsed.inSeconds, lessThan(15));
+    });
+  });
+
+  group('review gaps: refusals by bytes', () {
+    void refuses(List<int> b, String code, String why) {
+      expect(
+        () => parseRawGenomeBytes(b),
+        throwsA(isA<GenomeFormatError>().having((e) => e.code, 'code', code)),
+        reason: why,
+      );
+    }
+
+    test('each archive and UTF-16 marker is refused on its own', () {
+      refuses([0x42, 0x5A, 0x68, 0x39], 'COMPRESSED', 'bzip2');
+      refuses([0x37, 0x7A, 0xBC, 0xAF], 'COMPRESSED', '7z');
+      refuses([0xFF, 0xFE, 0x72, 0x00], 'NOT_TEXT', 'UTF-16 LE');
+      refuses([0xFE, 0xFF, 0x00, 0x72], 'NOT_TEXT', 'UTF-16 BE');
+      refuses([0x1F, 0x8B], 'COMPRESSED', 'a two-byte gzip marker');
+    });
+
+    test('a NUL byte inside the first kilobyte is not text', () {
+      final b = List<int>.filled(600, 0x41)..[500] = 0;
+      refuses(b, 'NOT_TEXT', 'NUL at byte 500');
+    });
+
+    test('the size limit is exact', () {
+      refuses(Uint8List(maxRawGenomeBytes + 1), 'TOO_LARGE', 'one over');
+      refuses(
+        Uint8List(maxRawGenomeBytes),
+        'NOT_TEXT',
+        'at the limit it is read',
+      );
+    });
+  });
+
+  group('review gaps: unreadable lines and fields', () {
+    String lines(int good, int bad) =>
+        '# rsid\tchromosome\tposition\tgenotype\n'
+        '${[for (var i = 0; i < good; i++) 'rs${100 + i}\t1\t${10 + i}\tAG', for (var i = 0; i < bad; i++) 'rs${900 + i}\t99\t5\tAG'].join('\n')}\n';
+
+    test('one unreadable line in six loads; more than that is refused', () {
+      expect(parseRawGenome(lines(5, 1)).invalidCount, 1);
+      expect(
+        () => parseRawGenome(lines(4, 1)),
+        throwsA(
+          isA<GenomeFormatError>().having(
+            (e) => e.code,
+            'code',
+            'MOSTLY_INVALID',
+          ),
+        ),
+      );
+    });
+
+    test('chromosome names: chr prefix, lower case, XY, 0 and 23', () {
+      final g = parseRawGenome(
+        '# rsid\tchromosome\tposition\tgenotype\n'
+                'rs1\tchr7\t1\tAG\nrs2\tx\t2\tA\nrs3\tXY\t3\tAG\n'
+                'rs4\t0\t4\tAG\nrs5\t23\t5\tAG\nrs6\tm\t6\tA\n' +
+            _pad,
+      );
+      expect(
+        [
+          for (final v in g.variants.where((v) => v.rsid.length == 3))
+            v.chromosome,
+        ],
+        ['7', 'X', 'XY', 'MT'],
+      );
+      expect(g.invalidCount, 2, reason: '0 and 23 are not chromosomes here');
+    });
+
+    test('a position is plain digits: hex, a sign and a minus are invalid', () {
+      final g = parseRawGenome(
+        '# rsid\tchromosome\tposition\tgenotype\n'
+                'rs1\t1\t10\tAG\nrs2\t1\t0x10\tAG\nrs3\t1\t+5\tAG\nrs4\t1\t-5\tAG\n'
+                'rs5\t1\t11\tAG\nrs6\t1\t12\tAG\nrs7\t1\t13\tAG\nrs8\t1\t14\tAG\n'
+                'rs9\t1\t15\tAG\nrs10\t1\t16\tAG\nrs11\t1\t17\tAG\nrs12\t1\t18\tAG\n'
+                'rs13\t1\t19\tAG\nrs14\t1\t20\tAG\nrs15\t1\t21\tAG\n' +
+            _pad,
+      );
+      expect(g.invalidCount, 3);
+      expect(g.variants.first.position, 10);
+    });
+
+    test('a trailing tab on 23andMe lines is still four columns', () {
+      final g = parseRawGenome(
+        '# rsid\tchromosome\tposition\tgenotype\nrs1\t1\t100\tAG\t\nrs2\t1\t200\t--\t\n',
+      );
+      expect(g.source, GenomeSource.twentyThreeAndMe);
+      expect([for (final v in g.variants) v.call], ['AG', null]);
+    });
+
+    test('a lone carriage return inside a genotype is not deleted', () {
+      final g = parseRawGenome(
+        '# rsid\tchromosome\tposition\tgenotype\n'
+        '${List.generate(8, (i) => 'rs${i + 1}\t1\t${i + 1}\tAG').join('\n')}\n'
+        'rs20\t1\t100\tA\rG\n',
+      );
+      expect(g.variants.any((v) => v.rsid == 'rs20'), isFalse);
+      expect(g.invalidCount, 1);
+    });
+
+    test('ids repeated with another case count as repeated', () {
+      final g = parseRawGenome(
+        '# rsid\tchromosome\tposition\tgenotype\nrs1\t1\t1\tAG\nRS1\t1\t1\tAG\n',
+      );
+      expect(g.duplicateCount, 1);
+    });
+
+    test('quoted CSV fields may hold commas and doubled quotes', () {
+      final g = parseRawGenome(
+        'rsid,chromosome,position,result\n"rs1","1","10","AG"\n"rs2","2","20","CT"\n',
+      );
+      expect(g.variants, hasLength(2));
+      expect(g.variants.first.call, 'AG');
+    });
+  });
+
+  group('review gaps: build and vendor words', () {
+    String withHeader(String h) =>
+        '$h\n# rsid\tchromosome\tposition\tgenotype\nrs1\t1\t1\tAG\n';
+
+    test('only 36, 37 and 38 count; hg and GRCh forms are mapped', () {
+      const cases = {
+        '# build 37': '37',
+        '# reference human assembly build 37.1': '37',
+        '# GRCh38': '38',
+        '# hg19': '37',
+        '# hg18': '36',
+        '# assembly: GRCh37': '37',
+        '# build 2024 generated': null,
+        '# assembly 1234': null,
+        '# this is mhg 12 times': null,
+        '# no word about it': null,
+      };
+      cases.forEach((h, b) {
+        expect(parseRawGenome(withHeader(h)).build, b, reason: h);
+      });
+    });
+
+    test('the vendor is named only when the header says so', () {
+      expect(
+        parseRawGenome(withHeader('# Family Tree DNA export')).vendorHint,
+        'FamilyTreeDNA',
+      );
+      expect(parseRawGenome(withHeader('# ftdna')).vendorHint, 'FamilyTreeDNA');
+      expect(parseRawGenome(withHeader('# nothing')).vendorHint, isNull);
     });
   });
 }

@@ -104,11 +104,14 @@ class GenomeFile {
   static const int maxInvalidSample = 20;
 
   int get total => variants.length;
-  int get noCallCount => variants.where((v) => !v.isCalled).length;
+  // Computed once: the screen asks on every rebuild.
+  late final int noCallCount = variants.where((v) => !v.isCalled).length;
   int get calledCount => total - noCallCount;
 
   /// Variants per chromosome, in the order 1–22, X, Y, XY, MT.
-  Map<String, int> get perChromosome {
+  late final Map<String, int> perChromosome = _countByChromosome();
+
+  Map<String, int> _countByChromosome() {
     final counts = <String, int>{};
     for (final v in variants) {
       counts[v.chromosome] = (counts[v.chromosome] ?? 0) + 1;
@@ -149,12 +152,32 @@ const List<String> chromosomeOrder = [
   'MT',
 ];
 
+final _digits = RegExp(r'^\d{1,9}$');
 final _idPattern = RegExp(r'^[A-Za-z0-9_.:\-]{2,60}$');
 final _basePattern = RegExp(r'^[ACGTDI]{1,2}$');
+// A build is only ever 36, 37 or 38, written as a number, GRCh or hg (hg18 is
+// build 36, hg19 is build 37). Anything else is not a build statement.
 final _buildPattern = RegExp(
-  r'(?:build|assembly|grch|hg)\s*[:=]?\s*(?:grch|hg|b)?\s*(\d{2})',
+  r'\b(?:build|assembly|grch|ncbi|hg)\s*[:=]?\s*(?:grch|ncbi|hg|b)?\s*(36|37|38|18|19)(?:\.\d+)?\b',
   caseSensitive: false,
 );
+final _buildOnly = RegExp(
+  r'^\s*(?:build|grch|ncbi|hg|b)?\s*(36|37|38|18|19)(?:\.\d+)?\s*$',
+  caseSensitive: false,
+);
+
+String _buildNumber(String n) => switch (n) {
+  '18' => '36',
+  '19' => '37',
+  _ => n,
+};
+
+/// The build `36`, `37` or `38` a text states (`GRCh37`, `hg19`, `build 37`),
+/// or null when it states none. Used for both the file and a pack.
+String? normalizeBuild(String text, {bool wholeText = false}) {
+  final m = (wholeText ? _buildOnly : _buildPattern).firstMatch(text);
+  return m == null ? null : _buildNumber(m[1]!);
+}
 
 String _stripBom(String s) =>
     s.isNotEmpty && s.codeUnitAt(0) == 0xFEFF ? s.substring(1) : s;
@@ -188,8 +211,8 @@ String? _normalizeChromosome(String raw, {required bool numericSexCodes}) {
   final c = raw.trim().toUpperCase().replaceFirst('CHR', '');
   if (c == 'M' || c == 'MT') return 'MT';
   if (c == 'X' || c == 'Y' || c == 'XY') return c;
-  final n = int.tryParse(c);
-  if (n == null) return null;
+  if (!_digits.hasMatch(c)) return null;
+  final n = int.parse(c);
   if (n >= 1 && n <= 22) return '$n';
   if (numericSexCodes) {
     // AncestryDNA: 23 = X, 24 = Y, 25 = pseudo-autosomal, 26 = mitochondrial.
@@ -211,13 +234,13 @@ bool _isNoCall(String g) =>
 GenomeFile parseRawGenome(String text) {
   final body = _stripBom(text);
   if (body.trim().isEmpty) throw const GenomeFormatError('EMPTY');
-  final lines = body.split('\n');
+  final lines = body.split(RegExp(r'\r?\n'));
   final header = <String>[];
   GenomeSource? source;
   var dataStart = -1;
   // The first non-comment line decides the layout.
   for (var i = 0; i < lines.length; i++) {
-    final line = lines[i].replaceAll('\r', '');
+    final line = lines[i];
     final t = line.trim();
     if (t.isEmpty) continue;
     if (t.startsWith('#')) {
@@ -235,6 +258,12 @@ GenomeFile parseRawGenome(String text) {
       source = GenomeSource.twentyThreeAndMe;
       dataStart = i + 1;
     } else if (t.contains('\t') && line.trimLeft().split('\t').length == 4) {
+      source = GenomeSource.twentyThreeAndMe;
+      dataStart = i;
+    } else if (t.contains('\t') &&
+        line.trimLeft().split('\t').length == 5 &&
+        line.trimLeft().split('\t').last.trim().isEmpty) {
+      // A trailing tab after the genotype: still four columns.
       source = GenomeSource.twentyThreeAndMe;
       dataStart = i;
     } else if (t.contains('\t') && line.trimLeft().split('\t').length == 5) {
@@ -282,7 +311,7 @@ GenomeFile parseRawGenome(String text) {
   }
 
   for (var i = dataStart; i < lines.length; i++) {
-    final raw = lines[i].replaceAll('\r', '');
+    final raw = lines[i];
     final t = raw.trim();
     if (t.isEmpty || t.startsWith('#')) continue;
     final lineNumber = i + 1;
@@ -294,6 +323,7 @@ GenomeFile parseRawGenome(String text) {
       // Not trimmed first: an empty last field is a no-call, not a missing
       // column.
       f = raw.trimLeft().split('\t').map((e) => e.trim()).toList();
+      if (!ancestry && f.length == 5 && f[4].isEmpty) f.removeLast();
     }
     final expected = ancestry ? 5 : 4;
     if (f.length != expected) {
@@ -310,8 +340,8 @@ GenomeFile parseRawGenome(String text) {
       bad(lineNumber, 'CHROMOSOME');
       continue;
     }
-    final position = int.tryParse(f[2]);
-    if (position == null || position < 0) {
+    final position = _digits.hasMatch(f[2]) ? int.parse(f[2]) : null;
+    if (position == null) {
       bad(lineNumber, 'POSITION');
       continue;
     }
@@ -343,7 +373,7 @@ GenomeFile parseRawGenome(String text) {
         continue;
       }
     }
-    if (!seen.add(id)) duplicates++;
+    if (!seen.add(id.toLowerCase())) duplicates++;
     variants.add(
       Variant(rsid: id, chromosome: chromosome, position: position, call: call),
     );
@@ -351,7 +381,7 @@ GenomeFile parseRawGenome(String text) {
   if (variants.isEmpty) throw const GenomeFormatError('NO_VARIANTS');
   // A file that is mostly unreadable was not in the layout it seemed to be:
   // refuse it instead of loading a few lines and hiding the rest.
-  if (invalid * 5 > variants.length + invalid) {
+  if (invalid * 6 > variants.length + invalid) {
     throw const GenomeFormatError('MOSTLY_INVALID');
   }
   final headerText = header.join('\n');
@@ -368,11 +398,11 @@ GenomeFile parseRawGenome(String text) {
   } else if (lowerHeader.contains('ancestry')) {
     hint = 'AncestryDNA';
   }
-  final m = _buildPattern.firstMatch(headerText);
+  final m = normalizeBuild(headerText);
   return GenomeFile(
     source: source,
     vendorHint: hint,
-    build: m?[1],
+    build: m,
     headerLines: header,
     variants: variants,
     invalidCount: invalid,

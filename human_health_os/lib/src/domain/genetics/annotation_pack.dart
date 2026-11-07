@@ -81,7 +81,8 @@ final _bases = RegExp(r'^[ACGT]$');
 // Control characters and the invisible direction marks that can reorder or
 // hide text (bidi embeddings and isolates, zero-width marks, BOM).
 final _hiddenChars = RegExp(
-  r'[\u0000-\u001F\u007F-\u009F\u061C\u200B-\u200F\u2028-\u202E\u2060-\u206F\uFEFF]',
+  r'[\u0000-\u001F\u007F-\u009F\u061C\u200B-\u200F\u2028-\u202E\u2060-\u206F\uFEFF\u00AD\u034F\u180E\uFE00-\uFE0F\uFFF9-\uFFFC\u{E0000}-\u{E007F}]',
+  unicode: true,
 );
 
 /// Longest text a pack may show for one field; longer text is cut with "…".
@@ -158,7 +159,10 @@ AnnotationPack parsePack(String text) {
   return AnnotationPack(
     name: header['name']!,
     licence: header['licence']!,
-    build: header['build']!,
+    // A known build is kept as 36/37/38 so that GRCh37, hg19 and 37 compare
+    // equal; any other text is kept as typed and never equals a file's build.
+    build:
+        normalizeBuild(header['build']!, wholeText: true) ?? header['build']!,
     synthetic: (header['synthetic'] ?? '').toLowerCase() == 'yes',
     entries: entries,
     invalidCount: invalid,
@@ -178,6 +182,9 @@ enum MatchKind {
 
   /// A/T or C/G: the strand cannot be told apart, so nothing is claimed.
   strandUndecidable,
+
+  /// The call is an insertion or deletion (I, D): not comparable to a base.
+  notComparable,
 }
 
 class PackMatch {
@@ -224,6 +231,8 @@ List<PackMatch> matchPack(GenomeFile genome, AnnotationPack pack) {
       final call = v.call;
       if (call == null) {
         kind = MatchKind.notRead;
+      } else if (call.contains('D') || call.contains('I')) {
+        kind = MatchKind.notComparable;
       } else if (_undecidable(call, e.allele)) {
         kind = MatchKind.strandUndecidable;
       } else {

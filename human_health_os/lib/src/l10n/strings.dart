@@ -671,6 +671,10 @@ class S {
       'The file lists no $allele at this position. This says nothing about other positions.',
       'Dosya bu konumda $allele alelini listelemiyor. Bu, başka konumlar hakkında bir şey söylemez.',
     ),
+    'notComparable' => _t(
+      'The call here is an insertion or deletion, so it is not compared with allele $allele',
+      'Buradaki çağrı bir ekleme ya da silme olduğundan $allele aleliyle karşılaştırılmaz',
+    ),
     'notRead' => _t(
       'No call at this position in your file',
       'Dosyanda bu konum için çağrı yok',
