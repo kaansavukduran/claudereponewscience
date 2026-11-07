@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
 import '../domain/records/health_record.dart';
+import '../domain/settings/appearance.dart';
 
 enum AppLang { en, tr }
 
@@ -530,6 +531,39 @@ class S {
   );
 
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String get settingsTitle => _t('Settings', 'Ayarlar');
+  String get settingsTileHint => _t(
+    'Language (Dil), light or dark, colour, text size',
+    'Dil (Language), açık ya da koyu, renk, yazı boyutu',
+  );
+  String get settingsLanguage => _t('Language', 'Dil');
+  String get settingsTheme => _t('Appearance', 'Görünüm');
+  String get settingsAccent => _t('Colour', 'Renk');
+  String get settingsTextSize => _t('Text size', 'Yazı boyutu');
+  String get settingsSystem => _t('Same as this device', 'Bu cihazla aynı');
+  String get settingsLight => _t('Light', 'Açık');
+  String get settingsDark => _t('Dark', 'Koyu');
+  String get settingsLarger => _t('Larger', 'Daha büyük');
+  String get settingsLargest => _t('Largest', 'En büyük');
+  String accentName(AccentChoice c) => switch (c) {
+    AccentChoice.teal => _t('Teal', 'Camgöbeği'),
+    AccentChoice.blue => _t('Blue', 'Mavi'),
+    AccentChoice.purple => _t('Purple', 'Mor'),
+    AccentChoice.green => _t('Green', 'Yeşil'),
+    AccentChoice.graphite => _t('Graphite', 'Grafit'),
+  };
+  String get settingsSaved => _t(
+    'Changes apply at once and are kept on this device.',
+    'Değişiklikler hemen uygulanır ve bu cihazda saklanır.',
+  );
+  String get settingsSessionOnly => _t(
+    'Changes apply at once. This build keeps them until the app is closed.',
+    'Değişiklikler hemen uygulanır. Bu derleme onları uygulama kapanana kadar tutar.',
+  );
+  String get settingsSaveFailed => _t(
+    'The change applies now but could not be saved; it lasts until the app is closed.',
+    'Değişiklik şimdi uygulandı ama kaydedilemedi; uygulama kapanana kadar geçerli.',
+  );
   String get howToTitle =>
       _t('How to use Human OS', 'Human OS nasıl kullanılır');
   String get howToTileHint => _t(

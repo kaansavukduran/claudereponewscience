@@ -5,6 +5,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../domain/settings/appearance.dart';
+
 @immutable
 class HealthRoleColors extends ThemeExtension<HealthRoleColors> {
   const HealthRoleColors({
@@ -69,24 +71,47 @@ class HealthRoleColors extends ThemeExtension<HealthRoleColors> {
 
 /// Calm clinical look (docs/DESIGN.md): one muted teal accent, near-white
 /// surfaces, hairline borders instead of shadows. Colour never judges a value.
-ThemeData buildHumanOsTheme(Brightness brightness) {
+/// Light and dark tones of each accent (AccentChoice). The light tone is
+/// at least 4.5:1 on white, the dark tone at least 4.5:1 on the dark surface.
+const Map<AccentChoice, (Color, Color)> accentTones = {
+  AccentChoice.teal: (Color(0xFF1F6F78), Color(0xFF7FC4CB)),
+  AccentChoice.blue: (Color(0xFF1F5FA8), Color(0xFF8DB8F0)),
+  AccentChoice.purple: (Color(0xFF6A4BA8), Color(0xFFC2AEF2)),
+  AccentChoice.green: (Color(0xFF2E6B3A), Color(0xFF8FCB9B)),
+  AccentChoice.graphite: (Color(0xFF3F4A55), Color(0xFFB5C0CA)),
+};
+
+ThemeData buildHumanOsTheme(
+  Brightness brightness, {
+  AccentChoice accentChoice = AccentChoice.teal,
+}) {
   final dark = brightness == Brightness.dark;
-  final accent = dark ? const Color(0xFF7FC4CB) : const Color(0xFF1F6F78);
+  final tones = accentTones[accentChoice]!;
+  final teal = accentChoice == AccentChoice.teal;
+  final accent = dark ? tones.$2 : tones.$1;
+  final seeded = ColorScheme.fromSeed(
+    seedColor: tones.$1,
+    brightness: brightness,
+  );
   final surface = dark ? const Color(0xFF101819) : const Color(0xFFF6F8F8);
   final card = dark ? const Color(0xFF172224) : const Color(0xFFFFFFFF);
   final hairline = dark ? const Color(0xFF2B3A3D) : const Color(0xFFDDE4E4);
   final ink = dark ? const Color(0xFFE6EEEE) : const Color(0xFF1B2B2E);
   final scheme =
       ColorScheme.fromSeed(
-        seedColor: const Color(0xFF1F6F78),
+        seedColor: tones.$1,
         brightness: brightness,
       ).copyWith(
         primary: accent,
         onPrimary: dark ? const Color(0xFF06292D) : Colors.white,
-        primaryContainer: dark
+        primaryContainer: !teal
+            ? seeded.primaryContainer
+            : dark
             ? const Color(0xFF1C3A3E)
             : const Color(0xFFD9ECEE),
-        onPrimaryContainer: dark
+        onPrimaryContainer: !teal
+            ? seeded.onPrimaryContainer
+            : dark
             ? const Color(0xFFCDEBEE)
             : const Color(0xFF0E3A40),
         surface: surface,
@@ -128,7 +153,11 @@ ThemeData buildHumanOsTheme(Brightness brightness) {
   // Field boundaries need 3:1 against the surface (WCAG 1.4.11); card
   // outlines stay hairline.
   final fieldEdge = dark ? const Color(0xFF6C8386) : const Color(0xFF7B8E90);
-  final navIndicator = dark ? const Color(0xFF2E5F66) : const Color(0xFFBFE0E3);
+  final navIndicator = !teal
+      ? seeded.secondaryContainer
+      : dark
+      ? const Color(0xFF2E5F66)
+      : const Color(0xFFBFE0E3);
   final radius = BorderRadius.circular(12);
   return ThemeData(
     colorScheme: scheme,

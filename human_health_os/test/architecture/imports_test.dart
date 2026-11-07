@@ -95,6 +95,8 @@ void main() {
   const nativeAdapters = [
     'data/local/storage_io.dart',
     'data/backup/data_files_io.dart', // F005: backup/export files
+    // U005: display preferences, through data/local/appearance_store.dart.
+    'data/local/appearance_store_io.dart',
   ];
 
   test('dart:io is confined to the native storage adapters', () {

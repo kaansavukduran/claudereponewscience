@@ -8,6 +8,7 @@ import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
 import '../genetics/genetics_screen.dart';
 import '../help/how_to_screen.dart';
+import '../settings/settings_screen.dart';
 import 'measurements_card.dart';
 import 'weight_card.dart';
 import 'your_data_card.dart';
@@ -49,6 +50,16 @@ class TodayScreen extends StatelessWidget {
           child: Text(s.geneticsToolsTitle, style: text.titleMedium),
         ),
         const SizedBox(height: 12),
+        _ToolTile(
+          key: const ValueKey('tool-settings'),
+          icon: Icons.tune,
+          title: s.settingsTitle,
+          hint: s.settingsTileHint,
+          onTap: () => Navigator.of(context).push(
+            MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+          ),
+        ),
+        const SizedBox(height: 8),
         _ToolTile(
           key: const ValueKey('tool-howto'),
           icon: Icons.help_outline,

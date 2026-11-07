@@ -7,6 +7,8 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../features/settings/settings_screen.dart';
+
 import '../app/app_services.dart';
 import '../features/common/planned_destination_screen.dart';
 import '../features/labs/labs_screen.dart';
@@ -57,7 +59,21 @@ class _AppShellState extends State<AppShell> {
     final wide = width >= kRailBreakpoint;
 
     return Scaffold(
-      appBar: AppBar(title: Text(s.appTitle), centerTitle: false),
+      appBar: AppBar(
+        title: Text(s.appTitle),
+        centerTitle: false,
+        actions: [
+          // Always one click away, whatever language the device uses.
+          IconButton(
+            key: const ValueKey('open-settings'),
+            tooltip: s.settingsTileHint,
+            icon: const Icon(Icons.tune),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+            ),
+          ),
+        ],
+      ),
       // The profile banner sits above the content and takes the height its
       // text needs, so no clause is cut at large text sizes (audit UX-1).
       body: Column(
