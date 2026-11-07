@@ -16,9 +16,19 @@ import 'package:human_health_os/src/data/backup/data_files.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
+import 'package:human_health_os/src/features/measurements/measurement_format.dart';
+import 'package:human_health_os/src/features/today/measurements_card.dart';
+
 import 'package:human_health_os/src/l10n/strings.dart';
 
 import 'f004_labs_test.dart' show interpretive, judged;
+
+/// A place where no backup can be written (a full or read-only disk).
+class _FilesThatCannotSave extends MemoryDataFiles {
+  @override
+  Future<String> save(DataFileKind kind, String fileName, String text) async =>
+      throw const FileSystemException('disk full');
+}
 
 const dev = AppConfig(
   profile: BuildProfile.development,
@@ -212,6 +222,168 @@ void main() {
     expect(latestOf(tester, RecordKind.waistCircumference), '84.25 cm');
     expect(latestOf(tester, RecordKind.bloodPressure), '124/82 mmHg');
     expect(find.textContaining('0 bpm'), findsNothing);
+  });
+
+  test('a number is shown with the decimals it was typed with (84.0 stays '
+      '84.0, 57,50 is 57.50), never fewer', () {
+    expect(fmtMeasured(84, '84.0'), '84.0');
+    expect(fmtMeasured(57.5, '57,50'), '57.50');
+    expect(fmtMeasured(120, '120,0'), '120.0');
+    expect(fmtMeasured(120, '120'), '120');
+    expect(fmtMeasured(0.5, '.5'), '0.5', reason: 'not a typed-decimals form');
+    expect(fmtMeasured(84.25, null), '84.25');
+    expect(fmtMeasured(84, null), '84');
+  });
+
+  testWidgets('typed trailing zeros survive on Today for every kind', (
+    tester,
+  ) async {
+    await launch(tester);
+    await saveBp(tester, '120,0', '80.0');
+    expect(latestOf(tester, RecordKind.bloodPressure), '120.0/80.0 mmHg');
+    await saveScalar(tester, RecordKind.restingHeartRate, '57,50');
+    expect(latestOf(tester, RecordKind.restingHeartRate), '57.50 bpm');
+    await saveScalar(tester, RecordKind.waistCircumference, '84.0');
+    expect(latestOf(tester, RecordKind.waistCircumference), '84.0 cm');
+    for (final f in [
+      'measure-systolic',
+      'measure-diastolic',
+      'measure-value',
+    ]) {
+      final field = find.byKey(ValueKey(f));
+      if (field.evaluate().isNotEmpty) {
+        expect(
+          tester.widget<TextField>(field).controller!.text,
+          isEmpty,
+          reason: '$f is cleared after Save',
+        );
+      }
+    }
+    expect(find.byKey(const ValueKey('measure-saved')), findsOneWidget);
+  });
+
+  testWidgets('Timeline: a correction starts from the note, can change it, and '
+      'the note shows in the version rows', (tester) async {
+    final s = await launch(tester);
+    await saveScalar(
+      tester,
+      RecordKind.restingHeartRate,
+      '58',
+      context: 'after a walk',
+    );
+    await openTimeline(tester);
+    await tester.tap(find.text('58 bpm'));
+    await settle(tester);
+    final head = (await tester.runAsync(
+      () => s.heartbeat.measurementTimeline(
+        s.self.id,
+        RecordKind.restingHeartRate,
+      ),
+    ))!.single.heads.single;
+    await tapKey(tester, 'action-correct-${head.id}');
+    expect(
+      tester
+          .widget<TextField>(
+            find.byKey(const ValueKey('correct-input-context')),
+          )
+          .controller!
+          .text,
+      'after a walk',
+    );
+    await fill(tester, 'correct-input', '57');
+    await fill(tester, 'correct-input-context', 'at rest');
+    await tapKey(tester, 'correct-save');
+    final now = (await tester.runAsync(
+      () => s.heartbeat.measurementTimeline(
+        s.self.id,
+        RecordKind.restingHeartRate,
+      ),
+    ))!.single;
+    expect(now.heads.single.context, 'at rest');
+    expect(now.heads.single.supersedesId, head.id);
+    await tester.tap(find.text('57 bpm'));
+    await settle(tester);
+    final rows = textsUnder(
+      tester,
+      find.byKey(const ValueKey('timeline-detail')),
+    ).join('\n');
+    expect(rows, contains('note: "at rest"'));
+    expect(rows, contains('note: "after a walk"'));
+  });
+
+  testWidgets('a checkpoint that cannot be saved: the card says nothing was '
+      'saved, with the checkpoint text, and the reading is not stored', (
+    tester,
+  ) async {
+    final s = await launch(
+      tester,
+      sink: MemoryLogSink(),
+      files: _FilesThatCannotSave(),
+    );
+    await tester.runAsync(
+      () => s.heartbeat.recordWeightKg(profileId: s.self.id, input: '70'),
+    );
+    await saveScalar(tester, RecordKind.restingHeartRate, '57');
+    expect(
+      tester.widget<Text>(find.byKey(const ValueKey('measure-error'))).data,
+      S(AppLang.en).inputError('CHECKPOINT_FAILED'),
+    );
+    expect(find.byKey(const ValueKey('measure-saved')), findsNothing);
+    expect(latestOf(tester, RecordKind.restingHeartRate), startsWith('Not'));
+    expect(
+      (await tester.runAsync(
+        () => s.heartbeat.measurementTimeline(
+          s.self.id,
+          RecordKind.restingHeartRate,
+        ),
+      ))!,
+      isEmpty,
+    );
+  });
+
+  test('error texts, the empty state, the checkpoint text and the notes '
+      'judge nothing in either language', () {
+    const codes = [
+      'EMPTY',
+      'NOT_POSITIVE',
+      'VALUE_NOT_POSITIVE',
+      'NOT_A_NUMBER',
+      'AMBIGUOUS_SEPARATOR',
+      'BP_ORDER',
+      'TARGET_WRONG_KIND',
+      'CONTEXT_TOO_LONG',
+      'CHECKPOINT_FAILED',
+      'VALUE_NOT_FINITE',
+      'UNIT_NOT_SUPPORTED',
+      'KIND_NEEDS_NEWER_SCHEMA',
+      'FIELD_NEEDS_NEWER_SCHEMA',
+      'BP_HAS_NO_QUANTITY',
+      'DETAILS_MISMATCH',
+      'CONTEXT_NOT_SUPPORTED',
+      'CONTEXT_EMPTY',
+      'SAVE_FAILED',
+    ];
+    for (final lang in AppLang.values) {
+      final s = S(lang);
+      final texts = [
+        for (final c in codes) s.inputError(c),
+        s.measurementNotYet,
+        s.measurementsNote,
+        s.checkpointSaved('/somewhere/backup.json'),
+        s.measurementsTitle,
+        s.measurementKind,
+        s.systolicField,
+        s.diastolicField,
+        s.contextField,
+        s.saveMeasurement,
+        for (final k in MeasurementsCard.kinds) s.recordKind(k),
+      ];
+      for (final t in texts) {
+        for (final re in [interpretive, measurementJudged]) {
+          expect(re.firstMatch(t)?.group(0), isNull, reason: '$lang "$t"');
+        }
+      }
+    }
   });
 
   testWidgets('errors are shown on their own field and nothing is saved; '

@@ -665,6 +665,16 @@ void main() {
       kind: RecordKind.waistCircumference,
       input: const MeasurementInput(value: '84,75'),
     );
+    final hr = await s1.heartbeat.recordMeasurement(
+      profileId: s1.self.id,
+      kind: RecordKind.restingHeartRate,
+      input: const MeasurementInput(value: '57'),
+    );
+    await s1.heartbeat.correctMeasurement(
+      profileId: s1.self.id,
+      targetId: hr.id,
+      input: const MeasurementInput(value: '56'),
+    );
     expect(s1.checkpointSaved!.value, isNotNull);
 
     final file = File('${data.path}/vault.hhosvault');
@@ -705,10 +715,7 @@ void main() {
         .data!;
     expect(latest(RecordKind.bloodPressure), '131/87 mmHg');
     expect(latest(RecordKind.waistCircumference), '84.75 cm');
-    expect(
-      latest(RecordKind.restingHeartRate),
-      startsWith('Not recorded yet.'),
-    );
+    expect(latest(RecordKind.restingHeartRate), '56 bpm');
     data.deleteSync(recursive: true);
   });
 }

@@ -754,5 +754,95 @@ void main() {
       expect(staged.manifest.recordCount, 1);
       expect(staged.payload, isNot(contains('vital.blood_pressure')));
     });
+
+    test(
+      'a browser build (files that cannot restore) wires no checkpoint: '
+      'the save goes through and nothing is downloaded unasked (G-47)',
+      () async {
+        final repo = LogRepository(
+          sink: MemoryLogSink(),
+          durability: StorageDurability.localFile,
+          location: 'test',
+        );
+        await repo.open();
+        final files = _NoRestoreFiles();
+        final s = await servicesFor(
+          const AppConfig(
+            profile: BuildProfile.development,
+            version: '0.1.0+1',
+            sourceRevision: 'test',
+          ),
+          HostPlatform.web,
+          repo,
+          files: files,
+        );
+        expect(repo.beforeSchemaUpgrade, isNull);
+        await s.heartbeat.recordWeightKg(profileId: s.self.id, input: '70');
+        await s.heartbeat.recordMeasurement(
+          profileId: s.self.id,
+          kind: RecordKind.restingHeartRate,
+          input: const MeasurementInput(value: '57'),
+        );
+        expect(files.files, isEmpty);
+        expect(s.checkpointSaved!.value, isNull);
+      },
+    );
   });
+
+  group('what a save stores', () {
+    test('a correction keeps the note, or changes it, or drops it when the '
+        'form is cleared; the first reading says when it was saved', () async {
+      final (repo, _, svc, me) = await fresh();
+      final first = await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.restingHeartRate,
+        input: const MeasurementInput(value: '58', context: 'after a walk'),
+      );
+      expect(first.observedAt, first.recordedAt, reason: 'the save time');
+      final kept = await svc.correctMeasurement(
+        profileId: me,
+        targetId: first.id,
+        input: const MeasurementInput(value: '57', context: 'after a walk'),
+      );
+      expect(kept.context, 'after a walk');
+      final changed = await svc.correctMeasurement(
+        profileId: me,
+        targetId: kept.id,
+        input: const MeasurementInput(value: '56', context: 'at rest'),
+      );
+      expect(changed.context, 'at rest');
+      final dropped = await svc.correctMeasurement(
+        profileId: me,
+        targetId: changed.id,
+        input: const MeasurementInput(value: '55'),
+      );
+      expect(dropped.context, isNull);
+      expect(dropped.observedAt, first.observedAt);
+      expect(await repo.records(me), hasLength(4));
+    });
+
+    test('exactly 500 characters are kept; blood pressure text is stored '
+        'trimmed, as typed otherwise', () async {
+      final (_, _, svc, me) = await fresh();
+      final r = await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.bloodPressure,
+        input: MeasurementInput(
+          systolic: ' 120,0 ',
+          diastolic: '80.0  ',
+          context: 'x' * 500,
+        ),
+      );
+      expect(r.context, 'x' * 500);
+      final d = r.details! as BloodPressureDetails;
+      expect((d.systolicText, d.diastolicText), ('120,0', '80.0'));
+      expect((d.systolic, d.diastolic), (120.0, 80.0));
+    });
+  });
+}
+
+/// Files that cannot be listed or restored here (a browser).
+class _NoRestoreFiles extends MemoryDataFiles {
+  @override
+  bool get canRestore => false;
 }

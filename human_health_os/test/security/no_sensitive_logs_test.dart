@@ -50,6 +50,13 @@ List<String> get sensitive => [
   // that cannot occur by chance in base64 ciphertext ("." "_" ",").
   note,
   '84,75',
+  // Numbers and enum names pass the console filter, so they are listed
+  // too: a log line with a typed value or a kind name must fail this test.
+  '84.75',
+  '131.0',
+  'bloodPressure',
+  'restingHeartRate',
+  'waistCircumference',
   'vital.blood_pressure',
   'vital.resting_heart_rate',
   'body.waist_circumference',
