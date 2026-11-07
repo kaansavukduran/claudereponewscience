@@ -3,9 +3,42 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U005",
+    "contract": "v0.32",
+    "run_id": "U005@v0.32",
+    "slice": "settings: language, theme, colour, text size",
+    "goal": "The owner's request: the app can be switched to Turkish and its look changed (light/dark, colour, text size) with one click each, from any screen.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c164c69",
+    "started_at": "2026-11-07T19:15:00Z",
+    "scope": [
+      "Settings page (top-bar icon on every screen and a Today tile): language Türkçe/English/device, light/dark/device, five accent colours, text size device/larger/largest",
+      "choices apply at once and are saved by development desktop builds (D-023); other builds keep them for the session (G-62)"
+    ],
+    "out_of_scope": [
+      "custom colours or fonts",
+      "moving or hiding Today sections (a later U slice)",
+      "settings inside the vault"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Türkçe switches the whole app at once and is saved",
+      "AC-2 Dark, accent and text size apply at once; every accent tone reaches 4.5:1 on its surface",
+      "AC-3 Saved settings round-trip; unknown values fall back one by one; the file store is atomic and ignores an unreadable file without touching it",
+      "AC-4 No settings word judges; tests bound to mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "settings implemented (b8f7da4)"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -152,9 +185,9 @@
     "contract": "v0.32",
     "run_id": "U002@v0.32",
     "slice": "clickable body and specialties guide from open standards",
-    "why": "The owner asked for a Human-Atlas-like guide and medical specialties; written for the project from open standards (WHO ICD-11 chapters, UEMS specialty list) with sources, never verbatim atlas text, never diagnosing.",
+    "why": "Owner request; written from WHO ICD-11 chapters and the UEMS specialty list with sources, never verbatim atlas text, never diagnosing.",
     "depends_on": [
-      "U001"
+      "U005"
     ]
   },
   "updated_at": "2026-11-07T18:45:00Z",
