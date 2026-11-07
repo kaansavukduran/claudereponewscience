@@ -954,11 +954,12 @@ void main() {
         expect(r.state, RecordState.observed);
         expect(r.provenance.kind, ProvenanceKind.manual);
       }
-      final spo2 = (RecordKind kind, String v) => svc.recordMeasurement(
-        profileId: me,
-        kind: kind,
-        input: MeasurementInput(value: v),
-      );
+      Future<HealthRecord> spo2(RecordKind kind, String v) =>
+          svc.recordMeasurement(
+            profileId: me,
+            kind: kind,
+            input: MeasurementInput(value: v),
+          );
       await expectLater(
         spo2(RecordKind.oxygenSaturation, '100,5'),
         input('OUT_OF_DEFINITION', 'value'),
