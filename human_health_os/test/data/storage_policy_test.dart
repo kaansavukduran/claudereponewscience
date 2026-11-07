@@ -30,6 +30,13 @@ const prod = AppConfig(
 /// Paths compared with one separator: Windows mixes \ and / (CI on Windows).
 String norm(String p) => p.replaceAll('\\', '/');
 
+/// The data-folder variables of every host, all under [tmp]/data.
+Map<String, String> hostDataEnv(Directory tmp) => {
+  'XDG_DATA_HOME': '${tmp.path}/data',
+  'LOCALAPPDATA': '${tmp.path}${Platform.pathSeparator}data',
+  'HOME': tmp.path,
+};
+
 void main() {
   late Directory tmp;
   setUp(() => tmp = Directory.systemTemp.createTempSync('hhos-policy-'));
@@ -63,7 +70,9 @@ void main() {
       'key derivation off the UI thread; nothing written yet', () async {
     final choice = await createPlatformRepository(
       prod,
-      env: {'XDG_DATA_HOME': '${tmp.path}/data', 'HOME': tmp.path},
+      // Each host's own variable: XDG on Linux, LOCALAPPDATA on Windows,
+      // HOME on macOS; all point under the temporary folder.
+      env: hostDataEnv(tmp),
       executablePath: '${tmp.path}/bin/human_health_os',
     );
     final vault = choice.vault!;
@@ -86,7 +95,7 @@ void main() {
   test('staging never opens the production vault file', () async {
     final choice = await createPlatformRepository(
       staging,
-      env: {'XDG_DATA_HOME': '${tmp.path}/data', 'HOME': tmp.path},
+      env: hostDataEnv(tmp),
       executablePath: '${tmp.path}/bin/human_health_os',
     );
     expect(choice.vault!.location, endsWith('vault-staging.hhosvault'));
