@@ -552,6 +552,29 @@ class S {
     AccentChoice.green => _t('Green', 'Yeşil'),
     AccentChoice.graphite => _t('Graphite', 'Grafit'),
   };
+  String get settingsToday => _t('Today screen', 'Bugün ekranı');
+  String get settingsTiles => _t(
+    'Measurement tiles: tick to show, arrows to reorder',
+    'Ölçüm kutuları: göstermek için işaretle, sırayı oklarla değiştir',
+  );
+  String get settingsMoveUp => _t('Move up', 'Yukarı taşı');
+  String get settingsMoveDown => _t('Move down', 'Aşağı taşı');
+  String get settingsSections => _t('Sections', 'Bölümler');
+  String todaySectionName(TodaySection x) => switch (x) {
+    TodaySection.tools => _t('Tools', 'Araçlar'),
+    TodaySection.yourData => _t('Your data (backups)', 'Verilerin (yedekler)'),
+    TodaySection.buildFacts => _t('About this build', 'Bu derleme hakkında'),
+  };
+  String get settingsPadOpen => _t(
+    'Open the number pad in every measurement',
+    'Her ölçümde sayı tuşlarını açık getir',
+  );
+  String get settingsResetToday =>
+      _t('Reset Today to default', 'Bugün ekranını varsayılana döndür');
+  String get allTilesHidden => _t(
+    'All measurement tiles are hidden. Choose them in Settings (top right).',
+    'Tüm ölçüm kutuları gizli. Ayarlar\'dan (sağ üst) seçebilirsin.',
+  );
   String get settingsSaved => _t(
     'Changes apply at once and are kept on this device.',
     'Değişiklikler hemen uygulanır ve bu cihazda saklanır.',

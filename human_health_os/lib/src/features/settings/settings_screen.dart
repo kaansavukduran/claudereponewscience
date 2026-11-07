@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../app/appearance_scope.dart';
 import '../../domain/settings/appearance.dart';
+import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../today/measurements_card.dart';
 import '../../presentation/theme/human_os_theme.dart';
 
 /// Language, light or dark, accent colour and text size (U005). Every choice
@@ -111,6 +113,7 @@ class SettingsScreen extends StatelessWidget {
               (v) => set(a.copyWith(textSize: v)),
             ),
           ),
+          section(s.settingsToday, _TodayLayout(settings: a, onChange: set)),
           Text(
             controller?.saveFailed == true
                 ? s.settingsSaveFailed
@@ -180,6 +183,92 @@ class _AccentSwatch extends StatelessWidget {
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Which measurement tiles show and in what order, which sections show,
+/// and whether the number pad starts open. Up and Down buttons keep the
+/// order reachable with the mouse alone (no drag).
+class _TodayLayout extends StatelessWidget {
+  const _TodayLayout({required this.settings, required this.onChange});
+
+  final AppearanceSettings settings;
+  final void Function(AppearanceSettings) onChange;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final text = Theme.of(context).textTheme;
+    final defaults = [for (final k in MeasurementsCard.kinds) k.code];
+    final order = settings.ordered(defaults);
+    RecordKind kindOf(String c) =>
+        MeasurementsCard.kinds.firstWhere((k) => k.code == c);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(s.settingsTiles, style: text.bodyMedium),
+        const SizedBox(height: 4),
+        for (var i = 0; i < order.length; i++)
+          Row(
+            key: ValueKey('set-tile-${order[i]}'),
+            children: [
+              Checkbox(
+                key: ValueKey('set-tile-show-${order[i]}'),
+                value: !settings.hiddenTiles.contains(order[i]),
+                onChanged: (on) {
+                  final hidden = {...settings.hiddenTiles};
+                  on == true ? hidden.remove(order[i]) : hidden.add(order[i]);
+                  onChange(settings.copyWith(hiddenTiles: hidden));
+                },
+              ),
+              Expanded(child: Text(s.recordKind(kindOf(order[i])))),
+              IconButton(
+                key: ValueKey('set-tile-up-${order[i]}'),
+                tooltip: s.settingsMoveUp,
+                icon: const Icon(Icons.arrow_upward),
+                onPressed: i == 0
+                    ? null
+                    : () => onChange(settings.move(defaults, order[i], -1)),
+              ),
+              IconButton(
+                key: ValueKey('set-tile-down-${order[i]}'),
+                tooltip: s.settingsMoveDown,
+                icon: const Icon(Icons.arrow_downward),
+                onPressed: i == order.length - 1
+                    ? null
+                    : () => onChange(settings.move(defaults, order[i], 1)),
+              ),
+            ],
+          ),
+        const SizedBox(height: 12),
+        Text(s.settingsSections, style: text.bodyMedium),
+        for (final x in TodaySection.values)
+          SwitchListTile(
+            key: ValueKey('set-section-${x.name}'),
+            contentPadding: EdgeInsets.zero,
+            title: Text(s.todaySectionName(x)),
+            value: !settings.hiddenSections.contains(x),
+            onChanged: (on) {
+              final hidden = {...settings.hiddenSections};
+              on ? hidden.remove(x) : hidden.add(x);
+              onChange(settings.copyWith(hiddenSections: hidden));
+            },
+          ),
+        SwitchListTile(
+          key: const ValueKey('set-pad-open'),
+          contentPadding: EdgeInsets.zero,
+          title: Text(s.settingsPadOpen),
+          value: settings.padOpen,
+          onChanged: (on) => onChange(settings.copyWith(padOpen: on)),
+        ),
+        const SizedBox(height: 4),
+        OutlinedButton(
+          key: const ValueKey('set-reset-today'),
+          onPressed: () => onChange(settings.resetToday()),
+          child: Text(s.settingsResetToday),
+        ),
+      ],
     );
   }
 }

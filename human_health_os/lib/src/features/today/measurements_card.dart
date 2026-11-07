@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
+import '../../app/appearance_scope.dart';
+import '../../domain/settings/appearance.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
@@ -104,6 +106,15 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
+    final prefs =
+        AppearanceScope.maybeOf(context)?.value ?? const AppearanceSettings();
+    final codes = prefs.visible([
+      for (final k in MeasurementsCard.kinds) k.code,
+    ]);
+    final shown = [
+      for (final c in codes)
+        MeasurementsCard.kinds.firstWhere((k) => k.code == c),
+    ];
     return Column(
       key: const ValueKey('measurements-card'),
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -121,6 +132,12 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
           ),
         ),
         const SizedBox(height: 12),
+        if (shown.isEmpty)
+          Text(
+            s.allTilesHidden,
+            key: const ValueKey('measurements-all-hidden'),
+            style: text.bodyMedium,
+          ),
         LayoutBuilder(
           builder: (context, box) {
             final columns = box.maxWidth >= 720
@@ -132,7 +149,7 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
               spacing: gap,
               runSpacing: gap,
               children: [
-                for (final k in MeasurementsCard.kinds)
+                for (final k in shown)
                   ConstrainedBox(
                     constraints: BoxConstraints(
                       minWidth: width,
@@ -271,7 +288,10 @@ class _EntrySheetState extends State<_EntrySheet> {
   final _when = TextEditingController();
   final _more = ExpansibleController();
   late TextEditingController _active = _value;
-  bool _pad = false;
+  bool? _padChoice;
+
+  bool get _pad =>
+      _padChoice ?? (AppearanceScope.maybeOf(context)?.value.padOpen ?? false);
   String? _errorCode;
   String? _errorField;
   bool _busy = false;
@@ -505,7 +525,7 @@ class _EntrySheetState extends State<_EntrySheet> {
               alignment: Alignment.centerLeft,
               child: TextButton(
                 key: const ValueKey('measure-pad-toggle'),
-                onPressed: () => setState(() => _pad = !_pad),
+                onPressed: () => setState(() => _padChoice = !_pad),
                 child: Text(_pad ? s.numberPadHide : s.numberPadShow),
               ),
             ),

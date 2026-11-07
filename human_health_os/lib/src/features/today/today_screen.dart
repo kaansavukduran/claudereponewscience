@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
+import '../../app/appearance_scope.dart';
+import '../../domain/settings/appearance.dart';
 import '../../core/capabilities.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
@@ -23,6 +25,10 @@ class TodayScreen extends StatelessWidget {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
     final today = destinationById(DestinationId.today);
+    final hidden =
+        (AppearanceScope.maybeOf(context)?.value ?? const AppearanceSettings())
+            .hiddenSections;
+    bool show(TodaySection x) => !hidden.contains(x);
     return ListView(
       key: const ValueKey('screen-today'),
       padding: const EdgeInsets.all(16),
@@ -44,131 +50,142 @@ class TodayScreen extends StatelessWidget {
         const SizedBox(height: 28),
         MeasurementsCard(services: services),
         const SizedBox(height: 28),
-        Semantics(
-          container: true,
-          header: true,
-          child: Text(s.geneticsToolsTitle, style: text.titleMedium),
-        ),
-        const SizedBox(height: 12),
-        _ToolTile(
-          key: const ValueKey('tool-settings'),
-          icon: Icons.tune,
-          title: s.settingsTitle,
-          hint: s.settingsTileHint,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+        if (show(TodaySection.tools)) ...[
+          Semantics(
+            container: true,
+            header: true,
+            child: Text(s.geneticsToolsTitle, style: text.titleMedium),
           ),
-        ),
-        const SizedBox(height: 8),
-        _ToolTile(
-          key: const ValueKey('tool-howto'),
-          icon: Icons.help_outline,
-          title: s.howToTitle,
-          hint: s.howToTileHint,
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute<void>(builder: (_) => const HowToScreen())),
-        ),
-        const SizedBox(height: 8),
-        _ToolTile(
-          key: const ValueKey('tool-genetics'),
-          icon: Icons.biotech_outlined,
-          title: s.geneticsTitle,
-          hint: s.geneticsTileHint,
-          onTap: () => Navigator.of(context).push(
-            MaterialPageRoute<void>(
-              builder: (_) => GeneticsScreen(services: services),
+          const SizedBox(height: 12),
+          _ToolTile(
+            key: const ValueKey('tool-settings'),
+            icon: Icons.tune,
+            title: s.settingsTitle,
+            hint: s.settingsTileHint,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
             ),
           ),
-        ),
-        const SizedBox(height: 28),
-        YourDataCard(services: services),
-        const SizedBox(height: 28),
-        Wrap(
-          key: const ValueKey('today-planned'),
-          spacing: 8,
-          runSpacing: 4,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: [
-            Text(
-              s.checkInsAndMissions,
-              style: text.bodySmall?.copyWith(
-                color: Theme.of(context).colorScheme.outline,
+          const SizedBox(height: 8),
+          _ToolTile(
+            key: const ValueKey('tool-howto'),
+            icon: Icons.help_outline,
+            title: s.howToTitle,
+            hint: s.howToTileHint,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(builder: (_) => const HowToScreen()),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _ToolTile(
+            key: const ValueKey('tool-genetics'),
+            icon: Icons.biotech_outlined,
+            title: s.geneticsTitle,
+            hint: s.geneticsTileHint,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => GeneticsScreen(services: services),
               ),
             ),
-            StatusChip(
-              label: s.plannedIn(today.plannedForge!),
-              tone: StatusTone.muted,
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        _Section(
-          title: s.thisBuild,
-          child: Column(
-            children: [
-              _KeyValue(s.profile, services.config.profile.name.toUpperCase()),
-              _KeyValue(s.version, services.config.version),
-              _KeyValue(s.platform, services.registry.platform.name),
-              _KeyValue(s.sourceRevision, services.config.shortRevision),
-              _KeyValue(s.flutterVersion, services.config.flutterVersion),
-              _KeyValue(s.dartVersion, services.config.dartVersion),
-              _KeyValue(
-                s.recordSchema,
-                'v${HealthRecord.currentSchemaVersion}',
-              ),
-            ],
           ),
-        ),
-        const SizedBox(height: 12),
-        _Section(
-          title: s.capabilities,
-          child: Column(
+          const SizedBox(height: 28),
+        ],
+        if (show(TodaySection.yourData)) ...[
+          YourDataCard(services: services),
+          const SizedBox(height: 28),
+        ],
+        if (show(TodaySection.buildFacts)) ...[
+          Wrap(
+            key: const ValueKey('today-planned'),
+            spacing: 8,
+            runSpacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: [
-              for (final c in services.registry.capabilities)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 6),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(c.label, style: text.titleSmall),
-                            Text(c.detail, style: text.bodySmall),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      // May wrap: at 320 dp with 2x text a fixed chip
-                      // overflowed the row (found by the F007 layout test).
-                      Flexible(
-                        child: StatusChip(
-                          label: switch (c.status) {
-                            CapabilityStatus.available => s.available,
-                            CapabilityStatus.notImplemented => s.notImplemented,
-                            CapabilityStatus.notRequired => s.notRequired,
-                            CapabilityStatus.off => s.savingOff,
-                            CapabilityStatus.unsupportedOnPlatform =>
-                              s.unsupported,
-                          },
-                          tone: switch (c.status) {
-                            CapabilityStatus.available => StatusTone.ok,
-                            CapabilityStatus.notImplemented => StatusTone.muted,
-                            CapabilityStatus.notRequired => StatusTone.ok,
-                            CapabilityStatus.off => StatusTone.info,
-                            CapabilityStatus.unsupportedOnPlatform =>
-                              StatusTone.info,
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+              Text(
+                s.checkInsAndMissions,
+                style: text.bodySmall?.copyWith(
+                  color: Theme.of(context).colorScheme.outline,
                 ),
+              ),
+              StatusChip(
+                label: s.plannedIn(today.plannedForge!),
+                tone: StatusTone.muted,
+              ),
             ],
           ),
-        ),
+          const SizedBox(height: 12),
+          _Section(
+            title: s.thisBuild,
+            child: Column(
+              children: [
+                _KeyValue(
+                  s.profile,
+                  services.config.profile.name.toUpperCase(),
+                ),
+                _KeyValue(s.version, services.config.version),
+                _KeyValue(s.platform, services.registry.platform.name),
+                _KeyValue(s.sourceRevision, services.config.shortRevision),
+                _KeyValue(s.flutterVersion, services.config.flutterVersion),
+                _KeyValue(s.dartVersion, services.config.dartVersion),
+                _KeyValue(
+                  s.recordSchema,
+                  'v${HealthRecord.currentSchemaVersion}',
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 12),
+          _Section(
+            title: s.capabilities,
+            child: Column(
+              children: [
+                for (final c in services.registry.capabilities)
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 6),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(c.label, style: text.titleSmall),
+                              Text(c.detail, style: text.bodySmall),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        // May wrap: at 320 dp with 2x text a fixed chip
+                        // overflowed the row (found by the F007 layout test).
+                        Flexible(
+                          child: StatusChip(
+                            label: switch (c.status) {
+                              CapabilityStatus.available => s.available,
+                              CapabilityStatus.notImplemented =>
+                                s.notImplemented,
+                              CapabilityStatus.notRequired => s.notRequired,
+                              CapabilityStatus.off => s.savingOff,
+                              CapabilityStatus.unsupportedOnPlatform =>
+                                s.unsupported,
+                            },
+                            tone: switch (c.status) {
+                              CapabilityStatus.available => StatusTone.ok,
+                              CapabilityStatus.notImplemented =>
+                                StatusTone.muted,
+                              CapabilityStatus.notRequired => StatusTone.ok,
+                              CapabilityStatus.off => StatusTone.info,
+                              CapabilityStatus.unsupportedOnPlatform =>
+                                StatusTone.info,
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ],
       ],
     );
   }

@@ -37,3 +37,16 @@ Scores that tell a person they are "good" or "bad"; streak pressure; AI chat tha
 
 ## Suggested order
 A1–A3, B6, D13 (daily comfort and first impression), then D14, B7 with F011, C12, C10; platform adapters when hosts exist.
+
+## F. Make it yours (owner request 2026-11-07: editable, changeable, user-friendly first)
+Every choice is one click, applies at once, can be undone with "Reset to default", and never changes a stored value.
+21. **Today layout (S, U006).** Choose which measurement tiles show and their order (Up/Down buttons, so the mouse alone is enough; no drag needed); show or hide Today sections (Tools, Your data, build facts).
+22. **Number pad always open (S, U006)** for people who use only the mouse; a pad on the weight card too (G-61).
+23. **Comfortable or compact spacing (S).** Fewer scrolls on a laptop; larger targets on a tablet.
+24. **Start screen (S).** Open on Today, Timeline or Labs.
+25. **Display units (M, needs G-43).** kg or lb, cm or in, °C or °F shown beside the value as typed; the record keeps what was typed and its unit, and a converted number is labelled as converted.
+26. **Date and time style (S).** 24-hour or 12-hour, day-month or month-day; typed-time rules unchanged.
+27. **High contrast and reduced motion (S).** For low vision and motion sensitivity, on top of the device settings.
+28. **Your own quick notes (S).** Notes you used before offered as one-click chips (BRAINSTORM 9).
+29. **Profiles' look (M, with family profiles).** Each profile keeps its own accent so a caregiver sees whose data is open.
+Done so far: language, light/dark, accent colour, text size (U005).

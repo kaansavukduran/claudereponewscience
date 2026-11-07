@@ -3,9 +3,45 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U006",
+    "contract": "v0.32",
+    "run_id": "U006@v0.32",
+    "slice": "customisable Today",
+    "goal": "The owner: the interface is editable and changeable, user-friendly first. The person chooses which measurement tiles show and their order, which Today sections show, and whether the number pad starts open; Reset restores the default.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "e92891f",
+    "started_at": "2026-11-07T19:50:00Z",
+    "scope": [
+      "tile visibility (checkbox) and order (Up/Down buttons, mouse only) in Settings → Today screen",
+      "hide Tools, Your data or About this build (weight and measurements always stay; Settings stays in the top bar)",
+      "number pad open by default; a sheet can still close it",
+      "Reset Today to default keeps language and look",
+      "brainstorm section F in docs/BRAINSTORM.md"
+    ],
+    "out_of_scope": [
+      "drag-and-drop ordering",
+      "weight card number pad (G-61)",
+      "units, date style, start screen (BRAINSTORM F 24-26)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Order rules: unlisted codes follow in the default order, unknown ones are ignored, moves stop at the ends; layout round-trips through the saved file",
+      "AC-2 Hiding a tile, moving one and hiding a section change Today at once; Reset restores; with all tiles hidden Today says where to bring them back",
+      "AC-3 Pad-open preference opens the pad in a new sheet and the sheet can close it; Settings fits 320 dp at 2x in Turkish",
+      "AC-4 Tests bound to mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
