@@ -459,7 +459,10 @@ void main() {
     await tapKey(tester, 'measure-more');
     await fill(tester, 'measure-when', '31 December');
     await tapKey(tester, 'measure-save');
-    expect(find.textContaining('Write the time as'), findsOneWidget);
+    expect(
+      find.textContaining('Write the time on a 24-hour clock'),
+      findsOneWidget,
+    );
     await fill(tester, 'measure-when', '2099-01-01 00:00Z');
     await tapKey(tester, 'measure-save');
     expect(find.textContaining('in the future'), findsOneWidget);
@@ -533,7 +536,10 @@ void main() {
     await fill(tester, 'measure-diastolic', '76');
     await fillMore(tester, 'measure-when', 'yesterday');
     await tapKey(tester, 'measure-save');
-    expect(find.textContaining('Write the time as'), findsOneWidget);
+    expect(
+      find.textContaining('Write the time on a 24-hour clock'),
+      findsOneWidget,
+    );
     await tapKey(tester, 'measure-cancel');
     await saveScalar(tester, RecordKind.restingHeartRate, '0');
     expect(find.textContaining('greater than 0'), findsOneWidget);

@@ -185,6 +185,10 @@ int _offsetMinutes(String offset) {
   final sign = offset.startsWith('-') ? -1 : 1;
   final h = int.parse(offset.substring(1, 3));
   final mi = int.parse(offset.substring(4, 6));
+  // Real offsets run from -12:00 to +14:00.
+  if (sign < 0 && (h > 12 || (h == 12 && mi != 0))) {
+    throw _error('TIME_FORMAT');
+  }
   if (h > 14 ||
       (h == 14 && mi != 0) ||
       (mi != 0 && mi != 15 && mi != 30 && mi != 45)) {

@@ -78,10 +78,8 @@ class S {
   String get weightField => _t('Weight (kg)', 'Ağırlık (kg)');
   String get save => _t('Save', 'Kaydet');
   String get saved => _t('Saved', 'Kaydedildi');
-  String get noWeightYet => _t(
-    'No weight recorded yet.',
-    'Henüz kilo kaydı yok.',
-  );
+  String get noWeightYet =>
+      _t('No weight recorded yet.', 'Henüz kilo kaydı yok.');
   String get latest => _t('Latest', 'Son');
   String get history => _t('History', 'Geçmiş');
   String get enteredAs => _t('entered as', 'girilen');
@@ -139,8 +137,8 @@ class S {
       'Yüzde 100\'ü geçemez. Hiçbir şey kaydedilmedi.',
     ),
     'TIME_FORMAT' => _t(
-      'Write the time as YYYY-MM-DD HH:MM or HH:MM, e.g. 2026-11-07 07:30 or 07:30.',
-      'Zamanı YYYY-AA-GG SS:DD ya da SS:DD yaz, ör. 2026-11-07 07:30 ya da 07:30.',
+      'Write the time on a 24-hour clock as YYYY-MM-DD HH:MM or HH:MM, e.g. 2026-11-07 07:30 or 07:30.',
+      'Zamanı 24 saatlik düzende YYYY-AA-GG SS:DD ya da SS:DD yaz, ör. 2026-11-07 07:30 ya da 07:30.',
     ),
     'TIME_TOO_OLD' => _t(
       'Enter a date from the year 1900 on.',
@@ -151,8 +149,8 @@ class S {
       'Bu saat yoktu (saat o gün ileri alındı). Başka bir saat yaz.',
     ),
     'TIME_AMBIGUOUS' => _t(
-      'That clock time happened twice (the clock moved back). Add the offset, e.g. 2026-11-01 01:30 -04:00.',
-      'Bu saat iki kez yaşandı (saat geri alındı). Farkı ekle, ör. 2026-11-01 01:30 -04:00.',
+      'That clock time happened twice (the clock moved back). Type the full date and time, then the offset of the hour you mean: YYYY-MM-DD HH:MM +HH:MM.',
+      'Bu saat iki kez yaşandı (saat geri alındı). Tam tarih ve saati, ardından kastettiğin saatin farkını yaz: YYYY-AA-GG SS:DD +SS:DD.',
     ),
     'CONTEXT_TOO_LONG' => _t(
       'Keep the note to at most 500 characters.',
