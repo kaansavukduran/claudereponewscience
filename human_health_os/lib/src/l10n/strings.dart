@@ -531,6 +531,30 @@ class S {
   );
 
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
+  String get guideTitle =>
+      _t('Body and specialties', 'Vücut ve uzmanlık alanları');
+  String get guideTileHint => _t(
+    'What each body system does and which doctors care for it',
+    'Her vücut sisteminin ne yaptığı ve hangi hekimlerin ilgilendiği',
+  );
+  String get guideIntro => _t(
+    'Click a body system to see what it does, its main parts, which medical specialties care for it, and what you can record for it here.',
+    'Bir vücut sistemine tıkla: ne yaptığını, ana parçalarını, hangi tıp uzmanlıklarının ilgilendiğini ve burada onunla ilgili ne kaydedebileceğini gör.',
+  );
+  String get guideParts => _t('Main parts', 'Ana parçalar');
+  String get guideWhoCares => _t('Who looks after it', 'Kim ilgilenir');
+  String get guideFirstStop => _t(
+    'Not sure where to go? Family medicine is the usual first stop. In an emergency call 112.',
+    'Nereye gideceğinden emin değil misin? Olağan ilk adres aile hekimidir. Acil durumda 112\'yi ara.',
+  );
+  String get guideInHumanOs =>
+      _t('You can record here', 'Burada kaydedebileceklerin');
+  String get guideNotAdvice => _t(
+    'A general guide written for Human OS. It does not diagnose and does not replace a clinician.',
+    'Human OS için yazılmış genel bir rehber. Teşhis koymaz ve hekimin yerini tutmaz.',
+  );
+  String get guideSourcesTitle =>
+      _t('Sources of the structure', 'Yapının kaynakları');
   String get settingsTitle => _t('Settings', 'Ayarlar');
   String get settingsTileHint => _t(
     'Language (Dil), light or dark, colour, text size',
