@@ -3,45 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U006",
-    "contract": "v0.32",
-    "run_id": "U006@v0.32",
-    "slice": "customisable Today",
-    "goal": "The owner: the interface is editable and changeable, user-friendly first. The person chooses which measurement tiles show and their order, which Today sections show, and whether the number pad starts open; Reset restores the default.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "e92891f",
-    "started_at": "2026-11-07T19:50:00Z",
-    "scope": [
-      "tile visibility (checkbox) and order (Up/Down buttons, mouse only) in Settings → Today screen",
-      "hide Tools, Your data or About this build (weight and measurements always stay; Settings stays in the top bar)",
-      "number pad open by default; a sheet can still close it",
-      "Reset Today to default keeps language and look",
-      "brainstorm section F in docs/BRAINSTORM.md"
-    ],
-    "out_of_scope": [
-      "drag-and-drop ordering",
-      "weight card number pad (G-61)",
-      "units, date style, start screen (BRAINSTORM F 24-26)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Order rules: unlisted codes follow in the default order, unknown ones are ignored, moves stop at the ends; layout round-trips through the saved file",
-      "AC-2 Hiding a tile, moving one and hiding a section change Today at once; Reset restores; with all tiles hidden Today says where to bring them back",
-      "AC-3 Pad-open preference opens the pad in a new sheet and the sheet can close it; Settings fits 320 dp at 2x in Turkish",
-      "AC-4 Tests bound to mutations; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -52,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U005@v0.32 (2026-11-07, source revision e92891f45bae)",
+  "last_completed_forge": "U006@v0.32 (2026-11-07, source revision 77fb392a4eea)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -65,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0153",
+      "evidence_id": "EV-TEST-F007-0166",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0154",
+      "evidence_id": "EV-TEST-F007-0167",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0155",
+      "evidence_id": "EV-TEST-F007-0168",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (443 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0156",
+      "gate": "flutter test, TZ=UTC (451 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0169",
       "criterion": "AC-1..AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0157",
+      "evidence_id": "EV-TEST-F007-0170",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0158",
+      "evidence_id": "EV-BUILD-F007-0171",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0159",
+      "evidence_id": "EV-RUNTIME-F007-0172",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0160",
+      "evidence_id": "EV-TEST-F007-0173",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0161",
+      "evidence_id": "EV-BUILD-F007-0174",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0162",
+      "evidence_id": "EV-RUNTIME-F007-0175",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (444 PASS)",
-      "evidence_id": "EV-TEST-F007-0163",
+      "gate": "flutter test with TZ=America/New_York (452 PASS)",
+      "evidence_id": "EV-TEST-F007-0176",
       "criterion": "AC-1..AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0164",
+      "evidence_id": "EV-TEST-F007-0177",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0165",
+      "evidence_id": "EV-TEST-F007-0178",
       "criterion": "AC-4",
-      "source_revision": "e92891f45bae82484cb555f37cc030c7de12ce98",
+      "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
       "result": "PASS"
     }
   ],
@@ -184,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U006",
+    "forge_id": "U002",
     "contract": "v0.32",
-    "run_id": "U006@v0.32",
-    "slice": "customisable Today",
-    "why": "Owner: the interface must be editable and changeable, user-friendly first. Choose which measurement tiles show and in what order, show or hide Today sections, number pad on weight (G-61).",
+    "run_id": "U002@v0.32",
+    "slice": "clickable body and specialties guide from open standards",
+    "why": "Owner request (Human Atlas, specialties); written for the project from WHO ICD-11 chapters and the UEMS specialty list with sources, never verbatim atlas text, never diagnosing.",
     "depends_on": [
-      "U005"
+      "U006"
     ]
   },
-  "updated_at": "2026-11-07T19:45:00Z",
+  "updated_at": "2026-11-07T20:10:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -2747,6 +2711,183 @@
       ],
       "review": "single-author slice; mutations on the language switch, dark mapping, text factor and the save call each caught",
       "ci": "Windows, Linux, Android and macOS rebuilt by GitHub Actions from b8f7da4 onward (CI evidence, not local receipts)"
+    },
+    "U006@v0.32": {
+      "forge_id": "U006",
+      "contract": "v0.32",
+      "run_id": "U006@v0.32",
+      "slice": "customisable Today",
+      "goal": "The owner: the interface is editable and changeable, user-friendly first. The person chooses which measurement tiles show and their order, which Today sections show, and whether the number pad starts open; Reset restores the default.",
+      "status": "DONE",
+      "baseline_commit": "e92891f",
+      "started_at": "2026-11-07T19:50:00Z",
+      "scope": [
+        "tile visibility (checkbox) and order (Up/Down buttons, mouse only) in Settings → Today screen",
+        "hide Tools, Your data or About this build (weight and measurements always stay; Settings stays in the top bar)",
+        "number pad open by default; a sheet can still close it",
+        "Reset Today to default keeps language and look",
+        "brainstorm section F in docs/BRAINSTORM.md"
+      ],
+      "out_of_scope": [
+        "drag-and-drop ordering",
+        "weight card number pad (G-61)",
+        "units, date style, start screen (BRAINSTORM F 24-26)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Order rules: unlisted codes follow in the default order, unknown ones are ignored, moves stop at the ends; layout round-trips through the saved file",
+        "AC-2 Hiding a tile, moving one and hiding a section change Today at once; Reset restores; with all tiles hidden Today says where to bring them back",
+        "AC-3 Pad-open preference opens the pad in a new sheet and the sheet can close it; Settings fits 320 dp at 2x in Turkish",
+        "AC-4 Tests bound to mutations; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests",
+        "GATES: 13 receipts on clean tree 77fb392, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0178",
+      "next_action": null,
+      "files_touched": [
+        "docs/BRAINSTORM.md",
+        "evidence/builds/EV-BUILD-F007-0158.json",
+        "evidence/builds/EV-BUILD-F007-0161.json",
+        "evidence/runtime/EV-RUNTIME-F007-0159.json",
+        "evidence/runtime/EV-RUNTIME-F007-0162.json",
+        "evidence/tests/EV-TEST-F007-0153.json",
+        "evidence/tests/EV-TEST-F007-0154.json",
+        "evidence/tests/EV-TEST-F007-0155.json",
+        "evidence/tests/EV-TEST-F007-0156.json",
+        "evidence/tests/EV-TEST-F007-0157.json",
+        "evidence/tests/EV-TEST-F007-0160.json",
+        "evidence/tests/EV-TEST-F007-0163.json",
+        "evidence/tests/EV-TEST-F007-0164.json",
+        "evidence/tests/EV-TEST-F007-0165.json",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u006_today_layout_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "reports/runtime/flutter_web_smoke_e92891f45bae.json",
+        "reports/runtime/linux-u005/u005-dev-schema5-history.png",
+        "reports/runtime/linux-u005/u005-dev-schema5-measurements.png",
+        "reports/runtime/linux-u005/u005-dev-schema5-today.png",
+        "reports/runtime/linux-u005/u005-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0166",
+        "EV-TEST-F007-0167",
+        "EV-TEST-F007-0168",
+        "EV-TEST-F007-0169",
+        "EV-TEST-F007-0170",
+        "EV-BUILD-F007-0171",
+        "EV-RUNTIME-F007-0172",
+        "EV-TEST-F007-0173",
+        "EV-BUILD-F007-0174",
+        "EV-RUNTIME-F007-0175",
+        "EV-TEST-F007-0176",
+        "EV-TEST-F007-0177",
+        "EV-TEST-F007-0178"
+      ],
+      "blocker": null,
+      "result": "U006_COMPLETE",
+      "finished_at": "2026-11-07T20:10:00Z",
+      "app_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0166",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0167",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0168",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (451 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0169",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0170",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0171",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0172",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0173",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0174",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0175",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (452 PASS)",
+          "evidence_id": "EV-TEST-F007-0176",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0177",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0178",
+          "criterion": "AC-4",
+          "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on unlisted-code ordering, move bounds, section hiding and the pad preference each caught"
     }
   },
   "forge_history_legacy_ids": {

@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0169",
+  "kind": "TEST",
+  "forge_id": "U006@v0.32",
+  "source_revision": "77fb392a4eea71bcfce7ce046da85a7a91fee4cf",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T19:27:03.130Z",
+  "finished_at": "2026-11-07T19:28:17.047Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:11 +451 ~1: All tests passed!",
+  "log_sha256": "fd7bb1065fdb7f6ae5955c69e45d40e31d1c2f4c8e65a1f55c18e9426a8988e2",
+  "log_lines": 503,
+  "log_tail": [
+    "01:08 +440 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: phone: \"More\" reaches every non-primary destination",
+    "01:09 +441 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: every destination is reachable on desktop and none is blank",
+    "01:10 +442 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: non-production build shows its profile banner",
+    "01:10 +443 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: staging build shows its banner with the clinical disclaimer",
+    "01:10 +444 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: This build card shows the source revision",
+    "01:10 +445 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: production build hides the banner",
+    "01:10 +446 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Today states no weight yet, memory-only storage, network not required",
+    "01:10 +447 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: web registry never claims HealthKit/Health Connect",
+    "01:11 +448 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Turkish locale localizes navigation",
+    "01:11 +449 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: section headings are separate semantics nodes (not merged with body)",
+    "01:11 +450 ~1: /home/user/claudereponewscience/human_health_os/test/widget/shell_test.dart: Turkish phone layout renders without overflow",
+    "01:11 +451 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
