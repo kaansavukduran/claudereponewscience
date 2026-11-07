@@ -3,9 +3,53 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "FORGE_PLANNING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G001",
+    "contract": "v0.32",
+    "run_id": "G001@v0.32",
+    "slice": "genetics: raw DNA file import, offline",
+    "goal": "A person drops a raw DNA file from 23andMe, AncestryDNA, MyHeritage or FamilyTreeDNA onto the app and sees, offline and on their device only, what the file contains (a searchable list of variants with their genotypes), with missing never treated as normal; plus a way to match variants against a local annotation pack that cites its sources. User-directed track (D-020).",
+    "status": "FORGE_PLANNING",
+    "baseline_commit": "3e3c3b4",
+    "started_at": "2026-11-07T17:00:00Z",
+    "scope": [
+      "pure-Dart parser (no Flutter, IO or network) for 23andMe, AncestryDNA, MyHeritage and FamilyTreeDNA raw data, format detected from the header and the first data lines; unknown formats are refused with a reason",
+      "no-call and invalid-line handling: a no-call stays a no-call, every unreadable line is counted and the first ones listed with line numbers, duplicates are counted; nothing is dropped silently",
+      "summary: source, build if the header states it, totals (all, called, no-call), counts per chromosome, the vendor header kept as typed",
+      "Genetics screen, reachable with the mouse as a secondary destination: choose a file, summary, searchable paged list (rsID, chromosome, position, genotype), clear button; EN/TR; honest wording (a list of what the file contains, not a medical result)",
+      "annotation packs: a plain tab-separated file with rsID, gene, the association as its source states it, the allele, the source and its id; matches shown with genotype and source; the bundled pack is a SYNTHETIC demo, real packs from open sources (ClinVar, GWAS Catalog) are a later step",
+      "privacy: the data stays in session memory only, is never logged, written to disk or sent; the screen says so; Clear drops it"
+    ],
+    "out_of_scope": [
+      "saving a genome in the encrypted vault (G-52); real annotation data from ClinVar or GWAS Catalog and its licence review (G-53)",
+      "any risk score, ancestry estimate, health prediction, drug-response advice or statement of what a genotype means for the person",
+      "VCF or whole-genome sequencing files; building or lifting over genome builds",
+      "sharing, uploading or comparing genomes between people"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Each of the four formats is read from synthetic files that follow the vendor layout (23andMe tab with '# rsid chromosome position genotype'; AncestryDNA tab with allele1 allele2 and chromosome numbers 23-26; MyHeritage CSV with quoted RSID, CHROMOSOME, POSITION, RESULT; FamilyTreeDNA CSV); an unknown or empty file is refused with a stated reason and nothing is half-loaded",
+      "AC-2 Missing is not reference: '--', '-', '0' or an empty result is a no-call and is shown as 'not read', never as normal or as a base; indel markers (D, I, DD, II) are kept as typed; an unreadable line (wrong column count, bad chromosome, non-numeric position, odd genotype) is counted and listed with its line number, at most the first 20 listed; duplicate rsIDs are counted and kept",
+      "AC-3 Summary: source, build when the header states one, total, called, no-call, invalid and duplicate counts, per-chromosome counts (1-22, X, Y, XY, MT in order), the header lines as typed; a 700,000-line file parses in a few seconds",
+      "AC-4 Privacy: no network or disk use by the parser or the screen; genotypes never reach logs (redaction test with synthetic genotypes), the vault or backups; the screen states that the file is kept only until Clear or until the app closes",
+      "AC-5 Screen: reachable with the mouse; empty state; choose-file button; summary; search by rsID or chromosome; paging; Clear; a refused file shows its reason; EN/TR; 320 dp at 2x text without overflow; no interpretation or judging word (the judging-word scans cover every string)",
+      "AC-6 Annotation packs: a pack is parsed with the same care (bad lines counted); matches show rsID, the user's genotype, gene, the association as the source states it, source and source id; a variant not in the pack is not mentioned; the bundled pack is labelled SYNTHETIC; the screen says association is not cause and screening is not diagnosis once",
+      "AC-7 Every new rule has a test bound to a mutation; the F001-F007 suites pass in UTC and New York; gates on a clean tree; design audit items in docs/DESIGN.md pass or are recorded",
+      "AC-8 The only new dependency is a file chooser after a recorded review (D-021); the chooser sits behind an interface so tests and the web smoke do not need a native dialog",
+      "AC-9 Close: D-021, SOURCES, KNOWN_GAPS (G-52, G-53), state and docs updated, one next Forge"
+    ],
+    "completed_steps": [
+      "ORIENT: state READY after F007-S2 (main 3e3c3b4); the owner asked for DNA raw-data import",
+      "SPECIFY: scope and AC-1..AC-9 written"
+    ],
+    "last_verified_gate": null,
+    "next_action": "IMPLEMENT the parser (pure Dart) first",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -161,7 +205,7 @@
     "slice": "first-run experience, mouse-only entry",
     "why": "The owner's direction after slice 2: a person who opens the app for the first time must understand it and enter everything with the mouse only, in a calm interface. U001 adds a short first-run (what Human OS is, what stays on this device, add one number), mouse-only entry controls (steppers, quick-pick chips, time presets) beside the typed fields, and a plain-language 'how to use' page; U002 follows with a clickable body and specialties guide written from open sources (WHO ICD-11, UEMS specialty list), U003 a glossary and measurement guide. Each runs the docs/DESIGN.md slop audit, an independent review and mutation checks"
   },
-  "updated_at": "2026-11-07T16:00:00Z",
+  "updated_at": "2026-11-07T17:00:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
