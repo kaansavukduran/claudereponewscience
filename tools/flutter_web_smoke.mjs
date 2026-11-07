@@ -51,7 +51,6 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   const errors = [];
   page.on('request', (r) => { const u = new URL(r.url()); if (!['127.0.0.1', 'localhost'].includes(u.hostname) && u.protocol !== 'data:' && u.protocol !== 'blob:') external.push(r.url()); });
   page.on('pageerror', (e) => errors.push(e.message));
-  // v0.32 runtime smoke step 4: no fatal console/runtime error. Every console
   // 'error' entry fails the run (no allowlist); failed or >= 400 responses too.
   const consoleErrors = [];
   const failedRequests = [];

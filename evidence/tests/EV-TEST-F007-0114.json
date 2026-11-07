@@ -1,0 +1,54 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0114",
+  "kind": "TEST",
+  "forge_id": "G001@v0.32",
+  "source_revision": "0b98e44dda015a26a10e90d8d59b25bc8e516e16",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter pub get",
+  "argv": [
+    "flutter",
+    "pub",
+    "get"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-07T14:56:20.979Z",
+  "finished_at": "2026-11-07T14:56:21.366Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": null,
+  "log_sha256": "24cf84da4c2521a75a3610f10d652e8d4164b9697689016e4d2773c727d44c2e",
+  "log_lines": 19,
+  "log_tail": [
+    "  crypto 3.0.7 (3.0.8 available)",
+    "  material_color_utilities 0.13.0 (0.13.1 available)",
+    "  meta 1.18.3 (1.19.0 available)",
+    "  petitparser 7.0.2 (7.1.0 available)",
+    "  test_api 0.7.12 (0.7.15 available)",
+    "  vector_math 2.4.0 (2.4.4 available)",
+    "  vm_service 15.3.0 (15.4.0 available)",
+    "  web 1.1.1 (1.1.2 available)",
+    "  xml 7.0.1 (7.1.0 available)",
+    "Got dependencies!",
+    "10 packages have newer versions incompatible with dependency constraints.",
+    "Try `flutter pub outdated` for more information."
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

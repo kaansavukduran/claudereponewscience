@@ -66,6 +66,7 @@ Future<FakePicker> open(
   Size size = const Size(1280, 3000),
   double textScale = 1.0,
   Locale? locale,
+  bool stayOnToday = false,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1.0;
@@ -111,6 +112,7 @@ Future<FakePicker> open(
     const Offset(0, -150),
   );
   await tester.pumpAndSettle();
+  if (stayOnToday) return picker;
   await tester.tap(find.byKey(const ValueKey('tool-genetics')));
   await settle(tester);
   return picker;
@@ -507,6 +509,21 @@ void main() {
       find.bySemanticsLabel('rs9000001, kromozom 1, konum 100001, A, G'),
       findsOneWidget,
     );
+    handle.dispose();
+  });
+
+  testWidgets('the Genetics tile on Today is a button for assistive '
+      'technology, named by its title', (tester) async {
+    final handle = tester.ensureSemantics();
+    await open(tester, FakePicker([null]), stayOnToday: true);
+    final node = tester.getSemantics(
+      find.descendant(
+        of: find.byKey(const ValueKey('tool-genetics')),
+        matching: find.byType(InkWell),
+      ),
+    );
+    expect(node.flagsCollection.isButton, isTrue);
+    expect(node.label, contains('Genetics'));
     handle.dispose();
   });
 }

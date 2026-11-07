@@ -232,6 +232,7 @@ class _ToolTile extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Semantics(
+          container: true,
           header: true,
           child: Text(s.geneticsToolsTitle, style: text.titleMedium),
         ),
@@ -242,31 +243,37 @@ class _ToolTile extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
             side: BorderSide(color: scheme.outlineVariant),
           ),
-          child: InkWell(
-            borderRadius: BorderRadius.circular(12),
-            onTap: onTap,
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Row(
-                children: [
-                  Icon(Icons.biotech_outlined, color: scheme.primary),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(title, style: text.titleSmall),
-                        Text(
-                          hint,
-                          style: text.bodySmall?.copyWith(
-                            color: scheme.outline,
+          // A button for assistive technology and the browser, named by its
+          // title and hint (an InkWell alone is only a tap target).
+          child: Semantics(
+            container: true,
+            button: true,
+            child: InkWell(
+              borderRadius: BorderRadius.circular(12),
+              onTap: onTap,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Row(
+                  children: [
+                    Icon(Icons.biotech_outlined, color: scheme.primary),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(title, style: text.titleSmall),
+                          Text(
+                            hint,
+                            style: text.bodySmall?.copyWith(
+                              color: scheme.outline,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
-                  ),
-                  Icon(Icons.chevron_right, color: scheme.outline),
-                ],
+                    Icon(Icons.chevron_right, color: scheme.outline),
+                  ],
+                ),
               ),
             ),
           ),
