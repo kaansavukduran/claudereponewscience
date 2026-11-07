@@ -16,6 +16,9 @@ on:
 env:
   FLUTTER_VERSION: "3.47.6"
 
+permissions:
+  contents: write
+
 jobs:
   windows:
     runs-on: windows-latest
@@ -57,3 +60,14 @@ jobs:
             dist/Human-OS-windows-portable.zip
             dist/Human-OS-Setup.exe
           if-no-files-found: error
+      # One stable download page: the pre-release "windows-dev" is replaced by
+      # each run (Releases page of the repository).
+      - name: Publish the download
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release delete windows-dev --yes --cleanup-tag || true
+          gh release create windows-dev dist/Human-OS-Setup.exe dist/Human-OS-windows-portable.zip \
+            --prerelease --target "${{ github.sha }}" --title "Human OS for Windows (development build)" \
+            --notes "Built from ${{ github.sha }}. Human-OS-Setup.exe installs the app (Start menu and an optional desktop shortcut); the portable ZIP runs after unzipping (double-click human_health_os.exe). Development build for testing: data is stored unencrypted under %LOCALAPPDATA%; do not keep real health data you cannot lose. Not signed: Windows SmartScreen may ask you to confirm (More info, Run anyway)."
