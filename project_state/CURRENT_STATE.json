@@ -3,41 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U008",
-    "contract": "v0.32",
-    "run_id": "U008@v0.32",
-    "slice": "your numbers over time",
-    "goal": "Brainstorm B6: each measurement and the weight over time as saved points, lines only between readings at most 7 days apart, a range to choose, every reading as text; no interpolation, averages, target bands or judging colours.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "cd07d59",
-    "started_at": "2026-11-07T21:30:00Z",
-    "scope": [
-      "pure trend functions (points from live entries with a value, range filter, segments split by gaps over 7 days)",
-      "chart screen from each measurement sheet and the weight card: CustomPainter, no new dependency; blood pressure as circles (systolic) and squares (diastolic); click shows a reading; full list of readings"
-    ],
-    "out_of_scope": [
-      "comparisons, averages, regression lines (F011 derived results)",
-      "user-drawn reference lines (BRAINSTORM 8)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Withdrawn, deleted and not-recorded readings are not drawn; a correction draws its newest version (timeline already hides them; isLive check is defence in depth: its mutation is equivalent)",
-      "AC-2 Segments split after more than 7 days; exactly 7 is joined",
-      "AC-3 Range chips filter; every reading listed; click shows one; no readings says so; series differ by shape, not colour only",
-      "AC-4 Words judge nothing; mutations; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -48,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U007@v0.32 (2026-11-07, source revision cd07d5961efe)",
+  "last_completed_forge": "U008@v0.32 (2026-11-07, source revision 38c1125842a2)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -61,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0205",
+      "evidence_id": "EV-TEST-F007-0218",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0206",
+      "evidence_id": "EV-TEST-F007-0219",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0207",
+      "evidence_id": "EV-TEST-F007-0220",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (467 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0208",
+      "gate": "flutter test, TZ=UTC (473 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0221",
       "criterion": "AC-1..AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0209",
+      "evidence_id": "EV-TEST-F007-0222",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0210",
+      "evidence_id": "EV-BUILD-F007-0223",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0211",
+      "evidence_id": "EV-RUNTIME-F007-0224",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0212",
+      "evidence_id": "EV-TEST-F007-0225",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0213",
+      "evidence_id": "EV-BUILD-F007-0226",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0214",
+      "evidence_id": "EV-RUNTIME-F007-0227",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (468 PASS)",
-      "evidence_id": "EV-TEST-F007-0215",
+      "gate": "flutter test with TZ=America/New_York (474 PASS)",
+      "evidence_id": "EV-TEST-F007-0228",
       "criterion": "AC-1..AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0216",
+      "evidence_id": "EV-TEST-F007-0229",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0217",
+      "evidence_id": "EV-TEST-F007-0230",
       "criterion": "AC-4",
-      "source_revision": "cd07d5961efef43f1220d2f20be81ba8cec90157",
+      "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
       "result": "PASS"
     }
   ],
@@ -180,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U008",
+    "forge_id": "U009",
     "contract": "v0.32",
-    "run_id": "U008@v0.32",
-    "slice": "see your own numbers over time",
-    "why": "Brainstorm B6: a plain line per measurement over time with the actual points and gaps (never interpolated), a date range and the typed value on tap; no target bands or judging colours.",
+    "run_id": "U009@v0.32",
+    "slice": "export for the doctor",
+    "why": "Brainstorm C12: a printable summary of what was recorded and when (values as typed, their source and time), with a plain not-a-diagnosis line and no scores, saved as a file the person chooses to share.",
     "depends_on": [
-      "U007"
+      "U008"
     ]
   },
-  "updated_at": "2026-11-07T21:25:00Z",
+  "updated_at": "2026-11-07T21:50:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -3459,6 +3427,178 @@
         }
       ],
       "review": "single-author slice; mutations on the start screen mapping, contrast ink and the weight pad target each caught"
+    },
+    "U008@v0.32": {
+      "forge_id": "U008",
+      "contract": "v0.32",
+      "run_id": "U008@v0.32",
+      "slice": "your numbers over time",
+      "goal": "Brainstorm B6: each measurement and the weight over time as saved points, lines only between readings at most 7 days apart, a range to choose, every reading as text; no interpolation, averages, target bands or judging colours.",
+      "status": "DONE",
+      "baseline_commit": "cd07d59",
+      "started_at": "2026-11-07T21:30:00Z",
+      "scope": [
+        "pure trend functions (points from live entries with a value, range filter, segments split by gaps over 7 days)",
+        "chart screen from each measurement sheet and the weight card: CustomPainter, no new dependency; blood pressure as circles (systolic) and squares (diastolic); click shows a reading; full list of readings"
+      ],
+      "out_of_scope": [
+        "comparisons, averages, regression lines (F011 derived results)",
+        "user-drawn reference lines (BRAINSTORM 8)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Withdrawn, deleted and not-recorded readings are not drawn; a correction draws its newest version (timeline already hides them; isLive check is defence in depth: its mutation is equivalent)",
+        "AC-2 Segments split after more than 7 days; exactly 7 is joined",
+        "AC-3 Range chips filter; every reading listed; click shows one; no readings says so; series differ by shape, not colour only",
+        "AC-4 Words judge nothing; mutations; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests",
+        "GATES: 13 receipts on clean tree 38c1125, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0230",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0210.json",
+        "evidence/builds/EV-BUILD-F007-0213.json",
+        "evidence/runtime/EV-RUNTIME-F007-0211.json",
+        "evidence/runtime/EV-RUNTIME-F007-0214.json",
+        "evidence/tests/EV-TEST-F007-0205.json",
+        "evidence/tests/EV-TEST-F007-0206.json",
+        "evidence/tests/EV-TEST-F007-0207.json",
+        "evidence/tests/EV-TEST-F007-0208.json",
+        "evidence/tests/EV-TEST-F007-0209.json",
+        "evidence/tests/EV-TEST-F007-0212.json",
+        "evidence/tests/EV-TEST-F007-0215.json",
+        "evidence/tests/EV-TEST-F007-0216.json",
+        "evidence/tests/EV-TEST-F007-0217.json",
+        "human_health_os/lib/src/domain/trends/trend.dart",
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/features/trends/trend_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u008_trend_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "reports/runtime/flutter_web_smoke_cd07d5961efe.json",
+        "reports/runtime/linux-u007/u007-dev-schema5-history.png",
+        "reports/runtime/linux-u007/u007-dev-schema5-measurements.png",
+        "reports/runtime/linux-u007/u007-dev-schema5-today.png",
+        "reports/runtime/linux-u007/u007-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0218",
+        "EV-TEST-F007-0219",
+        "EV-TEST-F007-0220",
+        "EV-TEST-F007-0221",
+        "EV-TEST-F007-0222",
+        "EV-BUILD-F007-0223",
+        "EV-RUNTIME-F007-0224",
+        "EV-TEST-F007-0225",
+        "EV-BUILD-F007-0226",
+        "EV-RUNTIME-F007-0227",
+        "EV-TEST-F007-0228",
+        "EV-TEST-F007-0229",
+        "EV-TEST-F007-0230"
+      ],
+      "blocker": null,
+      "result": "U008_COMPLETE",
+      "finished_at": "2026-11-07T21:50:00Z",
+      "app_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0218",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0219",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0220",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (473 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0221",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0222",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0223",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0224",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0225",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0226",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0227",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (474 PASS)",
+          "evidence_id": "EV-TEST-F007-0228",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0229",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0230",
+          "criterion": "AC-4",
+          "source_revision": "38c1125842a2d66c28aee7fe3fb1552edf56c631",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on segment splitting and the range filter caught; the isLive check mutation is equivalent (buildTimeline already hides deleted and withdrawn entries), kept as defence in depth"
     }
   },
   "forge_history_legacy_ids": {
