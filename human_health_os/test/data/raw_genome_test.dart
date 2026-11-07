@@ -64,6 +64,8 @@ final _pad = List.generate(
   (i) => 'rs${5000 + i}\t2\t${i + 1}\tAG',
 ).join('\n');
 
+String withPad(List<String> parts) => '${parts.join()}$_pad';
+
 void main() {
   group('the four layouts', () {
     test('23andMe: tab separated, header in a comment, build 37', () {
@@ -389,10 +391,11 @@ void main() {
 
     test('chromosome names: chr prefix, lower case, XY, 0 and 23', () {
       final g = parseRawGenome(
-        '# rsid\tchromosome\tposition\tgenotype\n'
-                'rs1\tchr7\t1\tAG\nrs2\tx\t2\tA\nrs3\tXY\t3\tAG\n'
-                'rs4\t0\t4\tAG\nrs5\t23\t5\tAG\nrs6\tm\t6\tA\n' +
-            _pad,
+        withPad([
+          '# rsid\tchromosome\tposition\tgenotype\n'
+              'rs1\tchr7\t1\tAG\nrs2\tx\t2\tA\nrs3\tXY\t3\tAG\n'
+              'rs4\t0\t4\tAG\nrs5\t23\t5\tAG\nrs6\tm\t6\tA\n',
+        ]),
       );
       expect(
         [
@@ -406,12 +409,13 @@ void main() {
 
     test('a position is plain digits: hex, a sign and a minus are invalid', () {
       final g = parseRawGenome(
-        '# rsid\tchromosome\tposition\tgenotype\n'
-                'rs1\t1\t10\tAG\nrs2\t1\t0x10\tAG\nrs3\t1\t+5\tAG\nrs4\t1\t-5\tAG\n'
-                'rs5\t1\t11\tAG\nrs6\t1\t12\tAG\nrs7\t1\t13\tAG\nrs8\t1\t14\tAG\n'
-                'rs9\t1\t15\tAG\nrs10\t1\t16\tAG\nrs11\t1\t17\tAG\nrs12\t1\t18\tAG\n'
-                'rs13\t1\t19\tAG\nrs14\t1\t20\tAG\nrs15\t1\t21\tAG\n' +
-            _pad,
+        withPad([
+          '# rsid\tchromosome\tposition\tgenotype\n'
+              'rs1\t1\t10\tAG\nrs2\t1\t0x10\tAG\nrs3\t1\t+5\tAG\nrs4\t1\t-5\tAG\n'
+              'rs5\t1\t11\tAG\nrs6\t1\t12\tAG\nrs7\t1\t13\tAG\nrs8\t1\t14\tAG\n'
+              'rs9\t1\t15\tAG\nrs10\t1\t16\tAG\nrs11\t1\t17\tAG\nrs12\t1\t18\tAG\n'
+              'rs13\t1\t19\tAG\nrs14\t1\t20\tAG\nrs15\t1\t21\tAG\n',
+        ]),
       );
       expect(g.invalidCount, 3);
       expect(g.variants.first.position, 10);
