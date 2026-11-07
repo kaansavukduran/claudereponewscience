@@ -25,13 +25,16 @@ class BuildProfileBanner extends StatelessWidget {
         child: Container(
           key: const ValueKey('build-profile-banner'),
           width: double.infinity,
-          color: scheme.tertiaryContainer,
+          decoration: BoxDecoration(
+            color: scheme.surfaceContainerHighest,
+            border: Border(bottom: BorderSide(color: scheme.outlineVariant)),
+          ),
           alignment: Alignment.centerLeft,
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
           child: Row(
             children: [
               Icon(
-                Icons.construction,
+                Icons.science_outlined,
                 size: 16,
                 color: scheme.onTertiaryContainer,
               ),

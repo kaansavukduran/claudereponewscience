@@ -14,7 +14,7 @@ class StatusChip extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final (IconData icon, Color color) = switch (tone) {
       StatusTone.ok => (Icons.check_circle_outline, scheme.primary),
-      StatusTone.info => (Icons.info_outline, scheme.tertiary),
+      StatusTone.info => (Icons.info_outline, scheme.outline),
       StatusTone.warn => (Icons.warning_amber_outlined, scheme.error),
       StatusTone.muted => (Icons.radio_button_unchecked, scheme.outline),
     };

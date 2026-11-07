@@ -57,6 +57,19 @@ List<String> get sensitive => [
   'bloodPressure',
   'restingHeartRate',
   'waistCircumference',
+  // Slice 2: more kinds, a typed value and a typed time.
+  'body.height',
+  'vital.body_temperature',
+  'vital.oxygen_saturation',
+  'vital.respiratory_rate',
+  'bodyTemperature',
+  'oxygenSaturation',
+  'respiratoryRate',
+  '36,8',
+  '36.8',
+  '172,5',
+  '172.5',
+  '2026-10-08 06:00Z',
   'vital.blood_pressure',
   'vital.resting_heart_rate',
   'body.waist_circumference',
@@ -288,6 +301,16 @@ void main() {
         profileId: me,
         kind: RecordKind.waistCircumference,
         input: const MeasurementInput(value: '84,75'),
+      );
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.bodyTemperature,
+        input: const MeasurementInput(value: '36,8', when: '2026-10-08 06:00Z'),
+      );
+      await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.height,
+        input: const MeasurementInput(value: '172,5'),
       );
       final errors = <Object>[];
       Future<void> fails(Future<Object?> Function() f) async {

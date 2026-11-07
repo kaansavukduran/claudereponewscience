@@ -67,7 +67,24 @@ enum RecordKind {
 
   /// One blood pressure reading, systolic and diastolic together in
   /// [BloodPressureDetails] (F007, record schema 4). Never a quantity.
-  bloodPressure('vital.blood_pressure', minSchema: 4, unit: 'mmHg');
+  bloodPressure('vital.blood_pressure', minSchema: 4, unit: 'mmHg'),
+
+  /// Standing height typed by hand (F007 slice 2, record schema 5). A new
+  /// height is a new record, not a correction of an older one.
+  height('body.height', minSchema: 5, unit: 'cm'),
+
+  /// Body temperature typed by hand (F007 slice 2, record schema 5). The
+  /// site (mouth, ear, armpit) is not captured; the note is the place for it.
+  bodyTemperature('vital.body_temperature', minSchema: 5, unit: '°C'),
+
+  /// Oxygen saturation (SpO2) as read from a pulse oximeter, typed by hand
+  /// (F007 slice 2, record schema 5). An arterial blood-gas value is a
+  /// different measurand and is not stored here.
+  oxygenSaturation('vital.oxygen_saturation', minSchema: 5, unit: '%'),
+
+  /// Respiratory rate counted by hand or read from a device (F007 slice 2,
+  /// record schema 5).
+  respiratoryRate('vital.respiratory_rate', minSchema: 5, unit: 'breaths/min');
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -82,7 +99,13 @@ enum RecordKind {
   /// The F007 measurement kinds: typed by hand on Today, with an optional
   /// measurement context.
   bool get isMeasurement => switch (this) {
-    waistCircumference || restingHeartRate || bloodPressure => true,
+    waistCircumference ||
+    restingHeartRate ||
+    bloodPressure ||
+    height ||
+    bodyTemperature ||
+    oxygenSaturation ||
+    respiratoryRate => true,
     bodyWeight || labResult => false,
   };
 
@@ -239,9 +262,13 @@ class HealthRecord {
   ///   `body.waist_circumference`, `vital.resting_heart_rate` and
   ///   `vital.blood_pressure`, the optional `context` text and the
   ///   kind-tagged `details` slot. Older records read unchanged.
+  /// - 5 (F007 slice 2, step RS-005, additive): adds the measurement kinds
+  ///   `body.height`, `vital.body_temperature`, `vital.oxygen_saturation`
+  ///   and `vital.respiratory_rate`. No new key. Older records read
+  ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 4;
+  static const int currentSchemaVersion = 5;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -469,7 +496,12 @@ class HealthRecord {
             'A lab result needs the test name as printed',
           );
         }
-      case RecordKind.waistCircumference || RecordKind.restingHeartRate:
+      case RecordKind.waistCircumference ||
+          RecordKind.restingHeartRate ||
+          RecordKind.height ||
+          RecordKind.bodyTemperature ||
+          RecordKind.oxygenSaturation ||
+          RecordKind.respiratoryRate:
         // Structural checks only: no upper bound and no clinical threshold
         // (none is specified; master §43). A circumference or a rate of 0
         // or less is not a measurement.

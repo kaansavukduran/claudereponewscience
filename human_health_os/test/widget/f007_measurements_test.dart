@@ -42,7 +42,14 @@ final RegExp measurementJudged = RegExp(
   r'normotensi\p{L}*|stage|tachycardi\p{L}*|bradycardi\p{L}*|obes\p{L}*|'
   r'overweight|category|hipertansiyon\p{L}*|hipotansiyon\p{L}*|evre|'
   r'taşikardi\p{L}*|bradikardi\p{L}*|obez\p{L}*|kategori\p{L}*|'
-  r'kilolu)(?!\p{L})',
+  r'kilolu|'
+  // Slice 2: temperature, oxygen, breathing, height.
+  r'fever|febrile|afebrile|hypotherm\p{L}*|hypertherm\p{L}*|hypoxi\p{L}*|'
+  r'hypoxem\p{L}*|tachypn\p{L}*|bradypn\p{L}*|apn\p{L}*|dyspn\p{L}*|'
+  r'desaturat\p{L}*|low|high|warning|alert|critical|consult|doctor|'
+  r'healthy|good|poor|short|tall|ateş|ateşli|hipoterm\p{L}*|hiperterm\p{L}*|'
+  r'hipoksi\p{L}*|hipoksemi|taşipne|bradipne|apne|dispne|düşük|yüksek|'
+  r'uyarı|kritik|anormal|sağlıklı|iyi|kötü|kısa|uzun)(?!\p{L})',
   caseSensitive: false,
   unicode: true,
 );
@@ -109,10 +116,30 @@ Future<void> fill(WidgetTester tester, String key, String text) async {
   await tester.enterText(f, text);
 }
 
-Future<void> saveBp(WidgetTester tester, String sys, String dia) async {
-  await tapKey(tester, 'measure-kind-vital.blood_pressure');
+/// Opens the entry sheet of [kind] from its tile on Today.
+Future<void> openSheet(WidgetTester tester, RecordKind kind) =>
+    tapKey(tester, 'measure-tile-${kind.code}');
+
+/// Fills a field under "More details", opening the section first.
+Future<void> fillMore(WidgetTester tester, String key, String text) async {
+  if (find.byKey(ValueKey(key)).evaluate().isEmpty) {
+    await tapKey(tester, 'measure-more');
+  }
+  await fill(tester, key, text);
+}
+
+Future<void> saveBp(
+  WidgetTester tester,
+  String sys,
+  String dia, {
+  String when = '',
+  String context = '',
+}) async {
+  await openSheet(tester, RecordKind.bloodPressure);
   await fill(tester, 'measure-systolic', sys);
   await fill(tester, 'measure-diastolic', dia);
+  if (when.isNotEmpty) await fillMore(tester, 'measure-when', when);
+  if (context.isNotEmpty) await fillMore(tester, 'measure-context', context);
   await tapKey(tester, 'measure-save');
 }
 
@@ -121,10 +148,12 @@ Future<void> saveScalar(
   RecordKind kind,
   String value, {
   String context = '',
+  String when = '',
 }) async {
-  await tapKey(tester, 'measure-kind-${kind.code}');
+  await openSheet(tester, kind);
   await fill(tester, 'measure-value', value);
-  if (context.isNotEmpty) await fill(tester, 'measure-context', context);
+  if (when.isNotEmpty) await fillMore(tester, 'measure-when', when);
+  if (context.isNotEmpty) await fillMore(tester, 'measure-context', context);
   await tapKey(tester, 'measure-save');
 }
 
@@ -157,18 +186,12 @@ void main() {
   testWidgets('nothing yet: each kind says so, never 0; the note says values '
       'are kept as typed with the time Save is pressed', (tester) async {
     await launch(tester);
-    for (final k in [
-      RecordKind.bloodPressure,
-      RecordKind.restingHeartRate,
-      RecordKind.waistCircumference,
-    ]) {
-      expect(
-        latestOf(tester, k),
-        'Not recorded yet. An empty field is never stored as 0.',
-      );
+    for (final k in MeasurementsCard.kinds) {
+      expect(latestOf(tester, k), 'Not recorded yet', reason: k.code);
+      expect(find.byKey(ValueKey('measure-tile-${k.code}')), findsOneWidget);
     }
-    expect(find.textContaining('with the time you press Save'), findsOneWidget);
-    expect(find.text('Save measurement'), findsOneWidget);
+    expect(find.textContaining('never saved as 0'), findsOneWidget);
+    expect(find.byKey(const ValueKey('measure-save')), findsNothing);
   });
 
   testWidgets('blood pressure, heart rate and waist are saved as typed, '
@@ -189,16 +212,18 @@ void main() {
       context: 'standing, after breakfast',
     );
     expect(latestOf(tester, RecordKind.waistCircumference), '84.25 cm');
+    await openTimeline(tester);
+    await tester.tap(find.text('84.25 cm'));
+    await settle(tester);
     final row = textsUnder(
       tester,
-      find.byWidgetPredicate(
-        (w) =>
-            w.key is ValueKey<String> &&
-            (w.key! as ValueKey<String>).value.startsWith('measure-row-'),
-      ),
+      find.byKey(const ValueKey('timeline-detail')),
     ).join(' | ');
     expect(row, contains('entered as "84,25"'));
     expect(row, contains('note: "standing, after breakfast"'));
+    Navigator.of(tester.element(find.byKey(const ValueKey('timeline-detail'))))
+        .pop();
+    await settle(tester);
 
     await launch(tester, sink: sink); // restart on the same "file"
     expect(latestOf(tester, RecordKind.bloodPressure), '118/76 mmHg');
@@ -245,20 +270,11 @@ void main() {
     expect(latestOf(tester, RecordKind.restingHeartRate), '57.50 bpm');
     await saveScalar(tester, RecordKind.waistCircumference, '84.0');
     expect(latestOf(tester, RecordKind.waistCircumference), '84.0 cm');
-    for (final f in [
-      'measure-systolic',
-      'measure-diastolic',
-      'measure-value',
-    ]) {
-      final field = find.byKey(ValueKey(f));
-      if (field.evaluate().isNotEmpty) {
-        expect(
-          tester.widget<TextField>(field).controller!.text,
-          isEmpty,
-          reason: '$f is cleared after Save',
-        );
-      }
-    }
+    expect(
+      find.byKey(const ValueKey('measure-save')),
+      findsNothing,
+      reason: 'the sheet closes after Save',
+    );
     expect(find.byKey(const ValueKey('measure-saved')), findsOneWidget);
   });
 
@@ -386,18 +402,144 @@ void main() {
     }
   });
 
+  testWidgets('a back-dated height: the tile shows the measured time and says '
+      'when it was saved; the spoken label says both; Latest is the newest '
+      'observation, not the newest save', (tester) async {
+    final handle = tester.ensureSemantics();
+    await launch(tester);
+    await saveScalar(
+      tester,
+      RecordKind.height,
+      '172',
+      when: '2026-10-01 08:00Z',
+    );
+    expect(latestOf(tester, RecordKind.height), '172 cm');
+    final tile = textsUnder(
+      tester,
+      find.byKey(const ValueKey('measure-tile-body.height')),
+    ).join(' | ');
+    expect(tile, contains('saved 2'));
+    expect(
+      find.bySemanticsLabel(
+        RegExp(
+          r'^Height: 172 centimetres, measured \d{4}-\d{2}-\d{2} \d{2}:\d{2}, '
+          r'saved \d{4}-\d{2}-\d{2} \d{2}:\d{2}, Manual entry\. Add a '
+          r'measurement$',
+        ),
+      ),
+      findsOneWidget,
+    );
+    await saveScalar(
+      tester,
+      RecordKind.height,
+      '171',
+      when: '2026-09-01 08:00Z',
+    );
+    expect(
+      latestOf(tester, RecordKind.height),
+      '172 cm',
+      reason: 'the older observation saved later is not Latest',
+    );
+    await openTimeline(tester);
+    expect(find.text('172 cm'), findsOneWidget);
+    expect(find.text('171 cm'), findsOneWidget);
+    handle.dispose();
+  });
+
+  testWidgets('a time error opens "More details" and shows on the When '
+      'field; the new kinds have their own fields and hints', (tester) async {
+    await launch(tester);
+    await openSheet(tester, RecordKind.bodyTemperature);
+    expect(find.text('Body temperature (°C)'), findsOneWidget);
+    expect(find.textContaining('where you measured'), findsOneWidget);
+    await fill(tester, 'measure-value', '36,8');
+    expect(find.byKey(const ValueKey('measure-when')), findsNothing);
+    await tester.enterText(find.byKey(const ValueKey('measure-value')), '');
+    await fill(tester, 'measure-value', '36,8');
+    await tapKey(tester, 'measure-more');
+    await fill(tester, 'measure-when', '31 December');
+    await tapKey(tester, 'measure-save');
+    expect(find.textContaining('Write the time as'), findsOneWidget);
+    await fill(tester, 'measure-when', '2099-01-01 00:00Z');
+    await tapKey(tester, 'measure-save');
+    expect(find.textContaining('in the future'), findsOneWidget);
+    await tapKey(tester, 'measure-cancel');
+    expect(latestOf(tester, RecordKind.bodyTemperature), 'Not recorded yet');
+    await openSheet(tester, RecordKind.oxygenSaturation);
+    expect(find.textContaining('pulse oximeter'), findsOneWidget);
+    await tapKey(tester, 'measure-cancel');
+    await openSheet(tester, RecordKind.height);
+    expect(find.textContaining('new entry'), findsOneWidget);
+  });
+
+  test('every string of the new kinds, hints and time errors judges nothing '
+      'in either language', () {
+    const codes = [
+      'OUT_OF_DEFINITION',
+      'TIME_FORMAT',
+      'TIME_TOO_OLD',
+      'TIME_DOES_NOT_EXIST',
+      'TIME_AMBIGUOUS',
+      'FUTURE_TIME',
+    ];
+    for (final lang in AppLang.values) {
+      final s = S(lang);
+      final texts = [
+        for (final c in codes) s.inputError(c),
+        for (final k in MeasurementsCard.kinds) ...[
+          s.recordKind(k),
+          s.measurementField(k),
+          s.measurementHint(k) ?? '',
+        ],
+        s.whenField,
+        s.whenHint,
+        s.addMeasurement,
+        s.moreDetails,
+        s.savedAtLabel('2026-10-01 08:00'),
+        s.measuredAtLabel('2026-10-01 08:00'),
+        s.spokenLatest('Height', '172 cm', 'a', 'b', saved: 'c'),
+      ];
+      for (final t in texts) {
+        for (final re in [interpretive, measurementJudged]) {
+          expect(re.firstMatch(t)?.group(0), isNull, reason: '$lang "$t"');
+        }
+      }
+    }
+    expect(
+      S(AppLang.tr).recordKind(RecordKind.bodyTemperature),
+      'Vücut sıcaklığı',
+    );
+    expect(
+      S(AppLang.tr).recordKind(RecordKind.bodyTemperature).toLowerCase(),
+      isNot(contains('ateş')),
+    );
+  });
+
   testWidgets('errors are shown on their own field and nothing is saved; '
-      'a typed 0 and swapped numbers are refused', (tester) async {
+      'a typed 0, swapped numbers and a bad time are refused', (tester) async {
     final s = await launch(tester);
-    await saveBp(tester, '76', '118');
+    await openSheet(tester, RecordKind.bloodPressure);
+    await fill(tester, 'measure-systolic', '76');
+    await fill(tester, 'measure-diastolic', '118');
+    await tapKey(tester, 'measure-save');
     expect(
       find.textContaining('must be larger than the lower number'),
       findsOneWidget,
     );
-    await saveBp(tester, '118', '');
+    await fill(tester, 'measure-systolic', '118');
+    await fill(tester, 'measure-diastolic', '');
+    await tapKey(tester, 'measure-save');
     expect(find.textContaining('Empty is not saved as 0'), findsOneWidget);
+    await fill(tester, 'measure-diastolic', '76');
+    await fillMore(tester, 'measure-when', 'yesterday');
+    await tapKey(tester, 'measure-save');
+    expect(find.textContaining('Write the time as'), findsOneWidget);
+    await tapKey(tester, 'measure-cancel');
     await saveScalar(tester, RecordKind.restingHeartRate, '0');
     expect(find.textContaining('greater than 0'), findsOneWidget);
+    await tapKey(tester, 'measure-cancel');
+    await saveScalar(tester, RecordKind.oxygenSaturation, '101');
+    expect(find.textContaining('cannot be above 100'), findsOneWidget);
     expect(
       await s.heartbeat.repository.records(s.self.id),
       isEmpty,
@@ -410,6 +552,7 @@ void main() {
     tester,
   ) async {
     for (final locale in [const Locale('en'), const Locale('tr')]) {
+      await tester.pumpWidget(const SizedBox());
       await launch(tester, locale: locale);
       await saveBp(tester, '182', '121');
       await saveScalar(tester, RecordKind.restingHeartRate, '44');
@@ -481,19 +624,30 @@ void main() {
     );
     await tester.pumpWidget(const SizedBox());
     await launch(tester, sink: sink);
-    expect(find.byKey(const ValueKey('measure-save')), findsOneWidget);
+    expect(
+      find.byKey(
+        ValueKey('measure-tile-${RecordKind.waistCircumference.code}'),
+      ),
+      findsOneWidget,
+    );
     await openTimeline(tester);
     expect(find.text('0.1234567890123456789012 cm'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('switching the kind clears what was typed for the other kind; '
-      'a screen reader hears a save error', (tester) async {
-    await launch(tester);
-    await tapKey(tester, 'measure-kind-vital.resting_heart_rate');
+  testWidgets('a sheet starts empty for each kind and Cancel keeps nothing; '
+      'a save error is announced to a screen reader', (tester) async {
+    final s = await launch(
+      tester,
+      sink: MemoryLogSink(),
+      files: _FilesThatCannotSave(),
+    );
+    await openSheet(tester, RecordKind.restingHeartRate);
     await fill(tester, 'measure-value', '57');
-    await fill(tester, 'measure-context', 'after a walk');
-    await tapKey(tester, 'measure-kind-body.waist_circumference');
+    await fillMore(tester, 'measure-context', 'after a walk');
+    await tapKey(tester, 'measure-cancel');
+    expect(find.byKey(const ValueKey('measure-save')), findsNothing);
+    await openSheet(tester, RecordKind.waistCircumference);
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('measure-value')))
@@ -501,6 +655,7 @@ void main() {
           .text,
       isEmpty,
     );
+    await tapKey(tester, 'measure-more');
     expect(
       tester
           .widget<TextField>(find.byKey(const ValueKey('measure-context')))
@@ -508,9 +663,31 @@ void main() {
           .text,
       isEmpty,
     );
-    await tapKey(tester, 'measure-save');
-    expect(find.text('Waist circumference (cm)'), findsWidgets);
-    expect(latestOf(tester, RecordKind.waistCircumference), startsWith('Not'));
+    expect(
+      tester
+          .widget<TextField>(find.byKey(const ValueKey('measure-when')))
+          .controller!
+          .text,
+      isEmpty,
+      reason: 'a time is never pre-filled',
+    );
+    await tapKey(tester, 'measure-cancel');
+    // A refused save (no backup can be made) is a live region.
+    await tester.runAsync(
+      () => s.heartbeat.recordWeightKg(profileId: s.self.id, input: '70'),
+    );
+    await saveScalar(tester, RecordKind.restingHeartRate, '57');
+    final error = find.byKey(const ValueKey('measure-error'));
+    expect(error, findsOneWidget);
+    expect(
+      find.ancestor(
+        of: error,
+        matching: find.byWidgetPredicate(
+          (w) => w is Semantics && w.properties.liveRegion == true,
+        ),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('Timeline: a correction can be cancelled and the three buttons '
@@ -639,7 +816,7 @@ void main() {
     final saved = tester
         .widget<Text>(find.byKey(const ValueKey('measure-saved')))
         .data!;
-    expect(saved, startsWith('Saved. Before this first measurement'));
+    expect(saved, startsWith('Saved. Before saving this entry'));
     expect(saved, contains('memory:backup/'));
     expect(files.files.keys.single, startsWith('backup/'));
     await saveScalar(tester, RecordKind.restingHeartRate, '58');
@@ -660,7 +837,8 @@ void main() {
       find.bySemanticsLabel(
         RegExp(
           r'^Blood pressure: systolic 118, diastolic 76 millimetres of '
-          r'mercury, saved \d{4}-\d{2}-\d{2} \d{2}:\d{2}, Manual entry$',
+          r'mercury, measured \d{4}-\d{2}-\d{2} \d{2}:\d{2}, Manual entry\. '
+          r'Add a measurement$',
         ),
       ),
       findsOneWidget,

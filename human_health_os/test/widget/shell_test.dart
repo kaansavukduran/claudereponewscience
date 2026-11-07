@@ -165,7 +165,7 @@ void main() {
     expect(find.text('3.47.6'), findsOneWidget);
     expect(find.text('3.13.5'), findsOneWidget);
     expect(find.text('Record schema'), findsOneWidget);
-    expect(find.text('v4'), findsOneWidget);
+    expect(find.text('v5'), findsOneWidget);
   });
 
   testWidgets(

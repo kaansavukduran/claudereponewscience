@@ -5,6 +5,7 @@ import '../../application/heartbeat_service.dart';
 import '../../domain/ports/health_repository.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../measurements/measurement_format.dart';
 import '../../presentation/widgets/status_chip.dart';
 
 /// Persistence heartbeat: one canonical record type, saved through the
@@ -81,8 +82,8 @@ class _WeightCardState extends State<WeightCard> {
     }
   }
 
-  String _fmt(double v) =>
-      v == v.roundToDouble() ? v.toStringAsFixed(0) : v.toStringAsFixed(1);
+  /// The number with the decimals it was typed with (77,50 is 77.50).
+  String _fmt(double v, [String? typed]) => fmtMeasured(v, typed);
 
   /// The value cell: the number with the record's own unit, or the named
   /// value status when there is no number (missing ≠ zero).
@@ -93,14 +94,14 @@ class _WeightCardState extends State<WeightCard> {
     }
     final unit = q.unit;
     return unit == null
-        ? '${_fmt(q.value)} (${s.unitNotGiven})'
-        : '${_fmt(q.value)} $unit';
+        ? '${_fmt(q.value, r.originalText)} (${s.unitNotGiven})'
+        : '${_fmt(q.value, r.originalText)} $unit';
   }
 
   String _meta(S s, HealthRecord r) {
     final q = r.quantity;
-    final shown = q == null ? null : _fmt(q.value);
     final original = r.originalText;
+    final shown = q == null ? null : _fmt(q.value, original);
     return [
       _when(r.observedAt),
       s.recordState(r.state),
@@ -161,7 +162,7 @@ class _WeightCardState extends State<WeightCard> {
                     storage.durability.name,
                     storage.encrypted,
                   ),
-                  tone: storage.encrypted ? StatusTone.ok : StatusTone.warn,
+                  tone: storage.encrypted ? StatusTone.ok : StatusTone.info,
                 ),
               ],
             ),

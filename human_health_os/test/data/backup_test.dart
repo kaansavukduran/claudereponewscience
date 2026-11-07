@@ -21,6 +21,7 @@ const fixtures = [
   'test/fixtures/vault/v1_f003_schema2.hhoslog.jsonl',
   'test/fixtures/vault/v1_f004_schema3.hhoslog.jsonl',
   'test/fixtures/vault/v1_f007_schema4.hhoslog.jsonl',
+  'test/fixtures/vault/v1_f007s2_schema5.hhoslog.jsonl',
 ];
 
 String bundleOf(String vault) => createBackupBundle(

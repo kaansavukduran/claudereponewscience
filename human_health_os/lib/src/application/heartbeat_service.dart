@@ -5,29 +5,13 @@
 library;
 
 import '../core/ids.dart';
-import '../domain/errors.dart';
+import 'input_error.dart';
+import 'measured_at.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/profile/profile.dart';
 import '../domain/records/health_record.dart';
 
-class InputError implements Exception, CodedError {
-  const InputError(this.code, [this.field]);
-
-  /// Stable code; the UI maps it to localized text.
-  /// `EMPTY` · `NOT_A_NUMBER` · `OUT_OF_RANGE` · `FUTURE_TIME` ·
-  /// `TARGET_NOT_FOUND` · `TARGET_NOT_CURRENT` · `TARGET_WRONG_KIND` ·
-  /// `LAB_ANALYTE_EMPTY` · `DATE_INVALID` · `AMBIGUOUS_SEPARATOR` ·
-  /// `NOT_POSITIVE` · `BP_ORDER` · `CONTEXT_TOO_LONG`
-  @override
-  final String code;
-
-  /// Which input the error belongs to, when a form has several
-  /// (`value`, `systolic`, `diastolic`, `context`); null otherwise.
-  final String? field;
-
-  @override
-  String toString() => 'InputError($code)';
-}
+export 'input_error.dart';
 
 /// Parses user text such as `78.4`, `78,4` or ` 78 `. Blank input is an error,
 /// never zero (missing ≠ zero).
@@ -91,12 +75,16 @@ class MeasurementInput {
     this.systolic = '',
     this.diastolic = '',
     this.context = '',
+    this.when = '',
   });
 
   final String value;
   final String systolic;
   final String diastolic;
   final String context;
+
+  /// The time typed in the "When" field; blank means the save time.
+  final String when;
 }
 
 /// Like [parseDecimal], but refuses a value whose separator could be a
@@ -139,7 +127,7 @@ class HeartbeatService {
   }
 
   double _weightKg(String input) {
-    final value = parseDecimal(input);
+    final value = parseLabDecimal(input);
     if (value <= 0 || value > 700) throw const InputError('OUT_OF_RANGE');
     return value;
   }
@@ -153,9 +141,7 @@ class HeartbeatService {
     final value = _weightKg(input);
     final now = clock.nowUtc();
     final when = (observedAt ?? now).toUtc();
-    if (when.isAfter(now.add(const Duration(minutes: 5)))) {
-      throw const InputError('FUTURE_TIME');
-    }
+    if (isFutureTime(when, now)) throw const InputError('FUTURE_TIME');
     final record = HealthRecord(
       id: _ids.newId(),
       profileId: profileId,
@@ -398,10 +384,22 @@ class HeartbeatService {
         diastolicText: input.diastolic.trim(),
       );
     } else {
-      quantity = Quantity(_measurementNumber(input.value, 'value'), kind.unit);
+      final number = _measurementNumber(input.value, 'value');
+      // Definitional, not clinical: a percentage cannot be above 100. An
+      // entry rule only; stored records are not re-judged (D-018).
+      if (kind == RecordKind.oxygenSaturation && number > 100) {
+        throw const InputError('OUT_OF_DEFINITION', 'value');
+      }
+      quantity = Quantity(number, kind.unit);
       originalText = input.value.trim();
     }
     final now = clock.nowUtc();
+    // A correction is the same observation and keeps its time (a time typed
+    // for it is not read); a new entry takes the typed time, or the save
+    // time. Resolved once, before the record is built.
+    final observedAt = target != null
+        ? target.observedAt
+        : parseMeasuredAt(input.when, nowUtc: now) ?? now;
     return HealthRecord(
       id: _ids.newId(),
       profileId: profileId,
@@ -411,8 +409,7 @@ class HeartbeatService {
       quantity: quantity,
       originalText: originalText,
       provenance: const Provenance.manual(),
-      // A correction is the same observation: it keeps its time.
-      observedAt: target?.observedAt ?? now,
+      observedAt: observedAt,
       recordedAt: now,
       supersedesId: target?.id,
       amendReason: target == null ? null : AmendReason.correction,

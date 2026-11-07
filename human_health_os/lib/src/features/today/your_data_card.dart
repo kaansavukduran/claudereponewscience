@@ -274,7 +274,7 @@ class _YourDataCardState extends State<YourDataCard> {
             else ...[
               encrypted
                   ? StatusChip(label: s.dataEncrypted, tone: StatusTone.ok)
-                  : StatusChip(label: s.dataUnencrypted, tone: StatusTone.warn),
+                  : StatusChip(label: s.dataUnencrypted, tone: StatusTone.info),
               const SizedBox(height: 12),
               Wrap(
                 spacing: 8,

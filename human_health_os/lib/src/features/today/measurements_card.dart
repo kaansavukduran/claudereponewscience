@@ -8,10 +8,11 @@ import '../../l10n/strings.dart';
 import '../measurements/measurement_format.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
-/// Measurements typed by hand (ladder F007): blood pressure, resting heart
-/// rate and waist circumference. Each save is one record, kept exactly as
-/// typed with its time and source; nothing is averaged, derived or judged,
-/// and a value that does not exist is named, never drawn as 0.
+/// Measurements typed by hand (ladder F007): a quiet grid of tiles that show
+/// the latest value of each kind, and one entry sheet per kind. Each save is
+/// one record, kept exactly as typed with its time and source; nothing is
+/// averaged, derived or judged, and a value that does not exist is named,
+/// never drawn as 0. The history of each kind lives on the Timeline.
 class MeasurementsCard extends StatefulWidget {
   const MeasurementsCard({super.key, required this.services});
 
@@ -21,7 +22,11 @@ class MeasurementsCard extends StatefulWidget {
   static const kinds = [
     RecordKind.bloodPressure,
     RecordKind.restingHeartRate,
+    RecordKind.bodyTemperature,
+    RecordKind.oxygenSaturation,
+    RecordKind.respiratoryRate,
     RecordKind.waistCircumference,
+    RecordKind.height,
   ];
 
   @override
@@ -29,17 +34,7 @@ class MeasurementsCard extends StatefulWidget {
 }
 
 class _MeasurementsCardState extends State<MeasurementsCard> {
-  final _value = TextEditingController();
-  final _systolic = TextEditingController();
-  final _diastolic = TextEditingController();
-  final _context = TextEditingController();
-  RecordKind _kind = RecordKind.bloodPressure;
   Map<RecordKind, List<TimelineEntry>> _entries = const {};
-  String? _errorCode;
-  String? _errorField;
-  bool _busy = false;
-  bool _justSaved = false;
-  String? _checkpoint;
 
   HeartbeatService get _svc => widget.services.heartbeat;
 
@@ -47,15 +42,6 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
   void initState() {
     super.initState();
     _reload();
-  }
-
-  @override
-  void dispose() {
-    _value.dispose();
-    _systolic.dispose();
-    _diastolic.dispose();
-    _context.dispose();
-    super.dispose();
   }
 
   Future<void> _reload() async {
@@ -67,36 +53,239 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
     if (mounted) setState(() => _entries = next);
   }
 
-  Future<void> _save() async {
-    // Cleared first: a checkpoint made during this save (also a repeat of an
-    // earlier, failed attempt at the same place) is named for this save.
+  Future<void> _add(RecordKind kind) async {
+    final messenger = ScaffoldMessenger.of(context);
+    final s = S.of(context);
     widget.services.checkpointSaved?.value = null;
+    final saved = await showModalBottomSheet<bool>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _EntrySheet(services: widget.services, kind: kind),
+    );
+    if (saved != true) return;
+    final checkpoint = widget.services.checkpointSaved?.value;
+    messenger.hideCurrentSnackBar();
+    messenger.showSnackBar(
+      SnackBar(
+        content: Semantics(
+          liveRegion: true,
+          child: Text(
+            checkpoint == null ? s.saved : s.checkpointSaved(checkpoint),
+            key: const ValueKey('measure-saved'),
+          ),
+        ),
+        duration: Duration(seconds: checkpoint == null ? 3 : 12),
+        showCloseIcon: checkpoint != null,
+      ),
+    );
+    await _reload();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final text = Theme.of(context).textTheme;
+    return Column(
+      key: const ValueKey('measurements-card'),
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Semantics(
+          header: true,
+          child: Text(s.measurementsTitle, style: text.titleMedium),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          s.measurementsNote,
+          key: const ValueKey('measurements-note'),
+          style: text.bodySmall?.copyWith(
+            color: Theme.of(context).colorScheme.outline,
+          ),
+        ),
+        const SizedBox(height: 12),
+        LayoutBuilder(
+          builder: (context, box) {
+            final columns = box.maxWidth >= 720
+                ? 4
+                : (box.maxWidth >= 480 ? 3 : 2);
+            const gap = 12.0;
+            final width = (box.maxWidth - gap * (columns - 1)) / columns;
+            return Wrap(
+              spacing: gap,
+              runSpacing: gap,
+              children: [
+                for (final k in MeasurementsCard.kinds)
+                  ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minWidth: width,
+                      maxWidth: width,
+                      minHeight: 112,
+                    ),
+                    child: _Tile(
+                      kind: k,
+                      entries: _entries[k] ?? const [],
+                      onAdd: () => _add(k),
+                    ),
+                  ),
+              ],
+            );
+          },
+        ),
+      ],
+    );
+  }
+}
+
+/// The latest value of one kind and a way to add another.
+class _Tile extends StatelessWidget {
+  const _Tile({required this.kind, required this.entries, required this.onAdd});
+
+  final RecordKind kind;
+  final List<TimelineEntry> entries;
+  final VoidCallback onAdd;
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final text = Theme.of(context).textTheme;
+    final scheme = Theme.of(context).colorScheme;
+    final entry = latestWithValue(entries);
+    final conflict = entry?.status == EntryStatus.conflict;
+    final latest = conflict ? null : entry?.heads.first;
+    final code = kind.code;
+    final String value;
+    final String spoken;
+    String? caption;
+    if (conflict) {
+      value = s.versionsDisagree;
+      spoken = '${s.recordKind(kind)}: ${s.versionsDisagree}';
+    } else if (latest == null) {
+      value = s.measurementNotYet;
+      spoken = '${s.recordKind(kind)}: ${s.measurementNotYet}';
+    } else {
+      value = measurementValue(s, latest);
+      caption = whenCaption(s, latest, fmtWhen);
+      spoken = s.spokenLatest(
+        s.recordKind(kind),
+        spokenMeasurement(s, latest),
+        fmtWhen(latest.observedAt),
+        s.provenanceKind(latest.provenance.kind),
+        saved: savedWhenDifferent(latest, fmtWhen),
+      );
+    }
+    return Semantics(
+      key: ValueKey('measure-latest-$code'),
+      label: '$spoken. ${s.addMeasurement}',
+      button: true,
+      excludeSemantics: true,
+      onTap: onAdd,
+      child: Material(
+        color: scheme.surfaceContainerLowest,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: scheme.outlineVariant),
+        ),
+        child: InkWell(
+          key: ValueKey('measure-tile-$code'),
+          borderRadius: BorderRadius.circular(12),
+          onTap: onAdd,
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 12, 10, 12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        s.recordKind(kind),
+                        style: text.labelLarge?.copyWith(color: scheme.outline),
+                      ),
+                    ),
+                    Icon(Icons.add, size: 20, color: scheme.primary),
+                  ],
+                ),
+                const SizedBox(height: 6),
+                Text(
+                  value,
+                  key: ValueKey('measure-latest-value-$code'),
+                  style: latest == null
+                      ? text.bodyMedium?.copyWith(color: scheme.outline)
+                      : text.titleLarge?.copyWith(
+                          fontWeight: FontWeight.w600,
+                          fontFeatures: const [FontFeature.tabularFigures()],
+                        ),
+                ),
+                if (caption != null) ...[
+                  const SizedBox(height: 2),
+                  Text(
+                    caption,
+                    style: text.bodySmall?.copyWith(color: scheme.outline),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// One kind, one purpose: the value (or the two blood pressure numbers),
+/// Save, and under "More details" the time and a note.
+class _EntrySheet extends StatefulWidget {
+  const _EntrySheet({required this.services, required this.kind});
+
+  final AppServices services;
+  final RecordKind kind;
+
+  @override
+  State<_EntrySheet> createState() => _EntrySheetState();
+}
+
+class _EntrySheetState extends State<_EntrySheet> {
+  final _value = TextEditingController();
+  final _systolic = TextEditingController();
+  final _diastolic = TextEditingController();
+  final _context = TextEditingController();
+  final _when = TextEditingController();
+  final _more = ExpansibleController();
+  String? _errorCode;
+  String? _errorField;
+  bool _busy = false;
+
+  @override
+  void dispose() {
+    _value.dispose();
+    _systolic.dispose();
+    _diastolic.dispose();
+    _context.dispose();
+    _when.dispose();
+    super.dispose();
+  }
+
+  Future<void> _save() async {
     setState(() {
       _busy = true;
       _errorCode = null;
       _errorField = null;
-      _justSaved = false;
-      _checkpoint = null;
     });
     try {
-      await _svc.recordMeasurement(
+      await widget.services.heartbeat.recordMeasurement(
         profileId: widget.services.self.id,
-        kind: _kind,
+        kind: widget.kind,
         input: MeasurementInput(
           value: _value.text,
           systolic: _systolic.text,
           diastolic: _diastolic.text,
           context: _context.text,
+          when: _when.text,
         ),
       );
-      _value.clear();
-      _systolic.clear();
-      _diastolic.clear();
-      _context.clear();
-      _justSaved = true;
-      final after = widget.services.checkpointSaved?.value;
-      if (after != null) _checkpoint = after;
-      await _reload();
+      if (mounted) Navigator.of(context).pop(true);
+      return;
     } on InputError catch (e) {
       _errorCode = e.code;
       _errorField = e.field;
@@ -108,8 +297,11 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
       // Storage/IO failure: memory is only updated after a write, so
       // nothing is shown as saved.
       _errorCode = 'SAVE_FAILED';
-    } finally {
-      if (mounted) setState(() => _busy = false);
+    }
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (_errorField == 'when' || _errorField == 'context') {
+      _more.expand();
     }
   }
 
@@ -118,18 +310,6 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
       ? s.inputError(_errorCode!)
       : null;
 
-  String _meta(S s, HealthRecord r) {
-    final typed = typedWhenDifferent(r);
-    final context = r.context;
-    return [
-      fmtWhen(r.observedAt),
-      s.recordState(r.state),
-      s.provenanceKind(r.provenance.kind),
-      if (typed != null) '${s.enteredAs} "$typed"',
-      if (context != null) '${s.contextLabel}: "$context"',
-    ].join(' · ');
-  }
-
   Widget _field(
     S s,
     TextEditingController c,
@@ -137,155 +317,58 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
     String key,
     String field, {
     bool number = true,
+    String? hint,
+    bool autofocus = false,
   }) => Padding(
-    padding: const EdgeInsets.only(top: 8),
+    padding: const EdgeInsets.only(top: 12),
     child: TextField(
       key: ValueKey(key),
       controller: c,
+      autofocus: autofocus,
       keyboardType: number
           ? const TextInputType.numberWithOptions(decimal: true)
           : TextInputType.text,
-      inputFormatters: number ? null : const [ContextLengthFormatter()],
+      inputFormatters: field == 'context'
+          ? const [ContextLengthFormatter()]
+          : null,
       decoration: InputDecoration(
         labelText: label,
-        border: const OutlineInputBorder(),
+        helperText: hint,
+        helperMaxLines: 3,
         errorText: _errorFor(s, field),
         errorMaxLines: 3,
-        counterText: '',
       ),
     ),
   );
-
-  Widget _latestRow(S s, TextTheme text, RecordKind kind) {
-    final entries = _entries[kind] ?? const <TimelineEntry>[];
-    final entry = latestWithValue(entries);
-    final conflict = entry?.status == EntryStatus.conflict;
-    final latest = conflict ? null : entry?.heads.first;
-    final code = kind.code;
-    final String shown;
-    final String spoken;
-    if (conflict) {
-      shown = s.versionsDisagree;
-      spoken = '${s.recordKind(kind)}: ${s.versionsDisagree}';
-    } else if (latest == null) {
-      shown = s.measurementNotYet;
-      spoken = '${s.recordKind(kind)}: ${s.measurementNotYet}';
-    } else {
-      shown = measurementValue(s, latest);
-      spoken = s.spokenLatest(
-        s.recordKind(kind),
-        spokenMeasurement(s, latest),
-        fmtWhen(latest.observedAt),
-        s.provenanceKind(latest.provenance.kind),
-      );
-    }
-    return Semantics(
-      key: ValueKey('measure-latest-$code'),
-      label: spoken,
-      excludeSemantics: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(vertical: 4),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(s.recordKind(kind), style: text.labelLarge),
-                  if (latest != null)
-                    Text(
-                      '${fmtWhen(latest.observedAt)} · '
-                      '${s.provenanceKind(latest.provenance.kind)}',
-                      style: text.bodySmall,
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(width: 8),
-            Flexible(
-              child: Text(
-                shown,
-                key: ValueKey('measure-latest-value-$code'),
-                textAlign: TextAlign.end,
-                style: latest == null
-                    ? text.bodyMedium
-                    : text.titleMedium?.copyWith(
-                        fontFeatures: const [FontFeature.tabularFigures()],
-                      ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
-    final history = [
-      for (final e in _entries[_kind] ?? const <TimelineEntry>[]) ...e.heads,
-    ];
-    return Card(
-      semanticContainer: false,
-      key: const ValueKey('measurements-card'),
-      child: Padding(
-        padding: const EdgeInsets.all(16),
+    final scheme = Theme.of(context).colorScheme;
+    final kind = widget.kind;
+    final hint = s.measurementHint(kind);
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+          key: ValueKey('measure-sheet-${kind.code}'),
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Semantics(
               header: true,
-              child: Text(s.measurementsTitle, style: text.titleMedium),
+              child: Text(s.recordKind(kind), style: text.titleLarge),
             ),
-            const SizedBox(height: 4),
-            Text(
-              s.measurementsNote,
-              key: const ValueKey('measurements-note'),
-              style: text.bodySmall,
-            ),
-            const SizedBox(height: 8),
-            for (final k in MeasurementsCard.kinds) _latestRow(s, text, k),
-            const SizedBox(height: 12),
-            Text(s.measurementKind, style: text.titleSmall),
-            const SizedBox(height: 4),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                for (final k in MeasurementsCard.kinds)
-                  ChoiceChip(
-                    key: ValueKey('measure-kind-${k.code}'),
-                    label: Text(s.recordKind(k)),
-                    selected: _kind == k,
-                    onSelected: _busy
-                        ? null
-                        : (_) => setState(() {
-                            if (_kind != k) {
-                              // Nothing typed for one kind is saved under
-                              // another (57 bpm is not 57 cm).
-                              _value.clear();
-                              _systolic.clear();
-                              _diastolic.clear();
-                              _context.clear();
-                            }
-                            _kind = k;
-                            _errorCode = null;
-                            _errorField = null;
-                            _justSaved = false;
-                          }),
-                  ),
-              ],
-            ),
-            if (_kind.isStructured) ...[
+            if (kind.isStructured) ...[
               _field(
                 s,
                 _systolic,
                 s.systolicField,
                 'measure-systolic',
                 'systolic',
+                autofocus: true,
               ),
               _field(
                 s,
@@ -298,78 +381,77 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
               _field(
                 s,
                 _value,
-                s.measurementField(_kind),
+                s.measurementField(kind),
                 'measure-value',
                 'value',
+                hint: hint,
+                autofocus: true,
               ),
-            _field(
-              s,
-              _context,
-              s.contextField,
-              'measure-context',
-              'context',
-              number: false,
-            ),
             const SizedBox(height: 8),
-            FilledButton(
-              key: const ValueKey('measure-save'),
-              onPressed: _busy ? null : _save,
-              child: Text(s.saveMeasurement),
+            Theme(
+              data: Theme.of(context)
+                  .copyWith(dividerColor: Colors.transparent),
+              child: ExpansionTile(
+                key: const ValueKey('measure-more'),
+                controller: _more,
+                tilePadding: EdgeInsets.zero,
+                childrenPadding: EdgeInsets.zero,
+                title: Text(
+                  s.moreDetails,
+                  style: text.labelLarge?.copyWith(color: scheme.primary),
+                ),
+                children: [
+                  _field(
+                    s,
+                    _when,
+                    s.whenField,
+                    'measure-when',
+                    'when',
+                    number: false,
+                    hint: s.whenHint,
+                  ),
+                  _field(
+                    s,
+                    _context,
+                    s.contextField,
+                    'measure-context',
+                    'context',
+                    number: false,
+                  ),
+                ],
+              ),
             ),
             if (_errorCode != null && _errorField == null) ...[
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Semantics(
                 liveRegion: true,
                 child: Text(
                   s.inputError(_errorCode!),
                   key: const ValueKey('measure-error'),
-                  style: text.bodySmall?.copyWith(
-                    color: Theme.of(context).colorScheme.error,
-                  ),
+                  style: text.bodyMedium?.copyWith(color: scheme.error),
                 ),
               ),
             ],
-            if (_justSaved) ...[
-              const SizedBox(height: 6),
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _checkpoint == null
-                      ? s.saved
-                      : s.checkpointSaved(_checkpoint!),
-                  key: const ValueKey('measure-saved'),
-                  style: text.bodySmall,
-                ),
-              ),
-            ],
-            if (history.isNotEmpty) ...[
-              const SizedBox(height: 16),
-              Text(s.history, style: text.titleSmall),
-              const SizedBox(height: 4),
-              for (final r in history.take(10))
-                Padding(
-                  key: ValueKey('measure-row-${r.id}'),
-                  padding: const EdgeInsets.symmetric(vertical: 4),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        flex: 3,
-                        child: Text(_meta(s, r), style: text.bodySmall),
-                      ),
-                      const SizedBox(width: 8),
-                      Flexible(
-                        flex: 2,
-                        child: Text(
-                          measurementValue(s, r),
-                          textAlign: TextAlign.end,
-                          style: text.bodyMedium,
-                        ),
-                      ),
-                    ],
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: FilledButton(
+                    key: const ValueKey('measure-save'),
+                    onPressed: _busy ? null : _save,
+                    child: Text(s.saveMeasurement),
                   ),
                 ),
-            ],
+                const SizedBox(width: 8),
+                TextButton(
+                  key: const ValueKey('measure-cancel'),
+                  onPressed: _busy
+                      ? null
+                      : () => Navigator.of(context).pop(false),
+                  child: Text(s.cancel),
+                ),
+              ],
+            ),
           ],
         ),
       ),

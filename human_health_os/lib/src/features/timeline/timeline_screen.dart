@@ -121,6 +121,8 @@ String fmtValue(S s, HealthRecord r) {
   }
   final v = r.kind == RecordKind.labResult
       ? (r.originalText ?? q.value.toString())
+      : r.kind == RecordKind.bodyWeight
+      ? fmtMeasured(q.value, r.originalText)
       : q.value == q.value.roundToDouble()
       ? q.value.toStringAsFixed(0)
       : q.value.toStringAsFixed(1);
@@ -187,8 +189,14 @@ class _EntryTile extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '${fmtObserved(r)} · ${s.recordState(r.state)} · '
-                '${s.provenanceKind(r.provenance.kind)}',
+                [
+                  fmtObserved(r),
+                  s.recordState(r.state),
+                  s.provenanceKind(r.provenance.kind),
+                  if (r.kind.isMeasurement)
+                    if (savedWhenDifferent(r, fmtWhen) case final saved?)
+                      s.savedAtLabel(saved),
+                ].join(' · '),
                 style: text.bodySmall,
               ),
               if (entry.corrected || !entry.isLive) ...[
@@ -479,6 +487,9 @@ class _EntryDetailState extends State<_EntryDetail> {
                       withdrawn: e.withdrawn.contains(v.id),
                       current: headIds.contains(v.id) && e.isLive,
                     ),
+                    if (v.kind.isMeasurement &&
+                        savedWhenDifferent(v, fmtWhen) != null)
+                      s.measuredAtLabel(fmtWhen(v.observedAt)),
                     '${s.enteredOn} ${fmtWhen(v.recordedAt)}',
                     s.provenanceKind(v.provenance.kind),
                     if (v.kind.isMeasurement) ...[

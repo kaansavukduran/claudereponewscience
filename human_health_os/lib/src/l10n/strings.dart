@@ -132,13 +132,35 @@ class S {
       'The upper number (systolic) must be larger than the lower number (diastolic). Were the two swapped?',
       'Büyük tansiyon (sistolik) küçük tansiyondan (diyastolik) büyük olmalı. İkisi yer mi değiştirdi?',
     ),
+    // Time entry (F007 slice 2): what is wrong with the entry, never with
+    // the person or the body.
+    'OUT_OF_DEFINITION' => _t(
+      'A percentage cannot be above 100. Nothing was saved.',
+      'Yüzde 100\'ü geçemez. Hiçbir şey kaydedilmedi.',
+    ),
+    'TIME_FORMAT' => _t(
+      'Write the time as YYYY-MM-DD HH:MM or HH:MM, e.g. 2026-11-07 07:30 or 07:30.',
+      'Zamanı YYYY-AA-GG SS:DD ya da SS:DD yaz, ör. 2026-11-07 07:30 ya da 07:30.',
+    ),
+    'TIME_TOO_OLD' => _t(
+      'Enter a date from the year 1900 on.',
+      '1900 yılından sonraki bir tarih gir.',
+    ),
+    'TIME_DOES_NOT_EXIST' => _t(
+      'That clock time did not exist (the clock moved forward then). Type another time.',
+      'Bu saat yoktu (saat o gün ileri alındı). Başka bir saat yaz.',
+    ),
+    'TIME_AMBIGUOUS' => _t(
+      'That clock time happened twice (the clock moved back). Add the offset, e.g. 2026-11-01 01:30 -04:00.',
+      'Bu saat iki kez yaşandı (saat geri alındı). Farkı ekle, ör. 2026-11-01 01:30 -04:00.',
+    ),
     'CONTEXT_TOO_LONG' => _t(
       'Keep the note to at most 500 characters.',
       'Notu en fazla 500 karakterle sınırla.',
     ),
     'CHECKPOINT_FAILED' => _t(
-      'Not saved: this first measurement changes the record format, and a backup of your earlier data could not be made first. Nothing was written; check the free space and try again.',
-      'Kaydedilmedi: bu ilk ölçüm kayıt biçimini değiştiriyor ve önceki verilerinin yedeği önce alınamadı. Hiçbir şey yazılmadı; boş alanı kontrol edip tekrar dene.',
+      'Not saved: this entry changes the record format, and a backup of your earlier data could not be made first. Nothing was written; check the free space and try again.',
+      'Kaydedilmedi: bu giriş kayıt biçimini değiştiriyor ve önceki verilerinin yedeği önce alınamadı. Hiçbir şey yazılmadı; boş alanı kontrol edip tekrar dene.',
     ),
     // Record rules the form cannot break; shown with their code if a bug
     // ever lets one through.
@@ -316,6 +338,13 @@ class S {
     RecordKind.waistCircumference => _t('Waist circumference', 'Bel çevresi'),
     RecordKind.restingHeartRate => _t('Resting heart rate', 'Dinlenme nabzı'),
     RecordKind.bloodPressure => _t('Blood pressure', 'Tansiyon'),
+    RecordKind.height => _t('Height', 'Boy'),
+    RecordKind.bodyTemperature => _t('Body temperature', 'Vücut sıcaklığı'),
+    RecordKind.oxygenSaturation => _t(
+      'Oxygen saturation (SpO2)',
+      'Oksijen satürasyonu (SpO2)',
+    ),
+    RecordKind.respiratoryRate => _t('Respiratory rate', 'Solunum sayısı'),
   };
 
   // Measurements (F007): kept exactly as typed, never judged.
@@ -338,30 +367,123 @@ class S {
       'Waist circumference (cm)',
       'Bel çevresi (cm)',
     ),
+    RecordKind.height => _t('Height (cm)', 'Boy (cm)'),
+    RecordKind.bodyTemperature => _t(
+      'Body temperature (°C)',
+      'Vücut sıcaklığı (°C)',
+    ),
+    RecordKind.oxygenSaturation => _t(
+      'Oxygen saturation, SpO2 (%)',
+      'Oksijen satürasyonu, SpO2 (%)',
+    ),
+    RecordKind.respiratoryRate => _t(
+      'Respiratory rate (breaths/min)',
+      'Solunum sayısı (soluk/dk)',
+    ),
     _ => recordKind(k),
   };
+
+  /// A neutral one-line hint that names what is measured (null: none).
+  String? measurementHint(RecordKind k) => switch (k) {
+    RecordKind.height => _t(
+      'A new height is a new entry, not a correction of an old one.',
+      'Yeni bir boy, eskisinin düzeltmesi değil yeni bir giriştir.',
+    ),
+    RecordKind.bodyTemperature => _t(
+      'Write where you measured (mouth, ear, armpit) in the note.',
+      'Nerede ölçtüğünü (ağız, kulak, koltuk altı) nota yaz.',
+    ),
+    RecordKind.oxygenSaturation => _t(
+      'A reading from a pulse oximeter. Blood-gas results are not stored here.',
+      'Nabız oksimetresinden okunan değer. Kan gazı sonuçları burada saklanmaz.',
+    ),
+    _ => null,
+  };
+
+  String get whenField => _t('When (optional)', 'Ne zaman (isteğe bağlı)');
+  String get whenHint => _t(
+    'YYYY-MM-DD HH:MM or HH:MM, your device\'s time. Empty = now.',
+    'YYYY-AA-GG SS:DD ya da SS:DD, cihazının saati. Boş = şimdi.',
+  );
+  String measuredAtLabel(String when) => _t('measured $when', 'ölçülen $when');
+  String savedAtLabel(String when) => _t('saved $when', 'kaydedilen $when');
   String get contextField => _t(
     'How it was measured (optional), e.g. sitting, left arm',
     'Nasıl ölçüldü (isteğe bağlı), ör. oturarak, sol kol',
   );
   String get saveMeasurement => _t('Save measurement', 'Ölçümü kaydet');
-  String get measurementNotYet => _t(
-    'Not recorded yet. An empty field is never stored as 0.',
-    'Henüz kayıt yok. Boş alan asla 0 olarak saklanmaz.',
-  );
+  String get measurementNotYet => _t('Not recorded yet', 'Henüz kayıt yok');
+  String get addMeasurement => _t('Add a measurement', 'Ölçüm ekle');
+  String get moreDetails => _t('More details', 'Daha fazla ayrıntı');
+
+  /// The weekday and date shown at the top of Today.
+  String dateLine(DateTime d) {
+    const enDays = [
+      'Monday',
+      'Tuesday',
+      'Wednesday',
+      'Thursday',
+      'Friday',
+      'Saturday',
+      'Sunday',
+    ];
+    const trDays = [
+      'Pazartesi',
+      'Salı',
+      'Çarşamba',
+      'Perşembe',
+      'Cuma',
+      'Cumartesi',
+      'Pazar',
+    ];
+    const enMonths = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
+    const trMonths = [
+      'Ocak',
+      'Şubat',
+      'Mart',
+      'Nisan',
+      'Mayıs',
+      'Haziran',
+      'Temmuz',
+      'Ağustos',
+      'Eylül',
+      'Ekim',
+      'Kasım',
+      'Aralık',
+    ];
+    return _t(
+      '${enDays[d.weekday - 1]}, ${d.day} ${enMonths[d.month - 1]}',
+      '${d.day} ${trMonths[d.month - 1]} ${trDays[d.weekday - 1]}',
+    );
+  }
+
   String get measurementsNote => _t(
-    'Saved exactly as typed, with the time you press Save and the source. Human OS does not judge these values or compare them with any range or target.',
-    'Yazdığın gibi, Kaydet\'e bastığın zaman ve kaynağıyla saklanır. Human OS bu değerleri yorumlamaz, hiçbir aralık ya da hedefle karşılaştırmaz.',
+    'Saved exactly as typed, with its time and source. Human OS does not judge these values. An empty field is never saved as 0.',
+    'Yazdığın gibi, zamanı ve kaynağıyla saklanır. Human OS bu değerleri yorumlamaz. Boş alan asla 0 olarak kaydedilmez.',
   );
   String checkpointSaved(String where) => _t(
-    'Saved. Before this first measurement, a backup of your earlier data was saved at $where: older versions of Human OS cannot open the new record format.',
-    'Kaydedildi. Bu ilk ölçümden önce önceki verilerinin yedeği şuraya kaydedildi: $where. Human OS\'un eski sürümleri yeni kayıt biçimini açamaz.',
+    'Saved. Before saving this entry, a backup of your earlier data was saved at $where: older versions of Human OS cannot open the new record format.',
+    'Kaydedildi. Bu girişi kaydetmeden önce önceki verilerinin yedeği şuraya kaydedildi: $where. Human OS\'un eski sürümleri yeni kayıt biçimini açamaz.',
   );
   String get contextLabel => _t('note', 'not');
 
   /// A unit as shown (storage keeps the canonical unit).
   String unit(String u) => switch (u) {
     'bpm' => _t('bpm', 'atım/dk'),
+    'breaths/min' => _t('breaths/min', 'soluk/dk'),
     _ => u,
   };
 
@@ -371,17 +493,25 @@ class S {
     'bpm' => _t('beats per minute', 'dakikada atım'),
     'cm' => _t('centimetres', 'santimetre'),
     'kg' => _t('kilograms', 'kilogram'),
+    '°C' => _t('degrees Celsius', 'Celsius derece'),
+    '%' => _t('percent', 'yüzde'),
+    'breaths/min' => _t('breaths per minute', 'dakikada soluk'),
     _ => u,
   };
   String spokenBloodPressure(String systolic, String diastolic) => _t(
     'systolic $systolic, diastolic $diastolic',
     'sistolik $systolic, diyastolik $diastolic',
   );
-  String spokenLatest(String kind, String value, String when, String source) =>
-      _t(
-        '$kind: $value, saved $when, $source',
-        '$kind: $value, kaydedilme zamanı $when, $source',
-      );
+  String spokenLatest(
+    String kind,
+    String value,
+    String when,
+    String source, {
+    String? saved,
+  }) => _t(
+    '$kind: $value, measured $when${saved == null ? '' : ', saved $saved'}, $source',
+    '$kind: $value, ölçüm zamanı $when${saved == null ? '' : ', kaydedilme zamanı $saved'}, $source',
+  );
 
   // Labs (F004): everything is shown as the report printed it.
   String get labsNoInterpretation => _t(

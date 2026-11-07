@@ -101,13 +101,13 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes vault format 1, reads record schema 4 (F007) and '
+    test('this app writes vault format 1, reads record schema 5 (F007) and '
         'writes weight and lab results at 3, reads format 1, never '
         'downgrades', () {
       expect(vaultFormatVersion, 1);
       expect(vaultOldestReadableVersion, 1);
       expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 4);
+      expect(HealthRecord.currentSchemaVersion, 5);
       expect(HealthRecord.defaultWriteSchema, 3);
       expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
       expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
@@ -117,6 +117,14 @@ void main() {
         RecordKind.bloodPressure,
       ]) {
         expect(HealthRecord.writeSchemaFor(k), 4);
+      }
+      for (final k in [
+        RecordKind.height,
+        RecordKind.bodyTemperature,
+        RecordKind.oxygenSaturation,
+        RecordKind.respiratoryRate,
+      ]) {
+        expect(HealthRecord.writeSchemaFor(k), 5);
       }
       expect(Profile.currentSchemaVersion, 1);
     });
@@ -647,5 +655,120 @@ void main() {
         expect(raw.text, file.readAsStringSync());
       },
     );
+  });
+
+  group('fixture v1_f007s2_schema5 (record schema 5: more measurements)', () {
+    String id(int n) =>
+        '00000000-0000-4000-8000-0000000001${n.toRadixString(16).padLeft(2, '0')}';
+    final text = File('test/fixtures/vault/v1_f007s2_schema5.hhoslog.jsonl')
+        .readAsStringSync();
+
+    test('the slice 1 fixture is kept byte for byte at its start', () {
+      final slice1 = File('test/fixtures/vault/v1_f007_schema4.hhoslog.jsonl')
+          .readAsStringSync();
+      expect(text.startsWith(slice1), isTrue);
+    });
+
+    test('every field of the new kinds replays; observed and recorded '
+        'differ where they were typed apart; missing stays missing', () {
+      final state = parseVaultLog(text);
+      expect(state.warnings, isEmpty);
+      final height = state.records[id(1)]!;
+      expect(
+        (
+          height.kind,
+          height.schemaVersion,
+          height.quantity,
+          height.originalText,
+          height.context,
+        ),
+        (
+          RecordKind.height,
+          5,
+          const Quantity(172.5, 'cm'),
+          '172,5',
+          'barefoot',
+        ),
+      );
+      expect(state.records[id(0)]!.kind, RecordKind.height);
+      expect(
+        state.records[id(2)]!.quantity,
+        const Quantity(36.8, '°C'),
+        reason: 'the degree sign survives the log',
+      );
+      final back = state.records[id(5)]!;
+      expect(back.observedAt, DateTime.utc(2026, 10, 8, 21, 30));
+      expect(back.recordedAt.isAfter(back.observedAt), isTrue);
+      expect(back.quantity, const Quantity(14, 'breaths/min'));
+      final none = state.records[id(8)]!;
+      expect(none.valueStatus, ValueStatus.notMeasured);
+      expect(none.quantity, isNull);
+      final t = buildTimeline(state.records.values, includeHidden: true);
+      TimelineEntry entry(int n) => t.singleWhere((e) => e.rootId == id(n));
+      expect(entry(3).heads.single.id, id(4), reason: 'a correction');
+      expect(entry(6).isLive, isFalse, reason: 'entered in error');
+      expect(state.migrations, isEmpty);
+    });
+
+    test('every line is what the slice 2 writer produces', () {
+      final lines = text.trimRight().split('\n');
+      for (final l in lines.skip(2)) {
+        final data = ((jsonDecode(l) as Map)['data'] as Map)
+            .cast<String, Object?>();
+        expect(
+          encodeOp('record.append', HealthRecord.fromJson(data).toJson()),
+          l,
+        );
+      }
+    });
+
+    test('the encrypted twin opens to exactly this log with its passphrase '
+        'and its recovery key', () async {
+      const passphrase = 'fixture passphrase F006 (synthetic)';
+      const recoveryKey = 'K7QM-2XRA-PLMN-B3DE-ZZ4H-QW5T-RT6Y-HJ7U';
+      final file = File('test/fixtures/vault/enc_v1_f007s2.hhosvault');
+      for (final (secret, kind) in [
+        (passphrase, KeyKind.passphrase),
+        (recoveryKey, KeyKind.recovery),
+      ]) {
+        final raw = MemoryLogSink()..text = file.readAsStringSync();
+        final sink = await EncryptedLogSink.unlock(
+          raw,
+          secret,
+          kind: kind,
+          derive: deriveInline,
+        );
+        expect(await sink.read(), text, reason: kind.name);
+      }
+      final raw = MemoryLogSink()..text = file.readAsStringSync();
+      final before = raw.text;
+      final opened = await EncryptedVault(
+        raw: raw,
+        location: 'fixture',
+      ).unlock(passphrase);
+      expect(opened.report.warnings, isEmpty);
+      expect(raw.text, before, reason: 'opening writes nothing');
+    });
+
+    test('a store newer than this app (schema 6) is refused whole', () {
+      final lines = text.trimRight().split('\n');
+      final last = (jsonDecode(lines.last) as Map).cast<String, Object?>();
+      final data = (last['data']! as Map).cast<String, Object?>()
+        ..['schema_version'] = HealthRecord.currentSchemaVersion + 1;
+      final newer = [
+        ...lines.take(lines.length - 1),
+        encodeOp('record.append', data),
+      ].join('\n');
+      expect(
+        () => parseVaultLog(newer),
+        throwsA(
+          isA<VaultFormatError>().having(
+            (e) => e.code,
+            'code',
+            'RECORD_SCHEMA_NEWER',
+          ),
+        ),
+      );
+    });
   });
 }

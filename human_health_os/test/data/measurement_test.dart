@@ -839,6 +839,279 @@ void main() {
       expect((d.systolic, d.diastolic), (120.0, 80.0));
     });
   });
+
+  group('slice 2: height, temperature, SpO2, respiratory rate (schema 5)', () {
+    final kinds = {
+      RecordKind.height: ('cm', 172.0),
+      RecordKind.bodyTemperature: ('°C', 36.8),
+      RecordKind.oxygenSaturation: ('%', 97.0),
+      RecordKind.respiratoryRate: ('breaths/min', 14.0),
+    };
+
+    test('the four kinds exist only at schema 5, in their own unit', () {
+      for (final e in kinds.entries) {
+        final (unit, v) = e.value;
+        final ok = rec(kind: e.key, q: Quantity(v, unit), schema: 5);
+        expect(ok.validate, returnsNormally, reason: e.key.code);
+        for (final older in [3, 4]) {
+          expect(
+            rec(kind: e.key, q: Quantity(v, unit), schema: older).validate,
+            rule('KIND_NEEDS_NEWER_SCHEMA'),
+            reason: '${e.key.code} at $older',
+          );
+        }
+        expect(
+          rec(kind: e.key, q: Quantity(v, 'furlongs'), schema: 5).validate,
+          rule('UNIT_NOT_SUPPORTED'),
+        );
+        expect(
+          rec(kind: e.key, q: Quantity(0, unit), schema: 5).validate,
+          rule('VALUE_NOT_POSITIVE'),
+        );
+        expect(
+          rec(kind: e.key, q: Quantity(double.nan, unit), schema: 5).validate,
+          rule('VALUE_NOT_FINITE'),
+        );
+        expect(HealthRecord.writeSchemaFor(e.key), 5);
+        // Context is allowed, nothing else changes in the JSON shape.
+        final j = ok.toJson();
+        expect(
+          j.keys.toSet(),
+          rec(q: const Quantity(57, 'bpm'), schema: 4).toJson().keys.toSet(),
+          reason: 'schema 5 adds a kind, not a key',
+        );
+        expect(HealthRecord.fromJson(j).toJson(), j);
+      }
+    });
+
+    test('a stored SpO2 above 100 is not re-judged: it loads and shows', () {
+      final r = rec(
+        kind: RecordKind.oxygenSaturation,
+        q: const Quantity(101, '%'),
+        schema: 5,
+      );
+      expect(r.validate, returnsNormally);
+      expect(HealthRecord.fromJson(r.toJson()).quantity!.value, 101);
+    });
+
+    test('entry: each kind is one OBSERVED manual record at schema 5; SpO2 '
+        'above 100, 0 and blank are refused on the field', () async {
+      final (repo, _, svc, me) = await fresh();
+      for (final e in kinds.entries) {
+        final r = await svc.recordMeasurement(
+          profileId: me,
+          kind: e.key,
+          input: MeasurementInput(value: '${e.value.$2}'.replaceAll('.0', '')),
+        );
+        expect(r.schemaVersion, 5, reason: e.key.code);
+        expect(r.quantity!.unit, e.value.$1);
+        expect(r.state, RecordState.observed);
+        expect(r.provenance.kind, ProvenanceKind.manual);
+      }
+      final spo2 = (RecordKind kind, String v) => svc.recordMeasurement(
+        profileId: me,
+        kind: kind,
+        input: MeasurementInput(value: v),
+      );
+      await expectLater(
+        spo2(RecordKind.oxygenSaturation, '100,5'),
+        input('OUT_OF_DEFINITION', 'value'),
+      );
+      expect(
+        (await spo2(RecordKind.oxygenSaturation, '100')).quantity!.value,
+        100,
+      );
+      await expectLater(
+        spo2(RecordKind.bodyTemperature, '0'),
+        input('NOT_POSITIVE', 'value'),
+      );
+      await expectLater(spo2(RecordKind.height, ''), input('EMPTY', 'value'));
+      expect(await repo.records(me), hasLength(5));
+    });
+
+    test(
+      'a first height after slice-1 measurements makes one checkpoint '
+      '(4 to 5); from a vault of weights only, one for the first record',
+      () async {
+        final (repo, _, svc, me) = await fresh();
+        await svc.recordWeightKg(profileId: me, input: '70');
+        var calls = 0;
+        repo.beforeSchemaUpgrade = () async => calls++;
+        await svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.restingHeartRate,
+          input: const MeasurementInput(value: '57'),
+        );
+        expect(calls, 1, reason: '3 to 4');
+        await svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.height,
+          input: const MeasurementInput(value: '172'),
+        );
+        expect(calls, 2, reason: '4 to 5');
+        await svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.bodyTemperature,
+          input: const MeasurementInput(value: '36,8'),
+        );
+        expect(calls, 2, reason: 'once per step');
+
+        final (repo2, _, svc2, me2) = await fresh();
+        await svc2.recordWeightKg(profileId: me2, input: '70');
+        var calls2 = 0;
+        repo2.beforeSchemaUpgrade = () async => calls2++;
+        await svc2.recordMeasurement(
+          profileId: me2,
+          kind: RecordKind.height,
+          input: const MeasurementInput(
+            value: '172',
+            when: '2026-10-01 08:00Z',
+          ),
+        );
+        await svc2.recordMeasurement(
+          profileId: me2,
+          kind: RecordKind.height,
+          input: const MeasurementInput(value: '172'),
+        );
+        expect(calls2, 1, reason: '3 to 5 in one step, back-dated or not');
+      },
+    );
+
+    test('weight: a possible thousands separator is refused, typed text is '
+        'kept, the record stays schema 3', () async {
+      final (_, _, svc, me) = await fresh();
+      await expectLater(
+        svc.recordWeightKg(profileId: me, input: '7.500'),
+        input('AMBIGUOUS_SEPARATOR'),
+      );
+      await expectLater(
+        svc.recordWeightKg(profileId: me, input: '1,234'),
+        input('AMBIGUOUS_SEPARATOR'),
+      );
+      final w = await svc.recordWeightKg(profileId: me, input: '77,50');
+      expect(
+        (w.quantity!.value, w.originalText, w.schemaVersion),
+        (77.5, '77,50', 3),
+      );
+    });
+  });
+
+  group('slice 2: the time of a measurement', () {
+    test('a typed time is the observation, the save time is the record: '
+        'order follows the observation, not the save', () async {
+      final (repo, _, svc, me) = await fresh();
+      final first = await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.height,
+        input: const MeasurementInput(value: '172', when: '2026-10-08 06:00Z'),
+      );
+      final second = await svc.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.height,
+        input: const MeasurementInput(value: '171', when: '2026-10-08 05:00Z'),
+      );
+      expect(first.observedAt, DateTime.utc(2026, 10, 8, 6));
+      expect(second.observedAt, DateTime.utc(2026, 10, 8, 5));
+      expect(second.recordedAt.isAfter(first.recordedAt), isTrue);
+      final entries = await svc.measurementTimeline(me, RecordKind.height);
+      expect(
+        [for (final e in entries) e.heads.single.id],
+        [first.id, second.id],
+        reason: 'newest observation first; the later save is older',
+      );
+      expect(
+        entries.first.heads.single.quantity!.value,
+        172,
+        reason: 'Latest is the newest observation',
+      );
+      expect(await repo.records(me), hasLength(2));
+    });
+
+    test(
+      'blank means the save time; a correction keeps the observation and '
+      'ignores a time typed for it; a marker sorts with its target',
+      () async {
+        final (_, _, svc, me) = await fresh();
+        final r = await svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.bodyTemperature,
+          input: const MeasurementInput(value: '36,9'),
+        );
+        expect(r.observedAt, r.recordedAt);
+        final old = await svc.recordMeasurement(
+          profileId: me,
+          kind: RecordKind.bodyTemperature,
+          input: const MeasurementInput(value: '37', when: '2026-10-01 06:00Z'),
+        );
+        final fixed = await svc.correctMeasurement(
+          profileId: me,
+          targetId: old.id,
+          input: const MeasurementInput(
+            value: '36,5',
+            when: '2026-10-08 06:00Z',
+          ),
+        );
+        expect(fixed.observedAt, DateTime.utc(2026, 10, 1, 6));
+        final gone = await svc.amend(
+          profileId: me,
+          targetId: fixed.id,
+          reason: AmendReason.enteredInError,
+        );
+        expect(gone.observedAt, fixed.observedAt);
+      },
+    );
+
+    test('a future time and a bad time write nothing; a stored record with '
+        'any of those times still replays', () async {
+      final (repo, sink, svc, me) = await fresh();
+      final before = sink.text;
+      for (final (typed, code) in [
+        ('2099-01-01 00:00Z', 'FUTURE_TIME'),
+        ('1850-01-01 00:00Z', 'TIME_TOO_OLD'),
+        ('tomorrow', 'TIME_FORMAT'),
+      ]) {
+        await expectLater(
+          svc.recordMeasurement(
+            profileId: me,
+            kind: RecordKind.height,
+            input: MeasurementInput(value: '172', when: typed),
+          ),
+          input(code, 'when'),
+          reason: typed,
+        );
+      }
+      expect(sink.text, before);
+      // Entry rules only: the record rules accept those instants.
+      for (final at in [
+        DateTime.utc(2099),
+        DateTime.utc(1850),
+        DateTime.utc(2026, 10, 8, 7, 4),
+      ]) {
+        final r = HealthRecord(
+          id: 'm-${at.year}',
+          profileId: me,
+          kind: RecordKind.height,
+          state: RecordState.observed,
+          valueStatus: ValueStatus.present,
+          quantity: const Quantity(172, 'cm'),
+          originalText: '172',
+          provenance: const Provenance.manual(),
+          observedAt: at,
+          recordedAt: DateTime.utc(2026, 10, 8, 7),
+          schemaVersion: 5,
+        );
+        await repo.appendRecord(r);
+      }
+      final again = LogRepository(
+        sink: sink,
+        durability: StorageDurability.localFile,
+        location: 'test',
+      );
+      final report = await again.open();
+      expect(report.warnings, isEmpty);
+      expect(await again.records(me), hasLength(3));
+    });
+  });
 }
 
 /// Files that cannot be listed or restored here (a browser).

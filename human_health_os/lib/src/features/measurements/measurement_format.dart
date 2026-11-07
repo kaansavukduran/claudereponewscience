@@ -97,3 +97,17 @@ class ContextLengthFormatter extends TextInputFormatter {
     return oldValue;
   }
 }
+
+/// When the record was saved, as text, if that differs from the measured
+/// time by more than a minute (either way); null when they agree.
+String? savedWhenDifferent(HealthRecord r, String Function(DateTime) fmt) =>
+    r.recordedAt.difference(r.observedAt).abs() > const Duration(seconds: 60)
+    ? fmt(r.recordedAt)
+    : null;
+
+/// "measured time · source", plus "saved <time>" when it differs.
+String whenCaption(S s, HealthRecord r, String Function(DateTime) fmt) {
+  final saved = savedWhenDifferent(r, fmt);
+  final base = '${fmt(r.observedAt)} · ${s.provenanceKind(r.provenance.kind)}';
+  return saved == null ? base : '$base · ${s.savedAtLabel(saved)}';
+}
