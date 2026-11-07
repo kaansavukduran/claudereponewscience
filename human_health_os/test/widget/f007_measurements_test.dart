@@ -3,6 +3,8 @@
 // typed (118/76 mmHg, 84.25 cm), never as 0 when missing, never judged
 // (EN and TR), corrected and withdrawn on the Timeline, saved across a
 // restart, and laid out at 320 dp with 2x text.
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/app/app_services.dart';
@@ -192,6 +194,24 @@ void main() {
     expect(latestOf(tester, RecordKind.bloodPressure), '118/76 mmHg');
     expect(latestOf(tester, RecordKind.restingHeartRate), '57 bpm');
     expect(latestOf(tester, RecordKind.waistCircumference), '84.25 cm');
+  });
+
+  testWidgets('Latest skips a newer "not measured" entry, a withdrawn reading '
+      'and a deleted one: the schema-4 fixture shows the last real values', (
+    tester,
+  ) async {
+    // In the fixture the newest heart-rate entry is "not measured" (watch
+    // not worn), the 61 before it was entered in error, and the newest
+    // waist reading (85) was deleted: Latest is 57 bpm and 84.25 cm, never
+    // 0, never a blank that looks like a value.
+    final sink = MemoryLogSink()
+      ..text = File('test/fixtures/vault/v1_f007_schema4.hhoslog.jsonl')
+          .readAsStringSync();
+    await launch(tester, sink: sink);
+    expect(latestOf(tester, RecordKind.restingHeartRate), '57 bpm');
+    expect(latestOf(tester, RecordKind.waistCircumference), '84.25 cm');
+    expect(latestOf(tester, RecordKind.bloodPressure), '124/82 mmHg');
+    expect(find.textContaining('0 bpm'), findsNothing);
   });
 
   testWidgets('errors are shown on their own field and nothing is saved; '
