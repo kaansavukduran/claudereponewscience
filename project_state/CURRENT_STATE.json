@@ -3,9 +3,45 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U020",
+    "contract": "v0.32",
+    "run_id": "U020@v0.32",
+    "slice": "Today layout choice: Measurements before the weight card (G-49 part)",
+    "goal": "Let a person bring Measurements to the top of Today, so at large text on a narrow phone the first measurement is in view.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "12c9a21",
+    "started_at": "2026-11-08T20:20:00Z",
+    "scope": [
+      "AppearanceSettings.measurementsFirst (saved; Reset Today clears it)",
+      "Today order follows it",
+      "Settings switch"
+    ],
+    "out_of_scope": [
+      "Today's text styles (still open in G-49)"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: u020 tests (3); a mutation ignoring the choice caught; 618 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "U019"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

@@ -53,6 +53,7 @@ class AppearanceSettings {
     this.font = FontChoice.system,
     this.wideSpacing = false,
     this.reduceMotion = false,
+    this.measurementsFirst = false,
     this.units = UnitSystem.metric,
     this.dateOrder = DateOrder.iso,
     this.clock = ClockStyle.h24,
@@ -87,6 +88,10 @@ class AppearanceSettings {
   /// Pages open without sliding or zooming (the device setting "remove
   /// animations" does the same on its own).
   final bool reduceMotion;
+
+  /// Today shows Measurements before the weight card (a Today layout
+  /// choice; Reset Today clears it).
+  final bool measurementsFirst;
 
   /// Metric as typed, or US units shown beside them (display only).
   final UnitSystem units;
@@ -163,6 +168,7 @@ class AppearanceSettings {
     FontChoice? font,
     bool? wideSpacing,
     bool? reduceMotion,
+    bool? measurementsFirst,
     UnitSystem? units,
     DateOrder? dateOrder,
     ClockStyle? clock,
@@ -182,6 +188,7 @@ class AppearanceSettings {
     font: font ?? this.font,
     wideSpacing: wideSpacing ?? this.wideSpacing,
     reduceMotion: reduceMotion ?? this.reduceMotion,
+    measurementsFirst: measurementsFirst ?? this.measurementsFirst,
     units: units ?? this.units,
     dateOrder: dateOrder ?? this.dateOrder,
     clock: clock ?? this.clock,
@@ -205,6 +212,7 @@ class AppearanceSettings {
     'font': font.name,
     'wideSpacing': wideSpacing,
     'reduceMotion': reduceMotion,
+    'measurementsFirst': measurementsFirst,
     'units': units.name,
     'dateOrder': dateOrder.name,
     'clock': clock.name,
@@ -260,6 +268,7 @@ class AppearanceSettings {
       font: pick(FontChoice.values, json['font'], FontChoice.system),
       wideSpacing: json['wideSpacing'] == true,
       reduceMotion: json['reduceMotion'] == true,
+      measurementsFirst: json['measurementsFirst'] == true,
       units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
       dateOrder: pick(DateOrder.values, json['dateOrder'], DateOrder.iso),
       clock: pick(ClockStyle.values, json['clock'], ClockStyle.h24),
@@ -284,6 +293,7 @@ class AppearanceSettings {
       other.font == font &&
       other.wideSpacing == wideSpacing &&
       other.reduceMotion == reduceMotion &&
+      other.measurementsFirst == measurementsFirst &&
       other.units == units &&
       other.dateOrder == dateOrder &&
       other.clock == clock &&
@@ -306,6 +316,7 @@ class AppearanceSettings {
       font,
       wideSpacing,
       reduceMotion,
+      measurementsFirst,
       units,
       dateOrder,
       clock,

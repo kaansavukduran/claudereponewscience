@@ -29,9 +29,11 @@ class TodayScreen extends StatelessWidget {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
     final today = destinationById(DestinationId.today);
-    final hidden =
-        (AppearanceScope.maybeOf(context)?.value ?? const AppearanceSettings())
-            .hiddenSections;
+    final look =
+        AppearanceScope.maybeOf(context)?.value ?? const AppearanceSettings();
+    final hidden = look.hiddenSections;
+    final weight = WeightCard(services: services);
+    final measurements = MeasurementsCard(services: services);
     bool show(TodaySection x) => !hidden.contains(x);
     return ListView(
       key: const ValueKey('screen-today'),
@@ -50,9 +52,9 @@ class TodayScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
-        WeightCard(services: services),
+        look.measurementsFirst ? measurements : weight,
         const SizedBox(height: 28),
-        MeasurementsCard(services: services),
+        look.measurementsFirst ? weight : measurements,
         const SizedBox(height: 28),
         if (show(TodaySection.tools)) ...[
           Semantics(

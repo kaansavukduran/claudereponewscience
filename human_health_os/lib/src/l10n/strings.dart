@@ -804,6 +804,8 @@ class S {
     TodaySection.yourData => _t('Your data (backups)', 'Verilerin (yedekler)'),
     TodaySection.buildFacts => _t('About this build', 'Bu derleme hakkında'),
   };
+  String get settingsMeasurementsFirst =>
+      _t('Measurements before the weight card', 'Ölçümler kilo kartından önce');
   String get settingsPadOpen => _t(
     'Open the number pad in every measurement',
     'Her ölçümde sayı tuşları açık başlasın',
