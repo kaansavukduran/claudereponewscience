@@ -3,9 +3,43 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G005",
+    "contract": "v0.32",
+    "run_id": "G005@v0.32",
+    "slice": "ClinVar cards: labelled genotype, letters showing the alternate allele, one item for a screen reader (G-66)",
+    "goal": "Say plainly on each ClinVar card which genotype the file has and on how many of its letters ClinVar's alternate allele appears, without interpreting it.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "d4e31b2",
+    "started_at": "2026-11-08T13:05:00Z",
+    "scope": [
+      "lettersShowing(match, allele) pure function, null unless the file lists the alternate",
+      "genotype label and letter count on ClinVar cards",
+      "MergeSemantics on the card"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: g005 tests (4); 575 PASS; a mutation dropping the call check is equivalent (alternatesListed is empty then), removing MergeSemantics not caught in the test tree (recorded in G-66)"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "U015"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

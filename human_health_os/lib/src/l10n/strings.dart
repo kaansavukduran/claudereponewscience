@@ -1034,6 +1034,12 @@ class S {
     'ClinVar alleles (plus strand, $assembly): $ref > $alt',
     'ClinVar alelleri (artı şerit, $assembly): $ref > $alt',
   );
+  String clinvarGenotype(String g) =>
+      _t('Genotype in your file: $g', 'Dosyandaki genotip: $g');
+  String clinvarLetters(String allele, int showing, int letters) => _t(
+    'Letters showing $allele: $showing of $letters',
+    '$allele gösteren harf: $letters harften $showing',
+  );
   String clinvarSignificance(String v) =>
       _t('ClinVar label: $v', 'ClinVar etiketi: $v');
   String clinvarReview(String v) =>

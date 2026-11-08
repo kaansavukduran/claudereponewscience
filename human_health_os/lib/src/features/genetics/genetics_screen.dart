@@ -816,65 +816,81 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
             ),
             genotype,
           );
-    return Container(
-      key: ValueKey('clinvar-${r.rsid}-${r.variationId}'),
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: scheme.surfaceContainerLowest,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: scheme.outlineVariant),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            [r.rsid, if (r.gene.isNotEmpty) r.gene].join(' · '),
-            style: text.titleSmall,
-          ),
-          Text(
-            genotype ?? s.geneticsNotReadShort,
-            style: text.titleMedium?.copyWith(
-              fontFeatures: const [FontFeature.tabularFigures()],
-            ),
-          ),
-          if (comparison != null)
+    final letters = comparison == null
+        ? null
+        : lettersShowing(comparison, r.alternate!);
+    // One item for a screen reader: the card is read as a whole (G-66).
+    return MergeSemantics(
+      child: Container(
+        key: ValueKey('clinvar-${r.rsid}-${r.variationId}'),
+        margin: const EdgeInsets.only(bottom: 12),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: scheme.surfaceContainerLowest,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: scheme.outlineVariant),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
             Text(
-              s.dbsnpCall(
-                comparison.call.name,
-                comparison.alternatesListed.join(', '),
+              [r.rsid, if (r.gene.isNotEmpty) r.gene].join(' · '),
+              style: text.titleSmall,
+            ),
+            Text(
+              s.clinvarGenotype(genotype ?? s.geneticsNotReadShort),
+              key: ValueKey('clinvar-genotype-${r.rsid}-${r.variationId}'),
+              style: text.titleMedium?.copyWith(
+                fontFeatures: const [FontFeature.tabularFigures()],
               ),
             ),
-          if (r.reference != null && r.alternate != null)
+            if (comparison != null)
+              Text(
+                s.dbsnpCall(
+                  comparison.call.name,
+                  comparison.alternatesListed.join(', '),
+                ),
+              ),
+            if (letters != null)
+              Text(
+                s.clinvarLetters(
+                  r.alternate!,
+                  letters.showing,
+                  letters.letters,
+                ),
+                key: ValueKey('clinvar-letters-${r.rsid}-${r.variationId}'),
+              ),
+            if (r.reference != null && r.alternate != null)
+              Text(
+                s.clinvarAlleles(r.reference!, r.alternate!, r.assembly),
+                style: text.bodySmall,
+              ),
             Text(
-              s.clinvarAlleles(r.reference!, r.alternate!, r.assembly),
+              s.clinvarSignificance(
+                r.significance.isEmpty ? '—' : r.significance,
+              ),
+              key: ValueKey('clinvar-sig-${r.rsid}-${r.variationId}'),
               style: text.bodySmall,
             ),
-          Text(
-            s.clinvarSignificance(
-              r.significance.isEmpty ? '—' : r.significance,
-            ),
-            key: ValueKey('clinvar-sig-${r.rsid}-${r.variationId}'),
-            style: text.bodySmall,
-          ),
-          if (r.reviewStatus.isNotEmpty)
-            Text(s.clinvarReview(r.reviewStatus), style: text.bodySmall),
-          if (r.conditions.isNotEmpty)
+            if (r.reviewStatus.isNotEmpty)
+              Text(s.clinvarReview(r.reviewStatus), style: text.bodySmall),
+            if (r.conditions.isNotEmpty)
+              Text(
+                s.clinvarConditions(r.conditions),
+                style: text.bodySmall,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+              ),
             Text(
-              s.clinvarConditions(r.conditions),
-              style: text.bodySmall,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+              [
+                if (r.chromosome.isNotEmpty) '${r.chromosome}:${r.position}',
+                r.assembly,
+                'VCV ${r.variationId}',
+              ].where((x) => x.isNotEmpty).join(' · '),
+              style: text.bodySmall?.copyWith(color: scheme.outline),
             ),
-          Text(
-            [
-              if (r.chromosome.isNotEmpty) '${r.chromosome}:${r.position}',
-              r.assembly,
-              'VCV ${r.variationId}',
-            ].where((x) => x.isNotEmpty).join(' · '),
-            style: text.bodySmall?.copyWith(color: scheme.outline),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

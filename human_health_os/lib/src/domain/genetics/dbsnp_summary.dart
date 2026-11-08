@@ -236,3 +236,18 @@ DbSnpMatch compareWithDbSnp(DbSnpVariant v, String? genotype) {
     alternatesListed: listed,
   );
 }
+
+/// How many letters of a compared genotype are [allele] (G-66): "AG" and A
+/// gives 1 of 2, "AA" 2 of 2, a one-letter call such as "A" on X, Y or MT
+/// 1 of 1. Null unless [m] says the file lists an alternate allele, so a
+/// strand-ambiguous, multi-letter or missing call never gets a count. This
+/// counts letters in the file; it says nothing about what they mean.
+({int showing, int letters})? lettersShowing(DbSnpMatch m, String allele) {
+  final g = m.genotype?.toUpperCase();
+  if (m.call != DbSnpCall.listsAlternate || g == null) return null;
+  if (!m.alternatesListed.contains(allele)) return null;
+  return (
+    showing: g.split('').where((c) => c == allele).length,
+    letters: g.length,
+  );
+}
