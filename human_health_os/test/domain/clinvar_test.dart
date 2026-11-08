@@ -58,4 +58,13 @@ void main() {
     final r = await readClinVar(lines, {'rs20317'});
     expect(r.records.single.gene, 'GENEB');
   });
+
+  test('GRCh37 is kept whichever row comes first', () async {
+    final lines = const LineSplitter().convert(text);
+    final header = lines.first;
+    final rows = lines.skip(1).where((l) => l.contains('9000101')).toList();
+    final reversed = [header, ...rows.reversed].join('\n');
+    final r = await readClinVar(linesOf(reversed), {'rs9000101'});
+    expect(r.records.single.assembly, 'GRCh37');
+  });
 }
