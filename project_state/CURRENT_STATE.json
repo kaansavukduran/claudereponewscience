@@ -3,40 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U013",
-    "contract": "v0.32",
-    "run_id": "U013@v0.32",
-    "slice": "date and time style",
-    "goal": "Brainstorm F26: displayed dates as 2026-11-08, 08.11.2026 or 11/08/2026 and times as 24-hour or 12-hour; typed-time rules unchanged.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "45da54d",
-    "started_at": "2026-11-08T05:20:00Z",
-    "scope": [
-      "formatWhen(order, clock) behind fmtWhen; the app sets the display style from Settings",
-      "Settings → Date and time with example chips; a note that typing stays YYYY-MM-DD HH:MM"
-    ],
-    "out_of_scope": [
-      "typing times in another format",
-      "lab sample dates (calendar days stay ISO)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Every order and clock, midnight and noon in 12-hour",
-      "AC-2 A change applies to shown times at once",
-      "AC-3 Round trip; words judge nothing; mutations; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -47,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U012@v0.32 (2026-11-08, source revision 45da54d34b65)",
+  "last_completed_forge": "U013@v0.32 (2026-11-08, source revision 20b70aabfda3)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -60,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0296",
+      "evidence_id": "EV-TEST-F007-0309",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0297",
+      "evidence_id": "EV-TEST-F007-0310",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0298",
+      "evidence_id": "EV-TEST-F007-0311",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (535 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0299",
+      "gate": "flutter test, TZ=UTC (538 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0312",
       "criterion": "AC-1..AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0300",
+      "evidence_id": "EV-TEST-F007-0313",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0301",
+      "evidence_id": "EV-BUILD-F007-0314",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0302",
+      "evidence_id": "EV-RUNTIME-F007-0315",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0303",
+      "evidence_id": "EV-TEST-F007-0316",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0304",
+      "evidence_id": "EV-BUILD-F007-0317",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0305",
+      "evidence_id": "EV-RUNTIME-F007-0318",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (536 PASS)",
-      "evidence_id": "EV-TEST-F007-0306",
+      "gate": "flutter test with TZ=America/New_York (539 PASS)",
+      "evidence_id": "EV-TEST-F007-0319",
       "criterion": "AC-1..AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0307",
+      "evidence_id": "EV-TEST-F007-0320",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0308",
+      "evidence_id": "EV-TEST-F007-0321",
       "criterion": "AC-4",
-      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
       "result": "PASS"
     }
   ],
@@ -179,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U013",
+    "forge_id": "T002",
     "contract": "v0.32",
-    "run_id": "U013@v0.32",
-    "slice": "time and date style",
-    "why": "Brainstorm F26: 24-hour or 12-hour clock and day-month or month-day order for displayed times (typed-time rules unchanged); then the chart painting tests (G-63).",
+    "run_id": "T002@v0.32",
+    "slice": "chart rules as pure functions with tests (G-63)",
+    "why": "The trend chart's axis span, labels, segments and marker rules are only drawn, not tested; move them into pure functions and test the day boundaries of the range chips.",
     "depends_on": [
-      "U012"
+      "U013"
     ]
   },
-  "updated_at": "2026-11-08T04:45:00Z",
+  "updated_at": "2026-11-08T05:45:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -4697,6 +4666,178 @@
         }
       ],
       "review": "single-author slice; mutations on the °F formula, the units lookup in S.of and the weight card's converted value each caught"
+    },
+    "U013@v0.32": {
+      "forge_id": "U013",
+      "contract": "v0.32",
+      "run_id": "U013@v0.32",
+      "slice": "date and time style",
+      "goal": "Brainstorm F26: displayed dates as 2026-11-08, 08.11.2026 or 11/08/2026 and times as 24-hour or 12-hour; typed-time rules unchanged.",
+      "status": "DONE",
+      "baseline_commit": "45da54d",
+      "started_at": "2026-11-08T05:20:00Z",
+      "scope": [
+        "formatWhen(order, clock) behind fmtWhen; the app sets the display style from Settings",
+        "Settings → Date and time with example chips; a note that typing stays YYYY-MM-DD HH:MM"
+      ],
+      "out_of_scope": [
+        "typing times in another format",
+        "lab sample dates (calendar days stay ISO)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Every order and clock, midnight and noon in 12-hour",
+        "AC-2 A change applies to shown times at once",
+        "AC-3 Round trip; words judge nothing; mutations; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests",
+        "GATES: 13 receipts on clean tree 20b70aa, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0321",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0301.json",
+        "evidence/builds/EV-BUILD-F007-0304.json",
+        "evidence/runtime/EV-RUNTIME-F007-0302.json",
+        "evidence/runtime/EV-RUNTIME-F007-0305.json",
+        "evidence/tests/EV-TEST-F007-0296.json",
+        "evidence/tests/EV-TEST-F007-0297.json",
+        "evidence/tests/EV-TEST-F007-0298.json",
+        "evidence/tests/EV-TEST-F007-0299.json",
+        "evidence/tests/EV-TEST-F007-0300.json",
+        "evidence/tests/EV-TEST-F007-0303.json",
+        "evidence/tests/EV-TEST-F007-0306.json",
+        "evidence/tests/EV-TEST-F007-0307.json",
+        "evidence/tests/EV-TEST-F007-0308.json",
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/domain/settings/date_style.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u013_dates_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "reports/runtime/flutter_web_smoke_45da54d34b65.json",
+        "reports/runtime/linux-u012/u012-dev-schema5-history.png",
+        "reports/runtime/linux-u012/u012-dev-schema5-measurements.png",
+        "reports/runtime/linux-u012/u012-dev-schema5-today.png",
+        "reports/runtime/linux-u012/u012-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0309",
+        "EV-TEST-F007-0310",
+        "EV-TEST-F007-0311",
+        "EV-TEST-F007-0312",
+        "EV-TEST-F007-0313",
+        "EV-BUILD-F007-0314",
+        "EV-RUNTIME-F007-0315",
+        "EV-TEST-F007-0316",
+        "EV-BUILD-F007-0317",
+        "EV-RUNTIME-F007-0318",
+        "EV-TEST-F007-0319",
+        "EV-TEST-F007-0320",
+        "EV-TEST-F007-0321"
+      ],
+      "blocker": null,
+      "result": "U013_COMPLETE",
+      "finished_at": "2026-11-08T05:45:00Z",
+      "app_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0309",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0310",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0311",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (538 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0312",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0313",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0314",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0315",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0316",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0317",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0318",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (539 PASS)",
+          "evidence_id": "EV-TEST-F007-0319",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0320",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0321",
+          "criterion": "AC-4",
+          "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on the 12-hour midnight rule and the app setting the clock each caught"
     }
   },
   "forge_history_legacy_ids": {

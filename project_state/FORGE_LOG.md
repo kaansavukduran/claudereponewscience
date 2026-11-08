@@ -797,3 +797,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U012@v0.32 — display units, 2026-11-08 — U012_COMPLETE
 
 **Built** Settings → Units: "kg, cm, °C" or "also show lb, in, °F". With US units, a converted value is shown beside the typed one, marked ≈ ("72.4 kg (≈ 159.6 lb)"), in the measurement tiles, Timeline and trend lists and the weight card; entry and storage stay metric (a note says so); no conversion for mmHg, %, bpm or breaths/min. **Tests** 535 PASS in UTC, 536 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations caught. **Next** U013 time and date style.
+
+# FORGE U013@v0.32 — date and time style, 2026-11-08 — U013_COMPLETE
+
+**Built** Settings → Date and time: shown dates as 2026-11-08, 08.11.2026 or 11/08/2026 and times as 20:05 or 8:05 PM (midnight 12:00 AM, noon 12:00 PM), applied at once everywhere times are shown; typing a time stays YYYY-MM-DD HH:MM (a note says so) and lab sample dates stay calendar days. **Tests** 538 PASS in UTC, 539 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations caught. **Next** T002 chart rules as pure functions with tests (G-63).
