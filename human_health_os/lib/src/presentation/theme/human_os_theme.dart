@@ -88,6 +88,7 @@ ThemeData buildHumanOsTheme(
   bool compact = false,
   String? fontFamily,
   bool wideSpacing = false,
+  bool reduceMotion = false,
 }) {
   final dark = brightness == Brightness.dark;
   final tones = accentTones[accentChoice]!;
@@ -205,6 +206,12 @@ ThemeData buildHumanOsTheme(
       : const Color(0xFFBFE0E3);
   final radius = BorderRadius.circular(12);
   return ThemeData(
+    pageTransitionsTheme: PageTransitionsTheme(
+      builders: {
+        for (final p in TargetPlatform.values)
+          p: MotionAwareTransitions(reduce: reduceMotion),
+      },
+    ),
     colorScheme: scheme,
     useMaterial3: true,
     visualDensity: compact ? VisualDensity.compact : VisualDensity.standard,
@@ -293,4 +300,35 @@ ThemeData buildHumanOsTheme(
       ),
     ),
   );
+}
+
+/// Page transitions that honour "less motion" (the app setting) and the
+/// device's "remove animations": then a page simply appears; otherwise the
+/// platform's usual transition.
+class MotionAwareTransitions extends PageTransitionsBuilder {
+  const MotionAwareTransitions({required this.reduce});
+
+  final bool reduce;
+
+  static const _usual = PageTransitionsTheme();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    if (reduce || (MediaQuery.maybeDisableAnimationsOf(context) ?? false)) {
+      return child;
+    }
+    return _usual.buildTransitions(
+      route,
+      context,
+      animation,
+      secondaryAnimation,
+      child,
+    );
+  }
 }

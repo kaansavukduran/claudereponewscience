@@ -115,6 +115,7 @@ class _HumanOsAppState extends State<HumanOsApp> {
           compact: a.density == Density.compact,
           fontFamily: fontFamilyFor(a.font),
           wideSpacing: a.wideSpacing,
+          reduceMotion: a.reduceMotion,
         ),
         darkTheme: buildHumanOsTheme(
           Brightness.dark,
@@ -123,6 +124,7 @@ class _HumanOsAppState extends State<HumanOsApp> {
           compact: a.density == Density.compact,
           fontFamily: fontFamilyFor(a.font),
           wideSpacing: a.wideSpacing,
+          reduceMotion: a.reduceMotion,
         ),
         themeMode: switch (a.theme) {
           ThemeChoice.system => ThemeMode.system,

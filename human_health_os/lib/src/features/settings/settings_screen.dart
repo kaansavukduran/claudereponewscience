@@ -136,6 +136,13 @@ class SettingsScreen extends StatelessWidget {
                   value: a.wideSpacing,
                   onChanged: (on) => set(a.copyWith(wideSpacing: on)),
                 ),
+                SwitchListTile(
+                  key: const ValueKey('set-reduce-motion'),
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(s.settingsReduceMotion),
+                  value: a.reduceMotion,
+                  onChanged: (on) => set(a.copyWith(reduceMotion: on)),
+                ),
               ],
             ),
           ),

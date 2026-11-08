@@ -52,6 +52,7 @@ class AppearanceSettings {
     this.highContrast = false,
     this.font = FontChoice.system,
     this.wideSpacing = false,
+    this.reduceMotion = false,
     this.units = UnitSystem.metric,
     this.dateOrder = DateOrder.iso,
     this.clock = ClockStyle.h24,
@@ -82,6 +83,10 @@ class AppearanceSettings {
 
   /// More space between letters, words and lines.
   final bool wideSpacing;
+
+  /// Pages open without sliding or zooming (the device setting "remove
+  /// animations" does the same on its own).
+  final bool reduceMotion;
 
   /// Metric as typed, or US units shown beside them (display only).
   final UnitSystem units;
@@ -129,6 +134,7 @@ class AppearanceSettings {
     highContrast: highContrast,
     font: font,
     wideSpacing: wideSpacing,
+    reduceMotion: reduceMotion,
     units: units,
     dateOrder: dateOrder,
     clock: clock,
@@ -156,6 +162,7 @@ class AppearanceSettings {
     bool? highContrast,
     FontChoice? font,
     bool? wideSpacing,
+    bool? reduceMotion,
     UnitSystem? units,
     DateOrder? dateOrder,
     ClockStyle? clock,
@@ -174,6 +181,7 @@ class AppearanceSettings {
     highContrast: highContrast ?? this.highContrast,
     font: font ?? this.font,
     wideSpacing: wideSpacing ?? this.wideSpacing,
+    reduceMotion: reduceMotion ?? this.reduceMotion,
     units: units ?? this.units,
     dateOrder: dateOrder ?? this.dateOrder,
     clock: clock ?? this.clock,
@@ -196,6 +204,7 @@ class AppearanceSettings {
     'highContrast': highContrast,
     'font': font.name,
     'wideSpacing': wideSpacing,
+    'reduceMotion': reduceMotion,
     'units': units.name,
     'dateOrder': dateOrder.name,
     'clock': clock.name,
@@ -250,6 +259,7 @@ class AppearanceSettings {
       highContrast: json['highContrast'] == true,
       font: pick(FontChoice.values, json['font'], FontChoice.system),
       wideSpacing: json['wideSpacing'] == true,
+      reduceMotion: json['reduceMotion'] == true,
       units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
       dateOrder: pick(DateOrder.values, json['dateOrder'], DateOrder.iso),
       clock: pick(ClockStyle.values, json['clock'], ClockStyle.h24),
@@ -273,6 +283,7 @@ class AppearanceSettings {
       other.highContrast == highContrast &&
       other.font == font &&
       other.wideSpacing == wideSpacing &&
+      other.reduceMotion == reduceMotion &&
       other.units == units &&
       other.dateOrder == dateOrder &&
       other.clock == clock &&
@@ -294,6 +305,7 @@ class AppearanceSettings {
       highContrast,
       font,
       wideSpacing,
+      reduceMotion,
       units,
       dateOrder,
       clock,

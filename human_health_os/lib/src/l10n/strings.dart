@@ -767,6 +767,10 @@ class S {
   );
   String get fontDyslexic =>
       _t('For dyslexia (OpenDyslexic)', 'Disleksi için (OpenDyslexic)');
+  String get settingsReduceMotion => _t(
+    'Less motion: pages open without sliding',
+    'Daha az hareket: sayfalar kaymadan açılır',
+  );
   String get settingsWideSpacing => _t(
     'More space between letters, words and lines',
     'Harfler, sözcükler ve satırlar arasında daha fazla boşluk',
