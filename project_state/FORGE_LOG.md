@@ -825,3 +825,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE G005@v0.32 — ClinVar cards: genotype label and letters, 2026-11-08 — G005_COMPLETE
 
 **Built** each ClinVar card now says "Genotype in your file: CT" and, only when the file lists ClinVar's alternate allele, "Letters showing T: 1 of 2" (2 of 2, or 1 of 1 for one-letter calls on X, Y or MT); strand-ambiguous (A/T, C/G), multi-letter and missing calls get no count. It counts letters and interprets nothing. The card is wrapped in MergeSemantics; the test semantics tree already merged its texts, so that part is not distinguished by a test and a device screen-reader check is NOT_RUN (G-66 closed with that note). **Tests** 575 PASS in UTC, 576 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm. **Next** G006 ClinVar reading off the UI isolate (G-67).
+
+# FORGE G006@v0.32 — the window keeps drawing while ClinVar is read, 2026-11-08 — G006_COMPLETE
+
+**Built** the ClinVar reader pauses every 20,000 lines with a zero-delay timer and reports the line count there, so frames are drawn and the count moves even when a whole file arrives as one burst of lines (web, and files read at once). No new dependency. The per-line work still runs on the UI isolate and a .gz on the web must still be unpacked first (G-67 partly closed). **Tests** 576 PASS in UTC, 577 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; removing the pause caught. **Next** R003 independent review of U015, G005, G006.
