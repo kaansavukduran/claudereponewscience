@@ -20,12 +20,14 @@ Future<void> main() async {
     final store = await openAppearanceStore(config, platform);
     final appearance = AppearanceController(store, await store.load());
     // The introduction is offered only where seeing it can be remembered
-    // (desktop development builds today; G-62).
+    // (desktop development builds today; G-62), and in encrypted builds
+    // before a new vault is created (G-64).
     runApp(
       HumanOsApp.start(
         startup,
         appearance: appearance,
         offerFirstRun: store.persistent,
+        offerIntroBeforeNewVault: true,
       ),
     );
   } catch (e) {

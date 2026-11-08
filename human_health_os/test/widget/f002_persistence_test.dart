@@ -209,7 +209,8 @@ void main() {
   testWidgets('a vault written by a newer app: an update hint in Turkish', (
     tester,
   ) async {
-    tester.view.physicalSize = const Size(1280, 2000);
+    // Tall enough for Your data below the grouped tools (U015).
+    tester.view.physicalSize = const Size(1280, 2400);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.reset);
     tester.platformDispatcher.localesTestValue = [const Locale('tr')];

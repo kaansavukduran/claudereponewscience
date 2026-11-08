@@ -61,6 +61,7 @@ class TodayScreen extends StatelessWidget {
             child: Text(s.geneticsToolsTitle, style: text.titleMedium),
           ),
           const SizedBox(height: 12),
+          _ToolGroup(s.toolsGroupApp),
           _ToolTile(
             key: const ValueKey('tool-settings'),
             icon: Icons.tune,
@@ -92,7 +93,8 @@ class TodayScreen extends StatelessWidget {
               ),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
+          _ToolGroup(s.toolsGroupLearn),
           _ToolTile(
             key: const ValueKey('tool-glossary'),
             icon: Icons.menu_book_outlined,
@@ -112,7 +114,8 @@ class TodayScreen extends StatelessWidget {
               MaterialPageRoute<void>(builder: (_) => const BodyGuideScreen()),
             ),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 16),
+          _ToolGroup(s.toolsGroupFiles),
           _ToolTile(
             key: const ValueKey('tool-phyto'),
             icon: Icons.eco_outlined,
@@ -305,6 +308,26 @@ class _KeyValue extends StatelessWidget {
 }
 
 /// A way into a tool that is not a daily number (G001).
+/// A small heading over a group of tools (G-65), announced as a heading.
+class _ToolGroup extends StatelessWidget {
+  const _ToolGroup(this.label);
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 6),
+    child: Semantics(
+      header: true,
+      child: Text(
+        label,
+        style: Theme.of(context).textTheme.labelLarge
+            ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
+      ),
+    ),
+  );
+}
+
 class _ToolTile extends StatelessWidget {
   const _ToolTile({
     super.key,

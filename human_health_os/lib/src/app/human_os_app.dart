@@ -4,6 +4,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import '../domain/settings/appearance.dart';
 import '../domain/settings/date_style.dart';
 import '../features/onboarding/first_run_screen.dart';
+import '../data/local/encrypted_vault.dart';
 import '../features/vault/vault_gate_screen.dart';
 import '../navigation/app_shell.dart';
 import '../presentation/theme/human_os_theme.dart';
@@ -20,17 +21,20 @@ class HumanOsApp extends StatefulWidget {
     this.gate,
     this.appearance,
     this.offerFirstRun = false,
+    this.offerIntroBeforeNewVault = false,
   }) : assert(services != null || gate != null);
 
   factory HumanOsApp.start(
     AppStartup startup, {
     AppearanceController? appearance,
     bool offerFirstRun = false,
+    bool offerIntroBeforeNewVault = false,
   }) => HumanOsApp(
     services: startup.services,
     gate: startup.gate,
     appearance: appearance,
     offerFirstRun: offerFirstRun && appearance != null,
+    offerIntroBeforeNewVault: offerIntroBeforeNewVault,
   );
 
   final AppServices? services;
@@ -43,12 +47,24 @@ class HumanOsApp extends StatefulWidget {
   /// Shows the short introduction once (the real app; tests opt in).
   final bool offerFirstRun;
 
+  /// Shows the introduction before the passphrase screen when no vault
+  /// exists yet (a first start of an encrypted build; G-64). The choices
+  /// apply for this session; nothing is written before the vault exists,
+  /// and a later start finds the vault and skips the introduction.
+  final bool offerIntroBeforeNewVault;
+
   @override
   State<HumanOsApp> createState() => _HumanOsAppState();
 }
 
 class _HumanOsAppState extends State<HumanOsApp> {
+  void _finishIntro() {
+    setState(() => _introDone = true);
+    _appearance.update(_appearance.value.copyWith(firstRunDone: true));
+  }
+
   AppServices? _services;
+  bool _introDone = false;
   late AppearanceController _appearance =
       widget.appearance ?? AppearanceController(MemoryAppearanceStore());
 
@@ -131,18 +147,19 @@ class _HumanOsAppState extends State<HumanOsApp> {
           );
         },
         home: services != null
-            ? (widget.offerFirstRun && !a.firstRunDone
-                  ? FirstRunScreen(
-                      onDone: () => _appearance.update(
-                        _appearance.value.copyWith(firstRunDone: true),
-                      ),
-                    )
+            ? (widget.offerFirstRun && !a.firstRunDone && !_introDone
+                  ? FirstRunScreen(onDone: _finishIntro)
                   : AppShell(key: ObjectKey(services), services: services))
-            : VaultGateScreen(
-                key: ObjectKey(widget.gate),
-                gate: widget.gate!,
-                onReady: (s) => setState(() => _services = s),
-              ),
+            : (widget.offerIntroBeforeNewVault &&
+                      !_introDone &&
+                      !a.firstRunDone &&
+                      widget.gate!.inspection.access == VaultAccess.create
+                  ? FirstRunScreen(onDone: _finishIntro)
+                  : VaultGateScreen(
+                      key: ObjectKey(widget.gate),
+                      gate: widget.gate!,
+                      onReady: (s) => setState(() => _services = s),
+                    )),
       ),
     );
   }

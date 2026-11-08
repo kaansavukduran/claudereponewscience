@@ -878,6 +878,9 @@ class S {
   );
   String get geneticsTitle => _t('Genetics', 'Genetik');
   String get geneticsToolsTitle => _t('Tools', 'Araçlar');
+  String get toolsGroupApp => _t('App and visits', 'Uygulama ve muayene');
+  String get toolsGroupLearn => _t('Words and the body', 'Terimler ve beden');
+  String get toolsGroupFiles => _t('Read a file', 'Dosya oku');
   String get geneticsTileHint => _t(
     'Read a raw DNA file (23andMe, AncestryDNA, MyHeritage, FamilyTreeDNA) on this device',
     'Ham bir DNA dosyasını (23andMe, AncestryDNA, MyHeritage, FamilyTreeDNA) bu cihazda oku',

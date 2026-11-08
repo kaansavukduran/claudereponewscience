@@ -3,9 +3,42 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U015",
+    "contract": "v0.32",
+    "run_id": "U015@v0.32",
+    "slice": "group the Tools tiles (G-65) and offer the introduction before a new vault (G-64)",
+    "goal": "Make Today's tools easier to scan and let a person choose language, theme and font before creating an encrypted vault, writing nothing before the vault exists.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c9538fc",
+    "started_at": "2026-11-08T12:10:00Z",
+    "scope": [
+      "three headed tool groups on Today (App and visits; Words and the body; Read a file)",
+      "introduction before the passphrase screen when no vault exists; choices for the session; nothing written; existing vault straight to unlock"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED: grouped tools and the pre-vault introduction",
+      "TESTED: u015 widget tests (6) and a mutation on the vault-exists condition caught; 571 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "R002"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
