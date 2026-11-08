@@ -101,6 +101,11 @@ String _field(String line, int index) {
   return end < 0 ? line.substring(start) : line.substring(start, end);
 }
 
+/// Lines between pauses that let the app draw a frame (G-67): a file read
+/// at once arrives as one burst of line events, which would otherwise run
+/// without a break until the end.
+const int clinVarYieldEvery = 20000;
+
 /// Longest line read; a longer one is skipped (a file with no line breaks
 /// is not a ClinVar file).
 const int maxClinVarLine = 100000;
@@ -121,7 +126,10 @@ Future<ClinVarResult> readClinVar(
   int? rsColumn;
   await for (final raw in lines) {
     read++;
-    if (progress != null && read % 100000 == 0) progress(read);
+    if (read % clinVarYieldEvery == 0) {
+      progress?.call(read);
+      await Future<void>.delayed(Duration.zero);
+    }
     final line = raw.endsWith('\r') ? raw.substring(0, raw.length - 1) : raw;
     if (col == null) {
       if (line.startsWith('#AlleleID') || line.startsWith('AlleleID')) {
