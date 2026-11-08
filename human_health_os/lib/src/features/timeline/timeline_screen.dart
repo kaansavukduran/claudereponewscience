@@ -1,3 +1,5 @@
+import '../../domain/settings/date_style.dart';
+
 import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
@@ -142,11 +144,8 @@ String fmtObserved(HealthRecord r) {
 String recordTitle(S s, HealthRecord r) =>
     r.lab?.analyteLabel ?? s.recordKind(r.kind);
 
-String fmtWhen(DateTime utc) {
-  final l = utc.toLocal();
-  String two(int n) => n.toString().padLeft(2, '0');
-  return '${l.year}-${two(l.month)}-${two(l.day)} ${two(l.hour)}:${two(l.minute)}';
-}
+String fmtWhen(DateTime utc) =>
+    formatWhen(utc.toLocal(), displayDateOrder, displayClock);
 
 class _EntryTile extends StatelessWidget {
   const _EntryTile({super.key, required this.entry, required this.onTap});

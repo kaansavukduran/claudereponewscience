@@ -699,6 +699,11 @@ class S {
   String get settingsSpacing => _t('Spacing', 'Aralık');
   String get settingsFont => _t('Font', 'Yazı tipi');
   String get settingsUnits => _t('Units', 'Birimler');
+  String get settingsDates => _t('Date and time', 'Tarih ve saat');
+  String get datesNote => _t(
+    'Changes how dates and times are shown. When you type a time, the format stays YYYY-MM-DD HH:MM.',
+    'Tarih ve saatlerin nasıl gösterildiğini değiştirir. Bir saat yazarken biçim YYYY-AA-GG SS:DD olarak kalır.',
+  );
   String get unitsMetric => _t('kg, cm, °C', 'kg, cm, °C');
   String get unitsUs => _t('Also show lb, in, °F', 'lb, inç, °F de göster');
   String get unitsNote => _t(

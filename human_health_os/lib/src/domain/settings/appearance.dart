@@ -4,6 +4,9 @@
 library;
 
 import '../units/display_units.dart';
+import 'date_style.dart';
+
+export 'date_style.dart' show DateOrder, ClockStyle;
 
 export '../units/display_units.dart' show UnitSystem;
 
@@ -50,6 +53,8 @@ class AppearanceSettings {
     this.font = FontChoice.system,
     this.wideSpacing = false,
     this.units = UnitSystem.metric,
+    this.dateOrder = DateOrder.iso,
+    this.clock = ClockStyle.h24,
   });
 
   final LanguageChoice language;
@@ -79,6 +84,9 @@ class AppearanceSettings {
 
   /// Metric as typed, or US units shown beside them (display only).
   final UnitSystem units;
+
+  final DateOrder dateOrder;
+  final ClockStyle clock;
 
   /// [defaults] in the chosen order, all of them (hidden ones included).
   List<String> ordered(List<String> defaults) => [
@@ -118,6 +126,8 @@ class AppearanceSettings {
     font: font,
     wideSpacing: wideSpacing,
     units: units,
+    dateOrder: dateOrder,
+    clock: clock,
   );
 
   /// Multiplies the text size the system asks for.
@@ -142,6 +152,8 @@ class AppearanceSettings {
     FontChoice? font,
     bool? wideSpacing,
     UnitSystem? units,
+    DateOrder? dateOrder,
+    ClockStyle? clock,
   }) => AppearanceSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -157,6 +169,8 @@ class AppearanceSettings {
     font: font ?? this.font,
     wideSpacing: wideSpacing ?? this.wideSpacing,
     units: units ?? this.units,
+    dateOrder: dateOrder ?? this.dateOrder,
+    clock: clock ?? this.clock,
   );
 
   Map<String, Object?> toJson() => {
@@ -176,6 +190,8 @@ class AppearanceSettings {
     'font': font.name,
     'wideSpacing': wideSpacing,
     'units': units.name,
+    'dateOrder': dateOrder.name,
+    'clock': clock.name,
   };
 
   /// Reads saved settings; anything unknown or missing falls back to the
@@ -227,6 +243,8 @@ class AppearanceSettings {
       font: pick(FontChoice.values, json['font'], FontChoice.system),
       wideSpacing: json['wideSpacing'] == true,
       units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
+      dateOrder: pick(DateOrder.values, json['dateOrder'], DateOrder.iso),
+      clock: pick(ClockStyle.values, json['clock'], ClockStyle.h24),
     );
   }
 
@@ -246,7 +264,9 @@ class AppearanceSettings {
       other.highContrast == highContrast &&
       other.font == font &&
       other.wideSpacing == wideSpacing &&
-      other.units == units;
+      other.units == units &&
+      other.dateOrder == dateOrder &&
+      other.clock == clock;
 
   @override
   int get hashCode => Object.hash(
@@ -258,7 +278,16 @@ class AppearanceSettings {
     hiddenTiles.length,
     hiddenSections.length,
     padOpen,
-    Object.hash(startScreen, density, highContrast, font, wideSpacing, units),
+    Object.hash(
+      startScreen,
+      density,
+      highContrast,
+      font,
+      wideSpacing,
+      units,
+      dateOrder,
+      clock,
+    ),
   );
 }
 

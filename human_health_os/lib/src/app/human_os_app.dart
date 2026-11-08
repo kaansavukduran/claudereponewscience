@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../domain/settings/appearance.dart';
+import '../domain/settings/date_style.dart';
 import '../features/vault/vault_gate_screen.dart';
 import '../navigation/app_shell.dart';
 import '../presentation/theme/human_os_theme.dart';
@@ -72,6 +73,9 @@ class _HumanOsAppState extends State<HumanOsApp> {
   Widget build(BuildContext context) {
     final services = _services;
     final a = _appearance.value;
+    // Every displayed time follows the chosen style (display only).
+    displayDateOrder = a.dateOrder;
+    displayClock = a.clock;
     return AppearanceScope(
       controller: _appearance,
       child: MaterialApp(

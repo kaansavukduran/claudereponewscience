@@ -3,9 +3,40 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U013",
+    "contract": "v0.32",
+    "run_id": "U013@v0.32",
+    "slice": "date and time style",
+    "goal": "Brainstorm F26: displayed dates as 2026-11-08, 08.11.2026 or 11/08/2026 and times as 24-hour or 12-hour; typed-time rules unchanged.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "45da54d",
+    "started_at": "2026-11-08T05:20:00Z",
+    "scope": [
+      "formatWhen(order, clock) behind fmtWhen; the app sets the display style from Settings",
+      "Settings → Date and time with example chips; a note that typing stays YYYY-MM-DD HH:MM"
+    ],
+    "out_of_scope": [
+      "typing times in another format",
+      "lab sample dates (calendar days stay ISO)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Every order and clock, midnight and noon in 12-hour",
+      "AC-2 A change applies to shown times at once",
+      "AC-3 Round trip; words judge nothing; mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

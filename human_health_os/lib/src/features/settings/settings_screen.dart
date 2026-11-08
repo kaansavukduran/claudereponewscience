@@ -158,6 +158,33 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           section(
+            s.settingsDates,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                choices(
+                  'set-date',
+                  [
+                    (DateOrder.iso, '2026-11-08'),
+                    (DateOrder.dayMonth, '08.11.2026'),
+                    (DateOrder.monthDay, '11/08/2026'),
+                  ],
+                  a.dateOrder,
+                  (v) => set(a.copyWith(dateOrder: v)),
+                ),
+                const SizedBox(height: 8),
+                choices(
+                  'set-clock',
+                  [(ClockStyle.h24, '20:05'), (ClockStyle.h12, '8:05 PM')],
+                  a.clock,
+                  (v) => set(a.copyWith(clock: v)),
+                ),
+                const SizedBox(height: 4),
+                Text(s.datesNote, style: text.bodySmall),
+              ],
+            ),
+          ),
+          section(
             s.settingsSpacing,
             choices(
               'set-density',
