@@ -101,7 +101,12 @@ PhytoTable parsePhytoCsv(String text) {
       skipped++;
       continue;
     }
-    rows.add([for (final f in r) cleanPackText(f)]);
+    // A line break inside a quoted cell reads as a space, so two words
+    // never run together when control characters are removed.
+    rows.add([
+      for (final f in r)
+        cleanPackText(f.replaceAll(RegExp(r'\s*\r?\n\s*'), ' ')),
+    ]);
   }
   if (rows.isEmpty) throw const PhytoFormatError('NOT_TABLE');
   return PhytoTable(headers: headers, rows: rows, skipped: skipped);

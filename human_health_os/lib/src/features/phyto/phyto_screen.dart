@@ -27,6 +27,13 @@ class _PhytoScreenState extends State<PhytoScreen> {
   String? _refusal;
   bool _busy = false;
   String _q = '';
+  final _search = TextEditingController();
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   GenomeFilePicker get _picker =>
       widget.services.genomePicker ?? const SystemGenomeFilePicker();
@@ -53,7 +60,9 @@ class _PhytoScreenState extends State<PhytoScreen> {
         setState(() {
           _table = table;
           _name = picked.name;
+          // A new table starts unfiltered, and the box shows that.
           _q = '';
+          _search.clear();
         });
       }
     } on PhytoFormatError catch (e) {
@@ -139,6 +148,7 @@ class _PhytoScreenState extends State<PhytoScreen> {
             const SizedBox(height: 12),
             TextField(
               key: const ValueKey('phyto-search'),
+              controller: _search,
               decoration: InputDecoration(
                 labelText: s.phytoSearch,
                 prefixIcon: const Icon(Icons.search),

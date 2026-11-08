@@ -164,29 +164,36 @@ ThemeData buildHumanOsTheme(
       );
   // Wide spacing: more room between letters, words and lines (WCAG 1.4.12
   // text-spacing values as a guide).
-  TextStyle? spaced(TextStyle? s) => s?.copyWith(
-    letterSpacing: (s.fontSize ?? 14) * 0.12,
-    wordSpacing: (s.fontSize ?? 14) * 0.16,
-    height: 1.5,
-  );
+  // The base theme carries colours only; sizes come from the Material type
+  // scale, so spacing is measured against each style's real size.
+  final scale = Typography.material2021().englishLike;
+  TextStyle? spaced(TextStyle? s, TextStyle? size) {
+    final px = s?.fontSize ?? size?.fontSize ?? 14;
+    return s?.copyWith(
+      letterSpacing: px * 0.12,
+      wordSpacing: px * 0.16,
+      height: 1.5,
+    );
+  }
+
   final text = !wideSpacing
       ? styled
       : styled.copyWith(
-          displayLarge: spaced(styled.displayLarge),
-          displayMedium: spaced(styled.displayMedium),
-          displaySmall: spaced(styled.displaySmall),
-          headlineLarge: spaced(styled.headlineLarge),
-          headlineMedium: spaced(styled.headlineMedium),
-          headlineSmall: spaced(styled.headlineSmall),
-          titleLarge: spaced(styled.titleLarge),
-          titleMedium: spaced(styled.titleMedium),
-          titleSmall: spaced(styled.titleSmall),
-          bodyLarge: spaced(styled.bodyLarge),
-          bodyMedium: spaced(styled.bodyMedium),
-          bodySmall: spaced(styled.bodySmall),
-          labelLarge: spaced(styled.labelLarge),
-          labelMedium: spaced(styled.labelMedium),
-          labelSmall: spaced(styled.labelSmall),
+          displayLarge: spaced(styled.displayLarge, scale.displayLarge),
+          displayMedium: spaced(styled.displayMedium, scale.displayMedium),
+          displaySmall: spaced(styled.displaySmall, scale.displaySmall),
+          headlineLarge: spaced(styled.headlineLarge, scale.headlineLarge),
+          headlineMedium: spaced(styled.headlineMedium, scale.headlineMedium),
+          headlineSmall: spaced(styled.headlineSmall, scale.headlineSmall),
+          titleLarge: spaced(styled.titleLarge, scale.titleLarge),
+          titleMedium: spaced(styled.titleMedium, scale.titleMedium),
+          titleSmall: spaced(styled.titleSmall, scale.titleSmall),
+          bodyLarge: spaced(styled.bodyLarge, scale.bodyLarge),
+          bodyMedium: spaced(styled.bodyMedium, scale.bodyMedium),
+          bodySmall: spaced(styled.bodySmall, scale.bodySmall),
+          labelLarge: spaced(styled.labelLarge, scale.labelLarge),
+          labelMedium: spaced(styled.labelMedium, scale.labelMedium),
+          labelSmall: spaced(styled.labelSmall, scale.labelSmall),
         );
   // Field boundaries need 3:1 against the surface (WCAG 1.4.11); card
   // outlines stay hairline.

@@ -3,9 +3,39 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "T001",
+    "contract": "v0.32",
+    "run_id": "T001@v0.32",
+    "slice": "test-adequacy follow-up",
+    "goal": "Turn the test-adequacy reviewer's high-value mutation survivors (139 run, 99 survived) into tests, and fix what they reveal.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "6387399",
+    "started_at": "2026-11-08T03:20:00Z",
+    "scope": [
+      "direct reader tests for dbSNP (case, gene brackets, continuation lines, wide-space positions, comparison rules) and plant CSV (doubled quotes, quoted line breaks, BOM, one column, header only, short/long rows, header cap, byte limits, whole-word dose terms)",
+      "behaviour tests: text factors, 64-char cap, equality, Reset keeps fonts, failed save then good save, folder creation, wide spacing values, dark contrast ink, Light vs dark device, start screens, note chip replace/trim/max 8, plant search box cleared on a new file, Turkish dose words and folding"
+    ],
+    "out_of_scope": [
+      "chart painting rules (G-63)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Three defects found by the new tests fixed: plant search box kept old text after a new file; a quoted line break merged two words; wide spacing measured every style as 14 px",
+      "AC-2 Survivors listed in the review covered or recorded in G-63",
+      "AC-3 Gates on a clean tree"
+    ],
+    "completed_steps": [
+      "tests and fixes"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
