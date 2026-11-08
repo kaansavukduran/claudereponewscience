@@ -3,43 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "M002",
-    "contract": "v0.32",
-    "run_id": "M002@v0.32",
-    "slice": "phone backups, exports and the visit summary can be copied out (G-68)",
-    "goal": "A person on a phone can keep a backup or export where they can reach it, through the system save dialog; the app sends nothing anywhere itself.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "c15bb1e",
-    "started_at": "2026-11-08T17:20:00Z",
-    "scope": [
-      "SaveCopy port (system dialog via file_picker.saveFile on phones, fake in tests)",
-      "Your data card: 'saved inside the app' and 'Save a copy where I can find it' after a backup or export",
-      "visit summary: the same"
-    ],
-    "out_of_scope": null,
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: m002 tests (6); the phone-message mutation caught; 604 PASS"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "blocker": null,
-    "result": null,
-    "finished_at": null,
-    "app_revision": null,
-    "verified_gates": [],
-    "review": null,
-    "depends_on": [
-      "R004"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -50,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "R004@v0.32 (2026-11-08, source revision 7dfb36e82fc6)",
+  "last_completed_forge": "M002@v0.32 (2026-11-08, source revision 7ec09c19f27f)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -63,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0504",
+      "evidence_id": "EV-TEST-F007-0517",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0505",
+      "evidence_id": "EV-TEST-F007-0518",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0506",
+      "evidence_id": "EV-TEST-F007-0519",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (598 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0507",
+      "gate": "flutter test, TZ=UTC (604 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0520",
       "criterion": "AC-1..AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0508",
+      "evidence_id": "EV-TEST-F007-0521",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0509",
+      "evidence_id": "EV-BUILD-F007-0522",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0510",
+      "evidence_id": "EV-RUNTIME-F007-0523",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0511",
+      "evidence_id": "EV-TEST-F007-0524",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0512",
+      "evidence_id": "EV-BUILD-F007-0525",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0513",
+      "evidence_id": "EV-RUNTIME-F007-0526",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (599 PASS)",
-      "evidence_id": "EV-TEST-F007-0514",
+      "gate": "flutter test with TZ=America/New_York (605 PASS)",
+      "evidence_id": "EV-TEST-F007-0527",
       "criterion": "AC-1..AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0515",
+      "evidence_id": "EV-TEST-F007-0528",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0516",
+      "evidence_id": "EV-TEST-F007-0529",
       "criterion": "AC-4",
-      "source_revision": "7dfb36e82fc6cb43ae2fe7bf1038581ad04219ab",
+      "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
       "result": "PASS"
     }
   ],
@@ -182,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "M002",
+    "forge_id": "U018",
     "contract": "v0.32",
-    "run_id": "M002@v0.32",
-    "slice": "phone backups and exports reachable: a system save or share step instead of an internal path (G-68)",
-    "why": "On phones a person cannot open or share a saved backup or export, and the message shows an internal path; a backup the person cannot take off the device does not protect against losing the phone.",
+    "run_id": "U018@v0.32",
+    "slice": "display choices kept inside the encrypted vault for vault builds (G-62 rest)",
+    "why": "Staging, production and portable builds forget language, theme and font at every start; the vault is the only place they may be written.",
     "depends_on": [
-      "R004"
+      "M002"
     ]
   },
-  "updated_at": "2026-11-08T16:50:00Z",
+  "updated_at": "2026-11-08T18:00:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -6823,6 +6789,158 @@
       "review": "one Sonnet reviewer (stopped at a usage limit after reporting): two blocking privacy findings fixed; cupertino mutation caught; CI run 42499420473 green on Android, iOS, macOS, Windows, Linux",
       "depends_on": [
         "U017"
+      ]
+    },
+    "M002@v0.32": {
+      "forge_id": "M002",
+      "contract": "v0.32",
+      "run_id": "M002@v0.32",
+      "slice": "phone backups, exports and the visit summary can be copied out (G-68)",
+      "goal": "A person on a phone can keep a backup or export where they can reach it, through the system save dialog; the app sends nothing anywhere itself.",
+      "status": "DONE",
+      "baseline_commit": "c15bb1e",
+      "started_at": "2026-11-08T17:20:00Z",
+      "scope": [
+        "SaveCopy port (system dialog via file_picker.saveFile on phones, fake in tests)",
+        "Your data card: 'saved inside the app' and 'Save a copy where I can find it' after a backup or export",
+        "visit summary: the same"
+      ],
+      "out_of_scope": null,
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: m002 tests (6); the phone-message mutation caught; 604 PASS",
+        "GATES: 13 receipts on clean tree 7ec09c1, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0529",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/app/app_services.dart",
+        "human_health_os/lib/src/app/bootstrap.dart",
+        "human_health_os/lib/src/features/report/summary_screen.dart",
+        "human_health_os/lib/src/features/today/save_copy.dart",
+        "human_health_os/lib/src/features/today/your_data_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/m002_save_copy_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0517",
+        "EV-TEST-F007-0518",
+        "EV-TEST-F007-0519",
+        "EV-TEST-F007-0520",
+        "EV-TEST-F007-0521",
+        "EV-BUILD-F007-0522",
+        "EV-RUNTIME-F007-0523",
+        "EV-TEST-F007-0524",
+        "EV-BUILD-F007-0525",
+        "EV-RUNTIME-F007-0526",
+        "EV-TEST-F007-0527",
+        "EV-TEST-F007-0528",
+        "EV-TEST-F007-0529"
+      ],
+      "blocker": null,
+      "result": "M002_COMPLETE",
+      "finished_at": "2026-11-08T18:00:00Z",
+      "app_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0517",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0518",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0519",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (604 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0520",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0521",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0522",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0523",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0524",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0525",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0526",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (605 PASS)",
+          "evidence_id": "EV-TEST-F007-0527",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0528",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0529",
+          "criterion": "AC-4",
+          "source_revision": "7ec09c19f27f0225ff96385e7c1be603c4e78f96",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; the phone-message mutation caught; system save dialog on a real phone NOT_RUN",
+      "depends_on": [
+        "R004"
       ]
     }
   },
