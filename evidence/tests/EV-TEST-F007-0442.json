@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0442",
+  "kind": "TEST",
+  "forge_id": "R003@v0.32",
+  "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-08T12:09:44.318Z",
+  "finished_at": "2026-11-08T12:11:46.019Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:59 +579 ~1: All tests passed!",
+  "log_sha256": "e2a9094978c417b876773f1ae68b791bcbc3cdb3067741c7acfd19ab229d0556",
+  "log_lines": 651,
+  "log_tail": [
+    "01:56 +568 ~1: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:56 +569 ~1: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:56 +570 ~1: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:57 +571 ~1: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:57 +572 ~1: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader dose terms match whole words only, with the exact case",
+    "01:57 +573 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: only core/redact.dart writes to the console",
+    "01:57 +574 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: an error is shown as its type and code, never its message",
+    "01:57 +575 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: log events keep safe fields only",
+    "01:57 +576 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "01:57 +577 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "01:57 +578 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:59 +579 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
