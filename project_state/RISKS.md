@@ -21,3 +21,5 @@
 | R-17 | Receipts or screenshots claim more than they prove (e.g. a launch smoke read as a feature test) | Medium | Medium | Receipts carry the exact command and exit code; FORGE reports separate COMPILED / RUNTIME_TESTED / PACKAGED per target. |
 | R-18 | A user loses both the passphrase and the recovery key and so loses the local data for good | Medium | High | The recovery key is shown once and must be confirmed before the vault exists; the key-lost screen says plainly that nobody can decrypt it; encrypted backups open with the key of their time; a re-typed confirmation of the recovery key is planned (G-38). |
 
+
+- **R-26 (R005, display preferences rollback):** `<vault>.prefs` has no sequence number, so an older valid preferences file of the same vault, put back by someone with access to the folder, is accepted. It holds display choices only (no health data), so this is accepted; a set-aside vault leaves its old `.prefs` beside the new vault, which is then unusable (another vault id) and left as it is until a choice is changed.

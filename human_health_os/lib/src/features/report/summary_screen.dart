@@ -70,7 +70,9 @@ class _SummaryScreenState extends State<SummaryScreen> {
           _copyable = phone
               ? (name: name, text: html, mime: 'text/html')
               : null;
-          _message = phone ? s.savedInApp : s.savedTo(where);
+          _message = phone
+              ? '${s.savedInApp} ${s.copyNotEncrypted}'
+              : s.savedTo(where);
         });
       }
     } catch (_) {

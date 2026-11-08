@@ -79,7 +79,7 @@ void main() {
     final copy = FakeSaveCopy();
     final files = await start(tester, HostPlatform.android, copy: copy);
     await tapKey(tester, 'create-backup');
-    expect(message(tester), en.savedInApp);
+    expect(message(tester), '${en.savedInApp} ${en.copyNotEncrypted}');
     await tapKey(tester, 'data-save-copy');
     final name = files.files.keys.single.substring('backup/'.length);
     expect(copy.saved.single.fileName, name);
@@ -94,10 +94,10 @@ void main() {
     final copy = FakeSaveCopy(accept: false);
     await start(tester, HostPlatform.ios, copy: copy);
     await tapKey(tester, 'export-json');
-    expect(message(tester), en.savedInApp);
+    expect(message(tester), '${en.savedInApp} ${en.copyNotEncrypted}');
     await tapKey(tester, 'data-save-copy');
     expect(copy.saved, isEmpty);
-    expect(message(tester), en.savedInApp);
+    expect(message(tester), '${en.savedInApp} ${en.copyNotEncrypted}');
   });
 
   testWidgets('desktop: the place is named and no copy button appears', (
@@ -124,7 +124,7 @@ void main() {
     await tapKey(tester, 'summary-save');
     expect(
       tester.widget<Text>(find.byKey(const ValueKey('summary-message'))).data,
-      en.savedInApp,
+      '${en.savedInApp} ${en.copyNotEncrypted}',
     );
     await tapKey(tester, 'summary-save-copy');
     expect(copy.saved.single.mimeType, 'text/html');
@@ -142,7 +142,12 @@ void main() {
   test('the words judge nothing', () {
     for (final lang in AppLang.values) {
       final s = S(lang);
-      for (final w in [s.savedInApp, s.saveCopy, s.copySaved('x.json')]) {
+      for (final w in [
+        s.savedInApp,
+        s.saveCopy,
+        s.copySaved('x.json'),
+        s.copyNotEncrypted,
+      ]) {
         expect(interpretive.hasMatch(w), isFalse, reason: w);
         expect(judged.hasMatch(w), isFalse, reason: w);
       }

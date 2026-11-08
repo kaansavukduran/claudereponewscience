@@ -21,19 +21,20 @@ class AppearanceController extends ValueNotifier<AppearanceSettings> {
   /// (for example from the introduction) are saved; a file that cannot be
   /// read is left as it is (until a choice is changed) and this session's
   /// choices stay on screen.
+  ///
+  /// A choice changed while the file was being read wins over the file
+  /// (R005).
   Future<void> adopt(SealedAppearanceStore next) async {
     store = next;
+    final before = value;
     final saved = await next.load();
+    final changedMeanwhile = value != before;
     switch (next.state) {
-      case SealedPreferencesState.readable:
+      case SealedPreferencesState.readable when !changedMeanwhile:
         value = saved.copyWith(firstRunDone: true);
       case SealedPreferencesState.none:
-        try {
-          await next.save(value);
-          saveFailed = false;
-        } catch (_) {
-          saveFailed = true;
-        }
+      case SealedPreferencesState.readable:
+        await _save(value);
       case SealedPreferencesState.unusable || SealedPreferencesState.unknown:
         break;
     }
@@ -43,13 +44,26 @@ class AppearanceController extends ValueNotifier<AppearanceSettings> {
   Future<void> update(AppearanceSettings next) async {
     if (next == value) return;
     value = next;
-    try {
-      await store.save(next);
-      saveFailed = false;
-    } catch (_) {
-      saveFailed = true;
-    }
+    await _save(next);
     notifyListeners();
+  }
+
+  /// Saves run one after another, so two quick changes never write the same
+  /// file at once; the last change is the one kept (R005).
+  Future<void> _saving = Future<void>.value();
+
+  Future<void> _save(AppearanceSettings settings) {
+    final target = store;
+    final run = _saving.then((_) async {
+      try {
+        await target.save(settings);
+        saveFailed = false;
+      } catch (_) {
+        saveFailed = true;
+      }
+    });
+    _saving = run;
+    return run;
   }
 }
 

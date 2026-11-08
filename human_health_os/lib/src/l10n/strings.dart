@@ -1351,6 +1351,10 @@ class S {
     'Saved inside the app on this phone. To keep it somewhere else too (Downloads, a cloud folder, a USB drive), save a copy.',
     'Bu telefonda uygulamanın içine kaydedildi. Başka bir yerde de tutmak için (İndirilenler, bir bulut klasörü, USB bellek) bir kopyasını kaydet.',
   );
+  String get copyNotEncrypted => _t(
+    'This file is not encrypted: anyone who can open the place you choose can read it.',
+    'Bu dosya şifreli değil: seçtiğin yeri açabilen herkes okuyabilir.',
+  );
   String get saveCopy => _t(
     'Save a copy where I can find it',
     'Bulabileceğim bir yere kopyasını kaydet',

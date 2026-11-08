@@ -134,7 +134,9 @@ class _YourDataCardState extends State<YourDataCard> {
   String _saved(S s, String where, Copyable file) {
     if (saveCopyFor(_s) == null) return s.savedTo(where);
     _copyable = file;
-    return s.savedInApp;
+    return _s.storage.encrypted
+        ? s.savedInApp
+        : '${s.savedInApp} ${s.copyNotEncrypted}';
   }
 
   Future<void> _saveCopy(S s) async {

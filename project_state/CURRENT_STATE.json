@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R005",
+    "contract": "v0.32",
+    "run_id": "R005@v0.32",
+    "slice": "independent security review of M002 and U018",
+    "goal": "Fix the verified findings of an independent Sonnet security review of sealed preferences and copying files out on phones.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "59c20a7",
+    "started_at": "2026-11-08T19:35:00Z",
+    "scope": [
+      "preference saves serialised (no two writes to the same temporary file)",
+      "a change made while vault preferences are read wins over the file",
+      "development builds say a copied file is not encrypted",
+      "backup names keep only [A-Za-z0-9-] of the vault id",
+      "risk R-26 (preferences rollback, stale .prefs after set-aside)"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED: one Sonnet security reviewer, no blocking findings",
+      "IMPLEMENTED fixes",
+      "TESTED: r005 tests (5); both mutations caught; 613 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "U018"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

@@ -140,7 +140,14 @@ String fileStamp(DateTime t) {
 }
 
 String backupFileName(String vaultId, DateTime t) =>
-    'human-os-backup-${vaultId.length > 8 ? vaultId.substring(0, 8) : vaultId}-${fileStamp(t)}.hhosbackup.json';
+    'human-os-backup-${_safeIdPart(vaultId)}-${fileStamp(t)}.hhosbackup.json';
+
+/// The first 8 characters of a vault id, kept to letters, digits and '-'
+/// (an id read from a damaged file never shapes a path; R005).
+String _safeIdPart(String vaultId) {
+  final part = vaultId.length > 8 ? vaultId.substring(0, 8) : vaultId;
+  return part.replaceAll(RegExp(r'[^A-Za-z0-9-]'), '_');
+}
 
 String exportFileName(DateTime t) => 'human-os-export-${fileStamp(t)}.json';
 
