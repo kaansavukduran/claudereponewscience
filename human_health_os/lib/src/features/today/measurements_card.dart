@@ -131,7 +131,7 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
         Text(
           s.measurementsNote,
           key: const ValueKey('measurements-note'),
-          style: text.bodySmall?.copyWith(
+          style: text.bodyMedium?.copyWith(
             color: Theme.of(context).colorScheme.outline,
           ),
         ),
@@ -251,7 +251,7 @@ class _Tile extends StatelessWidget {
                     Expanded(
                       child: Text(
                         s.recordKind(kind),
-                        style: text.labelLarge?.copyWith(color: scheme.outline),
+                        style: text.bodyMedium?.copyWith(color: scheme.outline),
                       ),
                     ),
                     Icon(Icons.add, size: 20, color: scheme.primary),
@@ -272,7 +272,7 @@ class _Tile extends StatelessWidget {
                   const SizedBox(height: 2),
                   Text(
                     caption,
-                    style: text.bodySmall?.copyWith(color: scheme.outline),
+                    style: text.bodyMedium?.copyWith(color: scheme.outline),
                   ),
                 ],
               ],
@@ -474,7 +474,7 @@ class _EntrySheetState extends State<_EntrySheet> {
           children: [
             Semantics(
               header: true,
-              child: Text(s.recordKind(kind), style: text.titleLarge),
+              child: Text(s.recordKind(kind), style: text.titleMedium),
             ),
             Align(
               alignment: Alignment.centerLeft,
@@ -559,7 +559,7 @@ class _EntrySheetState extends State<_EntrySheet> {
                 childrenPadding: EdgeInsets.zero,
                 title: Text(
                   s.moreDetails,
-                  style: text.labelLarge?.copyWith(color: scheme.primary),
+                  style: text.bodyMedium?.copyWith(color: scheme.primary),
                 ),
                 children: [
                   _presets(s),
@@ -586,7 +586,7 @@ class _EntrySheetState extends State<_EntrySheet> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(s.yourNotes, style: text.labelMedium),
+                          Text(s.yourNotes, style: text.bodyMedium),
                           const SizedBox(height: 4),
                           Wrap(
                             spacing: 8,

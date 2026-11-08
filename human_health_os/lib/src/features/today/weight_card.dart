@@ -174,7 +174,7 @@ class _WeightCardState extends State<WeightCard> {
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
-                  Text(s.latest, style: text.labelLarge),
+                  Text(s.latest, style: text.bodyMedium),
                   const SizedBox(width: 12),
                   // Scales down instead of overflowing on narrow phones at
                   // large text sizes (audit UX-7).
@@ -185,7 +185,7 @@ class _WeightCardState extends State<WeightCard> {
                       child: Text(
                         _value(s, latest),
                         key: const ValueKey('weight-latest'),
-                        style: text.headlineMedium?.copyWith(
+                        style: text.titleLarge?.copyWith(
                           fontFeatures: const [FontFeature.tabularFigures()],
                         ),
                       ),
@@ -265,13 +265,13 @@ class _WeightCardState extends State<WeightCard> {
                 child: Text(
                   s.saved,
                   key: const ValueKey('weight-saved'),
-                  style: text.bodySmall,
+                  style: text.bodyMedium,
                 ),
               ),
             ],
             if (_weights.isNotEmpty) ...[
               const SizedBox(height: 16),
-              Text(s.history, style: text.titleSmall),
+              Text(s.history, style: text.titleMedium),
               const SizedBox(height: 4),
               for (final w in _weights.take(10))
                 Padding(
@@ -279,7 +279,9 @@ class _WeightCardState extends State<WeightCard> {
                   padding: const EdgeInsets.symmetric(vertical: 4),
                   child: Row(
                     children: [
-                      Expanded(child: Text(_meta(s, w), style: text.bodySmall)),
+                      Expanded(
+                        child: Text(_meta(s, w), style: text.bodyMedium),
+                      ),
                       const SizedBox(width: 8),
                       Text(_value(s, w), style: text.bodyMedium),
                     ],
@@ -307,7 +309,7 @@ class _WeightCardState extends State<WeightCard> {
               Text(
                 notice,
                 key: const ValueKey('storage-notice'),
-                style: text.bodySmall,
+                style: text.bodyMedium,
               ),
             ],
             for (final n in services.storageNotes) ...[
@@ -315,7 +317,7 @@ class _WeightCardState extends State<WeightCard> {
               Text(
                 s.storageNote(n),
                 key: ValueKey('storage-note-${n.kind.name}'),
-                style: text.bodySmall,
+                style: text.bodyMedium,
               ),
             ],
             for (final w in services.loadWarnings) ...[
@@ -323,7 +325,7 @@ class _WeightCardState extends State<WeightCard> {
               Text(
                 s.loadWarning(w),
                 key: ValueKey('load-warning-${w.line}'),
-                style: text.bodySmall?.copyWith(
+                style: text.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.error,
                 ),
               ),

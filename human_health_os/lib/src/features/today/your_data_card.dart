@@ -356,7 +356,7 @@ class _YourDataCardState extends State<YourDataCard> {
                 Text(
                   s.exportNotForEncrypted,
                   key: const ValueKey('export-not-for-encrypted'),
-                  style: text.bodySmall,
+                  style: text.bodyMedium,
                 ),
               ],
               if (_restored && _message == null) ...[
@@ -364,7 +364,7 @@ class _YourDataCardState extends State<YourDataCard> {
                 Text(
                   s.restartToUse,
                   key: const ValueKey('restart-to-use'),
-                  style: text.bodySmall,
+                  style: text.bodyMedium,
                 ),
               ],
               if (_message != null) ...[
@@ -374,7 +374,7 @@ class _YourDataCardState extends State<YourDataCard> {
                   child: Text(
                     _message!,
                     key: const ValueKey('data-message'),
-                    style: text.bodySmall?.copyWith(
+                    style: text.bodyMedium?.copyWith(
                       color: _messageIsError
                           ? Theme.of(context).colorScheme.error
                           : null,
@@ -393,14 +393,14 @@ class _YourDataCardState extends State<YourDataCard> {
               ],
               const SizedBox(height: 12),
               if (!files.canRestore)
-                Text(s.browserRestoreNotBuilt, style: text.bodySmall)
+                Text(s.browserRestoreNotBuilt, style: text.bodyMedium)
               else ...[
-                Text(s.backupsTitle, style: text.titleSmall),
+                Text(s.backupsTitle, style: text.titleMedium),
                 if (_backups.isEmpty)
                   Text(
                     s.noBackups,
                     key: const ValueKey('no-backups'),
-                    style: text.bodySmall,
+                    style: text.bodyMedium,
                   ),
                 for (final b in _backups)
                   Padding(
@@ -411,7 +411,7 @@ class _YourDataCardState extends State<YourDataCard> {
                       runSpacing: 4,
                       crossAxisAlignment: WrapCrossAlignment.center,
                       children: [
-                        Text(b.name, style: text.bodySmall),
+                        Text(b.name, style: text.bodyMedium),
                         TextButton(
                           key: ValueKey('check-${b.name}'),
                           onPressed: _busy

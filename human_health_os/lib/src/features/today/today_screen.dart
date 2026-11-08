@@ -156,7 +156,7 @@ class TodayScreen extends StatelessWidget {
             children: [
               Text(
                 s.checkInsAndMissions,
-                style: text.bodySmall?.copyWith(
+                style: text.bodyMedium?.copyWith(
                   color: Theme.of(context).colorScheme.outline,
                 ),
               ),
@@ -202,8 +202,8 @@ class TodayScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(c.label, style: text.titleSmall),
-                              Text(c.detail, style: text.bodySmall),
+                              Text(c.label, style: text.titleMedium),
+                              Text(c.detail, style: text.bodyMedium),
                             ],
                           ),
                         ),
@@ -322,7 +322,7 @@ class _ToolGroup extends StatelessWidget {
       header: true,
       child: Text(
         label,
-        style: Theme.of(context).textTheme.labelLarge
+        style: Theme.of(context).textTheme.bodyMedium
             ?.copyWith(color: Theme.of(context).colorScheme.onSurfaceVariant),
       ),
     ),
@@ -375,10 +375,10 @@ class _ToolTile extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(title, style: text.titleSmall),
+                          Text(title, style: text.titleMedium),
                           Text(
                             hint,
-                            style: text.bodySmall?.copyWith(
+                            style: text.bodyMedium?.copyWith(
                               color: scheme.outline,
                             ),
                           ),
