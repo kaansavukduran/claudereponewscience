@@ -3,44 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U019",
-    "contract": "v0.32",
-    "run_id": "U019@v0.32",
-    "slice": "measurement tile columns follow the text size (G-49 part)",
-    "goal": "Large text on a narrow phone shows one measurement tile per row instead of squeezed half-width tiles.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "bbf9936",
-    "started_at": "2026-11-08T20:15:00Z",
-    "scope": [
-      "tileColumns(width, textScale): width measured in text of the chosen size; 4/3/2/1 columns"
-    ],
-    "out_of_scope": [
-      "Measurements above the weight card",
-      "Today's text styles (still open in G-49)"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: u019 tests (2); ignoring the text scale caught; 615 PASS"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "blocker": null,
-    "result": null,
-    "finished_at": null,
-    "app_revision": null,
-    "verified_gates": [],
-    "review": null,
-    "depends_on": [
-      "R005"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -51,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "R005@v0.32 (2026-11-08, source revision 67de04ed611d)",
+  "last_completed_forge": "U019@v0.32 (2026-11-08, source revision 90e45194453f)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -64,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0556",
+      "evidence_id": "EV-TEST-F007-0569",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0557",
+      "evidence_id": "EV-TEST-F007-0570",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0558",
+      "evidence_id": "EV-TEST-F007-0571",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (613 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0559",
+      "gate": "flutter test, TZ=UTC (615 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0572",
       "criterion": "AC-1..AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0560",
+      "evidence_id": "EV-TEST-F007-0573",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0561",
+      "evidence_id": "EV-BUILD-F007-0574",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0562",
+      "evidence_id": "EV-RUNTIME-F007-0575",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0563",
+      "evidence_id": "EV-TEST-F007-0576",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0564",
+      "evidence_id": "EV-BUILD-F007-0577",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0565",
+      "evidence_id": "EV-RUNTIME-F007-0578",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (614 PASS)",
-      "evidence_id": "EV-TEST-F007-0566",
+      "gate": "flutter test with TZ=America/New_York (616 PASS)",
+      "evidence_id": "EV-TEST-F007-0579",
       "criterion": "AC-1..AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0567",
+      "evidence_id": "EV-TEST-F007-0580",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0568",
+      "evidence_id": "EV-TEST-F007-0581",
       "criterion": "AC-4",
-      "source_revision": "67de04ed611d31d9e25f49db096254181691f919",
+      "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
       "result": "PASS"
     }
   ],
@@ -183,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U019",
+    "forge_id": "U020",
     "contract": "v0.32",
-    "run_id": "U019@v0.32",
-    "slice": "Today at large text on a narrow phone: measurement tiles in one column and fewer text styles (G-49 rest)",
-    "why": "At 2x text on a 320 dp phone the first measurement tile is about two screens down and Today mixes about ten text styles; Kaan's priority is a calm, user-friendly interface on every screen size.",
+    "run_id": "U020@v0.32",
+    "slice": "Settings: show Measurements above the weight card (G-49 rest)",
+    "why": "At large text on a narrow phone the first measurement is still far down; letting the person put Measurements first (a Today layout choice) brings it into view without changing anyone else's screen.",
     "depends_on": [
-      "R005"
+      "U019"
     ]
   },
-  "updated_at": "2026-11-08T20:10:00Z",
+  "updated_at": "2026-11-08T20:45:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -7301,6 +7266,154 @@
       "review": "one Sonnet security reviewer, no blocking findings; should-fix items fixed; both mutations caught",
       "depends_on": [
         "U018"
+      ]
+    },
+    "U019@v0.32": {
+      "forge_id": "U019",
+      "contract": "v0.32",
+      "run_id": "U019@v0.32",
+      "slice": "measurement tile columns follow the text size (G-49 part)",
+      "goal": "Large text on a narrow phone shows one measurement tile per row instead of squeezed half-width tiles.",
+      "status": "DONE",
+      "baseline_commit": "bbf9936",
+      "started_at": "2026-11-08T20:15:00Z",
+      "scope": [
+        "tileColumns(width, textScale): width measured in text of the chosen size; 4/3/2/1 columns"
+      ],
+      "out_of_scope": [
+        "Measurements above the weight card",
+        "Today's text styles (still open in G-49)"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: u019 tests (2); ignoring the text scale caught; 615 PASS",
+        "GATES: 13 receipts on clean tree 90e4519, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0581",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/test/widget/u019_narrow_large_text_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0569",
+        "EV-TEST-F007-0570",
+        "EV-TEST-F007-0571",
+        "EV-TEST-F007-0572",
+        "EV-TEST-F007-0573",
+        "EV-BUILD-F007-0574",
+        "EV-RUNTIME-F007-0575",
+        "EV-TEST-F007-0576",
+        "EV-BUILD-F007-0577",
+        "EV-RUNTIME-F007-0578",
+        "EV-TEST-F007-0579",
+        "EV-TEST-F007-0580",
+        "EV-TEST-F007-0581"
+      ],
+      "blocker": null,
+      "result": "U019_COMPLETE",
+      "finished_at": "2026-11-08T20:45:00Z",
+      "app_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0569",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0570",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0571",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (615 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0572",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0573",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0574",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0575",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0576",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0577",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0578",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (616 PASS)",
+          "evidence_id": "EV-TEST-F007-0579",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0580",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0581",
+          "criterion": "AC-4",
+          "source_revision": "90e45194453fbde17a41c05313dbcea24442c885",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; ignoring the text scale caught",
+      "depends_on": [
+        "R005"
       ]
     }
   },
