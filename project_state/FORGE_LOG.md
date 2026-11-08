@@ -865,3 +865,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U019@v0.32 — measurement tiles follow the text size, 2026-11-08 — U019_COMPLETE
 
 **Built** measurement tiles choose their columns by the width measured in text of the chosen size (`tileColumns`): with large text on a 320 dp phone one tile per row instead of two squeezed ones, two at normal text, three or four in wide windows (G-49 part). **Tests** 615 PASS in UTC, 616 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; ignoring the text scale caught. **Next** U020 Measurements above the weight card as a Today layout choice.
+
+# FORGE U020@v0.32 — Measurements before the weight card, 2026-11-08 — U020_COMPLETE
+
+**Built** Settings → Today → "Measurements before the weight card" ("Ölçümler kilo kartından önce"): Today shows the measurement tiles first; saved with the other display choices; Reset Today clears it (G-49 part; first wording "above" reworded after the judging-word scan). **Tests** 618 PASS in UTC, 619 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; a mutation ignoring the choice caught. **Next** U021 Today's text styles.
