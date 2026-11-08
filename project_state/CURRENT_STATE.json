@@ -3,39 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "T002",
-    "contract": "v0.32",
-    "run_id": "T002@v0.32",
-    "slice": "chart rules as pure functions",
-    "goal": "G-63: the trend chart's axis range, reading lines, labels, time positions and range-chip boundaries become pure functions with tests; drawing unchanged.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "20b70aa",
-    "started_at": "2026-11-08T06:20:00Z",
-    "scope": [
-      "axisRange, readingLines, axisLabel, timePositions, rangeStart in domain/trends/trend.dart; rangeDays in the screen",
-      "tests for minimum span, padding, labels, positions and the 29/30/31 and 89/91 day boundaries"
-    ],
-    "out_of_scope": [
-      "marker sizes and colours as drawn (G-63)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Same chart output (existing trend tests pass)",
-      "AC-2 Each rule tested; mutations on padding, single-point position, 90-day chip and label decimals caught",
-      "AC-3 Gates on a clean tree"
-    ],
-    "completed_steps": [
-      "refactor and tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -46,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U013@v0.32 (2026-11-08, source revision 20b70aabfda3)",
+  "last_completed_forge": "T002@v0.32 (2026-11-08, source revision c29d6d4e7703)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -59,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0309",
+      "evidence_id": "EV-TEST-F007-0322",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0310",
+      "evidence_id": "EV-TEST-F007-0323",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0311",
+      "evidence_id": "EV-TEST-F007-0324",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (538 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0312",
+      "gate": "flutter test, TZ=UTC (543 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0325",
       "criterion": "AC-1..AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0313",
+      "evidence_id": "EV-TEST-F007-0326",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0314",
+      "evidence_id": "EV-BUILD-F007-0327",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0315",
+      "evidence_id": "EV-RUNTIME-F007-0328",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0316",
+      "evidence_id": "EV-TEST-F007-0329",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0317",
+      "evidence_id": "EV-BUILD-F007-0330",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0318",
+      "evidence_id": "EV-RUNTIME-F007-0331",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (539 PASS)",
-      "evidence_id": "EV-TEST-F007-0319",
+      "gate": "flutter test with TZ=America/New_York (544 PASS)",
+      "evidence_id": "EV-TEST-F007-0332",
       "criterion": "AC-1..AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0320",
+      "evidence_id": "EV-TEST-F007-0333",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0321",
+      "evidence_id": "EV-TEST-F007-0334",
       "criterion": "AC-4",
-      "source_revision": "20b70aabfda35728e59fdb7e8eb2009c09bf7a32",
+      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
       "result": "PASS"
     }
   ],
@@ -178,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "T002",
+    "forge_id": "U014",
     "contract": "v0.32",
-    "run_id": "T002@v0.32",
-    "slice": "chart rules as pure functions with tests (G-63)",
-    "why": "The trend chart's axis span, labels, segments and marker rules are only drawn, not tested; move them into pure functions and test the day boundaries of the range chips.",
+    "run_id": "U014@v0.32",
+    "slice": "a calm first run",
+    "why": "Brainstorm D13 and the owner's first-time-user priority: on the first launch, three short screens (what Human OS is, that everything stays on this device and works offline, choose language and look), each skippable, then Today; never shown again unless asked from Settings.",
     "depends_on": [
-      "U013"
+      "T002"
     ]
   },
-  "updated_at": "2026-11-08T05:45:00Z",
+  "updated_at": "2026-11-08T06:45:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -4868,6 +4838,174 @@
         }
       ],
       "review": "single-author slice; mutations on the 12-hour midnight rule and the app setting the clock each caught"
+    },
+    "T002@v0.32": {
+      "forge_id": "T002",
+      "contract": "v0.32",
+      "run_id": "T002@v0.32",
+      "slice": "chart rules as pure functions",
+      "goal": "G-63: the trend chart's axis range, reading lines, labels, time positions and range-chip boundaries become pure functions with tests; drawing unchanged.",
+      "status": "DONE",
+      "baseline_commit": "20b70aa",
+      "started_at": "2026-11-08T06:20:00Z",
+      "scope": [
+        "axisRange, readingLines, axisLabel, timePositions, rangeStart in domain/trends/trend.dart; rangeDays in the screen",
+        "tests for minimum span, padding, labels, positions and the 29/30/31 and 89/91 day boundaries"
+      ],
+      "out_of_scope": [
+        "marker sizes and colours as drawn (G-63)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Same chart output (existing trend tests pass)",
+        "AC-2 Each rule tested; mutations on padding, single-point position, 90-day chip and label decimals caught",
+        "AC-3 Gates on a clean tree"
+      ],
+      "completed_steps": [
+        "refactor and tests",
+        "GATES: 13 receipts on clean tree c29d6d4, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0334",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0314.json",
+        "evidence/builds/EV-BUILD-F007-0317.json",
+        "evidence/runtime/EV-RUNTIME-F007-0315.json",
+        "evidence/runtime/EV-RUNTIME-F007-0318.json",
+        "evidence/tests/EV-TEST-F007-0309.json",
+        "evidence/tests/EV-TEST-F007-0310.json",
+        "evidence/tests/EV-TEST-F007-0311.json",
+        "evidence/tests/EV-TEST-F007-0312.json",
+        "evidence/tests/EV-TEST-F007-0313.json",
+        "evidence/tests/EV-TEST-F007-0316.json",
+        "evidence/tests/EV-TEST-F007-0319.json",
+        "evidence/tests/EV-TEST-F007-0320.json",
+        "evidence/tests/EV-TEST-F007-0321.json",
+        "human_health_os/lib/src/domain/trends/trend.dart",
+        "human_health_os/lib/src/features/trends/trend_screen.dart",
+        "human_health_os/test/domain/t002_chart_rules_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "project_state/KNOWN_GAPS.md",
+        "reports/runtime/flutter_web_smoke_20b70aabfda3.json",
+        "reports/runtime/linux-u013/u013-dev-schema5-history.png",
+        "reports/runtime/linux-u013/u013-dev-schema5-measurements.png",
+        "reports/runtime/linux-u013/u013-dev-schema5-today.png",
+        "reports/runtime/linux-u013/u013-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0322",
+        "EV-TEST-F007-0323",
+        "EV-TEST-F007-0324",
+        "EV-TEST-F007-0325",
+        "EV-TEST-F007-0326",
+        "EV-BUILD-F007-0327",
+        "EV-RUNTIME-F007-0328",
+        "EV-TEST-F007-0329",
+        "EV-BUILD-F007-0330",
+        "EV-RUNTIME-F007-0331",
+        "EV-TEST-F007-0332",
+        "EV-TEST-F007-0333",
+        "EV-TEST-F007-0334"
+      ],
+      "blocker": null,
+      "result": "T002_COMPLETE",
+      "finished_at": "2026-11-08T06:45:00Z",
+      "app_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0322",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0323",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0324",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (543 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0325",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0326",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0327",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0328",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0329",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0330",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0331",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (544 PASS)",
+          "evidence_id": "EV-TEST-F007-0332",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0333",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0334",
+          "criterion": "AC-4",
+          "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author refactor; mutations on padding, single-point position, the 90-day chip and label decimals caught"
     }
   },
   "forge_history_legacy_ids": {

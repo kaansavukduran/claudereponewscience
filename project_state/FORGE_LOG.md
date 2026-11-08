@@ -801,3 +801,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U013@v0.32 — date and time style, 2026-11-08 — U013_COMPLETE
 
 **Built** Settings → Date and time: shown dates as 2026-11-08, 08.11.2026 or 11/08/2026 and times as 20:05 or 8:05 PM (midnight 12:00 AM, noon 12:00 PM), applied at once everywhere times are shown; typing a time stays YYYY-MM-DD HH:MM (a note says so) and lab sample dates stay calendar days. **Tests** 538 PASS in UTC, 539 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations caught. **Next** T002 chart rules as pure functions with tests (G-63).
+
+# FORGE T002@v0.32 — chart rules as pure functions, 2026-11-08 — T002_COMPLETE
+
+**Built** the trend chart's rules moved into tested pure functions: `axisRange` (minimum span centred on the data, 10% padding), `readingLines`, `axisLabel` (one decimal below 100, local separator), `timePositions` (by time, a single point centred) and `rangeStart`/`rangeDays` (30, 90, 365 days; a point exactly at the start counts). Drawing unchanged; existing trend tests pass. Part of G-63 closed. **Tests** 543 PASS in UTC, 544 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations caught. **Next** U014 a calm first run.
