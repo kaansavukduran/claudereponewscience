@@ -73,16 +73,17 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   // skippable with one click.
   const skipIntro = async () => {
     const b = page.getByRole('button', { name: /^(Skip|Atla)$/ }).first();
-    await b.waitFor({ timeout: 8_000 }).catch(() => {});
+    await b.waitFor({ timeout: 1_500 }).catch(() => {});
     if ((await b.count()) > 0) await b.click().catch(() => {});
     await page.waitForTimeout(300);
   };
-  const skip = page.getByRole('button', { name: /^(Skip|Atla)$/ }).first();
-  await skip.waitFor({ timeout: 20_000 }).catch(() => {});
-  const sawIntro = (await skip.count()) > 0;
-  check(`${label}: first run offers Skip`, sawIntro);
-  if (sawIntro) await skip.click().catch(() => {});
+  // R002: the browser build cannot remember that the introduction was seen
+  // (G-62), so it is not offered there: Today comes first.
   await today.waitFor({ timeout: 30_000 }).catch(() => {});
+  check(
+    `${label}: no introduction forced in the browser`,
+    (await page.getByRole('button', { name: /^(Skip|Atla)$/ }).count()) === 0,
+  );
   check(`${label}: app starts and shows ${todayLabel}`, await today.isVisible().catch(() => false));
   check(`${label}: development profile banner visible`, await page.getByText(banner).first().isVisible().catch(() => false));
   if (locale === 'en-US') {

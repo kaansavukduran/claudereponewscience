@@ -1,0 +1,72 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-F007-0380",
+  "kind": "RUNTIME",
+  "forge_id": "R002@v0.32",
+  "source_revision": "0fb829ccc7179bb2d4942ca12f41fbba46ea4adf",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env EXPECT_FLUTTER_VERSION=3.47.6 node tools/flutter_web_smoke.mjs",
+  "argv": [
+    "env",
+    "EXPECT_FLUTTER_VERSION=3.47.6",
+    "node",
+    "tools/flutter_web_smoke.mjs"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-08T07:46:21.051Z",
+  "finished_at": "2026-11-08T07:51:41.244Z",
+  "exit_code": 1,
+  "expected_exit_code": 0,
+  "result": "FAIL",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "PASS  phone-tr: no failed requests",
+  "log_sha256": "428069a96eeca64326da1db1d7f18aa23d7c2692c9a7942db5e365e7619e0483",
+  "log_lines": 89,
+  "log_tail": [
+    "PASS  phone-en: no failed requests",
+    "FAIL  phone-tr: first run offers Skip",
+    "PASS  phone-tr: app starts and shows Bug\u00fcn",
+    "PASS  phone-tr: development profile banner visible",
+    "PASS  phone-tr: navigates to Zaman \u00e7izelgesi",
+    "PASS  phone-tr: Timeline principle visible",
+    "PASS  phone-tr: Labs principle visible",
+    "PASS  phone-tr: navigates to Lab",
+    "PASS  phone-tr: no external network requests",
+    "PASS  phone-tr: no page errors",
+    "PASS  phone-tr: no console errors",
+    "PASS  phone-tr: no failed requests"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/flutter_web_smoke.mjs"
+  ],
+  "target": "web",
+  "profile": "development",
+  "artifacts": [
+    {
+      "path": "/home/user/claudereponewscience/human_health_os/build/web/main.dart.js",
+      "type": "file",
+      "bytes": 3522015,
+      "sha256": "75769c253a93c152011738e1aec9693f95aeae7537cf0eec469c210645fe8ca9"
+    },
+    {
+      "path": "/home/user/claudereponewscience/reports/runtime/flutter_web_smoke_0fb829ccc717.json",
+      "type": "file",
+      "bytes": 11350,
+      "sha256": "4d5496537f7f5b43407130d554917288edf39af29319e269ab5599c331aed31e"
+    }
+  ]
+}
