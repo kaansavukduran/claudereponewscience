@@ -1,5 +1,6 @@
 // U017@v0.32: "Less motion" opens pages without a transition; the device's
 // "remove animations" does the same; otherwise the usual transition runs.
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/settings/appearance.dart';
@@ -68,6 +69,29 @@ void main() {
     expect(AppearanceSettings.fromJson(c.value.toJson()).reduceMotion, isTrue);
     expect(AppearanceSettings.fromJson(const {}).reduceMotion, isFalse);
     expect(c.value == const AppearanceSettings(), isFalse);
+  });
+
+  testWidgets('iOS with less motion: the page does not move, and a swipe '
+      'from the left edge still goes back', (tester) async {
+    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+    await launchWith(
+      tester,
+      initial: const AppearanceSettings(reduceMotion: true),
+    );
+    final f = find.byKey(const ValueKey('tool-settings'));
+    await tester.ensureVisible(f);
+    await tester.pumpAndSettle();
+    await tester.tap(f);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 50));
+    final page = find.byKey(const ValueKey('screen-settings'));
+    expect(tester.getTopLeft(page).dx, 0, reason: 'no slide in');
+    await tester.pumpAndSettle();
+    await tester.dragFrom(const Offset(5, 400), const Offset(900, 0));
+    await tester.pumpAndSettle();
+    expect(page, findsNothing);
+    expect(find.byKey(const ValueKey('screen-today')), findsOneWidget);
+    debugDefaultTargetPlatformOverride = null;
   });
 
   test('the words judge nothing', () {

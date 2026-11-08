@@ -3,9 +3,47 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R004",
+    "contract": "v0.32",
+    "run_id": "R004@v0.32",
+    "slice": "independent review of M001, U016 and U017",
+    "goal": "Fix the verified findings of an independent Sonnet review of phone storage, app names and less motion.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "abb4a62",
+    "started_at": "2026-11-08T16:20:00Z",
+    "scope": [
+      "Android: allowBackup=false, data extraction and full-backup rules excluding every domain (no Google backup, no device transfer)",
+      "iOS: the HumanHealthOS folder created and excluded from iCloud/computer backup, else no folder (memory only)",
+      "channel timeout 5 s",
+      "macOS menu shows Human OS",
+      "less motion keeps the iOS/macOS swipe-back and forwards the delegated transition",
+      "gap G-68 phone backups/exports unreachable"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED: one Sonnet reviewer (it stopped at a usage limit after reporting); two blocking privacy findings",
+      "IMPLEMENTED fixes",
+      "TESTED: 598 PASS; the cupertino branch mutation caught; native code compiled by CI after push"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "U017"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

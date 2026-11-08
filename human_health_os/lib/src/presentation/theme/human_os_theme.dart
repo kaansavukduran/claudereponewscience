@@ -3,6 +3,7 @@
 /// colour alone; widgets pair every role colour with an icon and a text label.
 library;
 
+import 'package:flutter/cupertino.dart' show CupertinoPageTransitionsBuilder;
 import 'package:flutter/material.dart';
 
 import '../../domain/settings/appearance.dart';
@@ -209,7 +210,7 @@ ThemeData buildHumanOsTheme(
     pageTransitionsTheme: PageTransitionsTheme(
       builders: {
         for (final p in TargetPlatform.values)
-          p: MotionAwareTransitions(reduce: reduceMotion),
+          p: MotionAwareTransitions(reduce: reduceMotion, platform: p),
       },
     ),
     colorScheme: scheme,
@@ -304,13 +305,24 @@ ThemeData buildHumanOsTheme(
 
 /// Page transitions that honour "less motion" (the app setting) and the
 /// device's "remove animations": then a page simply appears; otherwise the
-/// platform's usual transition.
+/// platform's usual transition. On iOS and macOS a still page keeps the
+/// swipe-back gesture (R004).
 class MotionAwareTransitions extends PageTransitionsBuilder {
-  const MotionAwareTransitions({required this.reduce});
+  const MotionAwareTransitions({required this.reduce, required this.platform});
 
   final bool reduce;
+  final TargetPlatform platform;
 
-  static const _usual = PageTransitionsTheme();
+  PageTransitionsBuilder get _usual =>
+      const PageTransitionsTheme().builders[platform] ??
+      const ZoomPageTransitionsBuilder();
+
+  bool get _cupertino =>
+      platform == TargetPlatform.iOS || platform == TargetPlatform.macOS;
+
+  @override
+  DelegatedTransitionBuilder? get delegatedTransition =>
+      reduce ? null : _usual.delegatedTransition;
 
   @override
   Widget buildTransitions<T>(
@@ -321,6 +333,17 @@ class MotionAwareTransitions extends PageTransitionsBuilder {
     Widget child,
   ) {
     if (reduce || (MediaQuery.maybeDisableAnimationsOf(context) ?? false)) {
+      if (_cupertino) {
+        // Cupertino's builder brings the back gesture; finished animations
+        // keep the page still.
+        return const CupertinoPageTransitionsBuilder().buildTransitions(
+          route,
+          context,
+          kAlwaysCompleteAnimation,
+          kAlwaysDismissedAnimation,
+          child,
+        );
+      }
       return child;
     }
     return _usual.buildTransitions(

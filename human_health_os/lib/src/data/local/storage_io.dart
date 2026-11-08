@@ -138,7 +138,9 @@ Future<void> loadMobileAppDataDir() async {
   if (!Platform.isAndroid && !Platform.isIOS) return;
   try {
     final dir = await const MethodChannel('org.humanhealthos/paths')
-        .invokeMethod<String>('appDataDir');
+        .invokeMethod<String>('appDataDir')
+        // A side that never answers must not hold the app at start.
+        .timeout(const Duration(seconds: 5));
     mobileAppDataDir = dir != null && dir.isNotEmpty && _absolute(dir)
         ? dir
         : null;
