@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../app/app_services.dart';
 import '../../data/backup/data_files.dart';
 import '../../l10n/strings.dart';
+import '../today/save_copy.dart';
 import 'doctor_summary.dart';
 
 /// The summary for a visit (U009): shown on screen in every build; saved as
@@ -34,6 +35,25 @@ class _SummaryScreenState extends State<SummaryScreen> {
     if (mounted) setState(() => _summary = summary);
   }
 
+  Copyable? _copyable;
+
+  Future<void> _saveCopy(S s) async {
+    final file = _copyable;
+    final copy = saveCopyFor(widget.services);
+    if (file == null || copy == null) return;
+    try {
+      final ok = await copy.save(
+        fileName: file.name,
+        text: file.text,
+        mimeType: file.mime,
+        title: s.saveCopy,
+      );
+      if (ok && mounted) setState(() => _message = s.copySaved(file.name));
+    } catch (_) {
+      if (mounted) setState(() => _message = s.inputError('SAVE_FAILED'));
+    }
+  }
+
   Future<void> _save(S s) async {
     final files = widget.services.dataFiles;
     final summary = _summary;
@@ -41,12 +61,18 @@ class _SummaryScreenState extends State<SummaryScreen> {
     setState(() => _busy = true);
     try {
       final now = DateTime.now().toUtc();
-      final where = await files.save(
-        DataFileKind.export,
-        'human-os-summary-${fileStamp(now)}.html',
-        summary.toHtml(s.lang.name),
-      );
-      if (mounted) setState(() => _message = s.savedTo(where));
+      final name = 'human-os-summary-${fileStamp(now)}.html';
+      final html = summary.toHtml(s.lang.name);
+      final where = await files.save(DataFileKind.export, name, html);
+      final phone = saveCopyFor(widget.services) != null;
+      if (mounted) {
+        setState(() {
+          _copyable = phone
+              ? (name: name, text: html, mime: 'text/html')
+              : null;
+          _message = phone ? s.savedInApp : s.savedTo(where);
+        });
+      }
     } catch (_) {
       if (mounted) setState(() => _message = s.inputError('SAVE_FAILED'));
     } finally {
@@ -99,6 +125,15 @@ class _SummaryScreenState extends State<SummaryScreen> {
                       key: const ValueKey('summary-message'),
                     ),
                   ),
+                  if (_copyable != null) ...[
+                    const SizedBox(height: 8),
+                    OutlinedButton.icon(
+                      key: const ValueKey('summary-save-copy'),
+                      onPressed: _busy ? null : () => _saveCopy(s),
+                      icon: const Icon(Icons.save_alt),
+                      label: Text(s.saveCopy),
+                    ),
+                  ],
                 ],
                 const SizedBox(height: 12),
                 if (summary.sections.isEmpty)

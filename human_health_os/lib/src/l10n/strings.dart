@@ -1347,6 +1347,16 @@ class S {
   String get exportJson =>
       _t('Export records (JSON)', 'Kayıtları dışa aktar (JSON)');
   String savedTo(String where) => _t('Saved: $where', 'Kaydedildi: $where');
+  String get savedInApp => _t(
+    'Saved inside the app on this phone. To keep it somewhere else too (Downloads, a cloud folder, a USB drive), save a copy.',
+    'Bu telefonda uygulamanın içine kaydedildi. Başka bir yerde de tutmak için (İndirilenler, bir bulut klasörü, USB bellek) bir kopyasını kaydet.',
+  );
+  String get saveCopy => _t(
+    'Save a copy where I can find it',
+    'Bulabileceğim bir yere kopyasını kaydet',
+  );
+  String copySaved(String name) =>
+      _t('Copy saved: $name', 'Kopya kaydedildi: $name');
   String get backupsTitle =>
       _t('Backups on this device', 'Bu cihazdaki yedekler');
   String get noBackups => _t('No backups yet.', 'Henüz yedek yok.');

@@ -3,9 +3,43 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "M002",
+    "contract": "v0.32",
+    "run_id": "M002@v0.32",
+    "slice": "phone backups, exports and the visit summary can be copied out (G-68)",
+    "goal": "A person on a phone can keep a backup or export where they can reach it, through the system save dialog; the app sends nothing anywhere itself.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c15bb1e",
+    "started_at": "2026-11-08T17:20:00Z",
+    "scope": [
+      "SaveCopy port (system dialog via file_picker.saveFile on phones, fake in tests)",
+      "Your data card: 'saved inside the app' and 'Save a copy where I can find it' after a backup or export",
+      "visit summary: the same"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: m002 tests (6); the phone-message mutation caught; 604 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "R004"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

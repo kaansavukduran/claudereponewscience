@@ -13,6 +13,7 @@ import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
 import '../domain/profile/profile.dart';
 import '../features/genetics/genome_file_picker.dart';
+import '../features/today/save_copy.dart' show SaveCopy;
 
 class AppServices {
   const AppServices({
@@ -31,6 +32,7 @@ class AppServices {
     this.restartRequired,
     this.checkpointSaved,
     this.genomePicker,
+    this.saveCopy,
     this.deriveKey = deriveInline,
   });
 
@@ -78,4 +80,8 @@ class AppServices {
   /// Chooses a raw DNA file (G001); null means the system dialog. Tests and
   /// the browser smoke put a fake here instead of a native dialog.
   final GenomeFilePicker? genomePicker;
+
+  /// Copies a saved file out of a phone's private folder (M002); null means
+  /// the system dialog on phones and none elsewhere. Tests put a fake here.
+  final SaveCopy? saveCopy;
 }

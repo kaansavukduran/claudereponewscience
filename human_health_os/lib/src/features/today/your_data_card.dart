@@ -10,6 +10,7 @@ import '../../data/local/vault_envelope.dart' show KeyKind;
 import '../../l10n/strings.dart';
 import '../../presentation/widgets/status_chip.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
+import 'save_copy.dart';
 
 /// Your data (ladder F005, F006): create a backup, export the records, check
 /// a saved backup and restore one through the staged restore gate. An
@@ -29,6 +30,9 @@ class _YourDataCardState extends State<YourDataCard> {
   List<SavedFile> _backups = const [];
   String? _message;
   bool _messageIsError = false;
+
+  /// The file just saved, when it can be copied out (phones, M002).
+  Copyable? _copyable;
   bool _busy = false;
 
   /// Kept in AppServices, not here: leaving and returning to Today must not
@@ -63,6 +67,7 @@ class _YourDataCardState extends State<YourDataCard> {
     setState(() {
       _busy = true;
       _message = null;
+      _copyable = null;
     });
     try {
       final msg = await action(s);
@@ -98,7 +103,11 @@ class _YourDataCardState extends State<YourDataCard> {
       backupFileName(_s.storage.vaultId, now),
       bundle,
     );
-    return s.savedTo(where);
+    return _saved(s, where, (
+      name: backupFileName(_s.storage.vaultId, now),
+      text: bundle,
+      mime: 'application/json',
+    ));
   }
 
   Future<String> _export(S s) async {
@@ -114,7 +123,40 @@ class _YourDataCardState extends State<YourDataCard> {
       exportFileName(now),
       json,
     );
-    return s.savedTo(where);
+    return _saved(s, where, (
+      name: exportFileName(now),
+      text: json,
+      mime: 'application/json',
+    ));
+  }
+
+  /// On phones the folder is private: say so and offer a copy (M002).
+  String _saved(S s, String where, Copyable file) {
+    if (saveCopyFor(_s) == null) return s.savedTo(where);
+    _copyable = file;
+    return s.savedInApp;
+  }
+
+  Future<void> _saveCopy(S s) async {
+    final file = _copyable;
+    final copy = saveCopyFor(_s);
+    if (file == null || copy == null) return;
+    try {
+      final ok = await copy.save(
+        fileName: file.name,
+        text: file.text,
+        mimeType: file.mime,
+        title: s.saveCopy,
+      );
+      if (ok && mounted) setState(() => _message = s.copySaved(file.name));
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          _message = s.dataFileFailed(errorCode(e) ?? e.runtimeType.toString());
+          _messageIsError = true;
+        });
+      }
+    }
   }
 
   Future<String> _check(SavedFile f, S s) async {
@@ -337,6 +379,15 @@ class _YourDataCardState extends State<YourDataCard> {
                     ),
                   ),
                 ),
+                if (_copyable != null) ...[
+                  const SizedBox(height: 8),
+                  OutlinedButton.icon(
+                    key: const ValueKey('data-save-copy'),
+                    onPressed: _busy ? null : () => _saveCopy(s),
+                    icon: const Icon(Icons.save_alt),
+                    label: Text(s.saveCopy),
+                  ),
+                ],
               ],
               const SizedBox(height: 12),
               if (!files.canRestore)
