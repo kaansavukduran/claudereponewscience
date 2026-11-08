@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0397",
+  "kind": "TEST",
+  "forge_id": "R002@v0.32",
+  "source_revision": "a7994e2e5a1663e9bf944572ee650ec350d99412",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=America/New_York flutter test",
+  "argv": [
+    "env",
+    "TZ=America/New_York",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-08T08:09:14.021Z",
+  "finished_at": "2026-11-08T08:11:09.259Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:52 +566: All tests passed!",
+  "log_sha256": "8ec30ad69573ea8bc597bc513403f6114ec801bfac6a1a39f4104dae43ef1562",
+  "log_lines": 633,
+  "log_tail": [
+    "01:50 +555: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:50 +556: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:50 +557: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:50 +558: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:51 +559: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:51 +560: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:51 +561: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:51 +562: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:51 +563: /home/user/claudereponewscience/human_health_os/test/domain/t001_parsers_test.dart: plant-chemicals CSV reader bytes: empty, exactly at the limit read, one over refused",
+    "01:51 +564: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:51 +565: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:52 +566: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
