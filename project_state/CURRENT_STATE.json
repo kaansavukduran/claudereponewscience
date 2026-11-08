@@ -3,47 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "M001",
-    "contract": "v0.32",
-    "run_id": "M001@v0.32",
-    "slice": "phone builds keep data and display preferences in the app's private folder",
-    "goal": "Android and iOS builds stop forgetting entries and the language choice at close, under the same storage policy as desktop, with no new dependency.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "2acceb9",
-    "started_at": "2026-11-08T15:05:00Z",
-    "scope": [
-      "native channel org.humanhealthos/paths (Kotlin MainActivity, Swift AppDelegate)",
-      "loadMobileAppDataDir in main before storage",
-      "resolveDataDirectory/createPlatformRepository/openAppearanceStore phone branch; env and portable ignored on phones",
-      "D-026"
-    ],
-    "out_of_scope": [
-      "running on a real phone (no device here)",
-      "vault-build appearance persistence (G-62 remains for vault builds)"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: m001 tests (7); dropping the phone branch caught; 586 PASS; native code not compiled here (no Android/iOS toolchains), compiled by CI after push"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "blocker": null,
-    "result": null,
-    "finished_at": null,
-    "app_revision": null,
-    "verified_gates": [],
-    "review": null,
-    "depends_on": [
-      "R003"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -54,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "R003@v0.32 (2026-11-08, source revision 9d22c9deb8ab)",
+  "last_completed_forge": "M001@v0.32 (2026-11-08, source revision 8012c763f9f4)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -67,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0439",
+      "evidence_id": "EV-TEST-F007-0465",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0440",
+      "evidence_id": "EV-TEST-F007-0466",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0441",
+      "evidence_id": "EV-TEST-F007-0467",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (579 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0442",
+      "gate": "flutter test, TZ=UTC (586 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0468",
       "criterion": "AC-1..AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0443",
+      "evidence_id": "EV-TEST-F007-0469",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0444",
+      "evidence_id": "EV-BUILD-F007-0470",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0445",
+      "evidence_id": "EV-RUNTIME-F007-0471",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0446",
+      "evidence_id": "EV-TEST-F007-0472",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0447",
+      "evidence_id": "EV-BUILD-F007-0473",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0448",
+      "evidence_id": "EV-RUNTIME-F007-0474",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (580 PASS)",
-      "evidence_id": "EV-TEST-F007-0449",
+      "gate": "flutter test with TZ=America/New_York (587 PASS)",
+      "evidence_id": "EV-TEST-F007-0475",
       "criterion": "AC-1..AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0450",
+      "evidence_id": "EV-TEST-F007-0476",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0451",
+      "evidence_id": "EV-TEST-F007-0477",
       "criterion": "AC-4",
-      "source_revision": "9d22c9deb8ab9138219a91f39baed12c8bf306aa",
+      "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
       "result": "PASS"
     }
   ],
@@ -186,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "M001",
+    "forge_id": "U016",
     "contract": "v0.32",
-    "run_id": "M001@v0.32",
-    "slice": "phone builds keep data and display preferences in the app's private folder (G-02 mobile part, G-62 mobile part)",
-    "why": "The Android and iOS builds have no data folder, so a phone forgets every entry and the language choice when the app closes; a small native channel (no new dependency) gives the app-private folder.",
+    "run_id": "U016@v0.32",
+    "slice": "remember display choices in vault builds inside the encrypted vault once it is unlocked (G-62 rest)",
+    "why": "Staging, production and portable builds forget language, theme and font at every start; the vault is the only place they may be written.",
     "depends_on": [
-      "R003"
+      "M001"
     ]
   },
-  "updated_at": "2026-11-08T15:00:00Z",
+  "updated_at": "2026-11-08T16:00:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -6188,6 +6150,181 @@
       "review": "one independent Sonnet reviewer of U015/G005/G006: no blocking findings; should-fix items fixed; removing the store guard caught",
       "depends_on": [
         "G006"
+      ]
+    },
+    "M001@v0.32": {
+      "forge_id": "M001",
+      "contract": "v0.32",
+      "run_id": "M001@v0.32",
+      "slice": "phone builds keep data and display preferences in the app's private folder",
+      "goal": "Android and iOS builds stop forgetting entries and the language choice at close, under the same storage policy as desktop, with no new dependency.",
+      "status": "DONE",
+      "baseline_commit": "2acceb9",
+      "started_at": "2026-11-08T15:05:00Z",
+      "scope": [
+        "native channel org.humanhealthos/paths (Kotlin MainActivity, Swift AppDelegate)",
+        "loadMobileAppDataDir in main before storage",
+        "resolveDataDirectory/createPlatformRepository/openAppearanceStore phone branch; env and portable ignored on phones",
+        "D-026"
+      ],
+      "out_of_scope": [
+        "running on a real phone (no device here)",
+        "vault-build appearance persistence (G-62 remains for vault builds)"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: m001 tests (7); dropping the phone branch caught; 586 PASS; native code not compiled here (no Android/iOS toolchains), compiled by CI after push",
+        "GATES: 13 receipts on clean tree 8012c76, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0477",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0457.json",
+        "evidence/builds/EV-BUILD-F007-0460.json",
+        "evidence/runtime/EV-RUNTIME-F007-0458.json",
+        "evidence/runtime/EV-RUNTIME-F007-0461.json",
+        "evidence/tests/EV-TEST-F007-0452.json",
+        "evidence/tests/EV-TEST-F007-0453.json",
+        "evidence/tests/EV-TEST-F007-0454.json",
+        "evidence/tests/EV-TEST-F007-0455.json",
+        "evidence/tests/EV-TEST-F007-0456.json",
+        "evidence/tests/EV-TEST-F007-0459.json",
+        "evidence/tests/EV-TEST-F007-0462.json",
+        "evidence/tests/EV-TEST-F007-0463.json",
+        "evidence/tests/EV-TEST-F007-0464.json",
+        "human_health_os/android/app/src/main/kotlin/org/humanhealthos/human_health_os/MainActivity.kt",
+        "human_health_os/ios/Runner/AppDelegate.swift",
+        "human_health_os/lib/main.dart",
+        "human_health_os/lib/src/data/local/appearance_store_io.dart",
+        "human_health_os/lib/src/data/local/storage_io.dart",
+        "human_health_os/lib/src/data/local/storage_web.dart",
+        "human_health_os/test/data/m001_mobile_storage_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/KNOWN_GAPS.md",
+        "reports/runtime/flutter_web_smoke_5fcf2efb5e57.json",
+        "reports/runtime/linux-m001/m001-dev-schema5-history.png",
+        "reports/runtime/linux-m001/m001-dev-schema5-measurements.png",
+        "reports/runtime/linux-m001/m001-dev-schema5-today.png",
+        "reports/runtime/linux-m001/m001-dev-schema5.log"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0465",
+        "EV-TEST-F007-0466",
+        "EV-TEST-F007-0467",
+        "EV-TEST-F007-0468",
+        "EV-TEST-F007-0469",
+        "EV-BUILD-F007-0470",
+        "EV-RUNTIME-F007-0471",
+        "EV-TEST-F007-0472",
+        "EV-BUILD-F007-0473",
+        "EV-RUNTIME-F007-0474",
+        "EV-TEST-F007-0475",
+        "EV-TEST-F007-0476",
+        "EV-TEST-F007-0477"
+      ],
+      "blocker": null,
+      "result": "M001_COMPLETE",
+      "finished_at": "2026-11-08T16:00:00Z",
+      "app_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0465",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0466",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0467",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (586 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0468",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0469",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0470",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0471",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0472",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0473",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0474",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (587 PASS)",
+          "evidence_id": "EV-TEST-F007-0475",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0476",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0477",
+          "criterion": "AC-4",
+          "source_revision": "8012c763f9f49667a6d272b169ae54fb35d3a752",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; dropping the phone branch caught; native channel compiled by CI (Android APK and iOS no-codesign, run 42480131349); a run on a real phone NOT_RUN; first gate run 0452-0464 stale after the Windows test fix",
+      "depends_on": [
+        "R003"
       ]
     }
   },
