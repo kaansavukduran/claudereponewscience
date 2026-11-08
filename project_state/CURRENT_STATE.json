@@ -3,42 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U014",
-    "contract": "v0.32",
-    "run_id": "U014@v0.32",
-    "slice": "a calm first run",
-    "goal": "Brainstorm D13: on the first launch, three short steps (what Human OS does; it stays on this device and works offline; choose language, look and font), each skippable, then Today; remembered; reopened from Settings.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "c29d6d4",
-    "started_at": "2026-11-08T06:50:00Z",
-    "scope": [
-      "FirstRunScreen with Next/Back/Skip/Start, step counter, language/theme/font chips",
-      "shown only by the real app (an appearance store is present) and until firstRunDone; Settings → Show the introduction again",
-      "web smoke skips it with one click and checks it was offered; Linux smoke seeds a returning person's preferences and checks they stay unchanged"
-    ],
-    "out_of_scope": [
-      "a passphrase or vault step (encrypted builds keep the gate first)",
-      "tutorial overlays"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Three steps, back and skip work; language chosen in step 3 applies at once",
-      "AC-2 Start or Skip is remembered; not shown again; Settings reopens it and finishing returns to Settings",
-      "AC-3 No welcome fluff (DESIGN 7); words judge nothing",
-      "AC-4 Smokes updated; mutations; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -49,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "T002@v0.32 (2026-11-08, source revision c29d6d4e7703)",
+  "last_completed_forge": "U014@v0.32 (2026-11-08, source revision 4a36bf654e27)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -62,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0322",
+      "evidence_id": "EV-TEST-F007-0348",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0323",
+      "evidence_id": "EV-TEST-F007-0349",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0324",
+      "evidence_id": "EV-TEST-F007-0350",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (543 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0325",
+      "gate": "flutter test, TZ=UTC (548 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0351",
       "criterion": "AC-1..AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0326",
+      "evidence_id": "EV-TEST-F007-0352",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0327",
+      "evidence_id": "EV-BUILD-F007-0353",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
-      "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0328",
+      "gate": "Playwright smoke in Chromium (89 checks): the introduction is offered and skipped with one click (also after each reload), Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+      "evidence_id": "EV-RUNTIME-F007-0354",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0329",
+      "evidence_id": "EV-TEST-F007-0355",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0330",
+      "evidence_id": "EV-BUILD-F007-0356",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
-      "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0331",
+      "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+      "evidence_id": "EV-RUNTIME-F007-0357",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (544 PASS)",
-      "evidence_id": "EV-TEST-F007-0332",
+      "gate": "flutter test with TZ=America/New_York (549 PASS)",
+      "evidence_id": "EV-TEST-F007-0358",
       "criterion": "AC-1..AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0333",
+      "evidence_id": "EV-TEST-F007-0359",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0334",
+      "evidence_id": "EV-TEST-F007-0360",
       "criterion": "AC-4",
-      "source_revision": "c29d6d4e77037064f64a874bec83990d66e581a8",
+      "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
       "result": "PASS"
     }
   ],
@@ -181,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U014",
+    "forge_id": "G004",
     "contract": "v0.32",
-    "run_id": "U014@v0.32",
-    "slice": "a calm first run",
-    "why": "Brainstorm D13 and the owner's first-time-user priority: on the first launch, three short screens (what Human OS is, that everything stays on this device and works offline, choose language and look), each skippable, then Today; never shown again unless asked from Settings.",
+    "run_id": "G004@v0.32",
+    "slice": "ClinVar file comparison",
+    "why": "Owner request: compare the raw DNA file with ClinVar offline. ClinVar's variant_summary.txt.gz (NCBI, US government work) is large; read it as a stream filtered by the rsIDs in the person's file so memory stays small; show ClinVar's clinical significance and review status as ClinVar's words; no prediction (D-024).",
     "depends_on": [
-      "T002"
+      "U014"
     ]
   },
-  "updated_at": "2026-11-08T06:45:00Z",
+  "updated_at": "2026-11-08T07:30:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -5039,6 +5006,188 @@
         }
       ],
       "review": "single-author refactor; mutations on padding, single-point position, the 90-day chip and label decimals caught"
+    },
+    "U014@v0.32": {
+      "forge_id": "U014",
+      "contract": "v0.32",
+      "run_id": "U014@v0.32",
+      "slice": "a calm first run",
+      "goal": "Brainstorm D13: on the first launch, three short steps (what Human OS does; it stays on this device and works offline; choose language, look and font), each skippable, then Today; remembered; reopened from Settings.",
+      "status": "DONE",
+      "baseline_commit": "c29d6d4",
+      "started_at": "2026-11-08T06:50:00Z",
+      "scope": [
+        "FirstRunScreen with Next/Back/Skip/Start, step counter, language/theme/font chips",
+        "shown only by the real app (an appearance store is present) and until firstRunDone; Settings → Show the introduction again",
+        "web smoke skips it with one click and checks it was offered; Linux smoke seeds a returning person's preferences and checks they stay unchanged"
+      ],
+      "out_of_scope": [
+        "a passphrase or vault step (encrypted builds keep the gate first)",
+        "tutorial overlays"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Three steps, back and skip work; language chosen in step 3 applies at once",
+        "AC-2 Start or Skip is remembered; not shown again; Settings reopens it and finishing returns to Settings",
+        "AC-3 No welcome fluff (DESIGN 7); words judge nothing",
+        "AC-4 Smokes updated; mutations; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests",
+        "GATES: 13 receipts on clean tree 4a36bf6, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0360",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0327.json",
+        "evidence/builds/EV-BUILD-F007-0330.json",
+        "evidence/builds/EV-BUILD-F007-0340.json",
+        "evidence/runtime/EV-RUNTIME-F007-0328.json",
+        "evidence/runtime/EV-RUNTIME-F007-0331.json",
+        "evidence/tests/EV-TEST-F007-0322.json",
+        "evidence/tests/EV-TEST-F007-0323.json",
+        "evidence/tests/EV-TEST-F007-0324.json",
+        "evidence/tests/EV-TEST-F007-0325.json",
+        "evidence/tests/EV-TEST-F007-0326.json",
+        "evidence/tests/EV-TEST-F007-0329.json",
+        "evidence/tests/EV-TEST-F007-0332.json",
+        "evidence/tests/EV-TEST-F007-0333.json",
+        "evidence/tests/EV-TEST-F007-0334.json",
+        "evidence/tests/EV-TEST-F007-0335.json",
+        "evidence/tests/EV-TEST-F007-0336.json",
+        "evidence/tests/EV-TEST-F007-0337.json",
+        "evidence/tests/EV-TEST-F007-0338.json",
+        "evidence/tests/EV-TEST-F007-0339.json",
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/onboarding/first_run_screen.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u014_first_run_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "reports/runtime/flutter_web_smoke_c29d6d4e7703.json",
+        "reports/runtime/flutter_web_smoke_e0ea7744eb82.json",
+        "reports/runtime/linux-t002/t002-dev-schema5-history.png",
+        "reports/runtime/linux-t002/t002-dev-schema5-measurements.png",
+        "reports/runtime/linux-t002/t002-dev-schema5-today.png",
+        "reports/runtime/linux-t002/t002-dev-schema5.log",
+        "tools/flutter_web_smoke.mjs",
+        "tools/linux/measurements_smoke.sh"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0348",
+        "EV-TEST-F007-0349",
+        "EV-TEST-F007-0350",
+        "EV-TEST-F007-0351",
+        "EV-TEST-F007-0352",
+        "EV-BUILD-F007-0353",
+        "EV-RUNTIME-F007-0354",
+        "EV-TEST-F007-0355",
+        "EV-BUILD-F007-0356",
+        "EV-RUNTIME-F007-0357",
+        "EV-TEST-F007-0358",
+        "EV-TEST-F007-0359",
+        "EV-TEST-F007-0360"
+      ],
+      "blocker": null,
+      "result": "U014_COMPLETE",
+      "finished_at": "2026-11-08T07:30:00Z",
+      "app_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0348",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0349",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0350",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (548 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0351",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0352",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0353",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): the introduction is offered and skipped with one click (also after each reload), Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0354",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0355",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0356",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0357",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (549 PASS)",
+          "evidence_id": "EV-TEST-F007-0358",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0359",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0360",
+          "criterion": "AC-4",
+          "source_revision": "4a36bf654e27e9985bf7bd1abb138f71d4f269fc",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on the first-run condition and the saved flag caught; the web smoke found that the introduction returns after a reload in the browser build (settings kept in memory there) and was taught to skip it"
     }
   },
   "forge_history_legacy_ids": {
