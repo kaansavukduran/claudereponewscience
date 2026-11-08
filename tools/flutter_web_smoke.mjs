@@ -71,6 +71,12 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   const today = heading(todayLabel);
   // U014: a fresh browser shows the short introduction first; it must be
   // skippable with one click.
+  const skipIntro = async () => {
+    const b = page.getByRole('button', { name: /^(Skip|Atla)$/ }).first();
+    await b.waitFor({ timeout: 8_000 }).catch(() => {});
+    if ((await b.count()) > 0) await b.click().catch(() => {});
+    await page.waitForTimeout(300);
+  };
   const skip = page.getByRole('button', { name: /^(Skip|Atla)$/ }).first();
   await skip.waitFor({ timeout: 20_000 }).catch(() => {});
   const sawIntro = (await skip.count()) > 0;
@@ -145,6 +151,8 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       await page.locator('flt-semantics-placeholder').dispatchEvent('click').catch(() => {});
       await page.waitForTimeout(500);
     }
+    // The browser build keeps settings in memory: the introduction returns.
+    await skipIntro();
     const after = page.getByText('78.4 kg').first();
     await after.waitFor({ timeout: 15_000 }).catch(() => {});
     check(`${label}: weight survives reload (browser storage)`, await after.isVisible().catch(() => false));
@@ -230,6 +238,8 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       await page.locator('flt-semantics-placeholder').dispatchEvent('click').catch(() => {});
       await page.waitForTimeout(500);
     }
+    // The browser build keeps settings in memory: the introduction returns.
+    await skipIntro();
     await navItem(labsLabel).click().catch(() => {});
     await heading(labsLabel).waitFor({ timeout: 15_000 }).catch(() => {});
     check(`${label}: lab result survives reload`, await scrollTo(page.getByText('5,4 %').first()));
@@ -288,6 +298,8 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       await page.locator('flt-semantics-placeholder').dispatchEvent('click').catch(() => {});
       await page.waitForTimeout(500);
     }
+    // The browser build keeps settings in memory: the introduction returns.
+    await skipIntro();
     todayX = await openToday();
     check(`${label}: blood pressure survives reload`, await scrollTo(tile('Blood pressure').filter({ hasText: spokenBp }), todayX));
     check(`${label}: height survives reload`, await scrollTo(tile('Height').filter({ hasText: spokenHeight }), todayX));

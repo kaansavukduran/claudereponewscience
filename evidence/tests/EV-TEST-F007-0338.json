@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0338",
+  "kind": "TEST",
+  "forge_id": "U014@v0.32",
+  "source_revision": "e0ea7744eb827d26e31fc9eb7a482cf18d208e4c",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-08T06:37:13.578Z",
+  "finished_at": "2026-11-08T06:38:57.634Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:41 +548 ~1: All tests passed!",
+  "log_sha256": "af6cec56446037e1cd5b45f071bdb39b8365011c1488aae4bfbcee414114d282",
+  "log_lines": 619,
+  "log_tail": [
+    "01:39 +537 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u013_dates_test.dart: choosing day.month and 12-hour changes shown times at once",
+    "01:39 +538 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u013_dates_test.dart: choosing day.month and 12-hour changes shown times at once",
+    "01:39 +539 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u013_dates_test.dart: choosing day.month and 12-hour changes shown times at once",
+    "01:39 +540 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u013_dates_test.dart: choosing day.month and 12-hour changes shown times at once",
+    "01:39 +541 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u013_dates_test.dart: round trip and words",
+    "01:40 +542 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: only core/redact.dart writes to the console",
+    "01:40 +543 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: an error is shown as its type and code, never its message",
+    "01:40 +544 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: log events keep safe fields only",
+    "01:40 +545 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "01:40 +546 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "01:40 +547 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:41 +548 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
