@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "org.humanhealthos" "\0"
-            VALUE "FileDescription", "human_health_os" "\0"
+            VALUE "FileDescription", "Human OS" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "human_health_os" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2026 org.humanhealthos. All rights reserved." "\0"
             VALUE "OriginalFilename", "human_health_os.exe" "\0"
-            VALUE "ProductName", "human_health_os" "\0"
+            VALUE "ProductName", "Human OS" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END
