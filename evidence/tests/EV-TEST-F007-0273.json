@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0273",
+  "kind": "TEST",
+  "forge_id": "G003@v0.32",
+  "source_revision": "63873998a65910464a525bf691f5c1aaab43a52e",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-08T01:17:43.932Z",
+  "finished_at": "2026-11-08T01:19:29.968Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "01:39 +505 ~1: All tests passed!",
+  "log_sha256": "4e11b1e9ef981fb9dbd42adb8344c9ac27a665d95884de58e57fbac69cb8b090",
+  "log_lines": 576,
+  "log_tail": [
+    "01:36 +494 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u009_summary_test.dart: the summary lists readings as typed, newest first, with the note; the saved page is escaped and has no script or link",
+    "01:36 +495 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u009_summary_test.dart: the summary lists readings as typed, newest first, with the note; the saved page is escaped and has no script or link",
+    "01:37 +496 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u009_summary_test.dart: nothing recorded: says so and offers no empty page",
+    "01:37 +497 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u009_summary_test.dart: nothing recorded: says so and offers no empty page",
+    "01:37 +498 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: an error is shown as its type and code, never its message",
+    "01:37 +499 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u009_summary_test.dart: summary words judge nothing and score nothing",
+    "01:37 +500 ~1: /home/user/claudereponewscience/human_health_os/test/widget/u009_summary_test.dart: summary words judge nothing and score nothing",
+    "01:37 +501 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "01:37 +502 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "01:37 +503 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "01:37 +504 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "01:39 +505 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

@@ -785,3 +785,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U011@v0.32 — reading fonts, 2026-11-07 — closed on the R001 gate run
 
 **Built** Settings → Font: device, Atkinson Hyperlegible Next (legibility) or OpenDyslexic (dyslexia), bundled under SIL OFL 1.1 with licences beside the files and SHA-256 pinned by a test (D-025; the first Atkinson Hyperlegible lacks İ, so the Next version), plus "more space between letters, words and lines". **Next** G003 plant chemicals offline.
+
+# FORGE G003@v0.32 — plant chemicals offline, 2026-11-08 — G003_COMPLETE
+
+**Built** a "Plant chemicals" tool on Today: load a CSV exported from Dr. Duke's Phytochemical and Ethnobotanical Databases (USDA ARS, phytochem.nal.usda.gov → Download these results as CSV), search any column (Turkish letters folded), every cell shown as the database wrote it, and under each row the dose abbreviations explained (orl, ipr, mus, rat, IC50, LD50, LDlo, TD, ADI, ppm, uM) so animal and cell results are recognisable; a note says most doses are not doses for people and a lab activity is not proof of an effect. XLSX is refused with a request for the CSV (no spreadsheet dependency); rows with another column count are counted, not guessed. Nothing is saved or sent. **Tests** 505 PASS in UTC, 506 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations caught. **Next** T001 test-adequacy follow-up.

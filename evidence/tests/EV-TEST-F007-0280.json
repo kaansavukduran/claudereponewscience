@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0280",
+  "kind": "TEST",
+  "forge_id": "G003@v0.32",
+  "source_revision": "63873998a65910464a525bf691f5c1aaab43a52e",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=America/New_York flutter test",
+  "argv": [
+    "env",
+    "TZ=America/New_York",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-08T01:26:39.179Z",
+  "finished_at": "2026-11-08T01:29:04.767Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v310 x86_64",
+  "summary": "02:20 +506: All tests passed!",
+  "log_sha256": "7b603fba988d28c478bd4ed8d1db5dd268dc453fb7b05373920ed85a4791c9e6",
+  "log_lines": 577,
+  "log_tail": [
+    "02:18 +495: /home/user/claudereponewscience/human_health_os/test/domain/timeline_test.dart: entered in error vs deleted markers are never entries, heads or versions",
+    "02:18 +496: /home/user/claudereponewscience/human_health_os/test/domain/timeline_test.dart: conflicts (v0.24 FR-166) two live corrections of one version are a conflict: both shown, neither chosen by timestamp",
+    "02:18 +497: /home/user/claudereponewscience/human_health_os/test/domain/timeline_test.dart: conflicts (v0.24 FR-166) marking one side entered in error resolves the conflict",
+    "02:18 +498: /home/user/claudereponewscience/human_health_os/test/domain/timeline_test.dart: calendar days vs instants (review finding) a lab dated D sorts above an entry made at 21:00 local the day before (UTC-5)",
+    "02:18 +499: /home/user/claudereponewscience/human_health_os/test/domain/timeline_test.dart: calendar days vs instants (review finding) a lab dated D sorts above an entry made at 21:00 local the day before (UTC+3)",
+    "02:19 +500: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: only core/redact.dart writes to the console",
+    "02:19 +501: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: an error is shown as its type and code, never its message",
+    "02:19 +502: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: log events keep safe fields only",
+    "02:19 +503: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "02:19 +504: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "02:19 +505: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "02:20 +506: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
