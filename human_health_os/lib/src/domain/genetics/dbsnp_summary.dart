@@ -244,6 +244,7 @@ DbSnpMatch compareWithDbSnp(DbSnpVariant v, String? genotype) {
 /// counts letters in the file; it says nothing about what they mean.
 ({int showing, int letters})? lettersShowing(DbSnpMatch m, String allele) {
   final g = m.genotype?.toUpperCase();
+  allele = allele.toUpperCase();
   if (m.call != DbSnpCall.listsAlternate || g == null) return null;
   if (!m.alternatesListed.contains(allele)) return null;
   return (

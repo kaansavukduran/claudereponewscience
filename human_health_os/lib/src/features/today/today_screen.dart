@@ -307,7 +307,6 @@ class _KeyValue extends StatelessWidget {
   }
 }
 
-/// A way into a tool that is not a daily number (G001).
 /// A small heading over a group of tools (G-65), announced as a heading.
 class _ToolGroup extends StatelessWidget {
   const _ToolGroup(this.label);
@@ -328,6 +327,7 @@ class _ToolGroup extends StatelessWidget {
   );
 }
 
+/// A way into a tool that is not a daily number (G001).
 class _ToolTile extends StatelessWidget {
   const _ToolTile({
     super.key,

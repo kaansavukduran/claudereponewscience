@@ -13,15 +13,26 @@ import 'f006_vault_gate_test.dart'
     show Disk, createThroughGate, gateOn, settle, tapKey;
 import 'u005_settings_test.dart' show launchWith;
 
+/// A store that would keep choices on disk; saving fails the test.
+class DiskStore extends MemoryAppearanceStore {
+  @override
+  bool get persistent => true;
+
+  @override
+  Future<void> save(AppearanceSettings settings) async =>
+      fail('saved before the vault exists');
+}
+
 Future<MemoryAppearanceStore> launchGate(
   WidgetTester tester,
   Disk disk, {
   bool offer = true,
+  MemoryAppearanceStore? appearanceStore,
 }) async {
   tester.view.physicalSize = const Size(1280, 2600);
   tester.view.devicePixelRatio = 1.0;
   addTearDown(tester.view.reset);
-  final store = MemoryAppearanceStore();
+  final store = appearanceStore ?? MemoryAppearanceStore();
   final c = AppearanceController(store, await store.load());
   final gate = await tester.runAsync(() => gateOn(disk));
   await tester.pumpWidget(
@@ -103,6 +114,22 @@ void main() {
     await launchGate(tester, Disk(), offer: false);
     expect(find.byKey(const ValueKey('screen-first-run')), findsNothing);
     expect(find.byKey(const ValueKey('vault-gate-create')), findsOneWidget);
+  });
+
+  testWidgets('a store that keeps files: no introduction before the vault', (
+    tester,
+  ) async {
+    await launchGate(tester, Disk(), appearanceStore: DiskStore());
+    expect(find.byKey(const ValueKey('screen-first-run')), findsNothing);
+    expect(find.byKey(const ValueKey('vault-gate-create')), findsOneWidget);
+  });
+
+  testWidgets('an unreadable vault: no introduction', (tester) async {
+    final disk = Disk()..raw.text = 'not a vault\n';
+    await launchGate(tester, disk);
+    expect(find.byKey(const ValueKey('screen-first-run')), findsNothing);
+    expect(find.byKey(const ValueKey('vault-gate-unreadable')), findsOneWidget);
+    expect(disk.raw.text, 'not a vault\n');
   });
 
   test('group headings judge nothing', () {

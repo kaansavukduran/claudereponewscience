@@ -1038,7 +1038,7 @@ class S {
       _t('Genotype in your file: $g', 'Dosyandaki genotip: $g');
   String clinvarLetters(String allele, int showing, int letters) => _t(
     'Letters showing $allele: $showing of $letters',
-    '$allele gösteren harf: $letters harften $showing',
+    'Dosyada $allele olan harf: $showing (toplam $letters)',
   );
   String clinvarSignificance(String v) =>
       _t('ClinVar label: $v', 'ClinVar etiketi: $v');

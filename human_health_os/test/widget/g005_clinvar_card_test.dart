@@ -27,6 +27,7 @@ void main() {
       expect(lettersShowing(cmp('TT'), 'T'), (showing: 2, letters: 2));
       expect(lettersShowing(cmp('tt'), 'T'), (showing: 2, letters: 2));
       expect(lettersShowing(cmp('T'), 'T'), (showing: 1, letters: 1));
+      expect(lettersShowing(cmp('CT'), 't'), (showing: 1, letters: 2));
     });
     test('no count without a listed alternate', () {
       expect(lettersShowing(cmp('CC'), 'T'), isNull);
@@ -72,6 +73,34 @@ void main() {
     semantics.dispose();
   });
 
+  testWidgets('a no-call in the file: no letter count on the card', (
+    tester,
+  ) async {
+    final summary = File('test/fixtures/clinvar/variant_summary_synthetic.txt')
+        .readAsBytesSync();
+    final noCall = genome.replaceFirst('\tCT\n', '\t--\n');
+    expect(noCall, isNot(genome));
+    await open(
+      tester,
+      FakePicker([
+        ('dna.txt', utf8.encode(noCall)),
+        ('variant_summary.txt', summary),
+      ]),
+    );
+    await tap(tester, 'genetics-choose');
+    await tap(tester, 'clinvar-load');
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 200)),
+    );
+    await tester.pumpAndSettle();
+    await reveal(tester, find.byKey(const ValueKey('clinvar-rs9000101-111')));
+    expect(
+      find.byKey(const ValueKey('clinvar-letters-rs9000101-111')),
+      findsNothing,
+    );
+    expect(find.textContaining('Letters showing T'), findsNothing);
+  });
+
   test('the new words judge nothing', () {
     for (final lang in AppLang.values) {
       final s = S(lang);
@@ -82,7 +111,7 @@ void main() {
     }
     expect(
       S(AppLang.tr).clinvarLetters('T', 1, 2),
-      'T gösteren harf: 2 harften 1',
+      'Dosyada T olan harf: 1 (toplam 2)',
     );
   });
 }

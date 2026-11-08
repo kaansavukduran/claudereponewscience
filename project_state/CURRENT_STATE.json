@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R003",
+    "contract": "v0.32",
+    "run_id": "R003@v0.32",
+    "slice": "independent review of U015, G005 and G006",
+    "goal": "Fix the verified findings of an independent Sonnet review of the pre-vault introduction, the ClinVar letter count and the reader pause.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "3ad63a4",
+    "started_at": "2026-11-08T14:25:00Z",
+    "scope": [
+      "the pre-vault introduction only with an appearance store that keeps nothing (defence for the no-write-before-vault promise)",
+      "Turkish letter-count wording 'Dosyada T olan harf: 1 (toplam 2)'",
+      "lettersShowing upper-cases the allele",
+      "tests: a persistent store and an unreadable vault get no introduction; a no-call card has no count",
+      "doc comment back on _ToolTile"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED: one Sonnet reviewer, no blocking findings",
+      "IMPLEMENTED fixes",
+      "TESTED: 579 PASS; removing the store guard caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "G006"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

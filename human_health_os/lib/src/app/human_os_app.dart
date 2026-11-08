@@ -150,7 +150,10 @@ class _HumanOsAppState extends State<HumanOsApp> {
             ? (widget.offerFirstRun && !a.firstRunDone && !_introDone
                   ? FirstRunScreen(onDone: _finishIntro)
                   : AppShell(key: ObjectKey(services), services: services))
+            // Only with a store that keeps nothing: choices made here must
+            // not reach the disk before the vault exists.
             : (widget.offerIntroBeforeNewVault &&
+                      !_appearance.store.persistent &&
                       !_introDone &&
                       !a.firstRunDone &&
                       widget.gate!.inspection.access == VaultAccess.create
