@@ -1,3 +1,5 @@
+import '../../domain/settings/date_style.dart';
+
 import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
@@ -349,8 +351,7 @@ class _LabTile extends StatelessWidget {
     final text = Theme.of(context).textTheme;
     final lab = record.lab!;
     final day = record.observedAt;
-    final date =
-        '${day.year}-${day.month.toString().padLeft(2, '0')}-${day.day.toString().padLeft(2, '0')}';
+    final date = formatDay(day.year, day.month, day.day, displayDateOrder);
     return Card(
       semanticContainer: false,
       child: Padding(

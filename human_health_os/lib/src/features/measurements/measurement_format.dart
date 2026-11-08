@@ -51,7 +51,8 @@ String spokenMeasurement(S s, HealthRecord r) {
   }
   final q = r.quantity;
   if (q == null) return s.valueStatus(r.valueStatus);
-  return '${fmtMeasured(q.value, r.originalText)} ${s.spokenUnit(q.unit ?? '')}';
+  return '${fmtMeasured(q.value, r.originalText)} ${s.spokenUnit(q.unit ?? '')}'
+      '${s.convertedSpoken(q.value, q.unit)}';
 }
 
 /// What was typed, when it differs from what is shown ('entered as "…"').

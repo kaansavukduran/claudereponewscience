@@ -2,8 +2,13 @@ import '../../app/app_services.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../measurements/measurement_format.dart';
-import '../timeline/timeline_screen.dart' show fmtWhen;
+import '../../domain/settings/date_style.dart';
 import '../today/measurements_card.dart';
+
+/// A page handed to a clinician always uses 2026-11-08 20:05: 11/08/2026
+/// could be read either way.
+String isoWhen(DateTime utc) =>
+    formatWhen(utc.toLocal(), DateOrder.iso, ClockStyle.h24);
 
 /// One line of the summary: when, what (as typed), and a note.
 class SummaryRow {
@@ -56,7 +61,7 @@ class DoctorSummary {
           s.recordKind(RecordKind.bodyWeight),
           [
             for (final r in weights.take(rowsPerSection))
-              SummaryRow(fmtWhen(r.observedAt), measurementValue(s, r)),
+              SummaryRow(isoWhen(r.observedAt), measurementValue(s, r)),
           ],
           weights.length,
           _part(s, weights.length),
@@ -76,7 +81,7 @@ class DoctorSummary {
           [
             for (final r in live.take(rowsPerSection))
               SummaryRow(
-                fmtWhen(r.observedAt),
+                isoWhen(r.observedAt),
                 measurementValue(s, r),
                 r.context ?? '',
               ),
@@ -105,7 +110,7 @@ class DoctorSummary {
     final now = DateTime.now().toUtc();
     return DoctorSummary(
       title: s.summaryTitle,
-      createdAt: s.summaryCreated(fmtWhen(now)),
+      createdAt: s.summaryCreated(isoWhen(now)),
       sections: sections,
       footer: [s.summaryFooterTyped, s.summaryFooterNotDiagnosis],
     );

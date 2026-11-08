@@ -25,6 +25,16 @@ String formatWhen(DateTime local, DateOrder order, ClockStyle clock) {
   return '$date $time';
 }
 
+/// A calendar day alone in [order] (no clock).
+String formatDay(int year, int month, int day, DateOrder order) {
+  String two(int n) => n.toString().padLeft(2, '0');
+  return switch (order) {
+    DateOrder.iso => '$year-${two(month)}-${two(day)}',
+    DateOrder.dayMonth => '${two(day)}.${two(month)}.$year',
+    DateOrder.monthDay => '${two(month)}/${two(day)}/$year',
+  };
+}
+
 /// The style every displayed time uses; set by the app from Settings.
 /// A plain value (not per-widget) because times are formatted in many
 /// places that have no BuildContext; it only changes how text looks.

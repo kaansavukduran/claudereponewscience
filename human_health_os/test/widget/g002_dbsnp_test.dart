@@ -45,7 +45,9 @@ void main() {
     await reveal(tester, find.byKey(const ValueKey('dbsnp-rs9000101')));
     expect(find.text('Your file lists the alternate allele T'), findsOneWidget);
     expect(
-      find.text('dbSNP clinical significance: uncertain-significance'),
+      find.text(
+        'dbSNP clinical significance (for the rsID, not one allele): uncertain-significance',
+      ),
       findsOneWidget,
     );
     await tap(tester, 'dbsnp-only-missense');

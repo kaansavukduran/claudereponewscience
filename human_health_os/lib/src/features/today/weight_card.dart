@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../app/appearance_scope.dart';
 import '../../presentation/widgets/number_pad.dart';
+import '../timeline/timeline_screen.dart' show fmtWhen;
 import '../trends/trend_screen.dart';
 
 import '../../app/app_services.dart';
@@ -118,11 +119,7 @@ class _WeightCardState extends State<WeightCard> {
     ].join(' · ');
   }
 
-  String _when(DateTime utc) {
-    final l = utc.toLocal();
-    String two(int n) => n.toString().padLeft(2, '0');
-    return '${l.year}-${two(l.month)}-${two(l.day)} ${two(l.hour)}:${two(l.minute)}';
-  }
+  String _when(DateTime utc) => fmtWhen(utc);
 
   @override
   Widget build(BuildContext context) {

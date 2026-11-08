@@ -19,7 +19,15 @@ Future<void> main() async {
     final startup = await startApp(config, platform);
     final store = await openAppearanceStore(config, platform);
     final appearance = AppearanceController(store, await store.load());
-    runApp(HumanOsApp.start(startup, appearance: appearance));
+    // The introduction is offered only where seeing it can be remembered
+    // (desktop development builds today; G-62).
+    runApp(
+      HumanOsApp.start(
+        startup,
+        appearance: appearance,
+        offerFirstRun: store.persistent,
+      ),
+    );
   } catch (e) {
     // startApp() already falls back to memory when the vault cannot be
     // opened; anything else that fails here is shown, never a blank window.

@@ -58,15 +58,25 @@ class _FirstRunScreenState extends State<FirstRunScreen> {
           key: const ValueKey('screen-first-run'),
           padding: const EdgeInsets.all(24),
           children: [
-            Text(
-              s.firstStep(_step + 1, 3),
-              key: const ValueKey('first-step'),
-              style: text.labelLarge?.copyWith(color: scheme.outline),
-            ),
-            const SizedBox(height: 12),
+            // Step and title are announced together when the step changes.
             Semantics(
-              header: true,
-              child: Text(title, style: text.headlineSmall),
+              liveRegion: true,
+              container: true,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    s.firstStep(_step + 1, 3),
+                    key: const ValueKey('first-step'),
+                    style: text.labelLarge?.copyWith(color: scheme.outline),
+                  ),
+                  const SizedBox(height: 12),
+                  Semantics(
+                    header: true,
+                    child: Text(title, style: text.headlineSmall),
+                  ),
+                ],
+              ),
             ),
             const SizedBox(height: 12),
             Text(body, style: text.bodyLarge),

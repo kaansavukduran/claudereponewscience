@@ -154,6 +154,10 @@ enum DbSnpCall {
   /// The genotype lists only the reference allele.
   referenceOnly,
 
+  /// The genotype lists letters the source does not name here (a strand
+  /// or build difference, or an allele the record does not list).
+  otherAllele,
+
   /// The file has no call here.
   noCall,
 
@@ -222,7 +226,11 @@ DbSnpMatch compareWithDbSnp(DbSnpVariant v, String? genotype) {
   return DbSnpMatch(
     variant: v,
     genotype: genotype,
-    call: listed.isNotEmpty
+    // Reference only when every letter is the reference; any letter the
+    // source does not name is reported as such (unknown is not false).
+    call: g.split('').any((c) => c != ref && !v.alternates.contains(c))
+        ? DbSnpCall.otherAllele
+        : listed.isNotEmpty
         ? DbSnpCall.listsAlternate
         : DbSnpCall.referenceOnly,
     alternatesListed: listed,

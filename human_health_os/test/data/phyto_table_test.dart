@@ -15,11 +15,16 @@ void main() {
       'counted, not guessed', () {
     final t = read(bytes);
     expect(t.headers, ['Activity', 'Dosage', 'Reference']);
-    expect(t.rows, hasLength(5));
+    expect(
+      t.rows,
+      hasLength(6),
+      reason: 'a short row is kept, its missing cell empty',
+    );
     expect(t.rows[3], ['Antiadenomacarcinogenic', '50-200 mg/kg ipr rat', '*']);
     expect(t.rows[4].first, 'Antialzheimeran, synthetic test row');
     expect(t.rows[1][1], '', reason: 'an empty dose stays empty, never 0');
-    expect(t.skipped, 1);
+    expect(t.rows.last, ['broken', 'row', '']);
+    expect(t.skipped, 0);
     expect(t.column('dosage'), 1);
   });
 

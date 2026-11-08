@@ -3,9 +3,45 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R002",
+    "contract": "v0.32",
+    "run_id": "R002@v0.32",
+    "slice": "independent review of G002-G004 and U011-U014",
+    "goal": "Fix the verified findings of two independent Sonnet reviews (genetics/plant safety and wording; UI/accessibility) of the latest slices.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "b59183b",
+    "started_at": "2026-11-08T07:35:00Z",
+    "scope": [
+      "'reference only' only when every letter is the reference; a new 'other allele' call",
+      "ClinVar cap drops only Benign/Likely benign entries; carriers first; carrier-only filter; all label chips; RS# read without splitting every line; long lines skipped",
+      "wording: review status, zygosity, per-rsID dbSNP label, plus strand and assembly on alleles, Turkish terms",
+      "plant CSV: RFC 4180 quotes, short rows kept with empty cells; more dose and species codes (TDLo, LDLo, man, wmn, ...)",
+      "date style on the weight card, labs, lab rows and chart axis; the visit summary always ISO 24-hour; spoken conversions; first-run step announced; first run offered only where it is remembered; dedicated strings; plant search pre-folded; ClinVar progress bar and web instruction; no arrow glyph missing from Atkinson"
+    ],
+    "out_of_scope": [
+      "first run before the vault gate (G-64)",
+      "grouping the Tools tiles (G-65)",
+      "ClinVar card semantics and zygosity (G-66)",
+      "ClinVar in an isolate (G-67)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Every verified finding fixed or recorded with a gap",
+      "AC-2 Each fix bound to a test; mutations caught",
+      "AC-3 Gates on a clean tree"
+    ],
+    "completed_steps": [
+      "fixes and tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

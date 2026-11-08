@@ -25,12 +25,12 @@ class HumanOsApp extends StatefulWidget {
   factory HumanOsApp.start(
     AppStartup startup, {
     AppearanceController? appearance,
+    bool offerFirstRun = false,
   }) => HumanOsApp(
     services: startup.services,
     gate: startup.gate,
     appearance: appearance,
-    // The introduction needs somewhere to remember that it was seen.
-    offerFirstRun: appearance != null,
+    offerFirstRun: offerFirstRun && appearance != null,
   );
 
   final AppServices? services;

@@ -97,10 +97,13 @@ void main() {
       expect(() => csv('A,B\n'), code('NOT_TABLE'));
     });
 
-    test('rows too short and too long are both counted, not shown', () {
+    test('a short row is kept with empty cells; a long row is counted', () {
       final t = csv('A,B,C\n1,2,3\n1,2\n1,2,3,4\n');
-      expect(t.rows, hasLength(1));
-      expect(t.skipped, 2);
+      expect(t.rows, [
+        ['1', '2', '3'],
+        ['1', '2', ''],
+      ], reason: 'a short row keeps its cells; missing is empty, not dropped');
+      expect(t.skipped, 1, reason: 'a longer row cannot be placed');
     });
 
     test('a header longer than 80 characters is cut', () {

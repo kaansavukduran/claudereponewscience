@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../domain/settings/date_style.dart';
 import '../../app/app_services.dart';
 import '../../domain/records/health_record.dart';
 import '../../domain/trends/trend.dart';
@@ -241,7 +242,7 @@ class _TrendPainter extends CustomPainter {
     // First and last dates under the axis.
     String day(DateTime t) {
       final l = t.toLocal();
-      return '${l.year}-${l.month.toString().padLeft(2, '0')}-${l.day.toString().padLeft(2, '0')}';
+      return formatDay(l.year, l.month, l.day, displayDateOrder);
     }
 
     for (final (i, align) in [(0, 0.0), (points.length - 1, 1.0)]) {

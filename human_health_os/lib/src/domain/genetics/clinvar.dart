@@ -73,7 +73,37 @@ class ClinVarResult {
   final bool capped;
 }
 
+/// The most entries labelled only benign or likely benign that are kept;
+/// every other entry is always kept.
 const int maxClinVarMatches = 20000;
+
+bool _benignOnly(String sig) {
+  final parts = sig
+      .toLowerCase()
+      .split(RegExp(r'[/;,]'))
+      .map((s) => s.trim())
+      .where((s) => s.isNotEmpty)
+      .toList();
+  return parts.isNotEmpty &&
+      parts.every((s) => s == 'benign' || s == 'likely benign');
+}
+
+/// The RS# field of a tab-separated [line] without splitting the whole
+/// line (most of ClinVar's millions of rows are not wanted).
+String _field(String line, int index) {
+  var start = 0;
+  for (var i = 0; i < index; i++) {
+    start = line.indexOf('\t', start);
+    if (start < 0) return '';
+    start++;
+  }
+  final end = line.indexOf('\t', start);
+  return end < 0 ? line.substring(start) : line.substring(start, end);
+}
+
+/// Longest line read; a longer one is skipped (a file with no line breaks
+/// is not a ClinVar file).
+const int maxClinVarLine = 100000;
 
 /// Streams [lines] once. [wanted] holds lower-case rsIDs ("rs123"). For a
 /// variant listed for both GRCh37 and GRCh38, the GRCh37 row is kept
@@ -87,6 +117,8 @@ Future<ClinVarResult> readClinVar(
   final byKey = <String, ClinVarRecord>{};
   var read = 0;
   var capped = false;
+  var benignKept = 0;
+  int? rsColumn;
   await for (final raw in lines) {
     read++;
     if (progress != null && read % 100000 == 0) progress(read);
@@ -98,9 +130,15 @@ Future<ClinVarResult> readClinVar(
         if (!col.containsKey('RS# (dbSNP)')) {
           throw const ClinVarFormatError('NOT_CLINVAR');
         }
+        rsColumn = col['RS# (dbSNP)'];
       } else if (read > 5) {
         throw const ClinVarFormatError('NOT_CLINVAR');
       }
+      continue;
+    }
+    if (line.length > maxClinVarLine) continue;
+    final rsQuick = _field(line, rsColumn!).trim();
+    if (rsQuick.isEmpty || rsQuick == '-1' || !wanted.contains('rs$rsQuick')) {
       continue;
     }
     final f = line.split('\t');
@@ -118,10 +156,13 @@ Future<ClinVarResult> readClinVar(
     final key = '$rsid|$variation';
     final existing = byKey[key];
     if (existing != null && existing.assembly == 'GRCh37') continue;
-    if (existing == null && byKey.length >= maxClinVarMatches) {
+    final benign = _benignOnly(at('ClinicalSignificance'));
+    // The cap only drops entries labelled benign or likely benign.
+    if (existing == null && benign && benignKept >= maxClinVarMatches) {
       capped = true;
       continue;
     }
+    if (existing == null && benign) benignKept++;
     String? allele(String name) {
       final v = at(name).trim().toUpperCase();
       return v.isEmpty || v == 'NA' || v == '-' ? null : v;

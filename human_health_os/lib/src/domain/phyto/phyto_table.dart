@@ -50,11 +50,17 @@ List<List<String>> _records(String text) {
   for (var i = 0; i < text.length; i++) {
     final c = text[i];
     if (c == '"') {
+      // RFC 4180: a quote opens a quoted field only at its start; inside an
+      // unquoted field it is an ordinary character (5" rod).
       if (quoted && i + 1 < text.length && text[i + 1] == '"') {
         b.write('"');
         i++;
+      } else if (quoted) {
+        quoted = false;
+      } else if (b.isEmpty) {
+        quoted = true;
       } else {
-        quoted = !quoted;
+        b.write(c);
       }
     } else if (c == ',' && !quoted) {
       row.add(b.toString());
@@ -96,11 +102,14 @@ PhytoTable parsePhytoCsv(String text) {
   final headers = [for (final h in recs.first) cleanPackText(h, max: 80)];
   final rows = <List<String>>[];
   var skipped = 0;
-  for (final r in recs.skip(1)) {
-    if (r.length != headers.length) {
+  for (final r0 in recs.skip(1)) {
+    // A short row keeps its cells and leaves the rest empty (missing is
+    // not dropped); a longer row cannot be placed and is counted.
+    if (r0.length > headers.length) {
       skipped++;
       continue;
     }
+    final r = [...r0, for (var i = r0.length; i < headers.length; i++) ''];
     // A line break inside a quoted cell reads as a space, so two words
     // never run together when control characters are removed.
     rows.add([
@@ -133,15 +142,38 @@ const Map<String, (String, String)> doseTerms = {
     'lowest dose reported to have killed a test animal',
     'bir deney hayvanını öldürdüğü bildirilen en düşük doz',
   ),
-  'TD': (
+  'TDlo': (
     'lowest dose with a toxic effect reported',
     'toksik etki bildirilen en düşük doz',
   ),
+  'TDLo': (
+    'lowest dose with a toxic effect reported',
+    'toksik etki bildirilen en düşük doz',
+  ),
+  'LDLo': (
+    'lowest dose reported to have killed a test animal',
+    'bir deney hayvanını öldürdüğü bildirilen en düşük doz',
+  ),
+  'man': ('in men (human data)', 'erkeklerde (insan verisi)'),
+  'wmn': ('in women (human data)', 'kadınlarda (insan verisi)'),
+  'hmn': ('in humans', 'insanlarda'),
+  'dog': ('in dogs', 'köpeklerde'),
+  'rbt': ('in rabbits', 'tavşanlarda'),
+  'gpg': ('in guinea pigs', 'kobaylarda'),
+  'mky': ('in monkeys', 'maymunlarda'),
+  'ims': ('injected into a muscle', 'kasa enjeksiyon'),
+  'skn': ('on the skin', 'deri üzerine'),
+  'ihl': ('breathed in', 'solunarak'),
+  'par': ('not by mouth (parenteral)', 'ağız dışı yoldan (parenteral)'),
+  'unr': ('route not reported', 'yol bildirilmemiş'),
   'ADI': (
     'acceptable daily intake set by a regulator',
     'düzenleyicinin belirlediği kabul edilebilir günlük alım',
   ),
-  'ppm': ('parts per million in the plant', 'bitkide milyonda bir pay'),
+  'ppm': (
+    'parts per million (a concentration)',
+    'milyonda bir pay (bir derişim)',
+  ),
   'uM': (
     'micromoles per litre (lab concentration)',
     'litrede mikromol (laboratuvar derişimi)',

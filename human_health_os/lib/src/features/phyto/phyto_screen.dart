@@ -23,6 +23,10 @@ class PhytoScreen extends StatefulWidget {
 class _PhytoScreenState extends State<PhytoScreen> {
   static const int _shown = 200;
   PhytoTable? _table;
+
+  /// Each row folded once at load, so a keystroke does not re-fold the
+  /// whole table.
+  List<String> _folded = const [];
   String? _name;
   String? _refusal;
   bool _busy = false;
@@ -59,6 +63,9 @@ class _PhytoScreenState extends State<PhytoScreen> {
       if (mounted) {
         setState(() {
           _table = table;
+          _folded = [
+            for (final r in table.rows) foldForSearch(r.join('\u0001')),
+          ];
           _name = picked.name;
           // A new table starts unfiltered, and the box shows that.
           _q = '';
@@ -84,8 +91,8 @@ class _PhytoScreenState extends State<PhytoScreen> {
     final rows = t == null
         ? const <List<String>>[]
         : [
-            for (final r in t.rows)
-              if (q.isEmpty || r.any((c) => foldForSearch(c).contains(q))) r,
+            for (var i = 0; i < t.rows.length; i++)
+              if (q.isEmpty || _folded[i].contains(q)) t.rows[i],
           ];
     return Scaffold(
       appBar: AppBar(title: Text(s.phytoTitle)),
@@ -112,7 +119,7 @@ class _PhytoScreenState extends State<PhytoScreen> {
                     _table = null;
                     _name = null;
                   }),
-                  child: Text(s.geneticsClear),
+                  child: Text(s.phytoClear),
                 ),
             ],
           ),
@@ -157,10 +164,10 @@ class _PhytoScreenState extends State<PhytoScreen> {
             ),
             const SizedBox(height: 8),
             if (rows.isEmpty)
-              Text(s.glossaryNone, key: const ValueKey('phyto-none'))
+              Text(s.phytoNone, key: const ValueKey('phyto-none'))
             else
               for (final r in rows.take(_shown)) _row(s, text, scheme, t, r),
-            if (rows.length > _shown) Text(s.dbsnpMore(_shown, rows.length)),
+            if (rows.length > _shown) Text(s.phytoMore(_shown, rows.length)),
           ],
         ],
       ),

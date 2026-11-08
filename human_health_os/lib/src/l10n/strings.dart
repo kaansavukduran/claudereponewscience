@@ -33,6 +33,12 @@ class S {
     units: AppearanceScope.maybeOf(context)?.value.units ?? UnitSystem.metric,
   );
 
+  /// ", about 159.6 lb" for a screen reader when US units are chosen.
+  String convertedSpoken(double value, String? unit) {
+    final c = convertedFor(value, unit, units);
+    return c == null ? '' : ', ${_t('about', 'yaklaşık')} ${c.substring(2)}';
+  }
+
   /// " (≈ 159.6 lb)" beside a typed value when US units are chosen.
   String converted(double value, String? unit) {
     final c = convertedFor(value, unit, units);
@@ -603,7 +609,7 @@ class S {
     '$n kayıtlı ölçümün grafiği; her ölçüm aşağıda listelenmiştir.',
   );
   String get trendAllPoints => _t('Every reading', 'Tüm ölçümler');
-  String get phytoTitle => _t('Plant chemicals', 'Bitki maddeleri');
+  String get phytoTitle => _t('Plant chemicals', 'Bitki kimyasalları');
   String get phytoTileHint => _t(
     'Look up a table from the USDA plant-chemicals database, offline',
     'USDA bitki maddeleri veritabanından bir tabloya internetsiz bak',
@@ -640,6 +646,24 @@ class S {
     'Her hücre veritabanının yazdığı gibi gösterilir. Dozların çoğu hayvan ya da hücre çalışmalarından gelir (kısaltmalar her satırda açıklanır) ve insan için doz değildir. Laboratuvar testinde görülen bir etkinlik, bir insanda etkinin kanıtı değildir. Herhangi bir takviye almadan önce bir hekim ya da eczacıyla konuş.',
   );
   String get phytoSearch => _t('Search any column', 'Herhangi bir sütunda ara');
+  String get phytoNone => _t('No row matches.', 'Eşleşen satır yok.');
+  String phytoMore(int shown, int total) => _t(
+    'Showing $shown of $total rows. Search to narrow them.',
+    '$total satırın $shown tanesi gösteriliyor. Daraltmak için ara.',
+  );
+  String get phytoClear => _t('Close this table', 'Bu tabloyu kapat');
+  String get clinvarNone => _t(
+    'No ClinVar entry matches the variants in your file with this filter.',
+    'Bu süzgeçle, dosyandaki varyantlarla eşleşen ClinVar kaydı yok.',
+  );
+  String clinvarMore(int shown, int total) => _t(
+    'Showing $shown of $total entries.',
+    '$total kaydın $shown tanesi gösteriliyor.',
+  );
+  String get clinvarHowWeb => _t(
+    'In this browser version, unpack variant_summary.txt.gz first and load variant_summary.txt. The desktop and phone apps read the .gz directly.',
+    'Bu tarayıcı sürümünde önce variant_summary.txt.gz dosyasını aç ve variant_summary.txt dosyasını yükle. Bilgisayar ve telefon uygulamaları .gz dosyasını doğrudan okur.',
+  );
   String get glossaryTitle => _t('Glossary', 'Sözlük');
   String get glossaryTileHint => _t(
     'Every measurement and term in plain words, and how to measure at home',
@@ -992,19 +1016,25 @@ class S {
     '$lines satır okundu; $found ClinVar kaydı DNA dosyandaki varyantlarla eşleşiyor.',
   );
   String clinvarCapped(int n) => _t(
-    'More than $n entries matched; only the first $n are kept.',
-    '$n kayıttan fazlası eşleşti; yalnız ilk $n tanesi tutuldu.',
+    'More than $n entries ClinVar labels "Benign" or "Likely benign" matched; the rest of those are not kept. Every other entry is kept.',
+    'ClinVar\'ın "Benign" ya da "Likely benign" etiketlediği $n kayıttan fazlası eşleşti; bunların geri kalanı tutulmadı. Diğer bütün kayıtlar tutuldu.',
+  );
+  String get clinvarOnlyListed => _t(
+    'Only where my file lists the alternate allele',
+    'Yalnız dosyamın alternatif aleli listelediği yerler',
   );
   String get clinvarNote => _t(
-    'ClinVar\'s labels summarise what laboratories submitted about a variant; the review status says how much they agree. They are not a statement about you: most labels are about one copy, and what a variant means depends on both copies, family history and a clinical assessment. Talk to a clinician or genetic counsellor before acting on anything.',
-    'ClinVar\'ın etiketleri laboratuvarların bir varyant hakkında bildirdiklerini özetler; inceleme durumu ne kadar uzlaştıklarını söyler. Senin hakkında bir ifade değildir: etiketlerin çoğu tek bir kopya içindir ve bir varyantın ne anlama geldiği iki kopyaya, aile öyküsüne ve klinik değerlendirmeye bağlıdır. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş.',
+    'ClinVar\'s labels summarise what laboratories submitted about a variant for a condition; the review status says how it was reviewed (for example criteria provided, number of submitters, expert panel). A label describes the variant, not how many copies you carry or whether it causes anything in you; that depends on both copies, inheritance, family history and a clinical assessment. Talk to a clinician or genetic counsellor before acting on anything.',
+    'ClinVar\'ın etiketleri laboratuvarların bir varyant hakkında, bir durum için bildirdiklerini özetler; gözden geçirme durumu nasıl incelendiğini söyler (örneğin ölçüt sunulmuş, bildiren sayısı, uzman paneli). Bir etiket varyantı anlatır; kaç kopya taşıdığını ya da sende bir şeye yol açıp açmadığını söylemez. Bu, iki kopyaya, kalıtıma, aile öyküsüne ve klinik değerlendirmeye bağlıdır. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş.',
   );
-  String clinvarAlleles(String ref, String alt) =>
-      _t('ClinVar alleles: $ref > $alt', 'ClinVar alelleri: $ref > $alt');
+  String clinvarAlleles(String ref, String alt, String assembly) => _t(
+    'ClinVar alleles (plus strand, $assembly): $ref > $alt',
+    'ClinVar alelleri (artı şerit, $assembly): $ref > $alt',
+  );
   String clinvarSignificance(String v) =>
       _t('ClinVar label: $v', 'ClinVar etiketi: $v');
   String clinvarReview(String v) =>
-      _t('Review status: $v', 'İnceleme durumu: $v');
+      _t('Review status: $v', 'Gözden geçirme durumu: $v');
   String clinvarConditions(String v) => _t(
     'Conditions submitters named: $v',
     'Bildirenlerin adlandırdığı durumlar: $v',
@@ -1012,8 +1042,8 @@ class S {
   String get dbsnpTitle =>
       _t('Compare with a dbSNP file', 'Bir dbSNP dosyasıyla karşılaştır');
   String get dbsnpHow => _t(
-    'On ncbi.nlm.nih.gov/snp search a gene (for example GABRB3), then Send to → File → Format: Summary → Create File. Load that file here: it is read on this device and compared with your file by rsID.',
-    'ncbi.nlm.nih.gov/snp sitesinde bir gen ara (örneğin GABRB3), sonra Send to → File → Format: Summary → Create File. O dosyayı buraya yükle: bu cihazda okunur ve dosyanla rsID üzerinden karşılaştırılır.',
+    'On ncbi.nlm.nih.gov/snp search a gene (for example GABRB3), then Send to > File > Format: Summary > Create File. Load that file here: it is read on this device and compared with your file by rsID.',
+    'ncbi.nlm.nih.gov/snp sitesinde bir gen ara (örneğin GABRB3), sonra Send to > File > Format: Summary > Create File. O dosyayı buraya yükle: bu cihazda okunur ve dosyanla rsID üzerinden karşılaştırılır.',
   );
   String get dbsnpLoad =>
       _t('Load a dbSNP Summary file', 'dbSNP Summary dosyası yükle');
@@ -1062,20 +1092,28 @@ class S {
       'No call at this position in your file',
       'Dosyanda bu konum için çağrı yok',
     ),
+    'otherAllele' => _t(
+      'Your file lists a letter the source does not name here (a strand or build difference, or another allele); nothing is compared',
+      'Dosyan, kaynağın burada adlandırmadığı bir harf listeliyor (şerit ya da sürüm farkı veya başka bir alel); karşılaştırma yapılmadı',
+    ),
     _ => _t(
       'Not compared (an insertion or deletion, or A/T, C/G letters whose strand cannot be told apart)',
       'Karşılaştırılmadı (bir ekleme ya da silme, ya da şeridi ayırt edilemeyen A/T, C/G harfleri)',
     ),
   };
-  String dbsnpAlleles(String ref, String alts) =>
-      _t('dbSNP alleles: $ref > $alts', 'dbSNP alelleri: $ref > $alts');
+  String dbsnpAlleles(String ref, String alts) => _t(
+    'dbSNP alleles (plus strand): $ref > $alts',
+    'dbSNP alelleri (artı şerit): $ref > $alts',
+  );
   String dbsnpConsequence(String c) =>
       _t('dbSNP consequence: $c', 'dbSNP işlevsel sonucu: $c');
-  String dbsnpClinical(String c) =>
-      _t('dbSNP clinical significance: $c', 'dbSNP klinik önem: $c');
+  String dbsnpClinical(String c) => _t(
+    'dbSNP clinical significance (for the rsID, not one allele): $c',
+    'dbSNP klinik anlamlılık (rsID için, tek bir alel için değil): $c',
+  );
   String get dbsnpNoClinical => _t(
     'dbSNP gives no clinical significance',
-    'dbSNP bir klinik önem belirtmiyor',
+    'dbSNP bir klinik anlamlılık belirtmiyor',
   );
   String get geneticsPackTitle =>
       _t('Statements from a source pack', 'Bir kaynak paketinden ifadeler');

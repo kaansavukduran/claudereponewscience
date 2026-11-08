@@ -137,8 +137,7 @@ String fmtValue(S s, HealthRecord r) {
 String fmtObserved(HealthRecord r) {
   if (!r.observedDateOnly) return fmtWhen(r.observedAt);
   final d = r.observedAt;
-  String two(int n) => n.toString().padLeft(2, '0');
-  return '${d.year}-${two(d.month)}-${two(d.day)}';
+  return formatDay(d.year, d.month, d.day, displayDateOrder);
 }
 
 String recordTitle(S s, HealthRecord r) =>

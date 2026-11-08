@@ -110,6 +110,8 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
   ClinVarResult? _clinvar;
   String? _clinvarRefusal;
   int _clinvarProgress = 0;
+  bool _clinvarOnlyListed = false;
+  bool _clinvarReadingNow = false;
   String? _clinvarLabel;
 
   Future<void> _chooseClinVar() async {
@@ -134,6 +136,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
             .transform(const Utf8Decoder(allowMalformed: true))
             .transform(const LineSplitter());
         final wanted = {for (final v in file.variants) v.rsid.toLowerCase()};
+        if (mounted) setState(() => _clinvarReadingNow = true);
         final result = await readClinVar(
           lines,
           wanted,
@@ -155,7 +158,12 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     } catch (_) {
       if (mounted) setState(() => _clinvarRefusal = 'READ_FAILED');
     } finally {
-      if (mounted) setState(() => _busy = false);
+      if (mounted) {
+        setState(() {
+          _busy = false;
+          _clinvarReadingNow = false;
+        });
+      }
     }
   }
 
@@ -679,10 +687,30 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       for (final r in result?.records ?? const <ClinVarRecord>[])
         if (r.significance.isNotEmpty) r.significance,
     }.toList()..sort();
-    final shown = [
-      for (final r in result?.records ?? const <ClinVarRecord>[])
-        if (_clinvarLabel == null || r.significance == _clinvarLabel) r,
-    ];
+    DbSnpCall? callOf(ClinVarRecord r) =>
+        r.reference == null || r.alternate == null
+        ? null
+        : compareWithDbSnp(
+            DbSnpVariant(
+              rsid: r.rsid,
+              reference: r.reference,
+              alternates: [r.alternate!],
+            ),
+            byId[r.rsid]?.call,
+          ).call;
+    // Entries where the file lists ClinVar's alternate allele come first.
+    final shown =
+        [
+          for (final r in result?.records ?? const <ClinVarRecord>[])
+            if ((_clinvarLabel == null || r.significance == _clinvarLabel) &&
+                (!_clinvarOnlyListed || callOf(r) == DbSnpCall.listsAlternate))
+              r,
+        ]..sort((a, b) {
+          int rank(ClinVarRecord r) =>
+              callOf(r) == DbSnpCall.listsAlternate ? 0 : 1;
+          final c = rank(a).compareTo(rank(b));
+          return c != 0 ? c : a.significance.compareTo(b.significance);
+        });
     return [
       Semantics(
         header: true,
@@ -690,7 +718,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       ),
       const SizedBox(height: 4),
       Text(
-        s.clinvarHow,
+        canGunzip ? s.clinvarHow : '${s.clinvarHow} ${s.clinvarHowWeb}',
         key: const ValueKey('clinvar-how'),
         style: text.bodySmall?.copyWith(color: scheme.outline),
       ),
@@ -700,11 +728,13 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
         onPressed: _busy ? null : _chooseClinVar,
         child: Text(s.clinvarLoad),
       ),
-      if (_busy && _clinvarProgress > 0)
-        Semantics(
-          liveRegion: true,
-          child: Text(s.clinvarReading(_clinvarProgress)),
-        ),
+      // A bar from the start; the line count is shown, not announced each
+      // time (a full file has millions of lines).
+      if (_busy && _clinvarReadingNow) ...[
+        const SizedBox(height: 8),
+        const LinearProgressIndicator(key: ValueKey('clinvar-progress')),
+        if (_clinvarProgress > 0) Text(s.clinvarReading(_clinvarProgress)),
+      ],
       if (_clinvarRefusal != null) ...[
         const SizedBox(height: 8),
         Semantics(
@@ -731,6 +761,13 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
           style: text.bodySmall?.copyWith(color: scheme.outline),
         ),
         const SizedBox(height: 8),
+        FilterChip(
+          key: const ValueKey('clinvar-only-listed'),
+          label: Text(s.clinvarOnlyListed),
+          selected: _clinvarOnlyListed,
+          onSelected: (v) => setState(() => _clinvarOnlyListed = v),
+        ),
+        const SizedBox(height: 8),
         if (labels.length > 1)
           Wrap(
             spacing: 8,
@@ -742,7 +779,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
                 selected: _clinvarLabel == null,
                 onSelected: (_) => setState(() => _clinvarLabel = null),
               ),
-              for (final l in labels.take(12))
+              for (final l in labels)
                 ChoiceChip(
                   key: ValueKey('clinvar-label-$l'),
                   label: Text(l),
@@ -753,11 +790,11 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
           ),
         const SizedBox(height: 8),
         if (shown.isEmpty)
-          Text(s.dbsnpNone, key: const ValueKey('clinvar-none'))
+          Text(s.clinvarNone, key: const ValueKey('clinvar-none'))
         else
           for (final r in shown.take(200))
             _clinvarCard(s, text, scheme, r, byId[r.rsid]?.call),
-        if (shown.length > 200) Text(s.dbsnpMore(200, shown.length)),
+        if (shown.length > 200) Text(s.clinvarMore(200, shown.length)),
       ],
     ];
   }
@@ -810,7 +847,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
             ),
           if (r.reference != null && r.alternate != null)
             Text(
-              s.clinvarAlleles(r.reference!, r.alternate!),
+              s.clinvarAlleles(r.reference!, r.alternate!, r.assembly),
               style: text.bodySmall,
             ),
           Text(

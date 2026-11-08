@@ -30,7 +30,7 @@ void main() {
     await tapKey(tester, 'tool-phyto');
     await tapKey(tester, 'phyto-load');
     await settle(tester);
-    expect(find.text('curcumin.csv: 5 rows'), findsOneWidget);
+    expect(find.text('curcumin.csv: 6 rows'), findsOneWidget);
     expect(
       find.textContaining('ipr = injected into the belly cavity'),
       findsOneWidget,
@@ -45,7 +45,7 @@ void main() {
     await tapKey(tester, 'phyto-load');
     await settle(tester);
     expect(find.textContaining('Excel (XLSX)'), findsOneWidget);
-    expect(find.text('curcumin.csv: 5 rows'), findsOneWidget, reason: 'kept');
+    expect(find.text('curcumin.csv: 6 rows'), findsOneWidget, reason: 'kept');
   });
 
   test('the app\'s own words judge nothing', () {
