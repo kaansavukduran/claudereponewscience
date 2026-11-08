@@ -966,6 +966,49 @@ class S {
   };
   String geneticsInvalidLine(int line, String reason) =>
       _t('Line $line: $reason', 'Satır $line: $reason');
+  String get clinvarTitle =>
+      _t('Compare with ClinVar', 'ClinVar ile karşılaştır');
+  String get clinvarHow => _t(
+    'Download variant_summary.txt.gz from ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/ (about 400 MB) once, then load it here. It is read on this device, line by line, keeping only the variants in your DNA file.',
+    'ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/ adresinden variant_summary.txt.gz dosyasını (yaklaşık 400 MB) bir kez indir, sonra buraya yükle. Bu cihazda satır satır okunur ve yalnız DNA dosyandaki varyantlar tutulur.',
+  );
+  String get clinvarLoad =>
+      _t('Load the ClinVar summary file', 'ClinVar özet dosyasını yükle');
+  String clinvarReading(int n) =>
+      _t('Reading… $n lines so far', 'Okunuyor… şimdiye dek $n satır');
+  String clinvarRefusal(String code) => switch (code) {
+    'NOT_CLINVAR' => _t(
+      'This does not look like ClinVar\'s variant_summary file.',
+      'Bu, ClinVar\'ın variant_summary dosyasına benzemiyor.',
+    ),
+    'GZ_HERE' => _t(
+      'This build cannot unpack .gz files. Unpack it first (to variant_summary.txt) and load that.',
+      'Bu derleme .gz dosyalarını açamıyor. Önce dosyayı aç (variant_summary.txt) ve onu yükle.',
+    ),
+    _ => _t('The file could not be read.', 'Dosya okunamadı.'),
+  };
+  String clinvarCounts(int lines, int found) => _t(
+    '$lines lines read; $found ClinVar entries match variants in your DNA file.',
+    '$lines satır okundu; $found ClinVar kaydı DNA dosyandaki varyantlarla eşleşiyor.',
+  );
+  String clinvarCapped(int n) => _t(
+    'More than $n entries matched; only the first $n are kept.',
+    '$n kayıttan fazlası eşleşti; yalnız ilk $n tanesi tutuldu.',
+  );
+  String get clinvarNote => _t(
+    'ClinVar\'s labels summarise what laboratories submitted about a variant; the review status says how much they agree. They are not a statement about you: most labels are about one copy, and what a variant means depends on both copies, family history and a clinical assessment. Talk to a clinician or genetic counsellor before acting on anything.',
+    'ClinVar\'ın etiketleri laboratuvarların bir varyant hakkında bildirdiklerini özetler; inceleme durumu ne kadar uzlaştıklarını söyler. Senin hakkında bir ifade değildir: etiketlerin çoğu tek bir kopya içindir ve bir varyantın ne anlama geldiği iki kopyaya, aile öyküsüne ve klinik değerlendirmeye bağlıdır. Bir şeye göre davranmadan önce bir hekim ya da genetik danışmanla konuş.',
+  );
+  String clinvarAlleles(String ref, String alt) =>
+      _t('ClinVar alleles: $ref > $alt', 'ClinVar alelleri: $ref > $alt');
+  String clinvarSignificance(String v) =>
+      _t('ClinVar label: $v', 'ClinVar etiketi: $v');
+  String clinvarReview(String v) =>
+      _t('Review status: $v', 'İnceleme durumu: $v');
+  String clinvarConditions(String v) => _t(
+    'Conditions submitters named: $v',
+    'Bildirenlerin adlandırdığı durumlar: $v',
+  );
   String get dbsnpTitle =>
       _t('Compare with a dbSNP file', 'Bir dbSNP dosyasıyla karşılaştır');
   String get dbsnpHow => _t(

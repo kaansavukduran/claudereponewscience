@@ -1,0 +1,6 @@
+#AlleleID	Type	Name	GeneID	GeneSymbol	HGNC_ID	ClinicalSignificance	ClinSigSimple	LastEvaluated	RS# (dbSNP)	nsv/esv (dbVar)	RCVaccession	PhenotypeIDS	PhenotypeList	Origin	OriginSimple	Assembly	ChromosomeAccession	Chromosome	Start	Stop	ReferenceAllele	AlternateAllele	Cytogenetic	ReviewStatus	NumberSubmitters	Guidelines	TestedInGTR	OtherIDs	SubmitterCategories	VariationID	PositionVCF	ReferenceAlleleVCF	AlternateAlleleVCF
+1	single nucleotide variant	SYNTH1(c.1A>G)	-	GENEA	-	Pathogenic	-	-	9000101	-	-	-	Synthetic condition A	-	-	GRCh38	-	15	-	-	-	-	-	criteria provided, single submitter	-	-	-	-	-	111	26800000	C	T
+1	single nucleotide variant	SYNTH1(c.1A>G)	-	GENEA	-	Pathogenic	-	-	9000101	-	-	-	Synthetic condition A	-	-	GRCh37	-	15	-	-	-	-	-	criteria provided, single submitter	-	-	-	-	-	111	27045000	C	T
+2	single nucleotide variant	-	-	GENEB	-	Benign	-	-	20317	-	-	-	-	-	-	GRCh37	-	15	-	-	-	-	-	criteria provided, multiple submitters, no conflicts	-	-	-	-	-	222	27018937	G	A
+3	-	-	-	GENEC	-	Pathogenic	-	-	-1	-	-	-	-	-	-	GRCh37	-	-	-	-	-	-	-	-	-	-	-	-	-	333	-	-	-
+4	-	-	-	GENED	-	Uncertain significance	-	-	5555555	-	-	-	-	-	-	GRCh37	-	-	-	-	-	-	-	-	-	-	-	-	-	444	-	-	-

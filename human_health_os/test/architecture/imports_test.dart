@@ -100,6 +100,8 @@ void main() {
     'data/backup/data_files_io.dart', // F005: backup/export files
     // U005: display preferences, through data/local/appearance_store.dart.
     'data/local/appearance_store_io.dart',
+    // G004: gzip stream reader, through data/local/gzip_stream.dart.
+    'data/local/gzip_stream_io.dart',
   ];
 
   test('dart:io is confined to the native storage adapters', () {

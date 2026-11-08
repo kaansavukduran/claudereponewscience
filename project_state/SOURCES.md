@@ -65,3 +65,6 @@ Repo-local work, in a separate namespace: R1 = "v0.25 connected TS implementatio
 
 ## G003 plant chemicals (2026-11-07)
 - Dr. Duke's Phytochemical and Ethnobotanical Databases, USDA Agricultural Research Service (phytochem.nal.usda.gov): a US government work. Human OS bundles none of it: the person downloads a CSV of a chemical, activity or plant and loads it; cells are shown as written. Dose abbreviations (orl, ipr, mus, rat, IC50, LD50, LDlo, TD, ADI, ppm, uM) are explained so animal and cell results are recognisable; no dose is converted for a person. XLSX is refused with a request for the CSV version (no spreadsheet dependency).
+
+## G004 ClinVar comparison (2026-11-08)
+- ClinVar (NCBI, ncbi.nlm.nih.gov/clinvar; file variant_summary.txt.gz from ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/): a US government work, freely usable with a request to cite ClinVar. Not bundled: the person downloads the file once and loads it; it is read as a stream (gzip decoded on the fly on desktop and phone builds; the browser build asks for the unpacked file), filtered by the rsIDs in their raw DNA file, and kept only while the Genetics page is open. Columns are found by their header names. ClinVar's label, review status and conditions are shown verbatim as ClinVar's; no prediction (D-024).

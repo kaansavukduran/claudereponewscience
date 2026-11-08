@@ -5,7 +5,9 @@ import 'package:flutter/foundation.dart' show compute;
 import 'package:flutter/material.dart';
 
 import '../../app/app_services.dart';
+import '../../data/local/gzip_stream.dart';
 import '../../domain/genetics/annotation_pack.dart';
+import '../../domain/genetics/clinvar.dart';
 import '../../domain/genetics/dbsnp_summary.dart';
 import '../../domain/genetics/raw_genome.dart';
 import '../../domain/genetics/sample_data.dart';
@@ -105,6 +107,58 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
   bool _onlyMissense = false;
   bool _onlyClinical = false;
 
+  ClinVarResult? _clinvar;
+  String? _clinvarRefusal;
+  int _clinvarProgress = 0;
+  String? _clinvarLabel;
+
+  Future<void> _chooseClinVar() async {
+    final file = _file;
+    if (file == null) return;
+    setState(() {
+      _busy = true;
+      _clinvarRefusal = null;
+      _clinvarProgress = 0;
+    });
+    try {
+      final picked = await _picker.pick(title: S.of(context).clinvarLoad);
+      if (picked == null) return;
+      try {
+        Stream<List<int>> bytes =
+            picked.openRead?.call() ?? Stream.fromFuture(picked.read());
+        if (picked.name.toLowerCase().endsWith('.gz')) {
+          if (!canGunzip) throw const ClinVarFormatError('GZ_HERE');
+          bytes = gunzipStream(bytes);
+        }
+        final lines = bytes
+            .transform(const Utf8Decoder(allowMalformed: true))
+            .transform(const LineSplitter());
+        final wanted = {for (final v in file.variants) v.rsid.toLowerCase()};
+        final result = await readClinVar(
+          lines,
+          wanted,
+          progress: (n) {
+            if (mounted) setState(() => _clinvarProgress = n);
+          },
+        );
+        if (mounted) {
+          setState(() {
+            _clinvar = result;
+            _clinvarLabel = null;
+          });
+        }
+      } finally {
+        await _picker.release();
+      }
+    } on ClinVarFormatError catch (e) {
+      if (mounted) setState(() => _clinvarRefusal = e.code);
+    } catch (_) {
+      if (mounted) setState(() => _clinvarRefusal = 'READ_FAILED');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
   Future<void> _chooseDbSnp() async {
     setState(() {
       _busy = true;
@@ -173,6 +227,8 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     _packRefusal = null;
     _dbsnp = const [];
     _dbsnpRefusal = null;
+    _clinvar = null;
+    _clinvarRefusal = null;
     _query = '';
     _search.clear();
     _page = 0;
@@ -419,6 +475,8 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       ..._packSection(s, text, scheme),
       const SizedBox(height: 24),
       ..._dbsnpSection(s, text, scheme, f),
+      const SizedBox(height: 24),
+      ..._clinvarSection(s, text, scheme, f),
     ];
   }
 
@@ -605,6 +663,183 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
         if (matches.length > 200) Text(s.dbsnpMore(200, matches.length)),
       ],
     ];
+  }
+
+  List<Widget> _clinvarSection(
+    S s,
+    TextTheme text,
+    ColorScheme scheme,
+    GenomeFile f,
+  ) {
+    final result = _clinvar;
+    final byId = <String, Variant>{
+      for (final v in f.variants) v.rsid.toLowerCase(): v,
+    };
+    final labels = <String>{
+      for (final r in result?.records ?? const <ClinVarRecord>[])
+        if (r.significance.isNotEmpty) r.significance,
+    }.toList()..sort();
+    final shown = [
+      for (final r in result?.records ?? const <ClinVarRecord>[])
+        if (_clinvarLabel == null || r.significance == _clinvarLabel) r,
+    ];
+    return [
+      Semantics(
+        header: true,
+        child: Text(s.clinvarTitle, style: text.titleMedium),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        s.clinvarHow,
+        key: const ValueKey('clinvar-how'),
+        style: text.bodySmall?.copyWith(color: scheme.outline),
+      ),
+      const SizedBox(height: 8),
+      OutlinedButton(
+        key: const ValueKey('clinvar-load'),
+        onPressed: _busy ? null : _chooseClinVar,
+        child: Text(s.clinvarLoad),
+      ),
+      if (_busy && _clinvarProgress > 0)
+        Semantics(
+          liveRegion: true,
+          child: Text(s.clinvarReading(_clinvarProgress)),
+        ),
+      if (_clinvarRefusal != null) ...[
+        const SizedBox(height: 8),
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            s.clinvarRefusal(_clinvarRefusal!),
+            key: const ValueKey('clinvar-refusal'),
+            style: text.bodyMedium?.copyWith(color: scheme.error),
+          ),
+        ),
+      ],
+      if (result != null) ...[
+        const SizedBox(height: 12),
+        Text(
+          s.clinvarCounts(result.linesRead, result.records.length),
+          key: const ValueKey('clinvar-counts'),
+          style: text.titleSmall,
+        ),
+        if (result.capped) Text(s.clinvarCapped(maxClinVarMatches)),
+        const SizedBox(height: 8),
+        Text(
+          s.clinvarNote,
+          key: const ValueKey('clinvar-note'),
+          style: text.bodySmall?.copyWith(color: scheme.outline),
+        ),
+        const SizedBox(height: 8),
+        if (labels.length > 1)
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              ChoiceChip(
+                key: const ValueKey('clinvar-label-all'),
+                label: Text(s.trendRange('all')),
+                selected: _clinvarLabel == null,
+                onSelected: (_) => setState(() => _clinvarLabel = null),
+              ),
+              for (final l in labels.take(12))
+                ChoiceChip(
+                  key: ValueKey('clinvar-label-$l'),
+                  label: Text(l),
+                  selected: _clinvarLabel == l,
+                  onSelected: (_) => setState(() => _clinvarLabel = l),
+                ),
+            ],
+          ),
+        const SizedBox(height: 8),
+        if (shown.isEmpty)
+          Text(s.dbsnpNone, key: const ValueKey('clinvar-none'))
+        else
+          for (final r in shown.take(200))
+            _clinvarCard(s, text, scheme, r, byId[r.rsid]?.call),
+        if (shown.length > 200) Text(s.dbsnpMore(200, shown.length)),
+      ],
+    ];
+  }
+
+  Widget _clinvarCard(
+    S s,
+    TextTheme text,
+    ColorScheme scheme,
+    ClinVarRecord r,
+    String? genotype,
+  ) {
+    final comparison = r.reference == null || r.alternate == null
+        ? null
+        : compareWithDbSnp(
+            DbSnpVariant(
+              rsid: r.rsid,
+              reference: r.reference,
+              alternates: [r.alternate!],
+            ),
+            genotype,
+          );
+    return Container(
+      key: ValueKey('clinvar-${r.rsid}-${r.variationId}'),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            [r.rsid, if (r.gene.isNotEmpty) r.gene].join(' · '),
+            style: text.titleSmall,
+          ),
+          Text(
+            genotype ?? s.geneticsNotReadShort,
+            style: text.titleMedium?.copyWith(
+              fontFeatures: const [FontFeature.tabularFigures()],
+            ),
+          ),
+          if (comparison != null)
+            Text(
+              s.dbsnpCall(
+                comparison.call.name,
+                comparison.alternatesListed.join(', '),
+              ),
+            ),
+          if (r.reference != null && r.alternate != null)
+            Text(
+              s.clinvarAlleles(r.reference!, r.alternate!),
+              style: text.bodySmall,
+            ),
+          Text(
+            s.clinvarSignificance(
+              r.significance.isEmpty ? '—' : r.significance,
+            ),
+            key: ValueKey('clinvar-sig-${r.rsid}-${r.variationId}'),
+            style: text.bodySmall,
+          ),
+          if (r.reviewStatus.isNotEmpty)
+            Text(s.clinvarReview(r.reviewStatus), style: text.bodySmall),
+          if (r.conditions.isNotEmpty)
+            Text(
+              s.clinvarConditions(r.conditions),
+              style: text.bodySmall,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+            ),
+          Text(
+            [
+              if (r.chromosome.isNotEmpty) '${r.chromosome}:${r.position}',
+              r.assembly,
+              'VCV ${r.variationId}',
+            ].where((x) => x.isNotEmpty).join(' · '),
+            style: text.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
+      ),
+    );
   }
 
   Widget _dbsnpCard(S s, TextTheme text, ColorScheme scheme, DbSnpMatch m) {

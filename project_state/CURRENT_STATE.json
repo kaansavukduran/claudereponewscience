@@ -3,9 +3,43 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G004",
+    "contract": "v0.32",
+    "run_id": "G004@v0.32",
+    "slice": "ClinVar file comparison",
+    "goal": "Owner request: compare the raw DNA file with ClinVar offline: stream variant_summary (plain or .gz) filtered by the file's rsIDs, show ClinVar's label, review status and conditions as ClinVar's words, filter by ClinVar's labels; no prediction.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "4a36bf6",
+    "started_at": "2026-11-08T07:15:00Z",
+    "scope": [
+      "readClinVar: header by column name, rsID filter, GRCh37 row preferred, rows without rsID skipped, cap 20,000 matches",
+      "gzip stream reader through a conditional import (dart:io only in the native adapter); PickedGenomeFile.openRead streams large files",
+      "Genetics page section with progress, counts, cards (ClinVar alleles compared like dbSNP), label chips"
+    ],
+    "out_of_scope": [
+      "bundling ClinVar",
+      "any prediction or ranking by the app",
+      "the browser build reading .gz (asks for the unpacked file)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Only wanted rsIDs; one row per variant with GRCh37 preferred; -1 skipped; header refusal",
+      "AC-2 Plain and .gz give the same result",
+      "AC-3 Cards show ClinVar's words; label filter; the app's own words judge nothing",
+      "AC-4 Mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

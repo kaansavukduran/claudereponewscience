@@ -4,10 +4,18 @@ import 'package:file_picker/file_picker.dart';
 
 /// A file the person chose, read only when asked.
 class PickedGenomeFile {
-  const PickedGenomeFile({required this.name, required this.read});
+  const PickedGenomeFile({
+    required this.name,
+    required this.read,
+    this.openRead,
+  });
 
   final String name;
   final Future<Uint8List> Function() read;
+
+  /// The file as a stream, for files too large to hold at once (ClinVar);
+  /// null when the platform gives bytes only.
+  final Stream<List<int>> Function()? openRead;
 }
 
 /// Chooses a file for the genetics screen. Behind an interface so tests and
@@ -30,7 +38,11 @@ class SystemGenomeFilePicker implements GenomeFilePicker {
   Future<PickedGenomeFile?> pick({required String title}) async {
     final f = await FilePicker.pickFile(dialogTitle: title);
     if (f == null) return null;
-    return PickedGenomeFile(name: f.name, read: f.readAsBytes);
+    return PickedGenomeFile(
+      name: f.name,
+      read: f.readAsBytes,
+      openRead: f.readAsByteStream,
+    );
   }
 
   @override
