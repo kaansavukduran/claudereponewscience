@@ -427,9 +427,17 @@ void main() {
     );
 
     final file = File('${data.path}/vault.hhosvault');
-    expect(data.listSync().map((e) => e.path.split('/').last).toList(), [
-      'vault.hhosvault',
-    ], reason: 'only the encrypted vault, no plaintext log or copy');
+    expect(
+      data.listSync().map((e) => e.path.split('/').last).toList()..sort(),
+      ['vault.hhosvault', 'vault.hhosvault.prefs'],
+      reason:
+          'only the encrypted vault and its sealed display preferences '
+          '(U018), no plaintext log or copy',
+    );
+    final prefs = File('${data.path}/vault.hhosvault.prefs').readAsStringSync();
+    for (final s in ['language', 'theme', 'font', pass, key]) {
+      expect(prefs, isNot(contains(s)), reason: 'sealed: $s');
+    }
     final stored = file.readAsStringSync();
     for (final s in [
       pass,
