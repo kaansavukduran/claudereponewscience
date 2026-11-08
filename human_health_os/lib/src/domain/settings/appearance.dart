@@ -3,6 +3,10 @@
 /// effect on any value or record.
 library;
 
+import '../units/display_units.dart';
+
+export '../units/display_units.dart' show UnitSystem;
+
 enum LanguageChoice { system, tr, en }
 
 enum ThemeChoice { system, light, dark }
@@ -45,6 +49,7 @@ class AppearanceSettings {
     this.highContrast = false,
     this.font = FontChoice.system,
     this.wideSpacing = false,
+    this.units = UnitSystem.metric,
   });
 
   final LanguageChoice language;
@@ -71,6 +76,9 @@ class AppearanceSettings {
 
   /// More space between letters, words and lines.
   final bool wideSpacing;
+
+  /// Metric as typed, or US units shown beside them (display only).
+  final UnitSystem units;
 
   /// [defaults] in the chosen order, all of them (hidden ones included).
   List<String> ordered(List<String> defaults) => [
@@ -109,6 +117,7 @@ class AppearanceSettings {
     highContrast: highContrast,
     font: font,
     wideSpacing: wideSpacing,
+    units: units,
   );
 
   /// Multiplies the text size the system asks for.
@@ -132,6 +141,7 @@ class AppearanceSettings {
     bool? highContrast,
     FontChoice? font,
     bool? wideSpacing,
+    UnitSystem? units,
   }) => AppearanceSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -146,6 +156,7 @@ class AppearanceSettings {
     highContrast: highContrast ?? this.highContrast,
     font: font ?? this.font,
     wideSpacing: wideSpacing ?? this.wideSpacing,
+    units: units ?? this.units,
   );
 
   Map<String, Object?> toJson() => {
@@ -164,6 +175,7 @@ class AppearanceSettings {
     'highContrast': highContrast,
     'font': font.name,
     'wideSpacing': wideSpacing,
+    'units': units.name,
   };
 
   /// Reads saved settings; anything unknown or missing falls back to the
@@ -214,6 +226,7 @@ class AppearanceSettings {
       highContrast: json['highContrast'] == true,
       font: pick(FontChoice.values, json['font'], FontChoice.system),
       wideSpacing: json['wideSpacing'] == true,
+      units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
     );
   }
 
@@ -232,7 +245,8 @@ class AppearanceSettings {
       other.density == density &&
       other.highContrast == highContrast &&
       other.font == font &&
-      other.wideSpacing == wideSpacing;
+      other.wideSpacing == wideSpacing &&
+      other.units == units;
 
   @override
   int get hashCode => Object.hash(
@@ -244,7 +258,7 @@ class AppearanceSettings {
     hiddenTiles.length,
     hiddenSections.length,
     padOpen,
-    Object.hash(startScreen, density, highContrast, font, wideSpacing),
+    Object.hash(startScreen, density, highContrast, font, wideSpacing, units),
   );
 }
 

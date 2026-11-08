@@ -8,7 +8,9 @@ import 'package:flutter/widgets.dart';
 import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
 import '../domain/records/health_record.dart';
+import '../app/appearance_scope.dart';
 import '../domain/settings/appearance.dart';
+import '../domain/units/display_units.dart';
 
 enum AppLang { en, tr }
 
@@ -18,11 +20,24 @@ AppLang langOf(BuildContext context) {
 }
 
 class S {
-  const S(this.lang);
+  const S(this.lang, {this.units = UnitSystem.metric});
 
   final AppLang lang;
 
-  static S of(BuildContext context) => S(langOf(context));
+  /// Display units chosen in Settings (values are shown as typed; US units
+  /// add a converted value beside them).
+  final UnitSystem units;
+
+  static S of(BuildContext context) => S(
+    langOf(context),
+    units: AppearanceScope.maybeOf(context)?.value.units ?? UnitSystem.metric,
+  );
+
+  /// " (≈ 159.6 lb)" beside a typed value when US units are chosen.
+  String converted(double value, String? unit) {
+    final c = convertedFor(value, unit, units);
+    return c == null ? '' : ' ($c)';
+  }
 
   String _t(String en, String tr) => lang == AppLang.tr ? tr : en;
 
@@ -683,6 +698,13 @@ class S {
   };
   String get settingsSpacing => _t('Spacing', 'Aralık');
   String get settingsFont => _t('Font', 'Yazı tipi');
+  String get settingsUnits => _t('Units', 'Birimler');
+  String get unitsMetric => _t('kg, cm, °C', 'kg, cm, °C');
+  String get unitsUs => _t('Also show lb, in, °F', 'lb, inç, °F de göster');
+  String get unitsNote => _t(
+    'You always type in kg, cm and °C, and that is what is saved. With US units a converted value is shown beside it, marked ≈.',
+    'Her zaman kg, cm ve °C ile yazarsın ve kaydedilen budur. ABD birimleri seçiliyse yanında ≈ işaretli, dönüştürülmüş bir değer gösterilir.',
+  );
   String get fontLegible => _t(
     'Easy to read (Atkinson Hyperlegible)',
     'Kolay okunur (Atkinson Hyperlegible)',

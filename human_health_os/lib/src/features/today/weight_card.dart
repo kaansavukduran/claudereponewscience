@@ -103,7 +103,7 @@ class _WeightCardState extends State<WeightCard> {
     final unit = q.unit;
     return unit == null
         ? '${_fmt(q.value, r.originalText)} (${s.unitNotGiven})'
-        : '${_fmt(q.value, r.originalText)} $unit';
+        : '${_fmt(q.value, r.originalText)} $unit${s.converted(q.value, unit)}';
   }
 
   String _meta(S s, HealthRecord r) {

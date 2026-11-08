@@ -139,6 +139,25 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           section(
+            s.settingsUnits,
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                choices(
+                  'set-units',
+                  [
+                    (UnitSystem.metric, s.unitsMetric),
+                    (UnitSystem.us, s.unitsUs),
+                  ],
+                  a.units,
+                  (v) => set(a.copyWith(units: v)),
+                ),
+                const SizedBox(height: 4),
+                Text(s.unitsNote, style: text.bodySmall),
+              ],
+            ),
+          ),
+          section(
             s.settingsSpacing,
             choices(
               'set-density',

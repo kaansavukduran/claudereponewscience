@@ -37,7 +37,8 @@ String measurementValue(S s, HealthRecord r) {
   }
   final q = r.quantity;
   if (q == null) return s.valueStatus(r.valueStatus);
-  return '${fmtMeasured(q.value, r.originalText)} ${s.unit(q.unit ?? '')}';
+  return '${fmtMeasured(q.value, r.originalText)} ${s.unit(q.unit ?? '')}'
+      '${s.converted(q.value, q.unit)}';
 }
 
 /// The value as a screen reader should say it.

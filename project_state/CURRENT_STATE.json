@@ -3,9 +3,41 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U012",
+    "contract": "v0.32",
+    "run_id": "U012@v0.32",
+    "slice": "display units",
+    "goal": "Brainstorm F25: US units (lb, in, °F) shown beside the typed metric values, marked ≈; entry and storage unchanged.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "67cfca0",
+    "started_at": "2026-11-08T04:20:00Z",
+    "scope": [
+      "UnitSystem setting (metric / also US), saved with appearance",
+      "convertedFor for kg, cm, °C only; shown in measurement tiles, timeline and trend lists (measurementValue) and the weight card",
+      "a note that entry and storage stay metric"
+    ],
+    "out_of_scope": [
+      "entering values in lb/in/°F (needs unit-aware records, G-43)",
+      "12-hour clock and date order (later)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Conversions correct and marked ≈; none for mmHg, %, bpm",
+      "AC-2 Typed value unchanged; switching back removes the converted value",
+      "AC-3 Round trip; words judge nothing; mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
