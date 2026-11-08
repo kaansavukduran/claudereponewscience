@@ -23,6 +23,8 @@ const prod = AppConfig(
   sourceRevision: 't',
 );
 
+final sep = Platform.pathSeparator;
+
 void main() {
   late Directory tmp;
   setUp(() => tmp = Directory.systemTemp.createTempSync('m001'));
@@ -34,21 +36,18 @@ void main() {
   group('resolveDataDirectory on a phone', () {
     test('the app folder, ignoring HHOS_DATA_DIR and HOME', () {
       final d = resolveDataDirectory(
-        env: {'HHOS_DATA_DIR': '${tmp.path}/elsewhere', 'HOME': tmp.path},
+        env: {'HHOS_DATA_DIR': '${tmp.path}${sep}elsewhere', 'HOME': tmp.path},
         mobile: true,
-        mobileDir: '/data/user/0/org.humanhealthos.human_health_os/files',
+        mobileDir: '${tmp.path}${sep}files',
       );
-      expect(
-        d.dir!.path,
-        '/data/user/0/org.humanhealthos.human_health_os/files/HumanHealthOS',
-      );
+      expect(d.dir!.path, '${tmp.path}${sep}files${sep}HumanHealthOS');
       expect(d.invalidVariable, isNull);
     });
     test('the reported folder when none is passed', () {
-      mobileAppDataDir = '/var/mobile/Containers/Data/Application/X/Library/Application Support';
+      mobileAppDataDir = '${tmp.path}${sep}Application Support';
       expect(
         resolveDataDirectory(env: const {}, mobile: true).dir!.path,
-        endsWith('Application Support/HumanHealthOS'),
+        '${tmp.path}${sep}Application Support${sep}HumanHealthOS',
       );
     });
     test('none reported or a relative one: no folder', () {
@@ -67,7 +66,7 @@ void main() {
   test('development on a phone: the labelled log in the app folder', () async {
     mobileAppDataDir = tmp.path;
     // A portable marker beside a phone's "executable" changes nothing.
-    final exeDir = Directory('${tmp.path}/bin')..createSync();
+    final exeDir = Directory('${tmp.path}${sep}bin')..createSync();
     File('${exeDir.path}/portable_mode.json').writeAsStringSync('{}');
     final choice = await createPlatformRepository(
       dev,
@@ -92,9 +91,12 @@ void main() {
       env: const {},
       mobile: true,
     );
-    expect(choice.vault!.location, '${tmp.path}/HumanHealthOS/vault.hhosvault');
+    expect(
+      choice.vault!.location,
+      '${tmp.path}${sep}HumanHealthOS${sep}vault.hhosvault',
+    );
     await choice.repository.open();
-    expect(Directory('${tmp.path}/HumanHealthOS').existsSync(), isFalse);
+    expect(Directory('${tmp.path}${sep}HumanHealthOS').existsSync(), isFalse);
   });
 
   test('no folder reported: memory only, as before', () async {
@@ -127,7 +129,7 @@ void main() {
     );
     expect((await again.load()).language, LanguageChoice.tr);
     expect(
-      File('${tmp.path}/HumanHealthOS/appearance.json').existsSync(),
+      File('${tmp.path}${sep}HumanHealthOS${sep}appearance.json').existsSync(),
       isTrue,
     );
     final vaultBuild = await openAppearanceStore(
