@@ -11,6 +11,8 @@ import '../../domain/genetics/clinvar.dart';
 import '../../domain/genetics/dbsnp_summary.dart';
 import '../../domain/genetics/raw_genome.dart';
 import '../../domain/genetics/sample_data.dart';
+import '../../domain/genetics/uniprot.dart';
+import '../guide/glossary_screen.dart' show foldForSearch;
 import '../../l10n/strings.dart';
 import 'genome_file_picker.dart';
 
@@ -106,6 +108,44 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
   String? _dbsnpRefusal;
   bool _onlyMissense = false;
   bool _onlyClinical = false;
+
+  UniProtFile? _uniprot;
+  String? _uniprotRefusal;
+  String _uniprotQuery = '';
+
+  Future<void> _chooseUniProt() async {
+    setState(() {
+      _busy = true;
+      _uniprotRefusal = null;
+    });
+    try {
+      final picked = await _picker.pick(title: S.of(context).uniprotLoad);
+      if (picked == null) return;
+      final Uint8List bytes;
+      try {
+        bytes = await picked.read();
+      } finally {
+        await _picker.release();
+      }
+      final file = parseUniProtTsv(utf8.decode(bytes, allowMalformed: true));
+      if (mounted) setState(() => _uniprot = file);
+    } on UniProtFormatError catch (e) {
+      if (mounted) setState(() => _uniprotRefusal = e.code);
+    } catch (_) {
+      if (mounted) setState(() => _uniprotRefusal = 'READ_FAILED');
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// Genes named by the loaded dbSNP and ClinVar files, upper case.
+  Set<String> _comparisonGenes() => {
+    for (final v in _dbsnp)
+      for (final g in v.genes) g.toUpperCase(),
+    for (final r in _clinvar?.records ?? const <ClinVarRecord>[])
+      for (final g in r.gene.split(RegExp(r'[;,\s]+')))
+        if (g.isNotEmpty) g.toUpperCase(),
+  };
 
   ClinVarResult? _clinvar;
   String? _clinvarRefusal;
@@ -237,6 +277,7 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
     _dbsnpRefusal = null;
     _clinvar = null;
     _clinvarRefusal = null;
+    _uniprotQuery = '';
     _query = '';
     _search.clear();
     _page = 0;
@@ -485,6 +526,8 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       ..._dbsnpSection(s, text, scheme, f),
       const SizedBox(height: 24),
       ..._clinvarSection(s, text, scheme, f),
+      const SizedBox(height: 24),
+      ..._uniprotSection(s, text, scheme),
     ];
   }
 
@@ -798,6 +841,141 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
       ],
     ];
   }
+
+  List<Widget> _uniprotSection(S s, TextTheme text, ColorScheme scheme) {
+    final file = _uniprot;
+    final genes = _comparisonGenes();
+    final byGene = file?.byGene() ?? const <String, List<UniProtEntry>>{};
+    final List<UniProtEntry> shown;
+    if (file == null) {
+      shown = const [];
+    } else if (_uniprotQuery.isNotEmpty) {
+      final q = foldForSearch(_uniprotQuery);
+      shown = [
+        for (final e in file.entries)
+          if (foldForSearch(
+            '${e.accession} ${e.genes.join(' ')} ${e.proteinNames}',
+          ).contains(q))
+            e,
+      ];
+    } else {
+      final seen = <String>{};
+      shown = [
+        for (final g in genes.toList()..sort())
+          for (final e in byGene[g] ?? const <UniProtEntry>[])
+            if (seen.add(e.accession)) e,
+      ];
+    }
+    return [
+      Semantics(
+        header: true,
+        child: Text(s.uniprotTitle, style: text.titleMedium),
+      ),
+      const SizedBox(height: 4),
+      Text(
+        s.uniprotHow,
+        key: const ValueKey('uniprot-how'),
+        style: text.bodySmall?.copyWith(color: scheme.outline),
+      ),
+      const SizedBox(height: 8),
+      OutlinedButton(
+        key: const ValueKey('uniprot-load'),
+        onPressed: _busy ? null : _chooseUniProt,
+        child: Text(s.uniprotLoad),
+      ),
+      if (_uniprotRefusal != null) ...[
+        const SizedBox(height: 8),
+        Semantics(
+          liveRegion: true,
+          child: Text(
+            s.uniprotRefusal(_uniprotRefusal!),
+            key: const ValueKey('uniprot-refusal'),
+            style: text.bodyMedium?.copyWith(color: scheme.error),
+          ),
+        ),
+      ],
+      if (file != null) ...[
+        const SizedBox(height: 12),
+        Text(
+          s.uniprotCounts(file.entries.length, file.skipped + file.capped),
+          key: const ValueKey('uniprot-counts'),
+          style: text.titleSmall,
+        ),
+        const SizedBox(height: 4),
+        Text(
+          s.uniprotNote,
+          key: const ValueKey('uniprot-note'),
+          style: text.bodySmall?.copyWith(color: scheme.outline),
+        ),
+        const SizedBox(height: 8),
+        TextField(
+          key: const ValueKey('uniprot-search'),
+          decoration: InputDecoration(
+            labelText: s.uniprotSearch,
+            border: const OutlineInputBorder(),
+          ),
+          onChanged: (v) => setState(() => _uniprotQuery = v.trim()),
+        ),
+        const SizedBox(height: 8),
+        if (shown.isEmpty)
+          Text(
+            _uniprotQuery.isEmpty && genes.isEmpty
+                ? s.uniprotNoGenes
+                : s.uniprotNone,
+            key: const ValueKey('uniprot-none'),
+          )
+        else
+          for (final e in shown.take(100)) _uniprotCard(s, text, scheme, e),
+        if (shown.length > 100) Text(s.clinvarMore(100, shown.length)),
+      ],
+    ];
+  }
+
+  Widget _uniprotCard(
+    S s,
+    TextTheme text,
+    ColorScheme scheme,
+    UniProtEntry e,
+  ) => MergeSemantics(
+    child: Container(
+      key: ValueKey('uniprot-${e.accession}'),
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: scheme.surfaceContainerLowest,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: scheme.outlineVariant),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            [
+              if (e.genes.isNotEmpty) e.genes.first,
+              e.accession,
+              if (e.reviewed.isNotEmpty) e.reviewed,
+            ].join(' · '),
+            style: text.titleSmall,
+          ),
+          if (e.proteinNames.isNotEmpty) Text(e.proteinNames),
+          if (e.function.isNotEmpty)
+            Text(
+              e.function,
+              style: text.bodySmall,
+              maxLines: 6,
+              overflow: TextOverflow.ellipsis,
+            ),
+          Text(
+            [
+              if (e.organism.isNotEmpty) e.organism,
+              if (e.genes.length > 1) e.genes.skip(1).join(', '),
+            ].join(' · '),
+            style: text.bodySmall?.copyWith(color: scheme.outline),
+          ),
+        ],
+      ),
+    ),
+  );
 
   Widget _clinvarCard(
     S s,

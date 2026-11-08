@@ -1,0 +1,4 @@
+Entry	Entry Name	Reviewed	Protein names	Gene Names	Organism	Function [CC]
+Q9SYN1	SYN1_HUMAN	reviewed	Synthetic protein one (SP1)	GENEA SYNA1	Homo sapiens (Human)	FUNCTION: A synthetic description used only in tests.
+Q9SYN2	SYN2_HUMAN	unreviewed	Synthetic protein two	GENEB	Homo sapiens (Human)	
+	NOACC_HUMAN	reviewed	No accession	GENEC	Homo sapiens (Human)	

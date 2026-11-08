@@ -999,6 +999,43 @@ class S {
   };
   String geneticsInvalidLine(int line, String reason) =>
       _t('Line $line: $reason', 'Satır $line: $reason');
+  String get uniprotTitle =>
+      _t('Proteins from UniProt', 'UniProt\'tan proteinler');
+  String get uniprotHow => _t(
+    'On uniprot.org search for your genes (or "Homo sapiens" and Reviewed), choose Download, Format: TSV, with the columns Gene Names, Protein names and Function [CC], then load the file here. It is read on this device; nothing is sent.',
+    'uniprot.org\'da genlerini (ya da "Homo sapiens" ve Reviewed) ara, Download\'u seç, Format: TSV; Gene Names, Protein names ve Function [CC] sütunlarıyla indir, sonra dosyayı buraya yükle. Bu cihazda okunur; hiçbir şey gönderilmez.',
+  );
+  String get uniprotLoad =>
+      _t('Load a UniProt TSV file', 'UniProt TSV dosyası yükle');
+  String uniprotCounts(int kept, int skipped) => _t(
+    '$kept proteins read${skipped > 0 ? '; $skipped rows not kept' : ''}.',
+    '$kept protein okundu${skipped > 0 ? '; $skipped satır tutulmadı' : ''}.',
+  );
+  String get uniprotNote => _t(
+    'Protein names and functions are UniProt\'s words (UniProt Consortium, CC BY 4.0) about each protein, not about you. Shown first: the genes named in the dbSNP and ClinVar files loaded on this page.',
+    'Protein adları ve işlevleri UniProt\'un her protein için yazdıklarıdır (UniProt Consortium, CC BY 4.0); senin hakkında değildir. Önce bu sayfada yüklenen dbSNP ve ClinVar dosyalarında geçen genler gösterilir.',
+  );
+  String get uniprotSearch => _t(
+    'Search gene, protein or accession',
+    'Gen, protein ya da erişim no. ara',
+  );
+  String get uniprotNone => _t('No protein matches.', 'Eşleşen protein yok.');
+  String get uniprotNoGenes => _t(
+    'Load a dbSNP or ClinVar file on this page to see the proteins of their genes here, or search.',
+    'Genlerinin proteinlerini burada görmek için bu sayfada bir dbSNP ya da ClinVar dosyası yükle ya da ara.',
+  );
+  String uniprotRefusal(String code) => switch (code) {
+    'SPREADSHEET' => _t(
+      'This looks like a spreadsheet (XLSX). Download the TSV format instead.',
+      'Bu bir tablo dosyası (XLSX) gibi görünüyor. Bunun yerine TSV biçimini indir.',
+    ),
+    'NOT_UNIPROT' => _t(
+      'This file has no Entry and Gene Names columns, so it is not a UniProt TSV export.',
+      'Bu dosyada Entry ve Gene Names sütunları yok; bir UniProt TSV dışa aktarımı değil.',
+    ),
+    'EMPTY' => _t('The file is empty.', 'Dosya boş.'),
+    _ => _t('The file could not be read.', 'Dosya okunamadı.'),
+  };
   String get clinvarTitle =>
       _t('Compare with ClinVar', 'ClinVar ile karşılaştır');
   String get clinvarHow => _t(

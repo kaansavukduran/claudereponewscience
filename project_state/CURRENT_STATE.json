@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G007",
+    "contract": "v0.32",
+    "run_id": "G007@v0.32",
+    "slice": "UniProt offline: a TSV export on the Genetics page (G-69)",
+    "goal": "Read a UniProt TSV the person downloads and show protein names and functions for the genes in their dbSNP and ClinVar comparisons, as UniProt wrote them.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "9e30f4d",
+    "started_at": "2026-11-08T22:20:00Z",
+    "scope": [
+      "domain/genetics/uniprot.dart: parseUniProtTsv (columns by name, BOM, CRLF, hidden characters, caps), byGene",
+      "Genetics page section: load, counts, licence note, comparison genes first, search, refusals",
+      "D-028; synthetic fixture"
+    ],
+    "out_of_scope": [
+      "FASTA, UniProt XML or flat files",
+      "variant-level UniProt features"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: g007 domain (4) and screen (3) tests; ignoring the comparison genes caught; 627 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "R006"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
