@@ -6,7 +6,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/settings/appearance.dart';
 import 'package:human_health_os/src/features/today/measurements_card.dart';
 
-import 'f007_measurements_test.dart' show settle;
+import 'f007_measurements_test.dart' show saveBp, settle;
 import 'u005_settings_test.dart' show launchWith;
 
 Future<List<double>> tileLefts(WidgetTester tester) async {
@@ -49,5 +49,23 @@ void main() {
     await settle(tester);
     expect((await tileLefts(tester)).toSet().length, 1);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a long reading in narrow two-column tiles wraps, nothing '
+      'overflows (320 dp at 1x, 360 dp at 1.3x)', (tester) async {
+    for (final (width, scale) in [(320.0, 1.0), (360.0, 1.3)]) {
+      await launchWith(tester);
+      tester.view.physicalSize = Size(width, 3000);
+      tester.platformDispatcher.textScaleFactorTestValue = scale;
+      await settle(tester);
+      await saveBp(tester, '120', '80');
+      await settle(tester);
+      expect(
+        find.byKey(const ValueKey('measure-latest-value-vital.blood_pressure')),
+        findsOneWidget,
+      );
+      expect(tester.takeException(), isNull, reason: '$width dp × $scale');
+      tester.platformDispatcher.clearTextScaleFactorTestValue();
+    }
   });
 }

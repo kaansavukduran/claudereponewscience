@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import 'f007_measurements_test.dart' show settle;
+import 'f007_measurements_test.dart' show saveBp, settle;
 import 'u005_settings_test.dart' show launchWith;
 
 /// Font sizes of the words on Today (icons excluded), each with an example.
@@ -36,6 +36,8 @@ void main() {
     await tester.enterText(find.byKey(const ValueKey('weight-input')), '72,4');
     await tester.tap(find.byKey(const ValueKey('weight-save')));
     await settle(tester);
+    await saveBp(tester, '120', '80');
+    await settle(tester);
     final theme = Theme.of(
       tester.element(find.byKey(const ValueKey('screen-today'))),
     ).textTheme;
@@ -63,6 +65,19 @@ void main() {
         .style!
         .fontSize!;
     expect(latest, theme.titleLarge!.fontSize);
+    final tileValue = tester
+        .renderObject<RenderParagraph>(
+          find.descendant(
+            of: find.byKey(
+              const ValueKey('measure-latest-value-vital.blood_pressure'),
+            ),
+            matching: find.byType(RichText),
+          ),
+        )
+        .text
+        .style!
+        .fontSize!;
+    expect(tileValue, theme.titleLarge!.fontSize);
     expect(latest, greaterThan(theme.titleMedium!.fontSize!));
   });
 }

@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R006",
+    "contract": "v0.32",
+    "run_id": "R006@v0.32",
+    "slice": "independent review of U019, U020 and U021",
+    "goal": "Fix the verified findings of an independent Sonnet UI and accessibility review of Today at large text.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "1aa0877",
+    "started_at": "2026-11-08T22:00:00Z",
+    "scope": [
+      "tool group headings keep a weight cue (semibold)",
+      "u019 test records a blood pressure and checks no overflow at 320 dp 1x and 360 dp 1.3x",
+      "u021 test checks a filled tile value size"
+    ],
+    "out_of_scope": null,
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED: one Sonnet reviewer, no blocking findings, no overflow found across 320/360/480 dp, 1.0/1.6/2.0 system and largest in-app text in Turkish",
+      "IMPLEMENTED fixes",
+      "TESTED: 620 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "U021"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
