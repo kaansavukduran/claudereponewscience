@@ -144,9 +144,10 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
           ),
         LayoutBuilder(
           builder: (context, box) {
-            final columns = box.maxWidth >= 720
-                ? 4
-                : (box.maxWidth >= 480 ? 3 : 2);
+            final columns = tileColumns(
+              box.maxWidth,
+              MediaQuery.textScalerOf(context).scale(14) / 14,
+            );
             const gap = 12.0;
             final width = (box.maxWidth - gap * (columns - 1)) / columns;
             return Wrap(
@@ -173,6 +174,17 @@ class _MeasurementsCardState extends State<MeasurementsCard> {
       ],
     );
   }
+}
+
+/// Tile columns for [width] at [textScale]: the width is measured in text
+/// that size, so large text on a narrow phone gets one tile per row
+/// (G-49) and the value is never squeezed into a sliver.
+int tileColumns(double width, double textScale) {
+  final w = width / (textScale <= 0 ? 1 : textScale);
+  if (w >= 720) return 4;
+  if (w >= 480) return 3;
+  if (w >= 260) return 2;
+  return 1;
 }
 
 /// The latest value of one kind and a way to add another.

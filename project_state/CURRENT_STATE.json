@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U019",
+    "contract": "v0.32",
+    "run_id": "U019@v0.32",
+    "slice": "measurement tile columns follow the text size (G-49 part)",
+    "goal": "Large text on a narrow phone shows one measurement tile per row instead of squeezed half-width tiles.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "bbf9936",
+    "started_at": "2026-11-08T20:15:00Z",
+    "scope": [
+      "tileColumns(width, textScale): width measured in text of the chosen size; 4/3/2/1 columns"
+    ],
+    "out_of_scope": [
+      "Measurements above the weight card",
+      "Today's text styles (still open in G-49)"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: u019 tests (2); ignoring the text scale caught; 615 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "R005"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
