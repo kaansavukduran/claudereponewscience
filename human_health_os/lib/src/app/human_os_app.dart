@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 
 import '../domain/settings/appearance.dart';
 import '../domain/settings/date_style.dart';
+import '../features/onboarding/first_run_screen.dart';
 import '../features/vault/vault_gate_screen.dart';
 import '../navigation/app_shell.dart';
 import '../presentation/theme/human_os_theme.dart';
@@ -13,8 +14,13 @@ import 'bootstrap.dart';
 /// The app. Builds that keep an encrypted vault start at the vault gate
 /// ([gate]); the shell appears once the gate hands over [AppServices].
 class HumanOsApp extends StatefulWidget {
-  const HumanOsApp({super.key, this.services, this.gate, this.appearance})
-    : assert(services != null || gate != null);
+  const HumanOsApp({
+    super.key,
+    this.services,
+    this.gate,
+    this.appearance,
+    this.offerFirstRun = false,
+  }) : assert(services != null || gate != null);
 
   factory HumanOsApp.start(
     AppStartup startup, {
@@ -23,6 +29,8 @@ class HumanOsApp extends StatefulWidget {
     services: startup.services,
     gate: startup.gate,
     appearance: appearance,
+    // The introduction needs somewhere to remember that it was seen.
+    offerFirstRun: appearance != null,
   );
 
   final AppServices? services;
@@ -31,6 +39,9 @@ class HumanOsApp extends StatefulWidget {
   /// Language, theme, accent and text size; a session-only default when
   /// null (tests).
   final AppearanceController? appearance;
+
+  /// Shows the short introduction once (the real app; tests opt in).
+  final bool offerFirstRun;
 
   @override
   State<HumanOsApp> createState() => _HumanOsAppState();
@@ -120,7 +131,13 @@ class _HumanOsAppState extends State<HumanOsApp> {
           );
         },
         home: services != null
-            ? AppShell(key: ObjectKey(services), services: services)
+            ? (widget.offerFirstRun && !a.firstRunDone
+                  ? FirstRunScreen(
+                      onDone: () => _appearance.update(
+                        _appearance.value.copyWith(firstRunDone: true),
+                      ),
+                    )
+                  : AppShell(key: ObjectKey(services), services: services))
             : VaultGateScreen(
                 key: ObjectKey(widget.gate),
                 gate: widget.gate!,

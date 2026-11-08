@@ -6,6 +6,7 @@ import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../today/measurements_card.dart';
 import '../../presentation/theme/human_os_theme.dart';
+import '../onboarding/first_run_screen.dart';
 
 /// Language, light or dark, accent colour and text size (U005). Every choice
 /// applies at once and is one click; nothing here touches health data.
@@ -220,6 +221,20 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           section(s.settingsToday, _TodayLayout(settings: a, onChange: set)),
+          Align(
+            alignment: Alignment.centerLeft,
+            child: OutlinedButton(
+              key: const ValueKey('set-first-run'),
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (ctx) =>
+                      FirstRunScreen(onDone: () => Navigator.of(ctx).pop()),
+                ),
+              ),
+              child: Text(s.firstShowAgain),
+            ),
+          ),
+          const SizedBox(height: 16),
           Text(
             controller?.saveFailed == true
                 ? s.settingsSaveFailed

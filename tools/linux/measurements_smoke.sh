@@ -14,6 +14,11 @@ DATA="$HOMEDIR/.local/share/human-health-os"
 VAULT="$DATA/vault.hhoslog.jsonl"
 if [ ! -f "$VAULT" ]; then echo "# result: FAIL no vault at <home>/.local/share/human-health-os"; exit 1; fi
 before=$(sha256sum "$VAULT" | cut -d' ' -f1)
+# A returning person: the short introduction (U014) was already seen. The
+# file holds display preferences only and must stay unchanged too.
+PREFS="$DATA/appearance.json"
+printf '{"format":"hhos.appearance","version":1,"firstRunDone":true}' > "$PREFS"
+prefs_before=$(sha256sum "$PREFS" | cut -d' ' -f1)
 {
   echo "# $LABEL $(date -u +%FT%TZ)"
   echo "# host: $(. /etc/os-release; echo "$PRETTY_NAME"), $(uname -m)"
@@ -44,8 +49,11 @@ if [ "$before" = "$after" ]; then echo "# vault file: unchanged" >> "$LOG"
 else echo "# vault file: CHANGED" >> "$LOG"; RC=1; fi
 files=$(find "$DATA" -type f | sort)
 echo "# files: $(echo "$files" | sed "s|^$HOMEDIR|<home>|" | tr '\n' ' ')" >> "$LOG"
-if [ "$files" = "$VAULT" ]; then echo "# data folder: only the vault" >> "$LOG"
+expected=$(printf '%s\n%s' "$PREFS" "$VAULT" | sort)
+if [ "$files" = "$expected" ]; then echo "# data folder: only the vault and the display preferences" >> "$LOG"
 else echo "# data folder: EXTRA FILES" >> "$LOG"; RC=1; fi
+if [ "$(sha256sum "$PREFS" | cut -d' ' -f1)" = "$prefs_before" ]; then echo "# preferences: unchanged" >> "$LOG"
+else echo "# preferences: CHANGED" >> "$LOG"; RC=1; fi
 if grep -q 'RECORD_SCHEMA_NEWER\|vaultUnreadable\|error=' "$LOG"; then
   echo "# error events: YES" >> "$LOG"; RC=1
 else echo "# error events: none" >> "$LOG"; fi

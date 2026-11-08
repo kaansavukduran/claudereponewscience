@@ -3,9 +3,42 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U014",
+    "contract": "v0.32",
+    "run_id": "U014@v0.32",
+    "slice": "a calm first run",
+    "goal": "Brainstorm D13: on the first launch, three short steps (what Human OS does; it stays on this device and works offline; choose language, look and font), each skippable, then Today; remembered; reopened from Settings.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c29d6d4",
+    "started_at": "2026-11-08T06:50:00Z",
+    "scope": [
+      "FirstRunScreen with Next/Back/Skip/Start, step counter, language/theme/font chips",
+      "shown only by the real app (an appearance store is present) and until firstRunDone; Settings → Show the introduction again",
+      "web smoke skips it with one click and checks it was offered; Linux smoke seeds a returning person's preferences and checks they stay unchanged"
+    ],
+    "out_of_scope": [
+      "a passphrase or vault step (encrypted builds keep the gate first)",
+      "tutorial overlays"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Three steps, back and skip work; language chosen in step 3 applies at once",
+      "AC-2 Start or Skip is remembered; not shown again; Settings reopens it and finishing returns to Settings",
+      "AC-3 No welcome fluff (DESIGN 7); words judge nothing",
+      "AC-4 Smokes updated; mutations; gates on a clean tree"
+    ],
+    "completed_steps": [
+      "implemented with tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

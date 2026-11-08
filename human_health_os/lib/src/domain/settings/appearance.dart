@@ -55,6 +55,7 @@ class AppearanceSettings {
     this.units = UnitSystem.metric,
     this.dateOrder = DateOrder.iso,
     this.clock = ClockStyle.h24,
+    this.firstRunDone = false,
   });
 
   final LanguageChoice language;
@@ -87,6 +88,9 @@ class AppearanceSettings {
 
   final DateOrder dateOrder;
   final ClockStyle clock;
+
+  /// The short introduction was finished or skipped.
+  final bool firstRunDone;
 
   /// [defaults] in the chosen order, all of them (hidden ones included).
   List<String> ordered(List<String> defaults) => [
@@ -128,6 +132,7 @@ class AppearanceSettings {
     units: units,
     dateOrder: dateOrder,
     clock: clock,
+    firstRunDone: firstRunDone,
   );
 
   /// Multiplies the text size the system asks for.
@@ -154,6 +159,7 @@ class AppearanceSettings {
     UnitSystem? units,
     DateOrder? dateOrder,
     ClockStyle? clock,
+    bool? firstRunDone,
   }) => AppearanceSettings(
     language: language ?? this.language,
     theme: theme ?? this.theme,
@@ -171,6 +177,7 @@ class AppearanceSettings {
     units: units ?? this.units,
     dateOrder: dateOrder ?? this.dateOrder,
     clock: clock ?? this.clock,
+    firstRunDone: firstRunDone ?? this.firstRunDone,
   );
 
   Map<String, Object?> toJson() => {
@@ -192,6 +199,7 @@ class AppearanceSettings {
     'units': units.name,
     'dateOrder': dateOrder.name,
     'clock': clock.name,
+    'firstRunDone': firstRunDone,
   };
 
   /// Reads saved settings; anything unknown or missing falls back to the
@@ -245,6 +253,7 @@ class AppearanceSettings {
       units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
       dateOrder: pick(DateOrder.values, json['dateOrder'], DateOrder.iso),
       clock: pick(ClockStyle.values, json['clock'], ClockStyle.h24),
+      firstRunDone: json['firstRunDone'] == true,
     );
   }
 
@@ -266,7 +275,8 @@ class AppearanceSettings {
       other.wideSpacing == wideSpacing &&
       other.units == units &&
       other.dateOrder == dateOrder &&
-      other.clock == clock;
+      other.clock == clock &&
+      other.firstRunDone == firstRunDone;
 
   @override
   int get hashCode => Object.hash(
@@ -287,6 +297,7 @@ class AppearanceSettings {
       units,
       dateOrder,
       clock,
+      firstRunDone,
     ),
   );
 }

@@ -675,6 +675,33 @@ class S {
   );
   String get guideSourcesTitle =>
       _t('Sources of the structure', 'Yapının kaynakları');
+  String firstStep(int n, int of) => _t('Step $n of $of', 'Adım $n / $of');
+  String get firstWelcomeTitle => _t('What Human OS does', 'Human OS ne yapar');
+  String get firstWelcomeBody => _t(
+    'A place for your own health numbers: weight, blood pressure, lab results and more. You type them in, and find them again with their dates. Human OS does not judge values or give medical advice.',
+    'Kendi sağlık sayıların için bir yer: kilo, tansiyon, lab sonuçları ve daha fazlası. Onları sen girersin ve tarihleriyle yeniden bulursun. Human OS değerleri yargılamaz ve tıbbi tavsiye vermez.',
+  );
+  String get firstPrivateTitle =>
+      _t('It stays on this device', 'Bu cihazda kalır');
+  String get firstPrivateBody => _t(
+    'Human OS works without the internet. Nothing you enter is sent anywhere. Make a backup from "Your data" on Today to keep a copy.',
+    'Human OS internetsiz çalışır. Girdiğin hiçbir şey bir yere gönderilmez. Bir kopya saklamak için Bugün ekranındaki "Verilerin" bölümünden yedek al.',
+  );
+  String get firstLookTitle => _t('Choose how it looks', 'Görünüşünü seç');
+  String get firstLookBody => _t(
+    'You can change all of this later in Settings (top right).',
+    'Bunların hepsini daha sonra Ayarlar\'dan (sağ üst) değiştirebilirsin.',
+  );
+  String get firstMoreInSettings => _t(
+    'Colour, text size, units and more are in Settings.',
+    'Renk, yazı boyutu, birimler ve daha fazlası Ayarlar\'da.',
+  );
+  String get firstNext => _t('Next', 'İleri');
+  String get firstBack => _t('Back', 'Geri');
+  String get firstSkip => _t('Skip', 'Atla');
+  String get firstStart => _t('Start', 'Başla');
+  String get firstShowAgain =>
+      _t('Show the introduction again', 'Tanıtımı yeniden göster');
   String get settingsTitle => _t('Settings', 'Ayarlar');
   String get settingsTileHint => _t(
     'Language (Dil), light or dark, colour, text size',

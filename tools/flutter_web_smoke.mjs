@@ -69,6 +69,13 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
   const navItem = (name) => page.getByRole('tab', { name, exact: true }).or(page.getByRole('button', { name: new RegExp(`^${name} `) })).first();
   const heading = (name) => page.getByRole('heading', { name, exact: true }).first();
   const today = heading(todayLabel);
+  // U014: a fresh browser shows the short introduction first; it must be
+  // skippable with one click.
+  const skip = page.getByRole('button', { name: /^(Skip|Atla)$/ }).first();
+  await skip.waitFor({ timeout: 20_000 }).catch(() => {});
+  const sawIntro = (await skip.count()) > 0;
+  check(`${label}: first run offers Skip`, sawIntro);
+  if (sawIntro) await skip.click().catch(() => {});
   await today.waitFor({ timeout: 30_000 }).catch(() => {});
   check(`${label}: app starts and shows ${todayLabel}`, await today.isVisible().catch(() => false));
   check(`${label}: development profile banner visible`, await page.getByText(banner).first().isVisible().catch(() => false));
