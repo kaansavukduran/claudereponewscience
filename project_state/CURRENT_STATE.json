@@ -3,44 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "R006",
-    "contract": "v0.32",
-    "run_id": "R006@v0.32",
-    "slice": "independent review of U019, U020 and U021",
-    "goal": "Fix the verified findings of an independent Sonnet UI and accessibility review of Today at large text.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "1aa0877",
-    "started_at": "2026-11-08T22:00:00Z",
-    "scope": [
-      "tool group headings keep a weight cue (semibold)",
-      "u019 test records a blood pressure and checks no overflow at 320 dp 1x and 360 dp 1.3x",
-      "u021 test checks a filled tile value size"
-    ],
-    "out_of_scope": null,
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "REVIEWED: one Sonnet reviewer, no blocking findings, no overflow found across 320/360/480 dp, 1.0/1.6/2.0 system and largest in-app text in Turkish",
-      "IMPLEMENTED fixes",
-      "TESTED: 620 PASS"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "blocker": null,
-    "result": null,
-    "finished_at": null,
-    "app_revision": null,
-    "verified_gates": [],
-    "review": null,
-    "depends_on": [
-      "U021"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -51,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U021@v0.32 (2026-11-08, source revision 4814249d6821)",
+  "last_completed_forge": "R006@v0.32 (2026-11-08, source revision edd90561ba2b)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -64,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0595",
+      "evidence_id": "EV-TEST-F007-0608",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0596",
+      "evidence_id": "EV-TEST-F007-0609",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0597",
+      "evidence_id": "EV-TEST-F007-0610",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (619 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0598",
+      "gate": "flutter test, TZ=UTC (620 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0611",
       "criterion": "AC-1..AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0599",
+      "evidence_id": "EV-TEST-F007-0612",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0600",
+      "evidence_id": "EV-BUILD-F007-0613",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0601",
+      "evidence_id": "EV-RUNTIME-F007-0614",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0602",
+      "evidence_id": "EV-TEST-F007-0615",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0603",
+      "evidence_id": "EV-BUILD-F007-0616",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0604",
+      "evidence_id": "EV-RUNTIME-F007-0617",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (620 PASS)",
-      "evidence_id": "EV-TEST-F007-0605",
+      "gate": "flutter test with TZ=America/New_York (621 PASS)",
+      "evidence_id": "EV-TEST-F007-0618",
       "criterion": "AC-1..AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0606",
+      "evidence_id": "EV-TEST-F007-0619",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0607",
+      "evidence_id": "EV-TEST-F007-0620",
       "criterion": "AC-4",
-      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
       "result": "PASS"
     }
   ],
@@ -183,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "R006",
+    "forge_id": "G007",
     "contract": "v0.32",
-    "run_id": "R006@v0.32",
-    "slice": "independent review of U019, U020 and U021 (Today layout at large text, type sizes)",
-    "why": "Three single-author layout slices changed Today; an independent UI and accessibility reviewer checks them at 320 dp and 2x text in both languages before more features.",
+    "run_id": "G007@v0.32",
+    "slice": "UniProt offline: read a UniProt TSV export and show the proteins of genes seen in the DNA, dbSNP and ClinVar views",
+    "why": "Kaan asked for UniProt among the offline datasets; it is not built and was not recorded as a gap. A TSV the person downloads from uniprot.org (gene names, protein name, function) can be read offline like the dbSNP and plant files.",
     "depends_on": [
-      "U021"
+      "R006"
     ]
   },
-  "updated_at": "2026-11-08T21:55:00Z",
+  "updated_at": "2026-11-08T22:40:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -7749,6 +7714,154 @@
       "review": "single-author slice; the old weight card caught by the rendered-size test",
       "depends_on": [
         "U020"
+      ]
+    },
+    "R006@v0.32": {
+      "forge_id": "R006",
+      "contract": "v0.32",
+      "run_id": "R006@v0.32",
+      "slice": "independent review of U019, U020 and U021",
+      "goal": "Fix the verified findings of an independent Sonnet UI and accessibility review of Today at large text.",
+      "status": "DONE",
+      "baseline_commit": "1aa0877",
+      "started_at": "2026-11-08T22:00:00Z",
+      "scope": [
+        "tool group headings keep a weight cue (semibold)",
+        "u019 test records a blood pressure and checks no overflow at 320 dp 1x and 360 dp 1.3x",
+        "u021 test checks a filled tile value size"
+      ],
+      "out_of_scope": null,
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "REVIEWED: one Sonnet reviewer, no blocking findings, no overflow found across 320/360/480 dp, 1.0/1.6/2.0 system and largest in-app text in Turkish",
+        "IMPLEMENTED fixes",
+        "TESTED: 620 PASS",
+        "GATES: 13 receipts on clean tree edd9056, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0620",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/test/widget/u019_narrow_large_text_test.dart",
+        "human_health_os/test/widget/u021_today_type_test.dart",
+        "project_state/CURRENT_STATE.json"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0608",
+        "EV-TEST-F007-0609",
+        "EV-TEST-F007-0610",
+        "EV-TEST-F007-0611",
+        "EV-TEST-F007-0612",
+        "EV-BUILD-F007-0613",
+        "EV-RUNTIME-F007-0614",
+        "EV-TEST-F007-0615",
+        "EV-BUILD-F007-0616",
+        "EV-RUNTIME-F007-0617",
+        "EV-TEST-F007-0618",
+        "EV-TEST-F007-0619",
+        "EV-TEST-F007-0620"
+      ],
+      "blocker": null,
+      "result": "R006_COMPLETE",
+      "finished_at": "2026-11-08T22:40:00Z",
+      "app_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0608",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0609",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0610",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (620 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0611",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0612",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0613",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0614",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0615",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0616",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0617",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (621 PASS)",
+          "evidence_id": "EV-TEST-F007-0618",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0619",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0620",
+          "criterion": "AC-4",
+          "source_revision": "edd90561ba2bfa46a28afbce55eef42151ef740c",
+          "result": "PASS"
+        }
+      ],
+      "review": "one Sonnet UI reviewer: no blocking findings, no overflow at 320/360/480 dp up to 2.0 x largest in Turkish; should-fix and nits addressed",
+      "depends_on": [
+        "U021"
       ]
     }
   },

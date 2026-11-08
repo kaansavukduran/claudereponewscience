@@ -873,3 +873,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U021@v0.32 — Today's four type sizes, 2026-11-08 — U021_COMPLETE
 
 **Built** Today, the weight card, the measurement tiles and the Your data card use the four sizes of docs/DESIGN.md: page title, section title, value (one size for every reading, the largest on a tile) and body (captions and labels included); status chips keep their own label size. A test reads the rendered text sizes on Today with readings recorded (G-49 closed with U017, U019, U020). **Tests** 619 PASS in UTC, 620 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; the old weight card caught. **Next** R006 independent review of U019–U021.
+
+# FORGE R006@v0.32 — independent review of U019, U020, U021, 2026-11-08 — R006_COMPLETE
+
+**Input** one independent Sonnet UI and accessibility reviewer: no blocking findings; no overflow anywhere on Today across 320, 360 and 480 dp, system text 1.0, 1.6 and 2.0 and the largest in-app size, in Turkish, with a blood pressure recorded; the in-app text size reaches the tile columns; order of focus and screen reader follows Measurements-first. **Fixed** tool group headings keep a weight cue (semibold); the Today tests record a blood pressure (no overflow at 320 dp 1x and 360 dp 1.3x; a filled tile value at the value size). Recorded G-69: UniProt, an owner request, is not built yet. **Gates** 620 PASS in UTC, 621 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm. **Next** G007 UniProt offline.
