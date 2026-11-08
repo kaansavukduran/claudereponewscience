@@ -45,16 +45,19 @@ Future<AppearanceStore> openAppearanceStore(
   HostPlatform platform, {
   Map<String, String>? env,
   String? executablePath,
+  bool? mobile,
 }) async {
+  final isMobile = mobile ?? (Platform.isAndroid || Platform.isIOS);
   // Portable mode writes only the encrypted vault next to the program
   // (D-016); a development build in portable mode keeps settings in memory.
   if (config.profile != BuildProfile.development ||
-      isPortableMode(executablePath: executablePath)) {
+      (!isMobile && isPortableMode(executablePath: executablePath))) {
     return MemoryAppearanceStore();
   }
   final dir = resolveDataDirectory(
     env: env,
     executablePath: executablePath,
+    mobile: isMobile,
   ).dir;
   if (dir == null) return MemoryAppearanceStore();
   return FileAppearanceStore(

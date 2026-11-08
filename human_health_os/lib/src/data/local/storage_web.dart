@@ -73,3 +73,6 @@ Future<StorageChoice> createPlatformRepository(
     files: BrowserDataFiles(),
   );
 }
+
+/// The browser has no app folder; nothing to ask (M001).
+Future<void> loadMobileAppDataDir() async {}

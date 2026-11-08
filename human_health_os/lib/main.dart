@@ -8,6 +8,7 @@ import 'src/config/app_config.dart';
 import 'src/core/capabilities.dart';
 import 'src/core/redact.dart';
 import 'src/data/local/appearance_store.dart';
+import 'src/data/local/storage.dart' show loadMobileAppDataDir;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,8 @@ Future<void> main() async {
   try {
     final config = AppConfig.fromEnvironment();
     final platform = detectHostPlatform();
+    // Phones: the app-private folder, before storage is chosen (M001).
+    await loadMobileAppDataDir();
     final startup = await startApp(config, platform);
     final store = await openAppearanceStore(config, platform);
     final appearance = AppearanceController(store, await store.load());

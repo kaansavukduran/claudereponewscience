@@ -1,13 +1,16 @@
 /// Native (dart:io) storage on desktop: the encrypted vault for staging,
 /// production and portable builds (F006), the plaintext log for development
-/// installs. Mobile adapters need platform paths (path_provider) and land
-/// with their Forge; until then mobile falls back to memory with a notice.
+/// installs. On Android and iOS the native side reports the app's private
+/// folder at start (M001, [loadMobileAppDataDir]); without it the app falls
+/// back to memory with a notice.
 library;
 
 import 'dart:convert';
 import 'dart:io';
 import 'dart:isolate';
 import 'dart:typed_data';
+
+import 'package:flutter/services.dart' show MethodChannel;
 
 import '../../config/app_config.dart';
 import '../../domain/ports/health_repository.dart';
@@ -120,6 +123,30 @@ class DataDirectory {
 
 bool _absolute(String path) => Directory(path).isAbsolute;
 
+/// The app-private folder on Android (Context.filesDir) or iOS (Application
+/// Support), reported by the native side; null elsewhere and until
+/// [loadMobileAppDataDir] has run. Other apps cannot read it, and the system
+/// removes it with the app.
+String? mobileAppDataDir;
+
+/// Folder inside [mobileAppDataDir].
+const String mobileDataFolder = 'HumanHealthOS';
+
+/// Asks the native side for [mobileAppDataDir] (Android and iOS only). Any
+/// failure leaves it null, so the app keeps data in memory, as before.
+Future<void> loadMobileAppDataDir() async {
+  if (!Platform.isAndroid && !Platform.isIOS) return;
+  try {
+    final dir = await const MethodChannel('org.humanhealthos/paths')
+        .invokeMethod<String>('appDataDir');
+    mobileAppDataDir = dir != null && dir.isNotEmpty && _absolute(dir)
+        ? dir
+        : null;
+  } catch (_) {
+    mobileAppDataDir = null;
+  }
+}
+
 /// Resolves the data directory. Portable mode: a `portable_mode.json` next to
 /// the executable puts the vault in `UserData/` beside it (Rufus-like folder).
 ///
@@ -130,7 +157,19 @@ bool _absolute(String path) => Directory(path).isAbsolute;
 DataDirectory resolveDataDirectory({
   Map<String, String>? env,
   String? executablePath,
+  bool? mobile,
+  String? mobileDir,
 }) {
+  // Android and iOS: only the app-private folder, never an environment
+  // variable or a folder beside the program (M001).
+  if (mobile ?? (Platform.isAndroid || Platform.isIOS)) {
+    final base = mobileDir ?? mobileAppDataDir;
+    return DataDirectory(
+      base == null || !_absolute(base)
+          ? null
+          : Directory('$base${Platform.pathSeparator}$mobileDataFolder'),
+    );
+  }
   final e = env ?? Platform.environment;
   final override = e['HHOS_DATA_DIR'];
   if (override != null && override.isNotEmpty) {
@@ -179,7 +218,7 @@ DataDirectory resolveDataDirectory({
           : Directory('$base\\$desktopDataFolder'),
     );
   }
-  return const DataDirectory(null); // Android/iOS: needs a path adapter.
+  return const DataDirectory(null);
 }
 
 /// True when `portable_mode.json` sits next to the executable.
@@ -217,15 +256,19 @@ bool isPortableMode({String? executablePath}) {
   }
 }
 
+/// [mobile] stands in for an Android or iOS host (tests).
 Future<StorageChoice> createPlatformRepository(
   AppConfig config, {
   Map<String, String>? env,
   String? executablePath,
+  bool? mobile,
 }) async {
-  final portable = isPortableMode(executablePath: executablePath);
+  final isMobile = mobile ?? (Platform.isAndroid || Platform.isIOS);
+  final portable = !isMobile && isPortableMode(executablePath: executablePath);
   final resolved = resolveDataDirectory(
     env: env,
     executablePath: executablePath,
+    mobile: isMobile,
   );
   if (resolved.invalidVariable != null) {
     return StorageChoice(
