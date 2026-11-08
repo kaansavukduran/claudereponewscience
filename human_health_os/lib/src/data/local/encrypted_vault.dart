@@ -23,6 +23,7 @@ import '../../domain/ports/health_repository.dart';
 import '../backup/data_files.dart';
 import '../crypto/vault_crypto.dart';
 import 'log_repository.dart';
+import 'sealed_preferences.dart';
 import 'vault_envelope.dart';
 
 /// What has to happen before the vault can be used.
@@ -53,6 +54,7 @@ class OpenedVault {
     required this.report,
     required this.sink,
     this.files,
+    this.preferences,
   });
 
   final LogRepository repository;
@@ -61,6 +63,9 @@ class OpenedVault {
 
   /// Encrypted backups beside the vault; null when this place has none.
   final DataFiles? files;
+
+  /// Display preferences sealed beside the vault; null when none can be kept.
+  final SealedAppearanceStore? preferences;
 }
 
 /// Minimum passphrase length in characters (Unicode code points). No
@@ -78,6 +83,7 @@ class EncryptedVault {
     KdfParams Function()? newKdf,
     this.setAsideStore,
     this.filesFor,
+    this.preferencesFor,
     this.clock = const SystemClock(),
     this.ids,
   }) : newKdf = newKdf ?? KdfParams.forNewKey;
@@ -100,6 +106,9 @@ class EncryptedVault {
 
   /// Encrypted backups for an opened vault.
   final DataFiles? Function(EncryptedLogSink sink)? filesFor;
+
+  /// Display preferences sealed beside an opened vault (U018).
+  final SealedAppearanceStore? Function(EncryptedLogSink sink)? preferencesFor;
   final Clock clock;
   final IdGenerator? ids;
 
@@ -214,6 +223,7 @@ class EncryptedVault {
       report: report,
       sink: sink,
       files: filesFor?.call(sink),
+      preferences: preferencesFor?.call(sink),
     );
   }
 }

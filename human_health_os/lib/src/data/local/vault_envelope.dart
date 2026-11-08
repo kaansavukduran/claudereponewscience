@@ -75,6 +75,11 @@ Uint8List _utf8(String s) => Uint8List.fromList(utf8.encode(s));
 Uint8List _keyAad(String vaultId, KeyKind kind) =>
     _utf8('$envelopeFormat/$envelopeVersion|$vaultId|key:${kind.name}');
 
+Uint8List _prefsAad(String vaultId) =>
+    _utf8('$envelopeFormat/$envelopeVersion|$vaultId|display-preferences');
+
+const String preferencesFormat = 'hhos-display-preferences';
+
 Uint8List _entryAad(String vaultId, int seq) =>
     _utf8('$envelopeFormat/$envelopeVersion|$vaultId|entry:$seq');
 
@@ -404,6 +409,39 @@ class EncryptedLogSink implements LogSink {
   };
 
   String get vaultId => _header!.vaultId;
+
+  /// Seals display preferences (language, theme, font; no health data) for
+  /// a file beside the vault, under this vault's key with their own
+  /// associated data, so they open only with this vault (U018).
+  String sealPreferences(String json) {
+    final s = seal(_dataKey, _utf8(json), _prefsAad(vaultId));
+    return jsonEncode({
+      'format': preferencesFormat,
+      'vault_id': vaultId,
+      'n': base64Encode(s.nonce),
+      'c': base64Encode(s.sealed),
+    });
+  }
+
+  /// The preferences in [text], or null when they are not this vault's, not
+  /// authentic or not readable. Never throws.
+  String? openPreferences(String text) {
+    try {
+      final m = (jsonDecode(text) as Map).cast<String, Object?>();
+      if (m['format'] != preferencesFormat || m['vault_id'] != vaultId) {
+        return null;
+      }
+      final plain = openSealed(
+        _dataKey,
+        base64Decode(m['n']! as String),
+        base64Decode(m['c']! as String),
+        _prefsAad(vaultId),
+      );
+      return utf8.decode(plain);
+    } catch (_) {
+      return null;
+    }
+  }
 
   /// Opens [text] (this vault's envelope, e.g. a copy for a backup).
   OpenedEnvelope open(String text) {

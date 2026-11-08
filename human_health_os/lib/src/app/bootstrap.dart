@@ -14,6 +14,7 @@ import '../data/backup/backup_bundle.dart';
 import '../data/backup/data_files.dart';
 import '../data/local/encrypted_vault.dart';
 import '../data/local/log_repository.dart';
+import '../data/local/sealed_preferences.dart';
 import '../data/local/storage.dart';
 import '../data/local/vault_envelope.dart';
 import '../domain/ports/health_repository.dart';
@@ -86,6 +87,7 @@ Future<AppStartup> startApp(
         report: opened.report,
         files: opened.files,
         derive: choice.derive,
+        preferences: opened.preferences,
       ),
       memoryOnly: (reason, {detail}) async {
         final repo = inMemoryRepository();
@@ -176,6 +178,7 @@ Future<AppServices> servicesFor(
   GenomeFilePicker? genomePicker,
   SaveCopy? saveCopy,
   KeyDeriver derive = deriveInline,
+  SealedAppearanceStore? preferences,
 }) async {
   final heartbeat = HeartbeatService(repo);
   final self = await heartbeat.ensureSelfProfile();
@@ -241,6 +244,7 @@ Future<AppServices> servicesFor(
     checkpointSaved: checkpointSaved,
     genomePicker: genomePicker,
     saveCopy: saveCopy,
+    vaultPreferences: preferences,
     deriveKey: derive,
   );
 }

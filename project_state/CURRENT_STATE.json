@@ -3,9 +3,47 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U018",
+    "contract": "v0.32",
+    "run_id": "U018@v0.32",
+    "slice": "display choices of vault builds sealed beside the vault (G-62 rest)",
+    "goal": "Staging, production and portable builds remember language, theme and font across starts, written only after the vault is open and sealed under its key.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "552d2ee",
+    "started_at": "2026-11-08T18:20:00Z",
+    "scope": [
+      "EncryptedLogSink.sealPreferences/openPreferences with their own associated data",
+      "SealedAppearanceStore and <vault>.prefs beside the file vault",
+      "AppearanceController.adopt after the gate hands over services",
+      "D-027"
+    ],
+    "out_of_scope": [
+      "preferences before unlock (the gate shows defaults)",
+      "preferences inside backups"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: u018 widget (3) and data (1) tests; mutations (no save of session choices; no adopt) caught; 608 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "blocker": null,
+    "result": null,
+    "finished_at": null,
+    "app_revision": null,
+    "verified_gates": [],
+    "review": null,
+    "depends_on": [
+      "M002"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

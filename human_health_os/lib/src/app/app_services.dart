@@ -13,6 +13,7 @@ import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
 import '../domain/profile/profile.dart';
 import '../features/genetics/genome_file_picker.dart';
+import '../data/local/sealed_preferences.dart';
 import '../features/today/save_copy.dart' show SaveCopy;
 
 class AppServices {
@@ -33,6 +34,7 @@ class AppServices {
     this.checkpointSaved,
     this.genomePicker,
     this.saveCopy,
+    this.vaultPreferences,
     this.deriveKey = deriveInline,
   });
 
@@ -84,4 +86,8 @@ class AppServices {
   /// Copies a saved file out of a phone's private folder (M002); null means
   /// the system dialog on phones and none elsewhere. Tests put a fake here.
   final SaveCopy? saveCopy;
+
+  /// Display preferences sealed beside an opened encrypted vault (U018);
+  /// the app adopts them once the vault is open.
+  final SealedAppearanceStore? vaultPreferences;
 }

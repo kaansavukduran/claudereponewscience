@@ -18,7 +18,9 @@ import '../backup/data_files.dart' show RestoreTarget, fileStamp;
 import '../backup/data_files_io.dart';
 import '../crypto/vault_crypto.dart';
 import 'encrypted_vault.dart';
+import 'vault_envelope.dart' show EncryptedLogSink;
 import 'log_repository.dart';
+import 'sealed_preferences.dart';
 import 'storage_status.dart';
 import 'vault_log.dart' show decodeLogBytes;
 
@@ -223,6 +225,24 @@ DataDirectory resolveDataDirectory({
   return const DataDirectory(null);
 }
 
+/// Display preferences sealed in `<vault>.prefs` beside [vault] (U018),
+/// written through a temporary file and a rename.
+SealedAppearanceStore sealedPreferencesBeside(
+  File vault,
+  EncryptedLogSink sink,
+) {
+  final file = File('${vault.path}.prefs');
+  return SealedAppearanceStore(
+    sink: sink,
+    read: () async => await file.exists() ? await file.readAsString() : null,
+    write: (text) async {
+      final tmp = File('${file.path}.tmp');
+      await tmp.writeAsString(text, flush: true);
+      await tmp.rename(file.path);
+    },
+  );
+}
+
 /// True when `portable_mode.json` sits next to the executable.
 bool isPortableMode({String? executablePath}) {
   final exe = File(executablePath ?? Platform.resolvedExecutable);
@@ -311,6 +331,7 @@ Future<StorageChoice> createPlatformRepository(
           vault: file,
           target: RestoreTarget.encrypted(sink.open),
         ),
+        preferencesFor: (sink) => sealedPreferencesBeside(file, sink),
       ),
     );
   }

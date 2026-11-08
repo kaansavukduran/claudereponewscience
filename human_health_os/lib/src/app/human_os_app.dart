@@ -58,6 +58,16 @@ class HumanOsApp extends StatefulWidget {
 }
 
 class _HumanOsAppState extends State<HumanOsApp> {
+  void _vaultOpened(AppServices s) {
+    setState(() => _services = s);
+    final prefs = s.vaultPreferences;
+    // Only a session store is replaced: a store that already keeps choices
+    // (development desktop) stays as it is.
+    if (prefs != null && !_appearance.store.persistent) {
+      _appearance.adopt(prefs);
+    }
+  }
+
   void _finishIntro() {
     setState(() => _introDone = true);
     _appearance.update(_appearance.value.copyWith(firstRunDone: true));
@@ -163,7 +173,7 @@ class _HumanOsAppState extends State<HumanOsApp> {
                   : VaultGateScreen(
                       key: ObjectKey(widget.gate),
                       gate: widget.gate!,
-                      onReady: (s) => setState(() => _services = s),
+                      onReady: _vaultOpened,
                     )),
       ),
     );
