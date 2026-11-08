@@ -3,41 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U012",
-    "contract": "v0.32",
-    "run_id": "U012@v0.32",
-    "slice": "display units",
-    "goal": "Brainstorm F25: US units (lb, in, °F) shown beside the typed metric values, marked ≈; entry and storage unchanged.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "67cfca0",
-    "started_at": "2026-11-08T04:20:00Z",
-    "scope": [
-      "UnitSystem setting (metric / also US), saved with appearance",
-      "convertedFor for kg, cm, °C only; shown in measurement tiles, timeline and trend lists (measurementValue) and the weight card",
-      "a note that entry and storage stay metric"
-    ],
-    "out_of_scope": [
-      "entering values in lb/in/°F (needs unit-aware records, G-43)",
-      "12-hour clock and date order (later)"
-    ],
-    "acceptance_criteria": [
-      "AC-1 Conversions correct and marked ≈; none for mmHg, %, bpm",
-      "AC-2 Typed value unchanged; switching back removes the converted value",
-      "AC-3 Round trip; words judge nothing; mutations; gates on a clean tree"
-    ],
-    "completed_steps": [
-      "implemented with tests"
-    ],
-    "last_verified_gate": null,
-    "next_action": "gates",
-    "files_touched": [],
-    "migration_ids": [],
-    "evidence_ids": [],
-    "blocker": null
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -48,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "T001@v0.32 (2026-11-08, source revision 67cfca057f74)",
+  "last_completed_forge": "U012@v0.32 (2026-11-08, source revision 45da54d34b65)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -61,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0283",
+      "evidence_id": "EV-TEST-F007-0296",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0284",
+      "evidence_id": "EV-TEST-F007-0297",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0285",
+      "evidence_id": "EV-TEST-F007-0298",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (532 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0286",
+      "gate": "flutter test, TZ=UTC (535 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0299",
       "criterion": "AC-1..AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0287",
+      "evidence_id": "EV-TEST-F007-0300",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0288",
+      "evidence_id": "EV-BUILD-F007-0301",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0289",
+      "evidence_id": "EV-RUNTIME-F007-0302",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0290",
+      "evidence_id": "EV-TEST-F007-0303",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0291",
+      "evidence_id": "EV-BUILD-F007-0304",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0292",
+      "evidence_id": "EV-RUNTIME-F007-0305",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (533 PASS)",
-      "evidence_id": "EV-TEST-F007-0293",
+      "gate": "flutter test with TZ=America/New_York (536 PASS)",
+      "evidence_id": "EV-TEST-F007-0306",
       "criterion": "AC-1..AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0294",
+      "evidence_id": "EV-TEST-F007-0307",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0295",
+      "evidence_id": "EV-TEST-F007-0308",
       "criterion": "AC-4",
-      "source_revision": "67cfca057f746ff2b05b95d6f9214a130a09f0ad",
+      "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
       "result": "PASS"
     }
   ],
@@ -180,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U012",
+    "forge_id": "U013",
     "contract": "v0.32",
-    "run_id": "U012@v0.32",
-    "slice": "display units and date style",
-    "why": "Brainstorm F25-26 and the owner's customisation priority: kg/lb, cm/in, °C/°F shown beside the value as typed (the record keeps what was typed; a converted number is labelled as converted), and 24-hour or 12-hour, day-month or month-day; needs G-43 groundwork.",
+    "run_id": "U013@v0.32",
+    "slice": "time and date style",
+    "why": "Brainstorm F26: 24-hour or 12-hour clock and day-month or month-day order for displayed times (typed-time rules unchanged); then the chart painting tests (G-63).",
     "depends_on": [
-      "T001"
+      "U012"
     ]
   },
-  "updated_at": "2026-11-08T03:50:00Z",
+  "updated_at": "2026-11-08T04:45:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -4525,6 +4493,179 @@
         }
       ],
       "review": "driven by the Sonnet test-adequacy reviewer's 139 mutation probes (99 survivors); high-value survivors covered, the rest recorded in G-63; three defects found and fixed"
+    },
+    "U012@v0.32": {
+      "forge_id": "U012",
+      "contract": "v0.32",
+      "run_id": "U012@v0.32",
+      "slice": "display units",
+      "goal": "Brainstorm F25: US units (lb, in, °F) shown beside the typed metric values, marked ≈; entry and storage unchanged.",
+      "status": "DONE",
+      "baseline_commit": "67cfca0",
+      "started_at": "2026-11-08T04:20:00Z",
+      "scope": [
+        "UnitSystem setting (metric / also US), saved with appearance",
+        "convertedFor for kg, cm, °C only; shown in measurement tiles, timeline and trend lists (measurementValue) and the weight card",
+        "a note that entry and storage stay metric"
+      ],
+      "out_of_scope": [
+        "entering values in lb/in/°F (needs unit-aware records, G-43)",
+        "12-hour clock and date order (later)"
+      ],
+      "acceptance_criteria": [
+        "AC-1 Conversions correct and marked ≈; none for mmHg, %, bpm",
+        "AC-2 Typed value unchanged; switching back removes the converted value",
+        "AC-3 Round trip; words judge nothing; mutations; gates on a clean tree"
+      ],
+      "completed_steps": [
+        "implemented with tests",
+        "GATES: 13 receipts on clean tree 45da54d, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0308",
+      "next_action": null,
+      "files_touched": [
+        "evidence/builds/EV-BUILD-F007-0288.json",
+        "evidence/builds/EV-BUILD-F007-0291.json",
+        "evidence/runtime/EV-RUNTIME-F007-0289.json",
+        "evidence/runtime/EV-RUNTIME-F007-0292.json",
+        "evidence/tests/EV-TEST-F007-0283.json",
+        "evidence/tests/EV-TEST-F007-0284.json",
+        "evidence/tests/EV-TEST-F007-0285.json",
+        "evidence/tests/EV-TEST-F007-0286.json",
+        "evidence/tests/EV-TEST-F007-0287.json",
+        "evidence/tests/EV-TEST-F007-0290.json",
+        "evidence/tests/EV-TEST-F007-0293.json",
+        "evidence/tests/EV-TEST-F007-0294.json",
+        "evidence/tests/EV-TEST-F007-0295.json",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/domain/units/display_units.dart",
+        "human_health_os/lib/src/features/measurements/measurement_format.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u012_units_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/FORGE_LOG.md",
+        "reports/runtime/flutter_web_smoke_67cfca057f74.json",
+        "reports/runtime/linux-t001/t001-dev-schema5-history.png",
+        "reports/runtime/linux-t001/t001-dev-schema5-measurements.png",
+        "reports/runtime/linux-t001/t001-dev-schema5-today.png",
+        "reports/runtime/linux-t001/t001-dev-schema5.log"
+      ],
+      "migration_ids": [],
+      "evidence_ids": [
+        "EV-TEST-F007-0296",
+        "EV-TEST-F007-0297",
+        "EV-TEST-F007-0298",
+        "EV-TEST-F007-0299",
+        "EV-TEST-F007-0300",
+        "EV-BUILD-F007-0301",
+        "EV-RUNTIME-F007-0302",
+        "EV-TEST-F007-0303",
+        "EV-BUILD-F007-0304",
+        "EV-RUNTIME-F007-0305",
+        "EV-TEST-F007-0306",
+        "EV-TEST-F007-0307",
+        "EV-TEST-F007-0308"
+      ],
+      "blocker": null,
+      "result": "U012_COMPLETE",
+      "finished_at": "2026-11-08T04:45:00Z",
+      "app_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0296",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0297",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0298",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (535 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0299",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0300",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0301",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (Today, Timeline, Labs, measurements, genetics, backup); no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0302",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0303",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0304",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture (Xvfb): vault file unchanged, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0305",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (536 PASS)",
+          "evidence_id": "EV-TEST-F007-0306",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0307",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0308",
+          "criterion": "AC-4",
+          "source_revision": "45da54d34b65308cac7e9d32e8af50fab1b84515",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; mutations on the °F formula, the units lookup in S.of and the weight card's converted value each caught"
     }
   },
   "forge_history_legacy_ids": {
