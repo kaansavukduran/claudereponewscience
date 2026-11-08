@@ -3,41 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U021",
-    "contract": "v0.32",
-    "run_id": "U021@v0.32",
-    "slice": "Today uses the four type sizes of docs/DESIGN.md (G-49 rest)",
-    "goal": "Fewer, consistent text sizes on Today: page title, section title, value, body; numbers the largest on a tile.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "58b70de",
-    "started_at": "2026-11-08T21:20:00Z",
-    "scope": [
-      "Today, weight, measurements and Your data cards: captions and labels at body size, tile titles at section size, every value at one value size"
-    ],
-    "out_of_scope": null,
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: u021 test on rendered sizes; the old weight card caught; 619 PASS"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "blocker": null,
-    "result": null,
-    "finished_at": null,
-    "app_revision": null,
-    "verified_gates": [],
-    "review": null,
-    "depends_on": [
-      "U020"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -48,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U020@v0.32 (2026-11-08, source revision 13525c9dc7b6)",
+  "last_completed_forge": "U021@v0.32 (2026-11-08, source revision 4814249d6821)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -61,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0582",
+      "evidence_id": "EV-TEST-F007-0595",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0583",
+      "evidence_id": "EV-TEST-F007-0596",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0584",
+      "evidence_id": "EV-TEST-F007-0597",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (618 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0585",
+      "gate": "flutter test, TZ=UTC (619 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0598",
       "criterion": "AC-1..AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0586",
+      "evidence_id": "EV-TEST-F007-0599",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0587",
+      "evidence_id": "EV-BUILD-F007-0600",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0588",
+      "evidence_id": "EV-RUNTIME-F007-0601",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0589",
+      "evidence_id": "EV-TEST-F007-0602",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0590",
+      "evidence_id": "EV-BUILD-F007-0603",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0591",
+      "evidence_id": "EV-RUNTIME-F007-0604",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (619 PASS)",
-      "evidence_id": "EV-TEST-F007-0592",
+      "gate": "flutter test with TZ=America/New_York (620 PASS)",
+      "evidence_id": "EV-TEST-F007-0605",
       "criterion": "AC-1..AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0593",
+      "evidence_id": "EV-TEST-F007-0606",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0594",
+      "evidence_id": "EV-TEST-F007-0607",
       "criterion": "AC-4",
-      "source_revision": "13525c9dc7b64c4a8e9a18ae6b41373a6d5213ba",
+      "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
       "result": "PASS"
     }
   ],
@@ -180,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U021",
+    "forge_id": "R006",
     "contract": "v0.32",
-    "run_id": "U021@v0.32",
-    "slice": "Today uses the four text styles of docs/DESIGN.md (G-49 rest)",
-    "why": "Today mixes about ten text styles; fewer, consistent sizes read calmer, especially with large text and the reading fonts.",
+    "run_id": "R006@v0.32",
+    "slice": "independent review of U019, U020 and U021 (Today layout at large text, type sizes)",
+    "why": "Three single-author layout slices changed Today; an independent UI and accessibility reviewer checks them at 320 dp and 2x text in both languages before more features.",
     "depends_on": [
-      "U020"
+      "U021"
     ]
   },
-  "updated_at": "2026-11-08T21:00:00Z",
+  "updated_at": "2026-11-08T21:55:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -7598,6 +7566,154 @@
       "review": "single-author slice; a mutation ignoring the choice caught; 'above' reworded after the judging-word scan",
       "depends_on": [
         "U019"
+      ]
+    },
+    "U021@v0.32": {
+      "forge_id": "U021",
+      "contract": "v0.32",
+      "run_id": "U021@v0.32",
+      "slice": "Today uses the four type sizes of docs/DESIGN.md (G-49 rest)",
+      "goal": "Fewer, consistent text sizes on Today: page title, section title, value, body; numbers the largest on a tile.",
+      "status": "DONE",
+      "baseline_commit": "58b70de",
+      "started_at": "2026-11-08T21:20:00Z",
+      "scope": [
+        "Today, weight, measurements and Your data cards: captions and labels at body size, tile titles at section size, every value at one value size"
+      ],
+      "out_of_scope": null,
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: u021 test on rendered sizes; the old weight card caught; 619 PASS",
+        "GATES: 13 receipts on clean tree 4814249, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0607",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/features/today/measurements_card.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/features/today/your_data_card.dart",
+        "human_health_os/test/widget/u021_today_type_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0595",
+        "EV-TEST-F007-0596",
+        "EV-TEST-F007-0597",
+        "EV-TEST-F007-0598",
+        "EV-TEST-F007-0599",
+        "EV-BUILD-F007-0600",
+        "EV-RUNTIME-F007-0601",
+        "EV-TEST-F007-0602",
+        "EV-BUILD-F007-0603",
+        "EV-RUNTIME-F007-0604",
+        "EV-TEST-F007-0605",
+        "EV-TEST-F007-0606",
+        "EV-TEST-F007-0607"
+      ],
+      "blocker": null,
+      "result": "U021_COMPLETE",
+      "finished_at": "2026-11-08T21:55:00Z",
+      "app_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0595",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0596",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0597",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (619 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0598",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0599",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0600",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0601",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0602",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0603",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0604",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (620 PASS)",
+          "evidence_id": "EV-TEST-F007-0605",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0606",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0607",
+          "criterion": "AC-4",
+          "source_revision": "4814249d6821ab4689db78fef1938fd65842dfd5",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; the old weight card caught by the rendered-size test",
+      "depends_on": [
+        "U020"
       ]
     }
   },

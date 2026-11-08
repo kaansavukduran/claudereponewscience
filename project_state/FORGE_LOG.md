@@ -869,3 +869,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U020@v0.32 — Measurements before the weight card, 2026-11-08 — U020_COMPLETE
 
 **Built** Settings → Today → "Measurements before the weight card" ("Ölçümler kilo kartından önce"): Today shows the measurement tiles first; saved with the other display choices; Reset Today clears it (G-49 part; first wording "above" reworded after the judging-word scan). **Tests** 618 PASS in UTC, 619 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; a mutation ignoring the choice caught. **Next** U021 Today's text styles.
+
+# FORGE U021@v0.32 — Today's four type sizes, 2026-11-08 — U021_COMPLETE
+
+**Built** Today, the weight card, the measurement tiles and the Your data card use the four sizes of docs/DESIGN.md: page title, section title, value (one size for every reading, the largest on a tile) and body (captions and labels included); status chips keep their own label size. A test reads the rendered text sizes on Today with readings recorded (G-49 closed with U017, U019, U020). **Tests** 619 PASS in UTC, 620 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; the old weight card caught. **Next** R006 independent review of U019–U021.
