@@ -82,3 +82,51 @@ List<List<TrendPoint>> segments(
   }
   return out;
 }
+
+/// The value range a chart shows for [values]: at least [minSpan] wide
+/// (centred on the data), then 10% padding above and below. A tiny change
+/// therefore never fills the whole height.
+({double lo, double hi, double pad}) axisRange(
+  List<double> values,
+  double minSpan,
+) {
+  var lo = values.reduce((a, b) => a < b ? a : b);
+  var hi = values.reduce((a, b) => a > b ? a : b);
+  if (hi - lo < minSpan) {
+    final mid = (hi + lo) / 2;
+    hi = mid + minSpan / 2;
+    lo = mid - minSpan / 2;
+  }
+  final pad = (hi - lo) * 0.1;
+  return (lo: lo - pad, hi: hi + pad, pad: pad);
+}
+
+/// The three reading lines a chart labels: just inside the bottom, the
+/// middle and just inside the top of [axisRange].
+List<double> readingLines(({double lo, double hi, double pad}) r) => [
+  r.lo + r.pad,
+  (r.lo + r.hi) / 2,
+  r.hi - r.pad,
+];
+
+/// A reading-line label with the person's decimal separator.
+String axisLabel(double v, String decimal) =>
+    v.toStringAsFixed(v.abs() >= 100 ? 0 : 1).replaceAll('.', decimal);
+
+/// Horizontal positions of [points] between [left] and [right], by time;
+/// a single point sits in the middle.
+List<double> timePositions(List<TrendPoint> points, double left, double right) {
+  final t0 = points.first.at.millisecondsSinceEpoch.toDouble();
+  final t1 = points.last.at.millisecondsSinceEpoch.toDouble();
+  final w = right - left;
+  return [
+    for (final p in points)
+      t1 == t0
+          ? left + w / 2
+          : left + (p.at.millisecondsSinceEpoch - t0) / (t1 - t0) * w,
+  ];
+}
+
+/// The earliest time a range shows, counted back from [now]; null shows all.
+DateTime? rangeStart(int? days, DateTime now) =>
+    days == null ? null : now.subtract(Duration(days: days));

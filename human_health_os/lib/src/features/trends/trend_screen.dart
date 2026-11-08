@@ -9,6 +9,14 @@ import '../timeline/timeline_screen.dart' show fmtWhen;
 
 enum TrendRange { days30, days90, year, all }
 
+/// Days a range chip shows; null for all.
+int? rangeDays(TrendRange r) => switch (r) {
+  TrendRange.days30 => 30,
+  TrendRange.days90 => 90,
+  TrendRange.year => 365,
+  TrendRange.all => null,
+};
+
 /// One measurement over time (U008): the saved points, joined only when
 /// they are close in time, a range to choose, and every point as text.
 /// No target band, no colour that judges, no smoothing.
@@ -49,13 +57,7 @@ class _TrendScreenState extends State<TrendScreen> {
   }
 
   DateTime? _from() {
-    final now = DateTime.now().toUtc();
-    return switch (_range) {
-      TrendRange.days30 => now.subtract(const Duration(days: 30)),
-      TrendRange.days90 => now.subtract(const Duration(days: 90)),
-      TrendRange.year => now.subtract(const Duration(days: 365)),
-      TrendRange.all => null,
-    };
+    return rangeStart(rangeDays(_range), DateTime.now().toUtc());
   }
 
   @override
@@ -183,17 +185,8 @@ double minSpanFor(RecordKind k) => switch (k) {
   _ => 1,
 };
 
-List<double> _xs(List<TrendPoint> points, Size size) {
-  final t0 = points.first.at.millisecondsSinceEpoch.toDouble();
-  final t1 = points.last.at.millisecondsSinceEpoch.toDouble();
-  final w = size.width - _left - _right;
-  return [
-    for (final p in points)
-      t1 == t0
-          ? _left + w / 2
-          : _left + (p.at.millisecondsSinceEpoch - t0) / (t1 - t0) * w,
-  ];
-}
+List<double> _xs(List<TrendPoint> points, Size size) =>
+    timePositions(points, _left, size.width - _right);
 
 class _TrendPainter extends CustomPainter {
   _TrendPainter({
@@ -220,17 +213,8 @@ class _TrendPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final all = [for (final p in points) ...p.values];
-    var lo = all.reduce((a, b) => a < b ? a : b);
-    var hi = all.reduce((a, b) => a > b ? a : b);
-    if (hi - lo < minSpan) {
-      final mid = (hi + lo) / 2;
-      hi = mid + minSpan / 2;
-      lo = mid - minSpan / 2;
-    }
-    final pad = (hi - lo) * 0.1;
-    lo -= pad;
-    hi += pad;
+    final range = axisRange([for (final p in points) ...p.values], minSpan);
+    final lo = range.lo, hi = range.hi;
     final h = size.height - _top - _bottom;
     double y(double v) => _top + (hi - v) / (hi - lo) * h;
     final xs = _xs(points, size);
@@ -239,7 +223,7 @@ class _TrendPainter extends CustomPainter {
     final gridPaint = Paint()
       ..color = grid
       ..strokeWidth = 1;
-    for (final v in [lo + pad, (lo + hi) / 2, hi - pad]) {
+    for (final v in readingLines(range)) {
       canvas.drawLine(
         Offset(_left, y(v)),
         Offset(size.width - _right, y(v)),
@@ -247,9 +231,7 @@ class _TrendPainter extends CustomPainter {
       );
       final tp = TextPainter(
         text: TextSpan(
-          text: v
-              .toStringAsFixed(v.abs() >= 100 ? 0 : 1)
-              .replaceAll('.', decimal),
+          text: axisLabel(v, decimal),
           style: textStyle.copyWith(color: label),
         ),
         textDirection: TextDirection.ltr,

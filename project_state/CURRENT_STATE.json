@@ -3,9 +3,39 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "T002",
+    "contract": "v0.32",
+    "run_id": "T002@v0.32",
+    "slice": "chart rules as pure functions",
+    "goal": "G-63: the trend chart's axis range, reading lines, labels, time positions and range-chip boundaries become pure functions with tests; drawing unchanged.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "20b70aa",
+    "started_at": "2026-11-08T06:20:00Z",
+    "scope": [
+      "axisRange, readingLines, axisLabel, timePositions, rangeStart in domain/trends/trend.dart; rangeDays in the screen",
+      "tests for minimum span, padding, labels, positions and the 29/30/31 and 89/91 day boundaries"
+    ],
+    "out_of_scope": [
+      "marker sizes and colours as drawn (G-63)"
+    ],
+    "acceptance_criteria": [
+      "AC-1 Same chart output (existing trend tests pass)",
+      "AC-2 Each rule tested; mutations on padding, single-point position, 90-day chip and label decimals caught",
+      "AC-3 Gates on a clean tree"
+    ],
+    "completed_steps": [
+      "refactor and tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": "gates",
+    "files_touched": [],
+    "migration_ids": [],
+    "evidence_ids": [],
+    "blocker": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
