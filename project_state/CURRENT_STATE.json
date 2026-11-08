@@ -3,46 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U017",
-    "contract": "v0.32",
-    "run_id": "U017@v0.32",
-    "slice": "less motion: pages open without a transition (G-49 part)",
-    "goal": "A Settings switch, and the device's remove-animations setting, make pages appear without sliding or zooming.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "d4eb742",
-    "started_at": "2026-11-08T17:00:00Z",
-    "scope": [
-      "AppearanceSettings.reduceMotion (saved with the other display choices)",
-      "MotionAwareTransitions page builder for every platform",
-      "Settings switch 'Less motion' / 'Daha az hareket'"
-    ],
-    "out_of_scope": [
-      "display choices inside the vault (the recommended U017 slice, re-prioritised again: no current download is a vault build; now U018)",
-      "ink ripples (Material's own)"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: u017 tests (5); both mutations (ignore the setting, ignore the device flag) caught; 595 PASS"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "blocker": null,
-    "result": null,
-    "finished_at": null,
-    "app_revision": null,
-    "verified_gates": [],
-    "review": null,
-    "depends_on": [
-      "U016"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -53,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U016@v0.32 (2026-11-08, source revision 856a8cac2612)",
+  "last_completed_forge": "U017@v0.32 (2026-11-08, source revision f608bf4d5da3)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -66,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0478",
+      "evidence_id": "EV-TEST-F007-0491",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0479",
+      "evidence_id": "EV-TEST-F007-0492",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0480",
+      "evidence_id": "EV-TEST-F007-0493",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (590 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0481",
+      "gate": "flutter test, TZ=UTC (595 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0494",
       "criterion": "AC-1..AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0482",
+      "evidence_id": "EV-TEST-F007-0495",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0483",
+      "evidence_id": "EV-BUILD-F007-0496",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0484",
+      "evidence_id": "EV-RUNTIME-F007-0497",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0485",
+      "evidence_id": "EV-TEST-F007-0498",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0486",
+      "evidence_id": "EV-BUILD-F007-0499",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0487",
+      "evidence_id": "EV-RUNTIME-F007-0500",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (591 PASS)",
-      "evidence_id": "EV-TEST-F007-0488",
+      "gate": "flutter test with TZ=America/New_York (596 PASS)",
+      "evidence_id": "EV-TEST-F007-0501",
       "criterion": "AC-1..AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0489",
+      "evidence_id": "EV-TEST-F007-0502",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0490",
+      "evidence_id": "EV-TEST-F007-0503",
       "criterion": "AC-4",
-      "source_revision": "856a8cac261200d6f38f244768933c1f047391da",
+      "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
       "result": "PASS"
     }
   ],
@@ -185,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U017",
+    "forge_id": "R004",
     "contract": "v0.32",
-    "run_id": "U017@v0.32",
-    "slice": "display choices kept inside the encrypted vault for vault builds (G-62 rest)",
-    "why": "Staging, production and portable builds forget language, theme and font at every start; once those builds are offered for download this is the next user-visible gap.",
+    "run_id": "R004@v0.32",
+    "slice": "independent review of M001, U016 and U017",
+    "why": "Phone storage is a new place where health data is written; an independent reviewer checks the storage policy (no plaintext beside an executable, nothing before the vault, fail closed) and the native channel before more features.",
     "depends_on": [
-      "U016"
+      "U017"
     ]
   },
-  "updated_at": "2026-11-08T16:40:00Z",
+  "updated_at": "2026-11-08T17:40:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -6514,6 +6477,160 @@
       "review": "single-author slice; names pinned by a test; native builds compiled by CI",
       "depends_on": [
         "M001"
+      ]
+    },
+    "U017@v0.32": {
+      "forge_id": "U017",
+      "contract": "v0.32",
+      "run_id": "U017@v0.32",
+      "slice": "less motion: pages open without a transition (G-49 part)",
+      "goal": "A Settings switch, and the device's remove-animations setting, make pages appear without sliding or zooming.",
+      "status": "DONE",
+      "baseline_commit": "d4eb742",
+      "started_at": "2026-11-08T17:00:00Z",
+      "scope": [
+        "AppearanceSettings.reduceMotion (saved with the other display choices)",
+        "MotionAwareTransitions page builder for every platform",
+        "Settings switch 'Less motion' / 'Daha az hareket'"
+      ],
+      "out_of_scope": [
+        "display choices inside the vault (the recommended U017 slice, re-prioritised again: no current download is a vault build; now U018)",
+        "ink ripples (Material's own)"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: u017 tests (5); both mutations (ignore the setting, ignore the device flag) caught; 595 PASS",
+        "GATES: 13 receipts on clean tree f608bf4, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0503",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/presentation/theme/human_os_theme.dart",
+        "human_health_os/test/widget/u017_less_motion_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0491",
+        "EV-TEST-F007-0492",
+        "EV-TEST-F007-0493",
+        "EV-TEST-F007-0494",
+        "EV-TEST-F007-0495",
+        "EV-BUILD-F007-0496",
+        "EV-RUNTIME-F007-0497",
+        "EV-TEST-F007-0498",
+        "EV-BUILD-F007-0499",
+        "EV-RUNTIME-F007-0500",
+        "EV-TEST-F007-0501",
+        "EV-TEST-F007-0502",
+        "EV-TEST-F007-0503"
+      ],
+      "blocker": null,
+      "result": "U017_COMPLETE",
+      "finished_at": "2026-11-08T17:40:00Z",
+      "app_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0491",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0492",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0493",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (595 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0494",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0495",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0496",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0497",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0498",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0499",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0500",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (596 PASS)",
+          "evidence_id": "EV-TEST-F007-0501",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0502",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0503",
+          "criterion": "AC-4",
+          "source_revision": "f608bf4d5da38d4b08d34dde735a03ca515a8b48",
+          "result": "PASS"
+        }
+      ],
+      "review": "single-author slice; both mutations caught",
+      "depends_on": [
+        "U016"
       ]
     }
   },

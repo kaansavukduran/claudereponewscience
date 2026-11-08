@@ -841,3 +841,7 @@ G-61 the weight card has no number pad yet · no first-run wizard (BRAINSTORM D1
 # FORGE U016@v0.32 — the app is called Human OS everywhere, 2026-11-08 — U016_COMPLETE
 
 **Built** "Human OS" instead of the template name `human_health_os` on the Android launcher, the Windows title bar and file details (FileDescription, ProductName), and the iOS and macOS bundle names; the executable, package id and download names stay as they were, so installers and data folders do not move; a test pins the names (G-20 closed). Re-prioritised from the recommended slice (display choices inside the vault), because every download is a development build and that slice affects no current user; it is now U017. **Tests** 590 PASS in UTC, 591 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm. **Next** U017 display choices inside the vault.
+
+# FORGE U017@v0.32 — less motion, 2026-11-08 — U017_COMPLETE
+
+**Built** Settings → "Less motion: pages open without sliding" (saved with the other display choices); with it on, or with the device's remove-animations setting, every page simply appears instead of sliding or zooming (a page-transition builder for every platform); otherwise the platform's usual transition (G-49 part closed). Re-prioritised again over display choices inside the vault, which no current download uses (now U018). **Tests** 595 PASS in UTC, 596 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm; mutations ignoring the setting or the device flag caught. **Next** R004 independent review of M001, U016, U017.
