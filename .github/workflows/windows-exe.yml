@@ -15,12 +15,12 @@ on:
 
 env:
   FLUTTER_VERSION: "3.47.6"
+  RELEASE_VERSION: "0.1.0-u022"
 
 permissions:
   contents: write
 
-# One publish at a time: an overlapping run waits, so one run never deletes
-# the release another is creating.
+# Serialize publishing on each branch; retain every prior release and tag.
 concurrency:
   group: windows-exe-${{ github.ref }}
   cancel-in-progress: false
@@ -39,19 +39,20 @@ jobs:
         shell: bash
         run: |
           flutter pub get --enforce-lockfile
-          flutter build windows --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=${{ github.sha }}
+          flutter build windows --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0-u022 --dart-define=SOURCE_REVISION=${{ github.sha }}
       - name: Portable ZIP
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
           Copy-Item human_health_os/build/windows/x64/runner/Release dist/Human-OS -Recurse
           Set-Content dist/Human-OS/README.txt "Double-click human_health_os.exe. Development build for testing: do not store real health data you cannot lose."
-          Compress-Archive -Path dist/Human-OS -DestinationPath dist/Human-OS-windows-portable.zip
+          Compress-Archive -Path dist/Human-OS -DestinationPath dist/Human-OS-0.1.0-u022-windows-x64-portable.zip
       - name: Installer
         shell: pwsh
         run: |
           choco install innosetup -y --no-progress
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" packaging/windows/human_os.iss
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=0.1.0-u022 packaging/windows/human_os.iss
+          Move-Item dist/Human-OS-Setup.exe dist/Human-OS-0.1.0-u022-windows-x64-Setup.exe
       - name: Check the executable starts
         shell: pwsh
         run: |
@@ -63,17 +64,15 @@ jobs:
         with:
           name: Human-OS-windows
           path: |
-            dist/Human-OS-windows-portable.zip
-            dist/Human-OS-Setup.exe
+            dist/Human-OS-0.1.0-u022-windows-x64-portable.zip
+            dist/Human-OS-0.1.0-u022-windows-x64-Setup.exe
           if-no-files-found: error
-      # One stable download page: the pre-release "windows-dev" is replaced by
-      # each run (Releases page of the repository).
+      # A new versioned pre-release for every run; never replace old installers.
       - name: Publish the download
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete windows-dev --yes --cleanup-tag || true
-          gh release create windows-dev dist/Human-OS-Setup.exe dist/Human-OS-windows-portable.zip \
+          gh release create "preview-${RELEASE_VERSION}-windows-${{ github.run_id }}-${{ github.run_attempt }}" dist/Human-OS-0.1.0-u022-windows-x64-Setup.exe dist/Human-OS-0.1.0-u022-windows-x64-portable.zip \
             --prerelease --target "${{ github.sha }}" --title "Human OS for Windows (development build)" \
             --notes "Built from ${{ github.sha }}. Human-OS-Setup.exe installs the app (Start menu and an optional desktop shortcut); the portable ZIP runs after unzipping (double-click human_health_os.exe). Development build for testing: data is stored unencrypted under %LOCALAPPDATA%; do not keep real health data you cannot lose. Not signed: Windows SmartScreen may ask you to confirm (More info, Run anyway)."

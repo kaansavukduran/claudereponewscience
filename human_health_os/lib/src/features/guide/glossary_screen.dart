@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import '../../domain/guide/body_guide.dart' show Bilingual;
 import '../../domain/guide/glossary.dart';
 import '../../l10n/strings.dart';
+import '../../app/appearance_scope.dart';
+import '../../domain/settings/appearance.dart';
 
 String _pick(S s, Bilingual b) => s.lang == AppLang.tr ? b.$2 : b.$1;
 
@@ -86,11 +88,14 @@ class _GlossaryScreenState extends State<GlossaryScreen> {
                 overflow: TextOverflow.ellipsis,
               ),
               trailing: const Icon(Icons.chevron_right),
-              onTap: () => Navigator.of(context).push(
-                MaterialPageRoute<void>(
-                  builder: (_) => GlossaryEntryScreen(entry: e),
-                ),
-              ),
+              onTap: () {
+                AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.glossary);
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (_) => GlossaryEntryScreen(entry: e),
+                  ),
+                );
+              },
             ),
           const SizedBox(height: 16),
           Text(

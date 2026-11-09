@@ -1,0 +1,70 @@
+BUILD HUMAN HEALTH OS — WINDOWS PORTABLE / DESKTOP DISTRIBUTION v0.26
+
+Primary user goal:
+Provide a Rufus-like Windows experience:
+download ZIP → extract → double-click HumanHealthOS.exe → use local-only Human Health OS without installing Flutter/Dart/developer tools.
+
+REQUIRED ARTIFACTS
+1. HumanHealthOS-Windows-x64-Portable.zip
+2. HumanHealthOS-Setup-x64.exe
+
+OPTIONAL
+- Windows ARM64 artifact when supported and tested
+- MSIX
+- literal single-file EXE experiment
+
+PORTABLE BUNDLE
+Package the actual Flutter Windows release pieces, including application EXE, required DLLs, data directory and a valid Visual C++ runtime strategy.
+
+END USER MUST NOT NEED
+Flutter SDK, Dart SDK, Visual Studio, source checkout or administrator rights for portable execution.
+
+PORTABLE VAULT
+Persistent health data must be encrypted.
+Do not leave a plaintext health database beside the EXE.
+Keep a genuine portable passphrase/recovery path so the vault can move between PCs.
+
+INSTALLER
+Use a normal per-user installer when practical.
+Provide Start-menu shortcut, optional desktop shortcut, upgrade and uninstall.
+
+Uninstall MUST NOT silently erase health data.
+Application deletion and health-data deletion are separate actions.
+
+OFFLINE CLEAN-MACHINE GATE
+On a clean supported Windows VM without Flutter/Dart/Visual Studio:
+- extract
+- launch
+- create local-only profile
+- save record
+- close/reopen
+- verify record
+- repeat offline
+- move portable folder
+- reopen same vault.
+
+SIGNING
+Production public artifacts need a known code-signing state.
+Timestamp production signatures.
+Compute final checksums after final signed bytes are fixed.
+
+FLUTTER REALITY
+The required UX is extract-and-run, not one physical EXE at all costs.
+Do not create a fragile self-extracting wrapper just to claim "single EXE".
+
+DELIVER
+Actual portable ZIP, actual Setup EXE, checksums, release-state JSON, install/run/update/uninstall docs, clean-machine evidence, signing state, architecture and known limitations.
+
+Never claim an artifact is built/signed/tested unless the file/evidence actually exists.
+
+
+V0.27 WINDOWS RELEASE SUPPLY-CHAIN GATES
+- Record exact Flutter/Dart/MSVC/Windows SDK/installer tool versions.
+- Hash dependency lockfiles and source revision.
+- Generate Windows portable/installer SBOM receipts bound to final artifact subjects.
+- Record unsigned release-build digest separately from final Authenticode/installer-signed digest.
+- Verify the production Windows signature before release.
+- Optionally produce a Sigstore/Cosign bundle as additional attestation, never as a replacement for required Windows signing.
+- Update client must use trusted, expiry-aware, rollback-resistant metadata through TUF or equivalent reviewed framework.
+- STABLE clients must not accept BETA/INTERNAL target metadata.
+- Final release capsule links clean-machine smoke evidence to exact portable ZIP/Setup EXE SHA-256.

@@ -8,6 +8,7 @@ import '../data/local/encrypted_vault.dart';
 import '../features/vault/vault_gate_screen.dart';
 import '../navigation/app_shell.dart';
 import '../presentation/theme/human_os_theme.dart';
+import '../presentation/widgets/interface_scale.dart';
 import 'app_services.dart';
 import 'appearance_scope.dart';
 import 'bootstrap.dart';
@@ -147,15 +148,22 @@ class _HumanOsAppState extends State<HumanOsApp> {
           LanguageChoice.en => const Locale('en'),
         },
         supportedLocales: const [Locale('en'), Locale('tr')],
+        localeListResolutionCallback: (locales, supported) {
+          for (final locale in locales ?? const <Locale>[]) {
+            if (locale.languageCode == 'tr' || locale.languageCode == 'en') {
+              return Locale(locale.languageCode);
+            }
+          }
+          return const Locale('tr');
+        },
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         // The chosen text size multiplies what the system asks for.
         builder: (context, child) {
           final mq = MediaQuery.of(context);
           final factor = a.textFactor;
-          if (factor == 1.0) return child!;
           return MediaQuery(
             data: mq.copyWith(textScaler: _Scaled(mq.textScaler, factor)),
-            child: child!,
+            child: InterfaceScale(percent: a.interfacePercent, child: child!),
           );
         },
         home: services != null

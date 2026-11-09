@@ -18,6 +18,7 @@ import '../settings/settings_screen.dart';
 import 'measurements_card.dart';
 import 'weight_card.dart';
 import 'your_data_card.dart';
+import 'discovery_card.dart';
 
 class TodayScreen extends StatelessWidget {
   const TodayScreen({super.key, required this.services});
@@ -56,6 +57,10 @@ class TodayScreen extends StatelessWidget {
         const SizedBox(height: 28),
         look.measurementsFirst ? weight : measurements,
         const SizedBox(height: 28),
+        if (look.discoveryEnabled) ...[
+          const DiscoveryCard(),
+          const SizedBox(height: 28),
+        ],
         if (show(TodaySection.tools)) ...[
           Semantics(
             container: true,
@@ -69,9 +74,12 @@ class TodayScreen extends StatelessWidget {
             icon: Icons.tune,
             title: s.settingsTitle,
             hint: s.settingsTileHint,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
-            ),
+            onTap: () {
+              AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.settings);
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+              );
+            },
           ),
           const SizedBox(height: 8),
           _ToolTile(
@@ -79,9 +87,12 @@ class TodayScreen extends StatelessWidget {
             icon: Icons.help_outline,
             title: s.howToTitle,
             hint: s.howToTileHint,
-            onTap: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const HowToScreen()),
-            ),
+            onTap: () {
+              AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.howTo);
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const HowToScreen()),
+              );
+            },
           ),
           const SizedBox(height: 8),
           _ToolTile(

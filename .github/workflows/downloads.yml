@@ -1,7 +1,7 @@
 name: downloads
 
-# Builds each platform on its own host and publishes one replaceable
-# pre-release per platform (Releases page): linux-dev, android-dev, macos-dev.
+# Builds each platform on its own host and preserves every pre-release.
+# A unique tag per run keeps old downloads and tags intact.
 # Windows is in windows-exe.yml. Development builds for testing, not signed
 # for any store; iOS needs an Apple developer signing identity (not built).
 on:
@@ -14,13 +14,13 @@ on:
 
 env:
   FLUTTER_VERSION: "3.47.6"
-  DEFINES: --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1
+  RELEASE_VERSION: "0.1.0-u022"
+  DEFINES: --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0-u022
 
 permissions:
   contents: write
 
-# One publish at a time: an overlapping run waits, so one run never deletes
-# the release another is creating.
+# Serialize publishing on each branch. Previous releases are never deleted.
 concurrency:
   group: downloads-${{ github.ref }}
   cancel-in-progress: false
@@ -46,7 +46,7 @@ jobs:
           mkdir -p dist/Human-OS
           cp -r human_health_os/build/linux/x64/release/bundle/. dist/Human-OS/
           printf 'Run ./human_health_os in this folder (or double-click it in your file manager).\nDevelopment build for testing: data is stored unencrypted under ~/.local/share/human-health-os.\n' > dist/Human-OS/README.txt
-          tar -C dist -czf dist/Human-OS-linux-x64.tar.gz Human-OS
+          tar -C dist -czf dist/Human-OS-0.1.0-u022-linux-x64.tar.gz Human-OS
       - name: Check the binary starts
         run: |
           sudo apt-get install -y xvfb
@@ -56,8 +56,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete linux-dev --yes --cleanup-tag || true
-          gh release create linux-dev dist/Human-OS-linux-x64.tar.gz --prerelease --target "${{ github.sha }}" \
+          gh release create "preview-${RELEASE_VERSION}-linux-${{ github.run_id }}-${{ github.run_attempt }}" dist/Human-OS-0.1.0-u022-linux-x64.tar.gz --prerelease --target "${{ github.sha }}" \
             --title "Human OS for Linux (development build)" \
             --notes "Built from ${{ github.sha }} on Ubuntu 22.04. Extract (tar -xzf), then run ./Human-OS/human_health_os. Needs GTK 3. Development build for testing: data is stored unencrypted; do not keep real health data you cannot lose."
 
@@ -78,15 +77,14 @@ jobs:
         run: |
           flutter pub get --enforce-lockfile
           flutter build apk --release $DEFINES --dart-define=SOURCE_REVISION=${{ github.sha }}
-          mkdir -p ../dist && cp build/app/outputs/flutter-apk/app-release.apk ../dist/Human-OS-android.apk
+          mkdir -p ../dist && cp build/app/outputs/flutter-apk/app-release.apk ../dist/Human-OS-0.1.0-u022-android.apk
       - name: Publish
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete android-dev --yes --cleanup-tag || true
-          gh release create android-dev dist/Human-OS-android.apk --prerelease --target "${{ github.sha }}" \
+          gh release create "preview-${RELEASE_VERSION}-android-${{ github.run_id }}-${{ github.run_attempt }}" dist/Human-OS-0.1.0-u022-android.apk --prerelease --target "${{ github.sha }}" \
             --title "Human OS for Android (development build)" \
-            --notes "Built from ${{ github.sha }}. Open this page on the phone, tap Human-OS-android.apk, then allow installing from this source when Android asks. Signed with a development key that changes with every build, not from Google Play: to install a newer build, remove the old one first (its data on the phone is removed with it). Development build for testing: do not keep real health data you cannot lose. Not run on a phone by the build."
+            --notes "Built from ${{ github.sha }}. Open this page on the phone, tap Human-OS-0.1.0-u022-android.apk, then allow installing from this source when Android asks. Signed with a development key that changes with every build, not from Google Play: to install a newer build, remove the old one first (its data on the phone is removed with it). Development build for testing: do not keep real health data you cannot lose. Not run on a phone by the build."
 
   macos:
     runs-on: macos-latest
@@ -102,7 +100,7 @@ jobs:
           flutter pub get --enforce-lockfile
           flutter build macos --release $DEFINES --dart-define=SOURCE_REVISION=${{ github.sha }}
           mkdir -p ../dist
-          ditto -c -k --keepParent "build/macos/Build/Products/Release/human_health_os.app" ../dist/Human-OS-macos.zip
+          ditto -c -k --keepParent "build/macos/Build/Products/Release/human_health_os.app" ../dist/Human-OS-0.1.0-u022-macos.zip
       - name: Check the app starts
         run: |
           app="human_health_os/build/macos/Build/Products/Release/human_health_os.app/Contents/MacOS/human_health_os"
@@ -113,7 +111,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release delete macos-dev --yes --cleanup-tag || true
-          gh release create macos-dev dist/Human-OS-macos.zip --prerelease --target "${{ github.sha }}" \
+          gh release create "preview-${RELEASE_VERSION}-macos-${{ github.run_id }}-${{ github.run_attempt }}" dist/Human-OS-0.1.0-u022-macos.zip --prerelease --target "${{ github.sha }}" \
             --title "Human OS for macOS (development build)" \
             --notes "Built from ${{ github.sha }}. Unzip, move human_health_os.app to Applications, then right-click it and choose Open (the app is not signed or notarized, so macOS asks once). Development build for testing: do not keep real health data you cannot lose."

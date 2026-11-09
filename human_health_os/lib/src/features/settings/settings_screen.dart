@@ -17,7 +17,6 @@ class SettingsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
-    final scheme = Theme.of(context).colorScheme;
     final controller = AppearanceScope.maybeOf(context);
     final a = controller?.value ?? const AppearanceSettings();
     void set(AppearanceSettings next) => controller?.update(next);
@@ -59,6 +58,30 @@ class SettingsScreen extends StatelessWidget {
         key: const ValueKey('screen-settings'),
         padding: const EdgeInsets.all(16),
         children: [
+          Text(s.settingsDeviceScope, style: text.bodySmall),
+          const SizedBox(height: 8),
+          Text(
+            controller?.saveFailed == true
+                ? s.settingsSaveFailed
+                : (controller?.store.persistent ?? false)
+                ? s.settingsSaved
+                : s.settingsSessionOnly,
+            key: const ValueKey('settings-persistence'),
+            style: text.bodySmall,
+          ),
+          const SizedBox(height: 24),
+          Semantics(
+            header: true,
+            child: Text(s.settingsAccessibility, style: text.titleLarge),
+          ),
+          const SizedBox(height: 16),
+          section(
+            s.settingsInterfaceScale,
+            _ScaleControl(
+              percent: a.interfacePercent,
+              onChange: (v) => set(a.copyWith(interfacePercent: v)),
+            ),
+          ),
           section(
             s.settingsLanguage,
             choices(
@@ -228,6 +251,17 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           section(s.settingsToday, _TodayLayout(settings: a, onChange: set)),
+          section(
+            s.discoveryTitle,
+            SwitchListTile(
+              key: const ValueKey('set-discovery'),
+              contentPadding: EdgeInsets.zero,
+              title: Text(s.discoveryEnabled),
+              subtitle: Text(s.discoveryNote),
+              value: a.discoveryEnabled,
+              onChanged: (v) => set(a.copyWith(discoveryEnabled: v)),
+            ),
+          ),
           Align(
             alignment: Alignment.centerLeft,
             child: OutlinedButton(
@@ -241,18 +275,123 @@ class SettingsScreen extends StatelessWidget {
               child: Text(s.firstShowAgain),
             ),
           ),
-          const SizedBox(height: 16),
-          Text(
-            controller?.saveFailed == true
-                ? s.settingsSaveFailed
-                : (controller?.store.persistent ?? false)
-                ? s.settingsSaved
-                : s.settingsSessionOnly,
-            key: const ValueKey('settings-persistence'),
-            style: text.bodySmall?.copyWith(color: scheme.outline),
-          ),
         ],
       ),
+    );
+  }
+}
+
+class _ScaleControl extends StatefulWidget {
+  const _ScaleControl({required this.percent, required this.onChange});
+
+  final int percent;
+  final ValueChanged<int> onChange;
+
+  @override
+  State<_ScaleControl> createState() => _ScaleControlState();
+}
+
+class _ScaleControlState extends State<_ScaleControl> {
+  late final _input = TextEditingController(text: '${widget.percent}');
+  final _sliderFocus = FocusNode();
+  bool _invalid = false;
+
+  @override
+  void didUpdateWidget(_ScaleControl old) {
+    super.didUpdateWidget(old);
+    if (old.percent != widget.percent) {
+      _input.text = '${widget.percent}';
+      _invalid = false;
+    }
+  }
+
+  @override
+  void dispose() {
+    _input.dispose();
+    _sliderFocus.dispose();
+    super.dispose();
+  }
+
+  void _apply() {
+    final n = AppearanceSettings.parseInterfacePercent(_input.text);
+    setState(() => _invalid = n == null);
+    if (n != null) widget.onChange(n);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          s.interfacePercent(widget.percent),
+          key: const ValueKey('interface-scale-value'),
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        Text(s.interfaceScaleNote),
+        Slider(
+          key: const ValueKey('set-interface-slider'),
+          focusNode: _sliderFocus,
+          min: 80,
+          max: 200,
+          divisions: 24,
+          // The exact input may fall between the slider's five-point stops.
+          value: widget.percent.toDouble(),
+          label: s.interfacePercent(widget.percent),
+          semanticFormatterCallback: (v) => s.interfacePercent(v.round()),
+          onChanged: (v) => widget.onChange(v.round()),
+        ),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final n in [80, 100, 125, 150, 175, 200])
+              ChoiceChip(
+                key: ValueKey('set-interface-$n'),
+                label: Text(s.interfacePercent(n)),
+                selected: widget.percent == n,
+                onSelected: (_) => widget.onChange(n),
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
+        TextField(
+          key: const ValueKey('set-interface-input'),
+          controller: _input,
+          keyboardType: TextInputType.number,
+          textInputAction: TextInputAction.done,
+          decoration: InputDecoration(
+            labelText: s.interfaceExact,
+            suffixText: '%',
+            errorText: _invalid ? s.interfaceInvalid : null,
+          ),
+          onSubmitted: (_) => _apply(),
+        ),
+        const SizedBox(height: 8),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            FilledButton(
+              key: const ValueKey('set-interface-apply'),
+              onPressed: _apply,
+              child: Text(s.interfaceApply),
+            ),
+            OutlinedButton(
+              key: const ValueKey('set-interface-reset'),
+              onPressed: () {
+                setState(() {
+                  _input.text = '100';
+                  _invalid = false;
+                });
+                widget.onChange(100);
+              },
+              child: Text(s.interfaceReset),
+            ),
+          ],
+        ),
+      ],
     );
   }
 }

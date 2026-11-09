@@ -68,3 +68,6 @@ Repo-local work, in a separate namespace: R1 = "v0.25 connected TS implementatio
 
 ## G004 ClinVar comparison (2026-11-08)
 - ClinVar (NCBI, ncbi.nlm.nih.gov/clinvar; file variant_summary.txt.gz from ftp.ncbi.nlm.nih.gov/pub/clinvar/tab_delimited/): a US government work, freely usable with a request to cite ClinVar. Not bundled: the person downloads the file once and loads it; it is read as a stream (gzip decoded on the fly on desktop and phone builds; the browser build asks for the unpacked file), filtered by the rsIDs in their raw DNA file, and kept only while the Genetics page is open. Columns are found by their header names. ClinVar's label, review status and conditions are shown verbatim as ClinVar's; no prediction (D-024).
+
+## Owner's Codex continuation, 2026-11-09
+The owner supplied v0.27/v0.29 reference texts, archived with hashes in docs/handoff/user-2026-11-09/README.md. They do not replace the newer v0.32 implementation checkpoint. The PDF renders the same v0.29 Markdown. The explicit request prioritises EN/TR, user-friendly appearance/accessibility, whole-interface scaling and optional gamification (U022). Repository id 1407814610 was renamed to kaansavukduran/human-os; source identity and history were verified before changing the remote URL. R007 remains pending.

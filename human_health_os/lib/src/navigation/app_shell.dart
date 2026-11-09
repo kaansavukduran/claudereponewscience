@@ -77,9 +77,12 @@ class _AppShellState extends State<AppShell> {
             key: const ValueKey('open-settings'),
             tooltip: s.settingsTitle,
             icon: const Icon(Icons.tune),
-            onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
-            ),
+            onPressed: () {
+              AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.settings);
+              Navigator.of(context).push(
+                MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+              );
+            },
           ),
         ],
       ),

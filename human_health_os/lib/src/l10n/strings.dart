@@ -727,6 +727,46 @@ class S {
   String get firstShowAgain =>
       _t('Show the introduction again', 'Tanıtımı yeniden göster');
   String get settingsTitle => _t('Settings', 'Ayarlar');
+  String get settingsAccessibility =>
+      _t('Appearance and accessibility', 'Görünüm ve erişilebilirlik');
+  String get settingsDeviceScope => _t(
+    'These choices apply on this device, not across an account.',
+    'Bu tercihler bu cihazda geçerlidir, hesabın tamamına uygulanmaz.',
+  );
+  String get settingsInterfaceScale => _t('Interface scale', 'Arayüz ölçeği');
+  String interfacePercent(int n) => _t('$n%', '%$n');
+  String get interfaceScaleNote => _t(
+    '80–200%. Text, buttons, icons and spacing scale together. The slider moves in steps of 5. On a narrow screen, scroll sideways if needed. Text size below is independent.',
+    '%80–%200. Yazılar, düğmeler, simgeler ve boşluklar birlikte ölçeklenir. Kaydırıcı 5 puanlık adımlarla ilerler. Dar ekranda gerekirse yana kaydır. Aşağıdaki yazı boyutu ayarı bağımsızdır.',
+  );
+  String get interfaceExact =>
+      _t('Exact scale (80–200)', 'Kesin ölçek (80–200)');
+  String get interfaceInvalid => _t(
+    'Enter a whole number from 80 to 200, for example 135.',
+    '80 ile 200 arasında bir tam sayı yaz, örneğin 135.',
+  );
+  String get interfaceApply => _t('Apply scale', 'Ölçeği uygula');
+  String get interfaceReset => _t('Reset scale to 100%', 'Ölçeği %100 yap');
+  String get discoveryTitle => _t('Explore Human OS', 'Human OS keşfi');
+  String get discoveryEnabled =>
+      _t('Show discovery progress', 'Keşif ilerlemesini göster');
+  String get discoveryNote => _t(
+    'Optional: counts opening these three tools once. No health values or daily streaks are scored. Turn off here or in Settings; your records and progress stay.',
+    'İsteğe bağlı: bu üç aracı birer kez açmanı sayar. Sağlık değerlerine veya günlük serilere puan verilmez. Buradan ya da Ayarlar’dan kapatabilirsin; kayıtların ve ilerlemen korunur.',
+  );
+  String discoveryCount(int n) =>
+      _t('$n / 3 tools explored', '$n / 3 araç keşfedildi');
+  String discoveryStep(DiscoveryStep step) => switch (step) {
+    DiscoveryStep.settings => _t('Open Settings', 'Ayarları aç'),
+    DiscoveryStep.glossary => _t(
+      'Open a glossary entry',
+      'Bir sözlük maddesini aç',
+    ),
+    DiscoveryStep.howTo => _t('Open the usage guide', 'Kullanım rehberini aç'),
+  };
+  String get discoveryVisited => _t('Opened', 'Açıldı');
+  String get discoveryHide =>
+      _t('Turn off discovery progress', 'Keşif ilerlemesini kapat');
   String get settingsTileHint => _t(
     'Language (Dil), light or dark, colour, text size',
     'Dil (Language), açık ya da koyu, renk, yazı boyutu',

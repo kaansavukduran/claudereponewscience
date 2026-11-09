@@ -32,6 +32,9 @@ enum Density { comfortable, compact }
 /// (OpenDyslexic). Both are bundled (D-025).
 enum FontChoice { system, legible, dyslexic }
 
+/// Explicitly visited tools, never inferred reading or health outcomes.
+enum DiscoveryStep { settings, glossary, howTo }
+
 /// Today sections a person may hide. The weight and measurement areas are
 /// always there (they hold the person's numbers); Settings stays one click
 /// away in the top bar whatever is hidden.
@@ -58,7 +61,26 @@ class AppearanceSettings {
     this.dateOrder = DateOrder.iso,
     this.clock = ClockStyle.h24,
     this.firstRunDone = false,
+    this.interfacePercent = 100,
+    this.discoveryEnabled = true,
+    this.discovered = const {},
   });
+
+  /// Whole-interface scale, independent of text-only and device scaling.
+  final int interfacePercent;
+  final bool discoveryEnabled;
+  final Set<DiscoveryStep> discovered;
+
+  /// Invalid persisted or typed values never replace a valid preference.
+  static int? parseInterfacePercent(String input) {
+    final n = int.tryParse(input.trim());
+    return n != null && n >= 80 && n <= 200 ? n : null;
+  }
+
+  AppearanceSettings visit(DiscoveryStep step) =>
+      !discoveryEnabled || discovered.contains(step)
+      ? this
+      : copyWith(discovered: {...discovered, step});
 
   final LanguageChoice language;
   final ThemeChoice theme;
@@ -130,6 +152,9 @@ class AppearanceSettings {
 
   /// The Today layout back to the default; language and look are kept.
   AppearanceSettings resetToday() => AppearanceSettings(
+    interfacePercent: interfacePercent,
+    discoveryEnabled: discoveryEnabled,
+    discovered: discovered,
     language: language,
     theme: theme,
     accent: accent,
@@ -154,6 +179,9 @@ class AppearanceSettings {
   };
 
   AppearanceSettings copyWith({
+    int? interfacePercent,
+    bool? discoveryEnabled,
+    Set<DiscoveryStep>? discovered,
     LanguageChoice? language,
     ThemeChoice? theme,
     AccentChoice? accent,
@@ -174,6 +202,9 @@ class AppearanceSettings {
     ClockStyle? clock,
     bool? firstRunDone,
   }) => AppearanceSettings(
+    interfacePercent: interfacePercent ?? this.interfacePercent,
+    discoveryEnabled: discoveryEnabled ?? this.discoveryEnabled,
+    discovered: discovered ?? this.discovered,
     language: language ?? this.language,
     theme: theme ?? this.theme,
     accent: accent ?? this.accent,
@@ -198,6 +229,9 @@ class AppearanceSettings {
   Map<String, Object?> toJson() => {
     'format': 'hhos.appearance',
     'version': 1,
+    'interfacePercent': interfacePercent,
+    'discoveryEnabled': discoveryEnabled,
+    'discovered': [for (final step in discovered) step.name]..sort(),
     'language': language.name,
     'theme': theme.name,
     'accent': accent.name,
@@ -238,6 +272,14 @@ class AppearanceSettings {
         : const [];
 
     return AppearanceSettings(
+      interfacePercent:
+          parseInterfacePercent('${json['interfacePercent']}') ?? 100,
+      discoveryEnabled: json['discoveryEnabled'] != false,
+      discovered: {
+        for (final name in strings(json['discovered']))
+          for (final step in DiscoveryStep.values)
+            if (step.name == name) step,
+      },
       language: pick(
         LanguageChoice.values,
         json['language'],
@@ -279,6 +321,9 @@ class AppearanceSettings {
   @override
   bool operator ==(Object other) =>
       other is AppearanceSettings &&
+      other.interfacePercent == interfacePercent &&
+      other.discoveryEnabled == discoveryEnabled &&
+      _sameSet(other.discovered, discovered) &&
       other.language == language &&
       other.theme == theme &&
       other.accent == accent &&
@@ -301,6 +346,9 @@ class AppearanceSettings {
 
   @override
   int get hashCode => Object.hash(
+    interfacePercent,
+    discoveryEnabled,
+    discovered.length,
     language,
     theme,
     accent,

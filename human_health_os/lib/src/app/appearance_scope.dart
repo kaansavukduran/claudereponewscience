@@ -16,6 +16,8 @@ class AppearanceController extends ValueNotifier<AppearanceSettings> {
   /// True when the last save failed (shown on the Settings page).
   bool saveFailed = false;
 
+  Future<void> visit(DiscoveryStep step) => update(value.visit(step));
+
   /// Switches to the preferences sealed in a just-opened vault (U018): saved
   /// choices are applied; with none saved yet, the choices of this session
   /// (for example from the introduction) are saved; a file that cannot be
