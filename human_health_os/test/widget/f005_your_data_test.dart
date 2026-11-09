@@ -138,6 +138,22 @@ Future<void> tapKey(WidgetTester tester, String key) async {
   await settle(tester);
 }
 
+/// Exercise real scrolling rather than assuming every Today card stays in
+/// the lazy list's cache when the page gains another optional section.
+Future<void> reveal(WidgetTester tester, String key, double delta) async {
+  await tester.scrollUntilVisible(
+    find.byKey(ValueKey(key)),
+    delta,
+    scrollable: find
+        .descendant(
+          of: find.byKey(const ValueKey('screen-today')),
+          matching: find.byType(Scrollable),
+        )
+        .first,
+  );
+  await settle(tester);
+}
+
 String message(WidgetTester tester) =>
     tester.widget<Text>(find.byKey(const ValueKey('data-message'))).data!;
 
@@ -253,12 +269,14 @@ void main() {
     expect(files.vaultText, other.text);
     expect(files.kept, isNotNull, reason: 'the replaced vault is kept');
 
+    await reveal(tester, 'weight-input', -500);
     await tester.enterText(find.byKey(const ValueKey('weight-input')), '70');
     await tapKey(tester, 'weight-save');
     expect(
       find.textContaining('a restore ran in this session. Restart Human OS'),
       findsOneWidget,
     );
+    await reveal(tester, 'create-backup', 500);
     expect(
       tester
           .widget<FilledButton>(find.byKey(const ValueKey('create-backup')))
@@ -375,6 +393,7 @@ void main() {
       isNull,
       reason: 'paused until a restart',
     );
+    await reveal(tester, 'weight-input', -500);
     await tester.enterText(find.byKey(const ValueKey('weight-input')), '70');
     await tapKey(tester, 'weight-save');
     expect(
