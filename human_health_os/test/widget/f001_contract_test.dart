@@ -246,11 +246,21 @@ void main() {
       () => Future<void>.delayed(const Duration(milliseconds: 50)),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Saving off'), findsOneWidget);
     expect(
       find.textContaining('keep this session in memory only'),
       findsOneWidget,
     );
+    await tester.scrollUntilVisible(
+      find.text('Saving off'),
+      500,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('screen-today')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    expect(find.text('Saving off'), findsOneWidget);
   });
 
   test('builds with an encrypted vault never start without the gate', () async {

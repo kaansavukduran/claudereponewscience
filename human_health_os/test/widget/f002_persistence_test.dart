@@ -232,6 +232,16 @@ void main() {
       find.textContaining('daha yeni bir sürümüyle yazılmış'),
       findsOneWidget,
     );
+    await tester.scrollUntilVisible(
+      find.text('Kayıt kapalı'),
+      500,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('screen-today')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
     expect(find.text('Kayıt kapalı'), findsOneWidget);
   });
 
