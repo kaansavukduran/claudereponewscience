@@ -57,10 +57,6 @@ class TodayScreen extends StatelessWidget {
         const SizedBox(height: 28),
         look.measurementsFirst ? weight : measurements,
         const SizedBox(height: 28),
-        if (look.discoveryEnabled) ...[
-          const DiscoveryCard(),
-          const SizedBox(height: 28),
-        ],
         if (show(TodaySection.tools)) ...[
           Semantics(
             container: true,
@@ -156,6 +152,10 @@ class TodayScreen extends StatelessWidget {
         ],
         if (show(TodaySection.yourData)) ...[
           YourDataCard(services: services),
+          const SizedBox(height: 28),
+        ],
+        if (look.discoveryEnabled) ...[
+          const DiscoveryCard(),
           const SizedBox(height: 28),
         ],
         if (show(TodaySection.buildFacts)) ...[
