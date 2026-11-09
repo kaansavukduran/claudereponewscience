@@ -21,29 +21,41 @@ class InterfaceScale extends StatelessWidget {
           math.max(320, constraints.maxWidth / factor),
           constraints.maxHeight / factor,
         );
-        return SingleChildScrollView(
+        return Scrollable(
           key: const ValueKey('interface-horizontal-scroll'),
-          scrollDirection: Axis.horizontal,
-          child: SizedBox(
-            width: size.width * factor,
-            height: constraints.maxHeight,
-            child: FittedBox(
-              fit: BoxFit.fill,
-              child: SizedBox.fromSize(
-                size: size,
-                child: MediaQuery(
-                  data: mq.copyWith(
-                    size: size,
-                    devicePixelRatio: mq.devicePixelRatio * factor,
-                    padding: mq.padding / factor,
-                    viewPadding: mq.viewPadding / factor,
-                    viewInsets: mq.viewInsets / factor,
-                    systemGestureInsets: mq.systemGestureInsets / factor,
+          axisDirection: AxisDirection.right,
+          // Route-level semantics remain intact; omit only the extra outer
+          // scrolling boundary. Keyboard focus can still reveal controls
+          // through this viewport, and touch/trackpad users can pan it.
+          excludeFromSemantics: true,
+          viewportBuilder: (context, offset) => Viewport(
+            axisDirection: AxisDirection.right,
+            offset: offset,
+            slivers: [
+              SliverToBoxAdapter(
+                child: SizedBox(
+                  width: size.width * factor,
+                  height: constraints.maxHeight,
+                  child: FittedBox(
+                    fit: BoxFit.fill,
+                    child: SizedBox.fromSize(
+                      size: size,
+                      child: MediaQuery(
+                        data: mq.copyWith(
+                          size: size,
+                          devicePixelRatio: mq.devicePixelRatio * factor,
+                          padding: mq.padding / factor,
+                          viewPadding: mq.viewPadding / factor,
+                          viewInsets: mq.viewInsets / factor,
+                          systemGestureInsets: mq.systemGestureInsets / factor,
+                        ),
+                        child: child,
+                      ),
+                    ),
                   ),
-                  child: child,
                 ),
               ),
-            ),
+            ],
           ),
         );
       },

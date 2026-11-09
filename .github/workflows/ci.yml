@@ -62,6 +62,7 @@ jobs:
         with:
           node-version: 22
       - run: cd .. && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium && EXPECT_FLUTTER_VERSION=$EXPECTED_FLUTTER node tools/flutter_web_smoke.mjs
+      - run: cd .. && node tools/flutter_appearance_smoke.mjs
 
   flutter-android:
     runs-on: ubuntu-latest

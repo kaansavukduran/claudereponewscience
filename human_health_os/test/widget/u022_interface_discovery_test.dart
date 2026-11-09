@@ -102,6 +102,21 @@ void main() {
     },
   );
 
+  testWidgets('changing scale preserves an unsaved measurement draft', (
+    tester,
+  ) async {
+    final c = await launchWith(tester);
+    await tester.enterText(keyed('weight-input'), '72.4');
+    await c.update(c.value.copyWith(interfacePercent: 135));
+    await settle(tester);
+    expect(
+      tester.widget<TextField>(keyed('weight-input')).controller!.text,
+      '72.4',
+    );
+    await tapKey(tester, 'weight-save');
+    expect(find.text('72.4 kg'), findsWidgets);
+  });
+
   testWidgets('invalid exact entry leaves active scale and shows recovery', (
     tester,
   ) async {
@@ -173,6 +188,7 @@ void main() {
       expect(MediaQuery.sizeOf(ctx).width, 320);
       expect(c.value.interfacePercent, 200);
       await tester.ensureVisible(keyed('open-settings'));
+      await settle(tester);
       await tester.tap(keyed('open-settings'));
       await settle(tester);
       expect(keyed('screen-settings'), findsOneWidget);
