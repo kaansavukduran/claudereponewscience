@@ -1,0 +1,56 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-U022-0017",
+  "kind": "TEST",
+  "forge_id": "U022@v0.32",
+  "source_revision": "5ef84d30079876c7c7f9f823bac1594000fb71e1",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "pnpm test",
+  "argv": [
+    "pnpm",
+    "test"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-09T11:44:26.442Z",
+  "finished_at": "2026-11-09T11:44:34.319Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "4f43dafa3b56d7d6b6df25edf6fcac47da21d7e5c8947faa13c9fbe342612e75",
+  "log_lines": 37,
+  "log_tail": [
+    "services/api test:  Test Files  1 passed (1)",
+    "services/api test:       Tests  13 passed (13)",
+    "services/api test:    Start at  11:44:31",
+    "services/api test:    Duration  1.32s (transform 62%, tests 24%, import 13%, worker 1%)",
+    "services/api test: Done",
+    "apps/client test$ vitest run",
+    "apps/client test:  RUN  v5.0.3 /workspace/work/claudereponewscience/apps/client",
+    "apps/client test:  Test Files  1 passed (1)",
+    "apps/client test:       Tests  5 passed (5)",
+    "apps/client test:    Start at  11:44:33",
+    "apps/client test:    Duration  1.03s (transform 52%, tests 35%, import 13%, worker 1%)",
+    "apps/client test: Done"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "packages",
+    "apps",
+    "services",
+    "pnpm-lock.yaml"
+  ]
+}

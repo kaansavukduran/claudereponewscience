@@ -1,0 +1,60 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-U022-0012",
+  "kind": "RUNTIME",
+  "forge_id": "U022@v0.32",
+  "source_revision": "5ef84d30079876c7c7f9f823bac1594000fb71e1",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "node tools/flutter_appearance_smoke.mjs human_health_os/build/web reports/runtime/u022-final",
+  "argv": [
+    "node",
+    "tools/flutter_appearance_smoke.mjs",
+    "human_health_os/build/web",
+    "reports/runtime/u022-final"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-09T11:45:08.290Z",
+  "finished_at": "2026-11-09T11:45:48.048Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "52c756ad9ce1dc07459f2f74c0501d3999d20af56abc83ba87d747fe2ac2affd",
+  "log_lines": 24,
+  "log_tail": [
+    "PASS tr-TR: scale reset usable at 200 ",
+    "PASS tr-TR: font and contrast controls usable ",
+    "PASS tr-TR: no page or console errors ",
+    "PASS tr-TR: no external requests ",
+    "PASS de-DE: first language ",
+    "PASS de-DE: session persistence explained ",
+    "PASS de-DE: exact 135 applied and route preserved ",
+    "PASS de-DE: 200 remains selected on narrow screen ",
+    "PASS de-DE: scale reset usable at 200 ",
+    "PASS de-DE: font and contrast controls usable ",
+    "PASS de-DE: no page or console errors ",
+    "PASS de-DE: no external requests "
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/flutter_appearance_smoke.mjs"
+  ],
+  "target": "web",
+  "arch": "js",
+  "profile": "development",
+  "signing": "NOT_APPLICABLE"
+}

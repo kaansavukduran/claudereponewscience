@@ -1,0 +1,58 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-U022-0004",
+  "kind": "TEST",
+  "forge_id": "U022@v0.32",
+  "source_revision": "9c62fb4b39af9093004dc8c346260c72fa7115cd",
+  "working_tree_dirty": true,
+  "dirty_source_paths": [
+    "tools/flutter_appearance_smoke.mjs"
+  ],
+  "command": "flutter test --no-pub --reporter expanded",
+  "argv": [
+    "flutter",
+    "test",
+    "--no-pub",
+    "--reporter",
+    "expanded"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-09T11:36:01.138Z",
+  "finished_at": "2026-11-09T11:39:28.008Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "d87e9391991d6a81b3e2c345295d8fc77bcb2c4072a1b8d980be0159af52cd31",
+  "log_lines": 696,
+  "log_tail": [
+    "03:22 +625 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/measurement_format_test.dart: saved time shown only when it differs by more than a minute the caption names the measured time first, the save time second",
+    "03:22 +626 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/measurement_format_test.dart: the tiles come in a fixed order, seven of them",
+    "03:22 +627 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/measurement_format_test.dart: spoken labels say measured and saved, and the unit in words",
+    "03:22 +628 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/theme_contrast_test.dart: dark: field edges, text and accent have enough contrast",
+    "03:22 +629 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/theme_contrast_test.dart: light: field edges, text and accent have enough contrast",
+    "03:23 +630 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/app_config_test.dart: APP_ENV fails closed: unknown never becomes production or development",
+    "03:23 +631 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/app_config_test.dart: absent build identity reads \"unknown\", never a guessed value",
+    "03:23 +632 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/app_config_test.dart: memory-only storage: \"saving off\" where an adapter exists, \"not built yet\" where none does",
+    "03:23 +633 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/app_config_test.dart: default (no --dart-define) is development",
+    "03:23 +634 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/app_config_test.dart: FORGE 001 claims no implemented capability on any platform",
+    "03:23 +635 ~1: /workspace/work/claudereponewscience/human_health_os/test/unit/app_config_test.dart: health platform adapters only appear on their own platform",
+    "03:23 +636 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

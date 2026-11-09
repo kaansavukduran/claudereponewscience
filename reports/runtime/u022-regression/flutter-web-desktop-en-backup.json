@@ -1,0 +1,24 @@
+{
+  "manifest": {
+    "format": "hhos-backup",
+    "format_version": 1,
+    "created_at": "2026-11-09T11:47:14.503Z",
+    "source_app_version": "0.1.0-u022",
+    "source_revision": "5ef84d3",
+    "vault_id": "c273f644-377e-4657-99fa-337430c063d7",
+    "vault_format_version": 1,
+    "record_schema_versions": [
+      3,
+      4,
+      5
+    ],
+    "profile_count": 1,
+    "record_count": 4,
+    "skipped_entries": 0,
+    "payload_sha256": "5cec75c5943ec58850e29ebdedc8b36d191cfdc51a07f936af5a55f7755d87dd",
+    "payload_bytes": 2411,
+    "encryption": "none-dev-only",
+    "attachments": []
+  },
+  "payload": "{\"format\":\"hhos-vault-log\",\"format_version\":1,\"vault_id\":\"c273f644-377e-4657-99fa-337430c063d7\",\"created_at\":\"2026-11-09T11:45:12.761Z\",\"encryption\":\"none-dev-only\"}\n{\"op\":\"profile.put\",\"data\":{\"schema_version\":1,\"id\":\"d623a482-bc2a-4c47-bf5d-293e313ce84e\",\"type\":\"self\",\"created_at\":\"2026-11-09T11:45:12.762Z\",\"display_name\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"881edec2-17bf-4c4b-b9ca-84564152a724\",\"profile_id\":\"d623a482-bc2a-4c47-bf5d-293e313ce84e\",\"kind\":\"body.weight\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":78.4,\"unit\":\"kg\"},\"original_text\":\"78,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-11-09T11:45:20.783Z\",\"recorded_at\":\"2026-11-09T11:45:20.783Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":3,\"id\":\"33ef24bb-9936-40e9-9e6a-b77ec26365af\",\"profile_id\":\"d623a482-bc2a-4c47-bf5d-293e313ce84e\",\"kind\":\"lab.result\",\"state\":\"reported\",\"value_status\":\"present\",\"quantity\":{\"value\":5.4,\"unit\":\"%\"},\"original_text\":\"5,4\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-11-09T00:00:00.000Z\",\"recorded_at\":\"2026-11-09T11:45:40.895Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":{\"analyte_label\":\"HbA1c\",\"specimen\":null,\"laboratory\":null,\"source_flag\":\"H\",\"reference_text\":\"4.0 - 6.0\"}}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":4,\"id\":\"f353b4f7-0653-4c21-8c9b-93c1fcb45e4e\",\"profile_id\":\"d623a482-bc2a-4c47-bf5d-293e313ce84e\",\"kind\":\"vital.blood_pressure\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":null,\"original_text\":null,\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-11-09T11:45:50.325Z\",\"recorded_at\":\"2026-11-09T11:45:50.325Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null,\"context\":null,\"details\":{\"type\":\"blood_pressure\",\"systolic\":118,\"diastolic\":76,\"unit\":\"mmHg\",\"systolic_text\":\"118\",\"diastolic_text\":\"76\"}}}\n{\"op\":\"record.append\",\"data\":{\"schema_version\":5,\"id\":\"e8f621c8-0965-44d8-b989-e0ef8bbbf0d2\",\"profile_id\":\"d623a482-bc2a-4c47-bf5d-293e313ce84e\",\"kind\":\"body.height\",\"state\":\"observed\",\"value_status\":\"present\",\"quantity\":{\"value\":172.5,\"unit\":\"cm\"},\"original_text\":\"172,5\",\"provenance\":{\"kind\":\"manual\"},\"observed_at\":\"2026-10-01T08:00:00.000Z\",\"recorded_at\":\"2026-11-09T11:45:55.640Z\",\"supersedes_id\":null,\"amend_reason\":null,\"deleted_at\":null,\"lab\":null,\"context\":null,\"details\":null}}\n"
+}

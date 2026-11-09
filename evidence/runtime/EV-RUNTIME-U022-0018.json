@@ -1,0 +1,60 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-RUNTIME-U022-0018",
+  "kind": "RUNTIME",
+  "forge_id": "U022@v0.32",
+  "source_revision": "5ef84d30079876c7c7f9f823bac1594000fb71e1",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "node tools/flutter_web_smoke.mjs human_health_os/build/web reports/runtime/u022-regression",
+  "argv": [
+    "node",
+    "tools/flutter_web_smoke.mjs",
+    "human_health_os/build/web",
+    "reports/runtime/u022-regression"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-09T11:45:08.313Z",
+  "finished_at": "2026-11-09T11:49:08.810Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "abc2b972541863534fd67b1aea2fc29b5b36b7024c052bc4f9f05cd638e980c6",
+  "log_lines": 89,
+  "log_tail": [
+    "PASS  phone-en: no failed requests",
+    "PASS  phone-tr: no introduction forced in the browser",
+    "PASS  phone-tr: app starts and shows Bug\u00fcn",
+    "PASS  phone-tr: development profile banner visible",
+    "PASS  phone-tr: navigates to Zaman \u00e7izelgesi",
+    "PASS  phone-tr: Timeline principle visible",
+    "PASS  phone-tr: Labs principle visible",
+    "PASS  phone-tr: navigates to Lab",
+    "PASS  phone-tr: no external network requests",
+    "PASS  phone-tr: no page errors",
+    "PASS  phone-tr: no console errors",
+    "PASS  phone-tr: no failed requests"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os",
+    "tools/flutter_web_smoke.mjs"
+  ],
+  "target": "web",
+  "arch": "js",
+  "profile": "development",
+  "signing": "NOT_APPLICABLE"
+}

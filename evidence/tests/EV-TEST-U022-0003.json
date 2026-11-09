@@ -1,0 +1,59 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-U022-0003",
+  "kind": "TEST",
+  "forge_id": "U022@v0.32",
+  "source_revision": "7337867abe9c71f3634418d3d019e1b954eb05a0",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter test --no-pub test/widget/f002_persistence_test.dart test/widget/f005_your_data_test.dart test/widget/u022_interface_discovery_test.dart --reporter expanded",
+  "argv": [
+    "flutter",
+    "test",
+    "--no-pub",
+    "test/widget/f002_persistence_test.dart",
+    "test/widget/f005_your_data_test.dart",
+    "test/widget/u022_interface_discovery_test.dart",
+    "--reporter",
+    "expanded"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-09T11:34:10.349Z",
+  "finished_at": "2026-11-09T11:34:37.682Z",
+  "exit_code": 1,
+  "expected_exit_code": 0,
+  "result": "FAIL",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "398279c9a51616389495b59bf41bd2849c0a2f5991a62ec5180746962e972a54",
+  "log_lines": 57,
+  "log_tail": [
+    "00:11 +16 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: exact 135 applies to whole UI, route stays open; reset only scale",
+    "00:12 +17 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: exact 135 applies to whole UI, route stays open; reset only scale",
+    "00:13 +18 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: exact 135 applies to whole UI, route stays open; reset only scale",
+    "00:13 +19 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: invalid exact entry leaves active scale and shows recovery",
+    "00:15 +20 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: slider has five-point keyboard steps and six working presets",
+    "00:20 +21 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: unsupported device locale defaults to Turkish; explicit English wins",
+    "00:20 +22 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: narrow 200% keeps scale, supports panning and both languages",
+    "00:22 +23 -1: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: only actual tool visits count; disabling preserves records and progress",
+    "00:24 +24 -1: Some tests failed.",
+    "",
+    "Failing tests:",
+    "  /workspace/work/claudereponewscience/human_health_os/test/widget/f002_persistence_test.dart: a vault written by a newer app: an update hint in Turkish"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

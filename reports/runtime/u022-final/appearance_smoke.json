@@ -1,0 +1,124 @@
+{
+  "checks": [
+    {
+      "name": "en-US: first language",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: session persistence explained",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: exact 135 applied and route preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: 200 remains selected on narrow screen",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: scale reset usable at 200",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: font and contrast controls usable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: no page or console errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "en-US: no external requests",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: first language",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: session persistence explained",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: exact 135 applied and route preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: 200 remains selected on narrow screen",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: scale reset usable at 200",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: font and contrast controls usable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: no page or console errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "tr-TR: no external requests",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: first language",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: session persistence explained",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: exact 135 applied and route preserved",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: 200 remains selected on narrow screen",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: scale reset usable at 200",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: font and contrast controls usable",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: no page or console errors",
+      "ok": true,
+      "detail": ""
+    },
+    {
+      "name": "de-DE: no external requests",
+      "ok": true,
+      "detail": ""
+    }
+  ]
+}

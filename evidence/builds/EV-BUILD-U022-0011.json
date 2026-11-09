@@ -1,0 +1,74 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-BUILD-U022-0011",
+  "kind": "BUILD",
+  "forge_id": "U022@v0.32",
+  "source_revision": "5ef84d30079876c7c7f9f823bac1594000fb71e1",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0-u022 --dart-define=SOURCE_REVISION=5ef84d3",
+  "argv": [
+    "flutter",
+    "build",
+    "web",
+    "--release",
+    "--no-web-resources-cdn",
+    "--dart-define=APP_ENV=development",
+    "--dart-define=APP_VERSION=0.1.0-u022",
+    "--dart-define=SOURCE_REVISION=5ef84d3"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-09T11:43:35.091Z",
+  "finished_at": "2026-11-09T11:44:39.924Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "6e822b545e37b369be004bc3299e1751dd25624f178534d8f9174ac21e865028",
+  "log_lines": 22,
+  "log_tail": [
+    "  web 1.1.1 (1.1.2 available)",
+    "  xml 7.0.1 (7.1.0 available)",
+    "Got dependencies!",
+    "10 packages have newer versions incompatible with dependency constraints.",
+    "Try `flutter pub outdated` for more information.",
+    "Compiling lib/main.dart for the Web...                          ",
+    "Wasm dry run succeeded. Consider building and testing your application with the `--wasm` flag. See docs for more info: https://docs.flutter.dev/platform-integration/web/wasm",
+    "Use --no-wasm-dry-run to disable these warnings.",
+    "Expected to find fonts for (MaterialIcons, packages/cupertino_icons/CupertinoIcons), but found (MaterialIcons). This usually means you are referring to font families in an IconData class but not including them in the assets section of your ",
+    "Font asset \"MaterialIcons-Regular.otf\" was tree-shaken, reducing it from 1645184 to 13808 bytes (99.2% reduction). Tree-shaking can be disabled by providing the --no-tree-shake-icons flag when building your app.",
+    "Compiling lib/main.dart for the Web...                             63.9s",
+    "\u2713 Built build/web"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ],
+  "target": "web",
+  "arch": "js",
+  "profile": "development",
+  "signing": "NOT_APPLICABLE",
+  "smoke_evidence": "EV-RUNTIME-U022-0012",
+  "artifacts": [
+    {
+      "path": "/workspace/work/claudereponewscience/human_health_os/build/web",
+      "type": "directory",
+      "files": 43,
+      "bytes": 43562782,
+      "sha256": "6ae4b87728657528dc27541a8994ca5a7e2e415a93d32c2817f5b684d1d50a74",
+      "digest_method": "sha256 of sorted '<relpath> <sha256>' lines"
+    }
+  ]
+}

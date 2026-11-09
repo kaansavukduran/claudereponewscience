@@ -1,0 +1,54 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-U022-0005",
+  "kind": "TEST",
+  "forge_id": "U022@v0.32",
+  "source_revision": "9c62fb4b39af9093004dc8c346260c72fa7115cd",
+  "working_tree_dirty": true,
+  "dirty_source_paths": [
+    "human_health_os/lib/src/presentation/widgets/interface_scale.dart",
+    "tools/flutter_appearance_smoke.mjs"
+  ],
+  "command": "python3 -m unittest tools/evidence/test_run_gate.py tools/test_validate_project_state.py",
+  "argv": [
+    "python3",
+    "-m",
+    "unittest",
+    "tools/evidence/test_run_gate.py",
+    "tools/test_validate_project_state.py"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-09T11:39:49.305Z",
+  "finished_at": "2026-11-09T11:39:54.313Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "4ebfd53830db83089dc1c81852dd46d897fbf7dbbf6d88e8e67b963871af5619",
+  "log_lines": 5,
+  "log_tail": [
+    "................",
+    "----------------------------------------------------------------------",
+    "Ran 16 tests in 4.794s",
+    "",
+    "OK"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "tools/evidence",
+    "tools/validate_project_state.py",
+    "tools/test_validate_project_state.py"
+  ]
+}

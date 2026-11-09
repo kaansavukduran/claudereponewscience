@@ -1,0 +1,58 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-U022-0002",
+  "kind": "TEST",
+  "forge_id": "U022@v0.32",
+  "source_revision": "e3fb0d73907c7bd05e43f577652d3c487e99e106",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "flutter test --no-pub test/widget/f005_your_data_test.dart test/widget/u022_interface_discovery_test.dart --reporter expanded",
+  "argv": [
+    "flutter",
+    "test",
+    "--no-pub",
+    "test/widget/f005_your_data_test.dart",
+    "test/widget/u022_interface_discovery_test.dart",
+    "--reporter",
+    "expanded"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-09T11:33:28.100Z",
+  "finished_at": "2026-11-09T11:33:50.701Z",
+  "exit_code": 1,
+  "expected_exit_code": 0,
+  "result": "FAIL",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v24.22.1",
+    "python": "Python 3.12.14"
+  },
+  "host": "Linux 6.18.57 x86_64",
+  "summary": null,
+  "log_sha256": "231c12bd66959b6653667befe4144ee4e5deb52badc8437d8861fbb6de2ffa2d",
+  "log_lines": 87,
+  "log_tail": [
+    "  The test description was: a restore whose last move fails: the card says the previous file is back, and this session stops writing until a restart",
+    "  ",
+    "00:12 +12 -2: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: slider has five-point keyboard steps and six working presets",
+    "00:13 +13 -2: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: slider has five-point keyboard steps and six working presets",
+    "00:14 +14 -2: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: unsupported device locale defaults to Turkish; explicit English wins",
+    "00:15 +15 -2: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: narrow 200% keeps scale, supports panning and both languages",
+    "00:17 +16 -2: /workspace/work/claudereponewscience/human_health_os/test/widget/u022_interface_discovery_test.dart: only actual tool visits count; disabling preserves records and progress",
+    "00:19 +17 -2: Some tests failed.",
+    "",
+    "Failing tests:",
+    "  /workspace/work/claudereponewscience/human_health_os/test/widget/f005_your_data_test.dart: a restore whose last move fails: the card says the previous file is back, and this session stops writing until a restart",
+    "  /workspace/work/claudereponewscience/human_health_os/test/widget/f005_your_data_test.dart: restore on a device without records, then no more writes until a restart"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
