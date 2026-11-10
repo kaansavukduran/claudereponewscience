@@ -846,6 +846,20 @@ class S {
   };
   String get settingsMeasurementsFirst =>
       _t('Measurements before the weight card', 'Ölçümler kilo kartından önce');
+  String get settingsUpdatesTitle =>
+      _t('Updates and about', 'Güncellemeler ve hakkında');
+  String settingsInstalledVersion(String version, String revision) => _t(
+    'Installed version: $version (source $revision)',
+    'Yüklü sürüm: $version (kaynak $revision)',
+  );
+  String get settingsUpdatesHow => _t(
+    'Human OS never connects to the internet, so it cannot look for a newer version by itself. Newer versions are listed on this page; open it in a browser and compare the version number:',
+    'Human OS internete hiç bağlanmaz; bu yüzden yeni sürüm olup olmadığına kendisi bakamaz. Yeni sürümler bu sayfada listelenir; tarayıcıda aç ve sürüm numarasını karşılaştır:',
+  );
+  String get settingsUpdatesKeepData => _t(
+    'Before installing another version, make a backup from Your data on Today.',
+    'Başka bir sürüm kurmadan önce Bugün ekranındaki Verilerin bölümünden yedek al.',
+  );
   String get settingsPadOpen => _t(
     'Open the number pad in every measurement',
     'Her ölçümde sayı tuşları açık başlasın',

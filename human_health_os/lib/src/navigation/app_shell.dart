@@ -77,12 +77,7 @@ class _AppShellState extends State<AppShell> {
             key: const ValueKey('open-settings'),
             tooltip: s.settingsTitle,
             icon: const Icon(Icons.tune),
-            onPressed: () {
-              AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.settings);
-              Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
-              );
-            },
+            onPressed: () => openSettings(context),
           ),
         ],
       ),
@@ -222,8 +217,79 @@ class _PlannedRailGroup extends StatelessWidget {
               selected: d.id == current,
               onTap: () => onSelect(d.id),
             ),
+          const Divider(height: 24),
+          // Settings: always the last item of the rail, with its label.
+          _RailSettingsItem(extended: extended),
           const SizedBox(height: 12),
         ],
+      ),
+    );
+  }
+}
+
+/// Opens Settings (from the top bar, the end of the rail or the end of the
+/// "More" sheet: the same place on every screen).
+void openSettings(BuildContext context) {
+  AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.settings);
+  Navigator.of(context)
+      .push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen()));
+}
+
+class _RailSettingsItem extends StatelessWidget {
+  const _RailSettingsItem({required this.extended});
+
+  final bool extended;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.colorScheme.onSurfaceVariant;
+    final label = S.of(context).settingsTitle;
+    final icon = Icon(Icons.tune, size: 20, color: color);
+    return Semantics(
+      button: true,
+      child: InkWell(
+        key: const ValueKey('rail-settings'),
+        onTap: () => openSettings(context),
+        borderRadius: BorderRadius.circular(12),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 48),
+          child: Padding(
+            padding: extended
+                ? const EdgeInsets.fromLTRB(30, 10, 16, 10)
+                : const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+            child: extended
+                ? Row(
+                    children: [
+                      icon,
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          label,
+                          style: theme.textTheme.labelMedium?.copyWith(
+                            color: color,
+                          ),
+                        ),
+                      ),
+                    ],
+                  )
+                : Column(
+                    children: [
+                      icon,
+                      const SizedBox(height: 2),
+                      Text(
+                        label,
+                        style: theme.textTheme.labelSmall?.copyWith(
+                          color: color,
+                        ),
+                        textAlign: TextAlign.center,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ],
+                  ),
+          ),
+        ),
       ),
     );
   }
@@ -347,6 +413,24 @@ class _CompactBar extends StatelessWidget {
                     selected: d.id == current,
                     onTap: () => Navigator.of(context).pop(d.id),
                   ),
+                const Divider(height: 16),
+                // Settings: always the last entry, with a visible label.
+                ListTile(
+                  key: const ValueKey('more-settings'),
+                  leading: const Icon(Icons.tune),
+                  title: Text(s.settingsTitle),
+                  onTap: () {
+                    final nav = Navigator.of(context);
+                    final scope = AppearanceScope.maybeOf(context);
+                    nav.pop();
+                    scope?.visit(DiscoveryStep.settings);
+                    nav.push(
+                      MaterialPageRoute<void>(
+                        builder: (_) => const SettingsScreen(),
+                      ),
+                    );
+                  },
+                ),
               ],
             ),
           ),

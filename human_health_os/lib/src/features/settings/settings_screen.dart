@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../app/appearance_scope.dart';
+import '../../config/app_config.dart';
 import '../../domain/settings/appearance.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
@@ -275,8 +276,46 @@ class SettingsScreen extends StatelessWidget {
               child: Text(s.firstShowAgain),
             ),
           ),
+          const SizedBox(height: 24),
+          section(s.settingsUpdatesTitle, const _UpdatesAndAbout()),
         ],
       ),
+    );
+  }
+}
+
+/// The installed version and where newer ones are. The app makes no network
+/// calls, so it says plainly that it cannot look for updates itself (k44
+/// §10 asks for a check button; that needs an owner decision on network
+/// use, G-71).
+class _UpdatesAndAbout extends StatelessWidget {
+  const _UpdatesAndAbout();
+
+  static const releasesPage = 'github.com/kaansavukduran/human-os/releases';
+
+  @override
+  Widget build(BuildContext context) {
+    final s = S.of(context);
+    final text = Theme.of(context).textTheme;
+    final config = AppConfig.fromEnvironment();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          s.settingsInstalledVersion(config.version, config.shortRevision),
+          key: const ValueKey('settings-version'),
+          style: text.bodyLarge,
+        ),
+        const SizedBox(height: 8),
+        Text(s.settingsUpdatesHow, key: const ValueKey('settings-updates-how')),
+        const SizedBox(height: 4),
+        const SelectableText(
+          releasesPage,
+          key: ValueKey('settings-releases-page'),
+        ),
+        const SizedBox(height: 8),
+        Text(s.settingsUpdatesKeepData, style: text.bodySmall),
+      ],
     );
   }
 }

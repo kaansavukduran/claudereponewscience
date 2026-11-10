@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U023",
+    "contract": "v0.32",
+    "run_id": "U023@v0.32",
+    "slice": "Settings last in the navigation with a visible label; Settings: Updates and about",
+    "goal": "Owner's app rules (k44): Settings at the end of the rail and of the phone's More sheet with its label; Settings ends with the installed version and where newer versions are.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "db6bab9",
+    "app_revision": null,
+    "started_at": "2026-11-10T18:10:00Z",
+    "finished_at": null,
+    "scope": [
+      "rail: Settings item last, labelled, 48 dp",
+      "phone More sheet: Settings last, labelled",
+      "Settings: Updates and about (installed version, source, releases page, back up first); no network",
+      "G-71 update check needs an owner decision"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: u023 tests (4); 641 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "R007"
+    ],
+    "review": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
