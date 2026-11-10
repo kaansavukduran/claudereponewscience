@@ -1,9 +1,9 @@
 {
-  "ran_at": "2026-11-07T11:42:52.164Z",
-  "git_head": "d7997095f61448d8ecd433b7c21b7b13e08535c3",
+  "ran_at": "2026-11-10T19:53:27.915Z",
+  "git_head": "107442e957056fc9699ecfccae0034a4db9b1e3f",
   "working_tree_dirty": false,
   "build": "/home/user/claudereponewscience/human_health_os/build/web",
-  "main_dart_js_sha256": "8e81f43f70d999293e3f63c495073ee567b4bc36345874711eed02dbcd94293a",
+  "main_dart_js_sha256": "fd6c0fa93c206f4eacc2de1f5d3e92a6e312e8018ddc454d98c4680afbe837f1",
   "browser": "chromium 153.0.8010.12",
   "runs": [
     {
@@ -32,6 +32,11 @@
     }
   ],
   "results": [
+    {
+      "name": "desktop-en: no introduction forced in the browser",
+      "status": "PASS",
+      "detail": ""
+    },
     {
       "name": "desktop-en: app starts and shows Today",
       "status": "PASS",
@@ -158,9 +163,29 @@
       "detail": ""
     },
     {
+      "name": "desktop-en: genetics page shows the notice before any file",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: genetics sample loaded (12 variants, none judged)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: genetics shows the invented pack label",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "desktop-en: no judging words on the genetics page",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "desktop-en: backup downloads with a matching checksum",
       "status": "PASS",
-      "detail": "human-os-backup-76c5f957-20261107T114220Z.hhosbackup.json"
+      "detail": "human-os-backup-6fb4e43f-20261110T195136Z.hhosbackup.json"
     },
     {
       "name": "desktop-en: backup holds the saved weight and lab result",
@@ -199,6 +224,11 @@
     },
     {
       "name": "desktop-en: no failed requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no introduction forced in the browser",
       "status": "PASS",
       "detail": ""
     },
@@ -328,9 +358,29 @@
       "detail": ""
     },
     {
+      "name": "phone-en: genetics page shows the notice before any file",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: genetics sample loaded (12 variants, none judged)",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: genetics shows the invented pack label",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-en: no judging words on the genetics page",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
       "name": "phone-en: backup downloads with a matching checksum",
       "status": "PASS",
-      "detail": "human-os-backup-69188430-20261107T114249Z.hhosbackup.json"
+      "detail": "human-os-backup-745ebb4d-20261110T195325Z.hhosbackup.json"
     },
     {
       "name": "phone-en: backup holds the saved weight and lab result",
@@ -369,6 +419,11 @@
     },
     {
       "name": "phone-en: no failed requests",
+      "status": "PASS",
+      "detail": ""
+    },
+    {
+      "name": "phone-tr: no introduction forced in the browser",
       "status": "PASS",
       "detail": ""
     },
