@@ -3,48 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "A001",
-    "contract": "v0.32",
-    "run_id": "A001@v0.32",
-    "slice": "Aion on the introduction and the empty weight card; Settings switch",
-    "goal": "Owner's character Aion, from the Drive main reference, greets on the first introduction step and keeps the empty weight card company, as a still labelled picture that can be hidden.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "c110ea5",
-    "app_revision": null,
-    "started_at": "2026-11-10T18:45:00Z",
-    "finished_at": null,
-    "scope": [
-      "assets/aion/aion_wave.png from the owner's reference (Drive)",
-      "AionFigure widget with a screen-reader label",
-      "first introduction step and empty weight card",
-      "AppearanceSettings.showAion with a Settings switch",
-      "D-029"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED (prepared in a separate worktree while U023 gates ran)",
-      "TESTED: a001 tests (5)"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": null,
-    "depends_on": [
-      "U023"
-    ],
-    "review": null,
-    "out_of_scope": [
-      "frame-by-frame animation (the Drive move sheet does not match the current reference)"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -55,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U023@v0.32 (2026-11-10, source revision ccba81c44983)",
+  "last_completed_forge": "A001@v0.32 (2026-11-10, source revision 329ab7a39de0)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -68,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0660",
+      "evidence_id": "EV-TEST-F007-0673",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0661",
+      "evidence_id": "EV-TEST-F007-0674",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0662",
+      "evidence_id": "EV-TEST-F007-0675",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (641 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0663",
+      "gate": "flutter test, TZ=UTC (646 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0676",
       "criterion": "AC-1..AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0664",
+      "evidence_id": "EV-TEST-F007-0677",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0665",
+      "evidence_id": "EV-BUILD-F007-0678",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0666",
+      "evidence_id": "EV-RUNTIME-F007-0679",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0667",
+      "evidence_id": "EV-TEST-F007-0680",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0668",
+      "evidence_id": "EV-BUILD-F007-0681",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0669",
+      "evidence_id": "EV-RUNTIME-F007-0682",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (642 PASS)",
-      "evidence_id": "EV-TEST-F007-0670",
+      "gate": "flutter test with TZ=America/New_York (647 PASS)",
+      "evidence_id": "EV-TEST-F007-0683",
       "criterion": "AC-1..AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0671",
+      "evidence_id": "EV-TEST-F007-0684",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0672",
+      "evidence_id": "EV-TEST-F007-0685",
       "criterion": "AC-4",
-      "source_revision": "ccba81c449831ba85cc8e296e483f3d8fe72e7ee",
+      "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
       "result": "PASS"
     }
   ],
@@ -187,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "A001",
+    "forge_id": "R008",
     "contract": "v0.32",
-    "run_id": "A001@v0.32",
-    "slice": "Aion, the owner's Human OS character, on the introduction and empty states; can be hidden",
-    "why": "Owner request (Aionlaştır with the Drive reference sheets): a calm, still, labelled character that greets and keeps empty screens company, never speaking for the app or as a clinician.",
+    "run_id": "R008@v0.32",
+    "slice": "independent review of U023 and A001 (navigation, Updates and about, Aion)",
+    "why": "Two single-author slices changed navigation and added a bundled character picture; an independent UI, accessibility and wording reviewer checks them at 320 dp, 200% scale and in Turkish.",
     "depends_on": [
-      "U023"
+      "A001"
     ]
   },
-  "updated_at": "2026-11-10T18:40:00Z",
+  "updated_at": "2026-11-10T19:20:00Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -8524,6 +8485,165 @@
         "R007"
       ],
       "review": "single-author slice"
+    },
+    "A001@v0.32": {
+      "forge_id": "A001",
+      "contract": "v0.32",
+      "run_id": "A001@v0.32",
+      "slice": "Aion on the introduction and the empty weight card; Settings switch",
+      "goal": "Owner's character Aion, from the Drive main reference, greets on the first introduction step and keeps the empty weight card company, as a still labelled picture that can be hidden.",
+      "status": "DONE",
+      "baseline_commit": "c110ea5",
+      "app_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+      "started_at": "2026-11-10T18:45:00Z",
+      "finished_at": "2026-11-10T19:20:00Z",
+      "scope": [
+        "assets/aion/aion_wave.png from the owner's reference (Drive)",
+        "AionFigure widget with a screen-reader label",
+        "first introduction step and empty weight card",
+        "AppearanceSettings.showAion with a Settings switch",
+        "D-029"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED (prepared in a separate worktree while U023 gates ran)",
+        "TESTED: a001 tests (5)",
+        "GATES: 13 receipts on clean tree 329ab7a, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0685",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/assets/aion/aion_wave.png",
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/onboarding/first_run_screen.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/presentation/widgets/aion.dart",
+        "human_health_os/pubspec.yaml",
+        "human_health_os/test/widget/a001_aion_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0673",
+        "EV-TEST-F007-0674",
+        "EV-TEST-F007-0675",
+        "EV-TEST-F007-0676",
+        "EV-TEST-F007-0677",
+        "EV-BUILD-F007-0678",
+        "EV-RUNTIME-F007-0679",
+        "EV-TEST-F007-0680",
+        "EV-BUILD-F007-0681",
+        "EV-RUNTIME-F007-0682",
+        "EV-TEST-F007-0683",
+        "EV-TEST-F007-0684",
+        "EV-TEST-F007-0685"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0673",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0674",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0675",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (646 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0676",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0677",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0678",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0679",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0680",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0681",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0682",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (647 PASS)",
+          "evidence_id": "EV-TEST-F007-0683",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0684",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0685",
+          "criterion": "AC-4",
+          "source_revision": "329ab7a39de026d1a8c11466aa1a4008e0d8c674",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "A001_COMPLETE",
+      "limitations": null,
+      "depends_on": [
+        "U023"
+      ],
+      "review": "single-author slice; prepared in a separate worktree while U023 gates ran",
+      "out_of_scope": [
+        "frame-by-frame animation (the Drive move sheet does not match the current reference)"
+      ]
     }
   },
   "forge_history_legacy_ids": {
