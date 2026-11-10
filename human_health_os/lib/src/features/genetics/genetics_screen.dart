@@ -110,6 +110,11 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
   bool _onlyClinical = false;
 
   UniProtFile? _uniprot;
+
+  /// Built once per file (R007): the gene index and each entry's folded
+  /// search text, so a keystroke or rebuild never re-folds 20,000 entries.
+  Map<String, List<UniProtEntry>> _uniprotByGene = const {};
+  List<String> _uniprotFolded = const [];
   String? _uniprotRefusal;
   String _uniprotQuery = '';
 
@@ -128,7 +133,18 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
         await _picker.release();
       }
       final file = parseUniProtTsv(utf8.decode(bytes, allowMalformed: true));
-      if (mounted) setState(() => _uniprot = file);
+      if (mounted) {
+        setState(() {
+          _uniprot = file;
+          _uniprotByGene = file.byGene();
+          _uniprotFolded = [
+            for (final e in file.entries)
+              foldForSearch(
+                '${e.accession} ${e.genes.join(' ')} ${e.proteinNames}',
+              ),
+          ];
+        });
+      }
     } on UniProtFormatError catch (e) {
       if (mounted) setState(() => _uniprotRefusal = e.code);
     } catch (_) {
@@ -845,18 +861,15 @@ class _GeneticsScreenState extends State<GeneticsScreen> {
   List<Widget> _uniprotSection(S s, TextTheme text, ColorScheme scheme) {
     final file = _uniprot;
     final genes = _comparisonGenes();
-    final byGene = file?.byGene() ?? const <String, List<UniProtEntry>>{};
+    final byGene = _uniprotByGene;
     final List<UniProtEntry> shown;
     if (file == null) {
       shown = const [];
     } else if (_uniprotQuery.isNotEmpty) {
       final q = foldForSearch(_uniprotQuery);
       shown = [
-        for (final e in file.entries)
-          if (foldForSearch(
-            '${e.accession} ${e.genes.join(' ')} ${e.proteinNames}',
-          ).contains(q))
-            e,
+        for (var i = 0; i < file.entries.length; i++)
+          if (_uniprotFolded[i].contains(q)) file.entries[i],
       ];
     } else {
       final seen = <String>{};

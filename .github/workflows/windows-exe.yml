@@ -15,7 +15,9 @@ on:
 
 env:
   FLUTTER_VERSION: "3.47.6"
-  RELEASE_VERSION: "0.1.0-u022"
+  # One increasing version per build of main (never reused), so every
+  # pre-release keeps its own name and older downloads stay as they were.
+  RELEASE_VERSION: "0.1.0-dev.${{ github.run_number }}"
 
 permissions:
   contents: write
@@ -39,20 +41,20 @@ jobs:
         shell: bash
         run: |
           flutter pub get --enforce-lockfile
-          flutter build windows --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0-u022 --dart-define=SOURCE_REVISION=${{ github.sha }}
+          flutter build windows --release --dart-define=APP_ENV=development --dart-define=APP_VERSION=${{ env.RELEASE_VERSION }} --dart-define=SOURCE_REVISION=${{ github.sha }}
       - name: Portable ZIP
         shell: pwsh
         run: |
           New-Item -ItemType Directory -Force dist | Out-Null
           Copy-Item human_health_os/build/windows/x64/runner/Release dist/Human-OS -Recurse
           Set-Content dist/Human-OS/README.txt "Double-click human_health_os.exe. Development build for testing: do not store real health data you cannot lose."
-          Compress-Archive -Path dist/Human-OS -DestinationPath dist/Human-OS-0.1.0-u022-windows-x64-portable.zip
+          Compress-Archive -Path dist/Human-OS -DestinationPath dist/Human-OS-${{ env.RELEASE_VERSION }}-windows-x64-portable.zip
       - name: Installer
         shell: pwsh
         run: |
           choco install innosetup -y --no-progress
-          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=0.1.0-u022 packaging/windows/human_os.iss
-          Move-Item dist/Human-OS-Setup.exe dist/Human-OS-0.1.0-u022-windows-x64-Setup.exe
+          & "C:\Program Files (x86)\Inno Setup 6\ISCC.exe" /DAppVersion=${{ env.RELEASE_VERSION }} packaging/windows/human_os.iss
+          Move-Item dist/Human-OS-Setup.exe dist/Human-OS-${{ env.RELEASE_VERSION }}-windows-x64-Setup.exe
       - name: Check the executable starts
         shell: pwsh
         run: |
@@ -64,8 +66,8 @@ jobs:
         with:
           name: Human-OS-windows
           path: |
-            dist/Human-OS-0.1.0-u022-windows-x64-portable.zip
-            dist/Human-OS-0.1.0-u022-windows-x64-Setup.exe
+            dist/Human-OS-${{ env.RELEASE_VERSION }}-windows-x64-portable.zip
+            dist/Human-OS-${{ env.RELEASE_VERSION }}-windows-x64-Setup.exe
           if-no-files-found: error
       # A new versioned pre-release for every run; never replace old installers.
       - name: Publish the download
@@ -73,6 +75,6 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh release create "preview-${RELEASE_VERSION}-windows-${{ github.run_id }}-${{ github.run_attempt }}" dist/Human-OS-0.1.0-u022-windows-x64-Setup.exe dist/Human-OS-0.1.0-u022-windows-x64-portable.zip \
+          gh release create "preview-${RELEASE_VERSION}-windows-${{ github.run_id }}-${{ github.run_attempt }}" dist/Human-OS-${{ env.RELEASE_VERSION }}-windows-x64-Setup.exe dist/Human-OS-${{ env.RELEASE_VERSION }}-windows-x64-portable.zip \
             --prerelease --target "${{ github.sha }}" --title "Human OS for Windows (development build)" \
             --notes "Built from ${{ github.sha }}. Human-OS-Setup.exe installs the app (Start menu and an optional desktop shortcut); the portable ZIP runs after unzipping (double-click human_health_os.exe). Development build for testing: data is stored unencrypted under %LOCALAPPDATA%; do not keep real health data you cannot lose. Not signed: Windows SmartScreen may ask you to confirm (More info, Run anyway)."

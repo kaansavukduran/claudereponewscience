@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R007",
+    "contract": "v0.32",
+    "run_id": "R007@v0.32",
+    "slice": "review of G007 (UniProt) and take-over of the Codex U022 branch",
+    "goal": "Close the UniProt review, make the UniProt search cheap on large files, merge Codex's U022 work after a local check, and give every download build its own increasing version.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "2cef42a",
+    "app_revision": null,
+    "started_at": "2026-11-10T12:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "UniProt gene index and folded search text built once per file",
+      "download workflows: RELEASE_VERSION 0.1.0-dev.<run number> instead of the fixed 0.1.0-u022",
+      "gap G-70: live UniProt header check NOT_RUN (host blocked)",
+      "Codex U022 (2cef42a) fast-forwarded after a local check: format, analyze, 637 tests"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED by the lead (the Sonnet reviewer stopped at a usage limit; the live header fetch was blocked)",
+      "IMPLEMENTED",
+      "TESTED: 637 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "U022"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
