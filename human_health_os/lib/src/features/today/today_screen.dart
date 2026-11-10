@@ -16,6 +16,7 @@ import '../report/summary_screen.dart';
 import '../help/how_to_screen.dart';
 import '../settings/settings_screen.dart';
 import 'measurements_card.dart';
+import 'sleep_card.dart';
 import 'weight_card.dart';
 import 'your_data_card.dart';
 import 'discovery_card.dart';
@@ -56,6 +57,8 @@ class TodayScreen extends StatelessWidget {
         look.measurementsFirst ? measurements : weight,
         const SizedBox(height: 28),
         look.measurementsFirst ? weight : measurements,
+        const SizedBox(height: 28),
+        SleepCard(services: services),
         const SizedBox(height: 28),
         if (show(TodaySection.tools)) ...[
           Semantics(

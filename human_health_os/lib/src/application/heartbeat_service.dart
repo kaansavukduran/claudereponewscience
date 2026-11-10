@@ -609,6 +609,90 @@ class HeartbeatService {
     return record;
   }
 
+  /// Records one night: going to bed and waking up as typed. A blank
+  /// waking time is now. A going-to-bed time without a date (`HH:MM`) is the
+  /// last such time before waking, so "23:10" then "07:00" is one night.
+  Future<HealthRecord> recordSleep({
+    required String profileId,
+    required String wentToBed,
+    String wokeUp = '',
+    WakeFeeling? feeling,
+    LocalZone zone = const SystemLocalZone(),
+  }) async {
+    final now = clock.nowUtc();
+    final bedText = wentToBed.trim();
+    if (bedText.isEmpty) throw const InputError('EMPTY', 'bed');
+    // Each error names the field it is about.
+    T inField<T>(String field, T Function() read) {
+      try {
+        return read();
+      } on InputError catch (e) {
+        throw InputError(e.code, field);
+      }
+    }
+
+    final up = inField(
+      'woke',
+      () => parseMeasuredAt(wokeUp, nowUtc: now, zone: zone) ?? now,
+    );
+    final bed = inField('bed', () {
+      if (!RegExp(r'^\d{2}:\d{2}$').hasMatch(bedText)) {
+        return parseMeasuredAt(bedText, nowUtc: now, zone: zone)!;
+      }
+      String on(DateTime wall) =>
+          '${wall.year.toString().padLeft(4, '0')}-'
+          '${wall.month.toString().padLeft(2, '0')}-'
+          '${wall.day.toString().padLeft(2, '0')} $bedText';
+      final upWall = zone.toLocal(up);
+      DateTime? sameDay;
+      try {
+        sameDay = parseMeasuredAt(on(upWall), nowUtc: now, zone: zone);
+      } on InputError catch (e) {
+        if (e.code != 'FUTURE_TIME') rethrow;
+      }
+      if (sameDay != null && sameDay.isBefore(up)) return sameDay;
+      final dayBefore = DateTime.utc(upWall.year, upWall.month, upWall.day - 1);
+      return parseMeasuredAt(on(dayBefore), nowUtc: now, zone: zone)!;
+    });
+    final details = SleepNightDetails(
+      wentToBed: bed,
+      wokeUp: up,
+      feeling: feeling,
+    );
+    final problem = details.problem();
+    if (problem != null) throw InputError(problem, 'bed');
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.sleepNight,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: up,
+      recordedAt: now,
+      details: details,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.sleepNight),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live nights, the latest waking first.
+  Future<List<HealthRecord>> sleepNights(String profileId) async {
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.sleepNight,
+    );
+    final heads = [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is SleepNightDetails) h,
+    ]..sort((a, b) => b.observedAt.compareTo(a.observedAt));
+    return heads;
+  }
+
   /// Each live medicine or supplement with its newest live plan and its
   /// recorded doses (newest first). Doses come only from dose records.
   Future<List<MedicationView>> medications(String profileId) async {

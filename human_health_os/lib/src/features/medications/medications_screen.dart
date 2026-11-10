@@ -69,6 +69,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
+      useSafeArea: true,
       builder: builder,
     );
     if (saved == true) await _reload();
@@ -272,8 +273,9 @@ class _FormSheet extends StatelessWidget {
         0,
         16,
         16 +
-            MediaQuery.viewInsetsOf(context).bottom +
-            MediaQuery.viewPaddingOf(context).bottom,
+            (MediaQuery.viewInsetsOf(context).bottom > 0
+                ? MediaQuery.viewInsetsOf(context).bottom
+                : MediaQuery.viewPaddingOf(context).bottom),
       ),
       child: SingleChildScrollView(
         child: Column(

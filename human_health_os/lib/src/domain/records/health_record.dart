@@ -97,7 +97,11 @@ enum RecordKind {
 
   /// One dose actually taken, or skipped, recorded by the person (F008).
   /// Only these records say what was taken. [MedicationIntakeDetails].
-  medicationIntake('medication.intake', minSchema: 6);
+  medicationIntake('medication.intake', minSchema: 6),
+
+  /// One night: going to bed and waking up, typed by hand (F007 slice 3,
+  /// record schema 7). [SleepNightDetails]. Time in bed, not time asleep.
+  sleepNight('sleep.night', minSchema: 7);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -123,7 +127,8 @@ enum RecordKind {
     labResult ||
     medicationItem ||
     medicationPlan ||
-    medicationIntake => false,
+    medicationIntake ||
+    sleepNight => false,
   };
 
   /// The F008 medication kinds.
@@ -133,7 +138,8 @@ enum RecordKind {
       this == medicationIntake;
 
   /// The value is [RecordDetails], never a single quantity.
-  bool get isStructured => this == bloodPressure || isMedication;
+  bool get isStructured =>
+      this == bloodPressure || isMedication || this == sleepNight;
 
   /// The `type` of the [RecordDetails] a structured kind carries.
   String? get detailsType => switch (this) {
@@ -141,6 +147,7 @@ enum RecordKind {
     medicationItem => MedicationItemDetails.typeTag,
     medicationPlan => MedicationPlanDetails.typeTag,
     medicationIntake => MedicationIntakeDetails.typeTag,
+    sleepNight => SleepNightDetails.typeTag,
     _ => null,
   };
 
@@ -304,7 +311,7 @@ class HealthRecord {
   ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 6;
+  static const int currentSchemaVersion = 7;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -560,6 +567,14 @@ class HealthRecord {
           RecordKind.medicationIntake:
         final code = switch (details) {
           final MedicationDetails d => d.problem(),
+          _ => null,
+        };
+        if (code != null) {
+          throw RecordValidationError(code, '${kind.code}: $code');
+        }
+      case RecordKind.sleepNight:
+        final code = switch (details) {
+          final SleepNightDetails d => d.problem(),
           _ => null,
         };
         if (code != null) {

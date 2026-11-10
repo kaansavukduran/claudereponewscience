@@ -121,6 +121,14 @@ String fmtValue(S s, HealthRecord r) {
   if (d is MedicationItemDetails) {
     return '${d.name} · ${s.medsCategoryLabel(d.category)}';
   }
+  if (d is SleepNightDetails) {
+    return s.sleepLine(
+      fmtWhen(d.wentToBed),
+      fmtWhen(d.wokeUp),
+      d.timeInBed,
+      d.feeling,
+    );
+  }
   if (d is MedicationPlanDetails) {
     return d.state == PlanState.active
         ? d.schedule

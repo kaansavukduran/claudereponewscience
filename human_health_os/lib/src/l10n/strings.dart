@@ -107,6 +107,14 @@ class S {
   String get enteredAs => _t('entered as', 'girilen');
   String inputError(String code) => switch (code) {
     'FUTURE_TIME' => _t('This date is in the future.', 'Bu tarih gelecekte.'),
+    'SLEEP_WAKE_NOT_AFTER_BED' => _t(
+      'The waking time has to come after the going-to-bed time.',
+      'Uyanma saati yatma saatinden sonra olmalı.',
+    ),
+    'SLEEP_TOO_LONG' => _t(
+      'From bed to waking has to be less than 24 hours; add a date to the going-to-bed time if it was another day.',
+      'Yatmadan uyanmaya 24 saatten az olmalı; başka bir gündeyse yatma saatine tarih ekle.',
+    ),
     'NO_CHANGE' => _t('Nothing to change.', 'Değişecek bir şey yok.'),
     'TEXT_TOO_LONG' => _t(
       'This text is too long (at most 300 characters).',
@@ -376,7 +384,51 @@ class S {
     ),
     RecordKind.medicationPlan => _t('Plan', 'Plan'),
     RecordKind.medicationIntake => _t('Dose', 'Doz'),
+    RecordKind.sleepNight => _t('Night', 'Gece'),
   };
+
+  // Sleep (F007 slice 3): two typed times and, if given, how waking felt.
+  // Time in bed is not time asleep; nothing is scored.
+  String get sleepTitle => _t('Sleep', 'Uyku');
+  String get sleepIntro => _t(
+    'When you went to bed and when you woke up. The time between them is time in bed, not time asleep.',
+    'Ne zaman yattığın ve ne zaman uyandığın. Aradaki süre yatakta geçen süredir, uykuda geçen süre değil.',
+  );
+  String get sleepAdd => _t('Add a night', 'Gece ekle');
+  String get sleepNone =>
+      _t('No nights recorded yet.', 'Henüz gece kaydı yok.');
+  String get sleepBed => _t('Went to bed', 'Yattım');
+  String get sleepBedHelp =>
+      _t('HH:MM, or YYYY-MM-DD HH:MM', 'SS:DD ya da YYYY-AA-GG SS:DD');
+  String get sleepWoke => _t('Woke up', 'Uyandım');
+  String get sleepWokeHelp => _t(
+    'HH:MM, or YYYY-MM-DD HH:MM; blank = now',
+    'SS:DD ya da YYYY-AA-GG SS:DD; boş = şimdi',
+  );
+  String get sleepSaveFailed => _t(
+    'The night could not be saved. Nothing was written.',
+    'Gece kaydedilemedi. Hiçbir şey yazılmadı.',
+  );
+  String get sleepFeeling => _t(
+    'How you felt on waking (optional)',
+    'Uyanınca nasıl hissettin (isteğe bağlı)',
+  );
+  String sleepFeelingLabel(WakeFeeling f) => switch (f) {
+    WakeFeeling.rested => _t('Rested', 'Dinlenmiş'),
+    WakeFeeling.okay => _t('So-so', 'İdare eder'),
+    WakeFeeling.tired => _t('Tired', 'Yorgun'),
+  };
+  String sleepSpan(Duration d) {
+    final h = d.inHours;
+    final m = d.inMinutes % 60;
+    return _t('$h h $m min in bed', 'yatakta $h sa $m dk');
+  }
+
+  String sleepLine(String bed, String up, Duration span, WakeFeeling? f) => [
+    _t('bed $bed, up $up', 'yatış $bed, uyanış $up'),
+    sleepSpan(span),
+    if (f != null) sleepFeelingLabel(f),
+  ].join(' · ');
 
   // Medicines and supplements (F008): the person's own words, never a drug
   // database, a dose rule or an interaction check. A plan is not an intake.

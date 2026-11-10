@@ -24,6 +24,7 @@ abstract class RecordDetails {
     MedicationItemDetails.typeTag => MedicationItemDetails.fromJson(j),
     MedicationPlanDetails.typeTag => MedicationPlanDetails.fromJson(j),
     MedicationIntakeDetails.typeTag => MedicationIntakeDetails.fromJson(j),
+    SleepNightDetails.typeTag => SleepNightDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -300,4 +301,75 @@ class MedicationIntakeDetails extends MedicationDetails {
 
   @override
   int get hashCode => Object.hash(itemRootId, status, amount);
+}
+
+/// How the person felt on waking, in their own words. Not a sleep score and
+/// not a measure of sleep.
+enum WakeFeeling { rested, okay, tired }
+
+/// A night is shorter than this, from going to bed to waking up (the same
+/// clock time twice is a slip, not a day in bed).
+const Duration maxNightSpan = Duration(hours: 24);
+
+/// One night as the person types it (F007 slice 3, record schema 7): when
+/// they went to bed and when they woke up, and optionally how they felt.
+/// The time between the two is time in bed, never time asleep: nothing here
+/// knows when sleep began or how often it broke.
+class SleepNightDetails extends RecordDetails {
+  const SleepNightDetails({
+    required this.wentToBed,
+    required this.wokeUp,
+    this.feeling,
+  });
+
+  static const String typeTag = 'sleep_night';
+
+  /// UTC instants.
+  final DateTime wentToBed;
+  final DateTime wokeUp;
+
+  /// Null = not said; never assumed.
+  final WakeFeeling? feeling;
+
+  /// Rule `sleep.time_in_bed` v1: waking time minus going-to-bed time.
+  Duration get timeInBed => wokeUp.difference(wentToBed);
+
+  @override
+  String get type => typeTag;
+
+  /// The first broken rule as a stable code, or null.
+  String? problem() => !wokeUp.isAfter(wentToBed)
+      ? 'SLEEP_WAKE_NOT_AFTER_BED'
+      : timeInBed >= maxNightSpan
+      ? 'SLEEP_TOO_LONG'
+      : null;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'went_to_bed': wentToBed.toUtc().toIso8601String(),
+    'woke_up': wokeUp.toUtc().toIso8601String(),
+    'feeling': feeling?.name,
+  };
+
+  static SleepNightDetails fromJson(Map<String, Object?> j) =>
+      SleepNightDetails(
+        wentToBed: DateTime.parse(j['went_to_bed']! as String).toUtc(),
+        wokeUp: DateTime.parse(j['woke_up']! as String).toUtc(),
+        feeling: switch (j['feeling']) {
+          null => null,
+          final String f => WakeFeeling.values.byName(f),
+          final f => throw FormatException('Unknown feeling "$f"'),
+        },
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is SleepNightDetails &&
+      other.wentToBed == wentToBed &&
+      other.wokeUp == wokeUp &&
+      other.feeling == feeling;
+
+  @override
+  int get hashCode => Object.hash(wentToBed, wokeUp, feeling);
 }
