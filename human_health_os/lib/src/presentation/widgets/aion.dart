@@ -25,6 +25,10 @@ class AionFigure extends StatelessWidget {
       asset,
       key: const ValueKey('aion'),
       height: height,
+      // Decoded at the drawn size, not the 480 px source (R008).
+      cacheHeight: (height * MediaQuery.devicePixelRatioOf(context))
+          .round()
+          .clamp(64, 480),
       fit: BoxFit.contain,
       semanticLabel: S.of(context).aionAlt,
       // A missing or unreadable picture leaves only empty space.

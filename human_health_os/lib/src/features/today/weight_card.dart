@@ -166,18 +166,26 @@ class _WeightCardState extends State<WeightCard> {
                 style: text.titleMedium,
               )
             else if (latest == null)
-              Row(
-                children: [
-                  const AionFigure(height: 64),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Text(
-                      s.noWeightYet,
-                      key: const ValueKey('weight-empty'),
-                      style: text.bodyMedium,
+              LayoutBuilder(
+                // When the card is narrow in text of the chosen size, the text
+                // keeps the whole width (R008).
+                builder: (context, box) => Row(
+                  children: [
+                    if (box.maxWidth /
+                            (MediaQuery.textScalerOf(context).scale(14) / 14) >=
+                        240) ...[
+                      const AionFigure(height: 64),
+                      const SizedBox(width: 12),
+                    ],
+                    Expanded(
+                      child: Text(
+                        s.noWeightYet,
+                        key: const ValueKey('weight-empty'),
+                        style: text.bodyMedium,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               )
             else
               Row(

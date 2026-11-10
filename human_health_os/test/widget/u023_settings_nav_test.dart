@@ -40,6 +40,18 @@ void main() {
       tester.getTopLeft(item).dy,
       greaterThan(tester.getTopLeft(lastPlanned).dy),
     );
+    final semantics = tester.ensureSemantics();
+    expect(
+      tester.getSemantics(item),
+      matchesSemantics(
+        label: 'Ayarlar',
+        isButton: true,
+        isFocusable: true,
+        hasTapAction: true,
+        hasFocusAction: true,
+      ),
+    );
+    semantics.dispose();
     await tester.tap(item);
     await settle(tester);
     expect(find.byKey(const ValueKey('screen-settings')), findsOneWidget);
@@ -90,7 +102,9 @@ void main() {
           )
           .first,
     );
-    expect(tester.widget<Text>(v).data, startsWith('Installed version: '));
+    // The running build's configuration (the test services use version 't',
+    // revision 't'), not the compile-time defaults.
+    expect(tester.widget<Text>(v).data, 'Installed version: t (source t)');
     expect(
       find.text('github.com/kaansavukduran/human-os/releases'),
       findsOneWidget,

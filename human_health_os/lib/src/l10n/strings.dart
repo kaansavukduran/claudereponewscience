@@ -853,8 +853,8 @@ class S {
     'Yüklü sürüm: $version (kaynak $revision)',
   );
   String get settingsUpdatesHow => _t(
-    'Human OS never connects to the internet, so it cannot look for a newer version by itself. Newer versions are listed on this page; open it in a browser and compare the version number:',
-    'Human OS internete hiç bağlanmaz; bu yüzden yeni sürüm olup olmadığına kendisi bakamaz. Yeni sürümler bu sayfada listelenir; tarayıcıda aç ve sürüm numarasını karşılaştır:',
+    'Human OS does not look for newer versions by itself; it sends nothing to the internet. Newer versions are listed on this page; open it in a browser and compare the version number:',
+    'Human OS yeni sürüm olup olmadığına kendisi bakmaz; internete hiçbir şey göndermez. Yeni sürümler bu sayfada listelenir; tarayıcıda aç ve sürüm numarasını karşılaştır:',
   );
   String get settingsUpdatesKeepData => _t(
     'Before installing another version, make a backup from Your data on Today.',

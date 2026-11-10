@@ -73,7 +73,9 @@ class TodayScreen extends StatelessWidget {
             onTap: () {
               AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.settings);
               Navigator.of(context).push(
-                MaterialPageRoute<void>(builder: (_) => const SettingsScreen()),
+                MaterialPageRoute<void>(
+                  builder: (_) => SettingsScreen(config: services.config),
+                ),
               );
             },
           ),

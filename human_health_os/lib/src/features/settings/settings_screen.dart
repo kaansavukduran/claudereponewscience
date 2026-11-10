@@ -12,7 +12,11 @@ import '../onboarding/first_run_screen.dart';
 /// Language, light or dark, accent colour and text size (U005). Every choice
 /// applies at once and is one click; nothing here touches health data.
 class SettingsScreen extends StatelessWidget {
-  const SettingsScreen({super.key});
+  const SettingsScreen({super.key, this.config});
+
+  /// The running build's configuration (version shown under Updates and
+  /// about); the compile-time values when not given.
+  final AppConfig? config;
 
   @override
   Widget build(BuildContext context) {
@@ -284,7 +288,7 @@ class SettingsScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          section(s.settingsUpdatesTitle, const _UpdatesAndAbout()),
+          section(s.settingsUpdatesTitle, _UpdatesAndAbout(config: config)),
         ],
       ),
     );
@@ -296,7 +300,9 @@ class SettingsScreen extends StatelessWidget {
 /// §10 asks for a check button; that needs an owner decision on network
 /// use, G-71).
 class _UpdatesAndAbout extends StatelessWidget {
-  const _UpdatesAndAbout();
+  const _UpdatesAndAbout({this.config});
+
+  final AppConfig? config;
 
   static const releasesPage = 'github.com/kaansavukduran/human-os/releases';
 
@@ -304,7 +310,7 @@ class _UpdatesAndAbout extends StatelessWidget {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
-    final config = AppConfig.fromEnvironment();
+    final config = this.config ?? AppConfig.fromEnvironment();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

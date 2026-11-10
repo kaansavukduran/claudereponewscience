@@ -3,9 +3,48 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R008",
+    "contract": "v0.32",
+    "run_id": "R008@v0.32",
+    "slice": "independent review of U023 and A001",
+    "goal": "Fix the verified findings of an independent Sonnet UI, accessibility and wording review of the navigation, Updates and about, and Aion.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c48a536",
+    "app_revision": null,
+    "started_at": "2026-11-10T19:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "one openSettingsOn helper for the top bar, rail and More sheet",
+      "Settings shows the running build's configuration (services.config), not compile-time values",
+      "softer update wording: the app does not look by itself and sends nothing",
+      "Aion decoded at the drawn size (cacheHeight)",
+      "the empty weight card drops Aion when narrow in text of the chosen size",
+      "tests: rail Settings semantics, version value, narrow/largest text and 200% layouts"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED: one Sonnet reviewer, no blocking findings, no overflow at 320 dp/200%/TR",
+      "IMPLEMENTED",
+      "TESTED: 647 PASS; the narrow-card mutation caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "A001"
+    ],
+    "review": null,
+    "out_of_scope": null
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

@@ -58,6 +58,48 @@ void main() {
     );
   });
 
+  testWidgets('a 320 dp phone with the largest text in Turkish: the empty '
+      'card keeps its text and nothing overflows; at 200% scale too', (
+    tester,
+  ) async {
+    await launchWith(
+      tester,
+      initial: const AppearanceSettings(
+        language: LanguageChoice.tr,
+        textSize: TextSizeChoice.largest,
+      ),
+    );
+    tester.view.physicalSize = const Size(320, 2400);
+    tester.platformDispatcher.textScaleFactorTestValue = 1.6;
+    addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+    await settle(tester);
+    final empty = find.byKey(const ValueKey('weight-empty'));
+    await tester.ensureVisible(empty);
+    await settle(tester);
+    expect(empty, findsOneWidget);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('weight-card')),
+        matching: find.byKey(const ValueKey('aion')),
+      ),
+      findsNothing,
+      reason: 'a narrow card gives the text the whole width',
+    );
+    expect(tester.takeException(), isNull);
+    // The whole interface at 200% keeps a 320 dp layout and scrolls.
+    await launchWith(
+      tester,
+      initial: const AppearanceSettings(
+        language: LanguageChoice.tr,
+        interfacePercent: 200,
+      ),
+    );
+    tester.view.physicalSize = const Size(320, 2400);
+    await settle(tester);
+    expect(find.byKey(const ValueKey('weight-empty')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   test('kept with the other choices, on by default, Reset Today keeps it', () {
     const off = AppearanceSettings(showAion: false);
     expect(AppearanceSettings.fromJson(off.toJson()).showAion, isFalse);

@@ -12,6 +12,7 @@ import '../domain/settings/appearance.dart';
 import '../features/settings/settings_screen.dart';
 
 import '../app/app_services.dart';
+import '../config/app_config.dart';
 import '../features/common/planned_destination_screen.dart';
 import '../features/labs/labs_screen.dart';
 import '../features/timeline/timeline_screen.dart';
@@ -77,7 +78,7 @@ class _AppShellState extends State<AppShell> {
             key: const ValueKey('open-settings'),
             tooltip: s.settingsTitle,
             icon: const Icon(Icons.tune),
-            onPressed: () => openSettings(context),
+            onPressed: () => openSettings(context, widget.services.config),
           ),
         ],
       ),
@@ -91,7 +92,11 @@ class _AppShellState extends State<AppShell> {
       ),
       bottomNavigationBar: wide
           ? null
-          : _CompactBar(current: _current, onSelect: _go),
+          : _CompactBar(
+              current: _current,
+              onSelect: _go,
+              config: widget.services.config,
+            ),
     );
   }
 
@@ -105,6 +110,7 @@ class _AppShellState extends State<AppShell> {
                   extended: width >= kExtendedRailBreakpoint,
                   current: _current,
                   onSelect: _go,
+                  config: widget.services.config,
                 ),
                 const VerticalDivider(width: 1),
                 Expanded(
@@ -128,11 +134,13 @@ class _ScrollableRail extends StatelessWidget {
     required this.extended,
     required this.current,
     required this.onSelect,
+    required this.config,
   });
 
   final bool extended;
   final DestinationId current;
   final ValueChanged<DestinationId> onSelect;
+  final AppConfig config;
 
   @override
   Widget build(BuildContext context) {
@@ -166,6 +174,7 @@ class _ScrollableRail extends StatelessWidget {
         extended: extended,
         current: current,
         onSelect: onSelect,
+        config: config,
       ),
     );
   }
@@ -177,11 +186,13 @@ class _PlannedRailGroup extends StatelessWidget {
     required this.extended,
     required this.current,
     required this.onSelect,
+    required this.config,
   });
 
   final bool extended;
   final DestinationId current;
   final ValueChanged<DestinationId> onSelect;
+  final AppConfig config;
 
   @override
   Widget build(BuildContext context) {
@@ -219,7 +230,7 @@ class _PlannedRailGroup extends StatelessWidget {
             ),
           const Divider(height: 24),
           // Settings: always the last item of the rail, with its label.
-          _RailSettingsItem(extended: extended),
+          _RailSettingsItem(extended: extended, config: config),
           const SizedBox(height: 12),
         ],
       ),
@@ -229,16 +240,30 @@ class _PlannedRailGroup extends StatelessWidget {
 
 /// Opens Settings (from the top bar, the end of the rail or the end of the
 /// "More" sheet: the same place on every screen).
-void openSettings(BuildContext context) {
-  AppearanceScope.maybeOf(context)?.visit(DiscoveryStep.settings);
-  Navigator.of(context)
-      .push(MaterialPageRoute<void>(builder: (_) => const SettingsScreen()));
+void openSettings(BuildContext context, AppConfig? config) => openSettingsOn(
+  Navigator.of(context),
+  AppearanceScope.maybeOf(context),
+  config,
+);
+
+/// The one way Settings opens (top bar, rail, More sheet), so the routes
+/// cannot drift apart.
+void openSettingsOn(
+  NavigatorState nav,
+  AppearanceController? scope,
+  AppConfig? config,
+) {
+  scope?.visit(DiscoveryStep.settings);
+  nav.push(
+    MaterialPageRoute<void>(builder: (_) => SettingsScreen(config: config)),
+  );
 }
 
 class _RailSettingsItem extends StatelessWidget {
-  const _RailSettingsItem({required this.extended});
+  const _RailSettingsItem({required this.extended, required this.config});
 
   final bool extended;
+  final AppConfig config;
 
   @override
   Widget build(BuildContext context) {
@@ -250,7 +275,7 @@ class _RailSettingsItem extends StatelessWidget {
       button: true,
       child: InkWell(
         key: const ValueKey('rail-settings'),
-        onTap: () => openSettings(context),
+        onTap: () => openSettings(context, config),
         borderRadius: BorderRadius.circular(12),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48),
@@ -367,7 +392,13 @@ class _PlannedRailItem extends StatelessWidget {
 }
 
 class _CompactBar extends StatelessWidget {
-  const _CompactBar({required this.current, required this.onSelect});
+  const _CompactBar({
+    required this.current,
+    required this.onSelect,
+    required this.config,
+  });
+
+  final AppConfig config;
 
   final DestinationId current;
   final ValueChanged<DestinationId> onSelect;
@@ -421,13 +452,11 @@ class _CompactBar extends StatelessWidget {
                   title: Text(s.settingsTitle),
                   onTap: () {
                     final nav = Navigator.of(context);
-                    final scope = AppearanceScope.maybeOf(context);
                     nav.pop();
-                    scope?.visit(DiscoveryStep.settings);
-                    nav.push(
-                      MaterialPageRoute<void>(
-                        builder: (_) => const SettingsScreen(),
-                      ),
+                    openSettingsOn(
+                      nav,
+                      AppearanceScope.maybeOf(context),
+                      config,
                     );
                   },
                 ),
