@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0754",
+  "kind": "TEST",
+  "forge_id": "G008@v0.32",
+  "source_revision": "89bfdc8f223ab6880b95804e101657e401b6e717",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=UTC flutter test",
+  "argv": [
+    "env",
+    "TZ=UTC",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-10T23:18:40.683Z",
+  "finished_at": "2026-11-10T23:21:21.450Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v338 x86_64",
+  "summary": "02:38 +669 ~1: All tests passed!",
+  "log_sha256": "6b0ff9b51e60256676abf6f41e661b838c290997f2a62fd522acb449c4656acc",
+  "log_lines": 756,
+  "log_tail": [
+    "02:35 +658 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g007_uniprot_test.dart: entries, genes, function as written; a row without accession is counted",
+    "02:35 +659 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g007_uniprot_test.dart: columns in another order, primary gene column, CRLF, BOM",
+    "02:35 +660 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g007_uniprot_test.dart: refusals",
+    "02:35 +661 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g007_uniprot_test.dart: hidden characters are removed and long fields capped",
+    "02:36 +662 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g006_clinvar_yield_test.dart: a timer set before reading fires while a burst is read",
+    "02:36 +663 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g006_clinvar_yield_test.dart: a timer set before reading fires while a burst is read",
+    "02:36 +664 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g006_clinvar_yield_test.dart: a timer set before reading fires while a burst is read",
+    "02:36 +665 ~1: /home/user/claudereponewscience/human_health_os/test/domain/g006_clinvar_yield_test.dart: a timer set before reading fires while a burst is read",
+    "02:36 +666 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "02:36 +667 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "02:36 +668 ~1: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "02:38 +669 ~1: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
