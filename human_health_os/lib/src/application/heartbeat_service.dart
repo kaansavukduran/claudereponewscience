@@ -538,9 +538,7 @@ class HeartbeatService {
     // A new wording keeps a paused or stopped plan paused or stopped: only
     // setPlanState changes the state.
     final earlier = _latest(
-      buildTimeline(
-        await repository.records(profileId, kind: RecordKind.medicationPlan),
-      ),
+      await repository.records(profileId, kind: RecordKind.medicationPlan),
       itemRootId,
     );
     final record = _medsRecord(
@@ -570,7 +568,7 @@ class HeartbeatService {
       profileId,
       kind: RecordKind.medicationPlan,
     );
-    final current = _latest(buildTimeline(all), itemRootId);
+    final current = _latest(all, itemRootId);
     if (current == null) throw const InputError('TARGET_NOT_FOUND');
     if (current.state == state) throw const InputError('NO_CHANGE');
     final record = _medsRecord(
@@ -617,7 +615,10 @@ class HeartbeatService {
     final all = await repository.records(profileId);
     List<TimelineEntry> of(RecordKind k) =>
         buildTimeline(all.where((r) => r.kind == k));
-    final plans = of(RecordKind.medicationPlan);
+    final planRecords = [
+      for (final r in all)
+        if (r.kind == RecordKind.medicationPlan) r,
+    ];
     final doses = of(RecordKind.medicationIntake);
     return [
       for (final e in of(RecordKind.medicationItem))
@@ -626,7 +627,7 @@ class HeartbeatService {
             rootId: e.rootId,
             item: e.shown.details! as MedicationItemDetails,
             itemRecord: e.shown,
-            plan: _latest(plans, e.rootId),
+            plan: _latest(planRecords, e.rootId),
             doses: [
               for (final d in doses)
                 for (final h in d.heads)
@@ -639,17 +640,25 @@ class HeartbeatService {
     ];
   }
 
+  /// The shown plan of an item among [stored] plan records (in the order
+  /// they were written): the live one saved last; on equal save times (a
+  /// coarse clock) the one written later.
   static MedicationPlanDetails? _latest(
-    List<TimelineEntry> plans,
+    List<HealthRecord> stored,
     String itemRootId,
   ) {
+    final written = {for (var i = 0; i < stored.length; i++) stored[i].id: i};
     HealthRecord? best;
-    for (final p in plans) {
+    for (final p in buildTimeline(stored)) {
       for (final h in p.heads) {
         final d = h.details;
         if (d is! MedicationPlanDetails || d.itemRootId != itemRootId) continue;
-        // Equal save times (a coarse clock): the later-written record wins.
-        if (best == null || !h.recordedAt.isBefore(best.recordedAt)) best = h;
+        if (best == null ||
+            h.recordedAt.isAfter(best.recordedAt) ||
+            (h.recordedAt == best.recordedAt &&
+                written[h.id]! > written[best.id]!)) {
+          best = h;
+        }
       }
     }
     return best?.details as MedicationPlanDetails?;

@@ -337,6 +337,20 @@ void main() {
         state: PlanState.paused,
       );
       expect((await svc.medications(me)).single.plan!.state, PlanState.paused);
+      for (final state in [
+        PlanState.active,
+        PlanState.stopped,
+        PlanState.active,
+        PlanState.paused,
+        PlanState.stopped,
+      ]) {
+        await svc.setPlanState(
+          profileId: me,
+          itemRootId: item.id,
+          state: state,
+        );
+        expect((await svc.medications(me)).single.plan!.state, state);
+      }
     },
   );
 
