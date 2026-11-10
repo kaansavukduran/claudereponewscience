@@ -3,50 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F008",
-    "contract": "v0.32",
-    "run_id": "F008@v0.32",
-    "slice": "Medications and supplements: product, plan and dose as separate records (prescribed is not taken)",
-    "goal": "A person records what they use, how it is meant to be taken, and each dose actually taken or skipped; a plan never counts as a dose.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "5b4c9b9",
-    "app_revision": null,
-    "started_at": "2026-11-10T20:20:00Z",
-    "finished_at": null,
-    "scope": [
-      "record schema 6: medication.item, medication.plan, medication.intake with kind-tagged details",
-      "HeartbeatService: addMedication, planMedication, recordDose, medications view",
-      "Medications screen in the primary navigation (EN/TR), Aion on its empty state",
-      "Timeline shows medication records in words",
-      "D-030"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: f008 domain (4) and screen (2) tests; 653 PASS"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": null,
-    "depends_on": [
-      "R008"
-    ],
-    "review": null,
-    "out_of_scope": [
-      "reminders",
-      "stopping or pausing a plan",
-      "product catalogue or interaction checks (never without a reviewed source)"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -57,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "R008@v0.32 (2026-11-10, source revision c794d50bbe16)",
+  "last_completed_forge": "F008@v0.32 (2026-11-10, source revision 1cf68da60de1)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -70,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0686",
+      "evidence_id": "EV-TEST-F007-0699",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0687",
+      "evidence_id": "EV-TEST-F007-0700",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0688",
+      "evidence_id": "EV-TEST-F007-0701",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (647 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0689",
+      "gate": "flutter test, TZ=UTC (653 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0702",
       "criterion": "AC-1..AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0690",
+      "evidence_id": "EV-TEST-F007-0703",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0691",
+      "evidence_id": "EV-BUILD-F007-0704",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0692",
+      "evidence_id": "EV-RUNTIME-F007-0705",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0693",
+      "evidence_id": "EV-TEST-F007-0706",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0694",
+      "evidence_id": "EV-BUILD-F007-0707",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0695",
+      "evidence_id": "EV-RUNTIME-F007-0708",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (648 PASS)",
-      "evidence_id": "EV-TEST-F007-0696",
+      "gate": "flutter test with TZ=America/New_York (654 PASS)",
+      "evidence_id": "EV-TEST-F007-0709",
       "criterion": "AC-1..AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0697",
+      "evidence_id": "EV-TEST-F007-0710",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0698",
+      "evidence_id": "EV-TEST-F007-0711",
       "criterion": "AC-4",
-      "source_revision": "c794d50bbe16138bff8f3961411f513f58454179",
+      "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
       "result": "PASS"
     }
   ],
@@ -189,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "F008",
+    "forge_id": "R009",
     "contract": "v0.32",
-    "run_id": "F008@v0.32",
-    "slice": "Medications and supplements: product, plan and intake as separate records (prescribed is not taken)",
-    "why": "Owner priority and roadmap F008 (NOT_STARTED): a person records what they use, the plan, and each dose actually taken or skipped; a plan never counts as intake.",
+    "run_id": "R009@v0.32",
+    "slice": "Independent review of F008 medications slice 1 (and F008-S2 plan states, prepared)",
+    "why": "F008 adds a new health-data domain and record schema 6; an independent review before more medication features is the bounded next step.",
     "depends_on": [
-      "R008"
+      "F008"
     ]
   },
-  "updated_at": "2026-11-10T20:10:00Z",
+  "updated_at": "2026-11-10T19:22:55Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -8842,6 +8801,155 @@
       ],
       "review": "one Sonnet reviewer, no blocking findings; should-fix items fixed; narrow-card mutation caught",
       "out_of_scope": null
+    },
+    "F008@v0.32": {
+      "forge_id": "F008",
+      "contract": "v0.32",
+      "run_id": "F008@v0.32",
+      "slice": "Medications and supplements: product, plan and dose as separate records (prescribed is not taken)",
+      "goal": "A person records what they use, how it is meant to be taken, and each dose actually taken or skipped; a plan never counts as a dose.",
+      "status": "DONE",
+      "baseline_commit": "5b4c9b9",
+      "app_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+      "started_at": "2026-11-10T20:20:00Z",
+      "finished_at": "2026-11-10T19:22:55Z",
+      "scope": [
+        "record schema 6: medication.item, medication.plan, medication.intake with kind-tagged details",
+        "HeartbeatService: addMedication, planMedication, recordDose, medications view",
+        "Medications screen in the primary navigation (EN/TR), Aion on its empty state",
+        "Timeline shows medication records in words",
+        "D-030"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: f008 domain (4) and screen (2) tests; 653 PASS",
+        "GATES: 13 receipts on clean tree 1cf68da, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0711",
+      "next_action": null,
+      "files_touched": [],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0699",
+        "EV-TEST-F007-0700",
+        "EV-TEST-F007-0701",
+        "EV-TEST-F007-0702",
+        "EV-TEST-F007-0703",
+        "EV-BUILD-F007-0704",
+        "EV-RUNTIME-F007-0705",
+        "EV-TEST-F007-0706",
+        "EV-BUILD-F007-0707",
+        "EV-RUNTIME-F007-0708",
+        "EV-TEST-F007-0709",
+        "EV-TEST-F007-0710",
+        "EV-TEST-F007-0711"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0699",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0700",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0701",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (653 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0702",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0703",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0704",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0705",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0706",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0707",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0708",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (654 PASS)",
+          "evidence_id": "EV-TEST-F007-0709",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0710",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0711",
+          "criterion": "AC-4",
+          "source_revision": "1cf68da60de1a35182bf3b171460bc0a9e637942",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "F008_COMPLETE",
+      "limitations": null,
+      "depends_on": [
+        "R008"
+      ],
+      "review": "self-checked; independent review R009 recommended next",
+      "out_of_scope": [
+        "reminders",
+        "stopping or pausing a plan",
+        "product catalogue or interaction checks (never without a reviewed source)"
+      ]
     }
   },
   "forge_history_legacy_ids": {
