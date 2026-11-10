@@ -45,6 +45,26 @@ void main() {
     await settle(tester);
     expect(find.byKey(const ValueKey('sleep-none')), findsNothing);
     expect(find.textContaining('7 h 50 min in bed · Rested'), findsOneWidget);
+
+    // Correct it: the sheet opens with the typed times; a new version shows.
+    await tester.tap(
+      find.byWidgetPredicate(
+        (w) =>
+            w.key is ValueKey<String> &&
+            (w.key! as ValueKey<String>).value.startsWith('sleep-correct-'),
+      ),
+    );
+    await settle(tester);
+    expect(find.text('Correct this night'), findsOneWidget);
+    expect(find.text('2026-11-01 23:10'), findsOneWidget);
+    await tester.enterText(
+      find.byKey(const ValueKey('sleep-woke')),
+      '2026-11-02 06:40',
+    );
+    await tapKey(tester, 'sleep-save');
+    await settle(tester);
+    expect(find.textContaining('7 h 30 min in bed · Rested'), findsOneWidget);
+    expect(find.textContaining('7 h 50 min'), findsNothing);
   });
 
   test('the sleep words score and judge nothing', () {

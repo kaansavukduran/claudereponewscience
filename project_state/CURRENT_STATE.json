@@ -3,9 +3,45 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G008",
+    "contract": "v0.32",
+    "run_id": "G008@v0.32",
+    "slice": "Correct a sleep night by typing new times from the Sleep card (G-72)",
+    "goal": "A wrong night is corrected as a new version with the earlier one kept in history.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "3051d2c",
+    "app_revision": null,
+    "started_at": "2026-11-10T23:45:00Z",
+    "finished_at": null,
+    "scope": [
+      "recordSleep(correcting:) appends a correction of the shown night; other kinds and older versions refused",
+      "Correct on each night of the Sleep card; the sheet opens with the typed times"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: sleep tests in UTC and New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F007-S3"
+    ],
+    "review": "lead review; small change on reviewed code",
+    "out_of_scope": [
+      "hiding the Sleep card as a Today section (rest of G-72)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

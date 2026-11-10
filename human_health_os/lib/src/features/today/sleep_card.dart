@@ -35,13 +35,13 @@ class _SleepCardState extends State<SleepCard> {
     if (mounted) setState(() => _nights = nights);
   }
 
-  Future<void> _add() async {
+  Future<void> _add({HealthRecord? correcting}) async {
     final saved = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
-      builder: (_) => _NightSheet(svc: _svc, me: _me),
+      builder: (_) => _NightSheet(svc: _svc, me: _me, correcting: correcting),
     );
     if (saved == true) await _reload();
   }
@@ -73,9 +73,20 @@ class _SleepCardState extends State<SleepCard> {
               for (final r in nights.take(3))
                 Padding(
                   padding: const EdgeInsets.only(bottom: 4),
-                  child: Text(
-                    _line(s, r.details! as SleepNightDetails),
-                    key: ValueKey('sleep-night-${r.id}'),
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    spacing: 8,
+                    children: [
+                      Text(
+                        _line(s, r.details! as SleepNightDetails),
+                        key: ValueKey('sleep-night-${r.id}'),
+                      ),
+                      TextButton(
+                        key: ValueKey('sleep-correct-${r.id}'),
+                        onPressed: () => _add(correcting: r),
+                        child: Text(s.amendAction(AmendReason.correction)),
+                      ),
+                    ],
                   ),
                 ),
             const SizedBox(height: 8),
@@ -100,10 +111,13 @@ String _line(S s, SleepNightDetails d) => s.sleepLine(
 );
 
 class _NightSheet extends StatefulWidget {
-  const _NightSheet({required this.svc, required this.me});
+  const _NightSheet({required this.svc, required this.me, this.correcting});
 
   final HeartbeatService svc;
   final String me;
+
+  /// The shown version of a night being corrected; null for a new night.
+  final HealthRecord? correcting;
 
   @override
   State<_NightSheet> createState() => _NightSheetState();
@@ -114,6 +128,18 @@ class _NightSheetState extends State<_NightSheet> {
   final _woke = TextEditingController();
   WakeFeeling? _feeling;
   String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.correcting?.details;
+    if (d is SleepNightDetails) {
+      _bed.text = _typed(d.wentToBed);
+      _woke.text = _typed(d.wokeUp);
+      _feeling = d.feeling;
+    }
+  }
+
   String? _errorField;
   bool _busy = false;
 
@@ -135,6 +161,7 @@ class _NightSheetState extends State<_NightSheet> {
         wentToBed: _bed.text,
         wokeUp: _woke.text,
         feeling: _feeling,
+        correcting: widget.correcting?.id,
       );
       saved = true;
     } on InputError catch (e) {
@@ -192,7 +219,7 @@ class _NightSheetState extends State<_NightSheet> {
             Semantics(
               header: true,
               child: Text(
-                s.sleepAdd,
+                widget.correcting == null ? s.sleepAdd : s.sleepCorrectTitle,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -250,4 +277,12 @@ class _NightSheetState extends State<_NightSheet> {
 double _bottomInset(BuildContext context) {
   final keyboard = MediaQuery.viewInsetsOf(context).bottom;
   return keyboard > 0 ? keyboard : MediaQuery.viewPaddingOf(context).bottom;
+}
+
+/// An instant as it would be typed: local `YYYY-MM-DD HH:MM`.
+String _typed(DateTime utc) {
+  final t = utc.toLocal();
+  String two(int v) => v.toString().padLeft(2, '0');
+  return '${t.year.toString().padLeft(4, '0')}-${two(t.month)}-${two(t.day)} '
+      '${two(t.hour)}:${two(t.minute)}';
 }

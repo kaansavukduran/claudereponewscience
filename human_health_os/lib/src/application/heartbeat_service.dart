@@ -618,7 +618,16 @@ class HeartbeatService {
     String wokeUp = '',
     WakeFeeling? feeling,
     LocalZone zone = const SystemLocalZone(),
+    String? correcting,
   }) async {
+    // A correction replaces the shown version of a night with new typed
+    // times; the earlier version stays in history.
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.sleepNight) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
     final now = clock.nowUtc();
     final bedText = wentToBed.trim();
     if (bedText.isEmpty) throw const InputError('EMPTY', 'bed');
@@ -673,6 +682,8 @@ class HeartbeatService {
       observedAt: up,
       recordedAt: now,
       details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
       schemaVersion: HealthRecord.writeSchemaFor(RecordKind.sleepNight),
     );
     await repository.appendRecord(record);

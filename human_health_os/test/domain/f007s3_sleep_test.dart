@@ -266,4 +266,51 @@ void main() {
     expect(await svc.sleepNights(me), isEmpty);
     expect(await repo.records(me, kind: RecordKind.sleepNight), hasLength(2));
   });
+
+  test('a night is corrected with new typed times: a new version, the '
+      'earlier one kept; only the shown night of this kind', () async {
+    final (svc, me, repo) = await fresh();
+    final first = await svc.recordSleep(
+      zone: utc,
+      profileId: me,
+      wentToBed: '2026-11-08 23:00',
+      wokeUp: '2026-11-09 07:00',
+    );
+    final fixed = await svc.recordSleep(
+      zone: utc,
+      profileId: me,
+      wentToBed: '2026-11-08 23:30',
+      wokeUp: '2026-11-09 06:45',
+      feeling: WakeFeeling.okay,
+      correcting: first.id,
+    );
+    expect(fixed.supersedesId, first.id);
+    expect(fixed.amendReason, AmendReason.correction);
+    final nights = await svc.sleepNights(me);
+    expect(nights.single.id, fixed.id);
+    expect(
+      (nights.single.details! as SleepNightDetails).timeInBed,
+      const Duration(hours: 7, minutes: 15),
+    );
+    expect(await repo.records(me, kind: RecordKind.sleepNight), hasLength(2));
+    expect(
+      () => svc.recordSleep(
+        zone: utc,
+        profileId: me,
+        wentToBed: '23:00',
+        correcting: first.id,
+      ),
+      inputError('TARGET_NOT_CURRENT'),
+    );
+    final weight = await svc.recordWeightKg(profileId: me, input: '70');
+    expect(
+      () => svc.recordSleep(
+        zone: utc,
+        profileId: me,
+        wentToBed: '23:00',
+        correcting: weight.id,
+      ),
+      inputError('TARGET_WRONG_KIND'),
+    );
+  });
 }

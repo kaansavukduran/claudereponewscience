@@ -395,6 +395,7 @@ class S {
     'Ne zaman yattığın ve ne zaman uyandığın. Aradaki süre yatakta geçen süredir, uykuda geçen süre değil.',
   );
   String get sleepAdd => _t('Add a night', 'Gece ekle');
+  String get sleepCorrectTitle => _t('Correct this night', 'Bu geceyi düzelt');
   String get sleepNone =>
       _t('No nights recorded yet.', 'Henüz gece kaydı yok.');
   String get sleepBed => _t('Went to bed', 'Yattım');
