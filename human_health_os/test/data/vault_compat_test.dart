@@ -101,13 +101,13 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes vault format 1, reads record schema 7 (sleep) and '
+    test('this app writes vault format 1, reads record schema 8 (check-in) and '
         'writes weight and lab results at 3, reads format 1, never '
         'downgrades', () {
       expect(vaultFormatVersion, 1);
       expect(vaultOldestReadableVersion, 1);
       expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 7);
+      expect(HealthRecord.currentSchemaVersion, 8);
       expect(HealthRecord.defaultWriteSchema, 3);
       expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
       expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
@@ -134,6 +134,7 @@ void main() {
         expect(HealthRecord.writeSchemaFor(k), 6);
       }
       expect(HealthRecord.writeSchemaFor(RecordKind.sleepNight), 7);
+      expect(HealthRecord.writeSchemaFor(RecordKind.feelingCheckIn), 8);
       expect(Profile.currentSchemaVersion, 1);
     });
 
@@ -758,7 +759,7 @@ void main() {
       expect(raw.text, before, reason: 'opening writes nothing');
     });
 
-    test('a store newer than this app (schema 8) is refused whole', () {
+    test('a store newer than this app (schema 9) is refused whole', () {
       final lines = text.trimRight().split('\n');
       final last = (jsonDecode(lines.last) as Map).cast<String, Object?>();
       final data = (last['data']! as Map).cast<String, Object?>()

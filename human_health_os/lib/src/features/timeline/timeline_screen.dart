@@ -121,6 +121,7 @@ String fmtValue(S s, HealthRecord r) {
   if (d is MedicationItemDetails) {
     return '${d.name} · ${s.medsCategoryLabel(d.category)}';
   }
+  if (d is FeelingCheckInDetails) return s.feelLine(d.energy, d.mood, d.stress);
   if (d is SleepNightDetails) {
     return s.sleepLine(
       fmtWhen(d.wentToBed),

@@ -107,6 +107,10 @@ class S {
   String get enteredAs => _t('entered as', 'girilen');
   String inputError(String code) => switch (code) {
     'FUTURE_TIME' => _t('This date is in the future.', 'Bu tarih gelecekte.'),
+    'CHECKIN_EMPTY' => _t(
+      'Pick at least one of energy, mood or stress.',
+      'Enerji, ruh hâli ya da stresten en az birini seç.',
+    ),
     'SLEEP_WAKE_NOT_AFTER_BED' => _t(
       'The waking time has to come after the going-to-bed time.',
       'Uyanma saati yatma saatinden sonra olmalı.',
@@ -385,7 +389,48 @@ class S {
     RecordKind.medicationPlan => _t('Plan', 'Plan'),
     RecordKind.medicationIntake => _t('Dose', 'Doz'),
     RecordKind.sleepNight => _t('Night', 'Gece'),
+    RecordKind.feelingCheckIn => _t('How I feel', 'Nasıl hissediyorum'),
   };
+
+  // How I feel (F007 slice 4): the person's own levels, never a score or a
+  // diagnosis; a level not picked is not given.
+  String get feelTitle => _t('How you feel', 'Nasıl hissediyorsun');
+  String get feelIntro => _t(
+    'Your own words for now. Pick any of the three; nothing is scored.',
+    'Şu an için kendi seçimin. Üçünden istediğini seç; hiçbir şey puanlanmaz.',
+  );
+  String get feelSave => _t('Save', 'Kaydet');
+  String get feelOpen => _t('Record how you feel', 'Nasıl hissettiğini kaydet');
+  String get feelNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get feelEnergy => _t('Energy', 'Enerji');
+  String get feelMood => _t('Mood', 'Ruh hâli');
+  String get feelStress => _t('Stress', 'Stres');
+
+  /// The person's own word for each level: one set per question, so a level
+  /// never reads as a lab-style high or low.
+  String feelWord(FeelingQuestion q, SelfLevel l) => switch ((q, l)) {
+    (FeelingQuestion.energy, SelfLevel.low) => _t('drained', 'bitkin'),
+    (FeelingQuestion.energy, SelfLevel.medium) => _t('steady', 'dengeli'),
+    (FeelingQuestion.energy, SelfLevel.high) => _t('lively', 'dinç'),
+    (FeelingQuestion.mood, SelfLevel.low) => _t('down', 'keyifsiz'),
+    (FeelingQuestion.mood, SelfLevel.medium) => _t('even', 'idare eder'),
+    (FeelingQuestion.mood, SelfLevel.high) => _t('bright', 'keyifli'),
+    (FeelingQuestion.stress, SelfLevel.low) => _t('calm', 'sakin'),
+    (FeelingQuestion.stress, SelfLevel.medium) => _t('tense', 'gergin'),
+    (FeelingQuestion.stress, SelfLevel.high) => _t('overwhelmed', 'çok gergin'),
+  };
+  String feelQuestion(FeelingQuestion q) => switch (q) {
+    FeelingQuestion.energy => feelEnergy,
+    FeelingQuestion.mood => feelMood,
+    FeelingQuestion.stress => feelStress,
+  };
+  String feelLine(SelfLevel? energy, SelfLevel? mood, SelfLevel? stress) => [
+    if (energy != null)
+      '$feelEnergy: ${feelWord(FeelingQuestion.energy, energy)}',
+    if (mood != null) '$feelMood: ${feelWord(FeelingQuestion.mood, mood)}',
+    if (stress != null)
+      '$feelStress: ${feelWord(FeelingQuestion.stress, stress)}',
+  ].join(' · ');
 
   // Sleep (F007 slice 3): two typed times and, if given, how waking felt.
   // Time in bed is not time asleep; nothing is scored.
@@ -989,6 +1034,8 @@ class S {
       _t('Move $what down', '$what aşağı taşı');
   String get settingsSections => _t('Sections', 'Bölümler');
   String todaySectionName(TodaySection x) => switch (x) {
+    TodaySection.sleep => _t('Sleep', 'Uyku'),
+    TodaySection.feeling => _t('How you feel', 'Nasıl hissediyorsun'),
     TodaySection.tools => _t('Tools', 'Araçlar'),
     TodaySection.yourData => _t('Your data (backups)', 'Verilerin (yedekler)'),
     TodaySection.buildFacts => _t('About this build', 'Bu derleme hakkında'),

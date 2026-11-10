@@ -3,6 +3,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
+import 'package:human_health_os/src/domain/settings/appearance.dart';
 import 'package:human_health_os/src/l10n/strings.dart';
 
 import 'f004_labs_test.dart' show interpretive, judged;
@@ -65,6 +66,17 @@ void main() {
     await settle(tester);
     expect(find.textContaining('7 h 30 min in bed · Rested'), findsOneWidget);
     expect(find.textContaining('7 h 50 min'), findsNothing);
+  });
+
+  testWidgets('Sleep can be hidden from Today like the other sections', (
+    tester,
+  ) async {
+    await launchWith(
+      tester,
+      initial: const AppearanceSettings(hiddenSections: {TodaySection.sleep}),
+    );
+    expect(find.byKey(const ValueKey('sleep-card')), findsNothing);
+    expect(find.byKey(const ValueKey('weight-card')), findsOneWidget);
   });
 
   test('the sleep words score and judge nothing', () {

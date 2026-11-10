@@ -38,7 +38,7 @@ enum DiscoveryStep { settings, glossary, howTo }
 /// Today sections a person may hide. The weight and measurement areas are
 /// always there (they hold the person's numbers); Settings stays one click
 /// away in the top bar whatever is hidden.
-enum TodaySection { tools, yourData, buildFacts }
+enum TodaySection { sleep, feeling, tools, yourData, buildFacts }
 
 class AppearanceSettings {
   const AppearanceSettings({

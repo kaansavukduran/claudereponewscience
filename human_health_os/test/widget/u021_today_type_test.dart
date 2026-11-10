@@ -18,8 +18,10 @@ Map<double, String> textSizes(WidgetTester tester) {
           .evaluate()) {
     final r = e.renderObject! as RenderParagraph;
     final plain = r.text.toPlainText().trim();
-    // Icon glyphs are private-use characters.
-    if (plain.isEmpty || plain.runes.every((c) => c >= 0xE000 && c <= 0xF8FF)) {
+    // Icon glyphs are private-use characters (Basic Multilingual Plane or
+    // the supplementary private-use planes).
+    bool icon(int c) => (c >= 0xE000 && c <= 0xF8FF) || c >= 0xF0000;
+    if (plain.isEmpty || plain.runes.every(icon)) {
       continue;
     }
     final size = r.text.style?.fontSize;

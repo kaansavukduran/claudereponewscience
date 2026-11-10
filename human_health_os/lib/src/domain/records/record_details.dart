@@ -25,6 +25,7 @@ abstract class RecordDetails {
     MedicationPlanDetails.typeTag => MedicationPlanDetails.fromJson(j),
     MedicationIntakeDetails.typeTag => MedicationIntakeDetails.fromJson(j),
     SleepNightDetails.typeTag => SleepNightDetails.fromJson(j),
+    FeelingCheckInDetails.typeTag => FeelingCheckInDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -372,4 +373,63 @@ class SleepNightDetails extends RecordDetails {
 
   @override
   int get hashCode => Object.hash(wentToBed, wokeUp, feeling);
+}
+
+/// A level the person picks for themselves. Not a measurement, not a score
+/// and not a diagnosis: the same word means what the person meant.
+enum SelfLevel { low, medium, high }
+
+/// The three questions of a check-in.
+enum FeelingQuestion { energy, mood, stress }
+
+/// How the person says they feel now (F007 slice 4, record schema 8):
+/// energy, mood and stress, each optional, at least one given. A level not
+/// given is not given, never "medium".
+class FeelingCheckInDetails extends RecordDetails {
+  const FeelingCheckInDetails({this.energy, this.mood, this.stress});
+
+  static const String typeTag = 'feeling_check_in';
+
+  final SelfLevel? energy;
+  final SelfLevel? mood;
+  final SelfLevel? stress;
+
+  @override
+  String get type => typeTag;
+
+  String? problem() =>
+      energy == null && mood == null && stress == null ? 'CHECKIN_EMPTY' : null;
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'energy': energy?.name,
+    'mood': mood?.name,
+    'stress': stress?.name,
+  };
+
+  static SelfLevel? _level(Object? v) => switch (v) {
+    null => null,
+    final String n =>
+      SelfLevel.values.asNameMap()[n] ??
+          (throw FormatException('Unknown level "$n"')),
+    final x => throw FormatException('Unknown level "$x"'),
+  };
+
+  static FeelingCheckInDetails fromJson(Map<String, Object?> j) =>
+      FeelingCheckInDetails(
+        energy: _level(j['energy']),
+        mood: _level(j['mood']),
+        stress: _level(j['stress']),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is FeelingCheckInDetails &&
+      other.energy == energy &&
+      other.mood == mood &&
+      other.stress == stress;
+
+  @override
+  int get hashCode => Object.hash(energy, mood, stress);
 }

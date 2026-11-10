@@ -101,7 +101,12 @@ enum RecordKind {
 
   /// One night: going to bed and waking up, typed by hand (F007 slice 3,
   /// record schema 7). [SleepNightDetails]. Time in bed, not time asleep.
-  sleepNight('sleep.night', minSchema: 7);
+  sleepNight('sleep.night', minSchema: 7),
+
+  /// How the person says they feel: energy, mood, stress as their own
+  /// levels (F007 slice 4, record schema 8). [FeelingCheckInDetails].
+  /// Self-report, never a diagnosis.
+  feelingCheckIn('self.feeling_check_in', minSchema: 8);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -128,7 +133,8 @@ enum RecordKind {
     medicationItem ||
     medicationPlan ||
     medicationIntake ||
-    sleepNight => false,
+    sleepNight ||
+    feelingCheckIn => false,
   };
 
   /// The F008 medication kinds.
@@ -139,7 +145,10 @@ enum RecordKind {
 
   /// The value is [RecordDetails], never a single quantity.
   bool get isStructured =>
-      this == bloodPressure || isMedication || this == sleepNight;
+      this == bloodPressure ||
+      isMedication ||
+      this == sleepNight ||
+      this == feelingCheckIn;
 
   /// The `type` of the [RecordDetails] a structured kind carries.
   String? get detailsType => switch (this) {
@@ -148,6 +157,7 @@ enum RecordKind {
     medicationPlan => MedicationPlanDetails.typeTag,
     medicationIntake => MedicationIntakeDetails.typeTag,
     sleepNight => SleepNightDetails.typeTag,
+    feelingCheckIn => FeelingCheckInDetails.typeTag,
     _ => null,
   };
 
@@ -311,7 +321,7 @@ class HealthRecord {
   ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 7;
+  static const int currentSchemaVersion = 8;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -572,9 +582,10 @@ class HealthRecord {
         if (code != null) {
           throw RecordValidationError(code, '${kind.code}: $code');
         }
-      case RecordKind.sleepNight:
+      case RecordKind.sleepNight || RecordKind.feelingCheckIn:
         final code = switch (details) {
           final SleepNightDetails d => d.problem(),
+          final FeelingCheckInDetails d => d.problem(),
           _ => null,
         };
         if (code != null) {

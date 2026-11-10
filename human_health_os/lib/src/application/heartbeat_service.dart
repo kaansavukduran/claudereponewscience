@@ -690,6 +690,53 @@ class HeartbeatService {
     return record;
   }
 
+  /// Records how the person says they feel now (or at the typed time).
+  Future<HealthRecord> recordFeeling({
+    required String profileId,
+    SelfLevel? energy,
+    SelfLevel? mood,
+    SelfLevel? stress,
+    String when = '',
+  }) async {
+    final details = FeelingCheckInDetails(
+      energy: energy,
+      mood: mood,
+      stress: stress,
+    );
+    final problem = details.problem();
+    if (problem != null) throw InputError(problem);
+    final now = clock.nowUtc();
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.feelingCheckIn,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: parseMeasuredAt(when, nowUtc: now) ?? now,
+      recordedAt: now,
+      details: details,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.feelingCheckIn),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live check-ins, the latest first.
+  Future<List<HealthRecord>> feelings(String profileId) async {
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.feelingCheckIn,
+    );
+    return [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is FeelingCheckInDetails) h,
+    ]..sort((a, b) => b.observedAt.compareTo(a.observedAt));
+  }
+
   /// The live nights, the latest waking first.
   Future<List<HealthRecord>> sleepNights(String profileId) async {
     final all = await repository.records(

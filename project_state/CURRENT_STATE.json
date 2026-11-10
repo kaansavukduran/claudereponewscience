@@ -3,9 +3,52 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F007-S4",
+    "contract": "v0.32",
+    "run_id": "F007-S4@v0.32",
+    "slice": "How you feel: three optional self-report questions in the person's words (record schema 8); Sleep and How you feel hideable on Today",
+    "goal": "A person records energy, mood and stress in their own words; nothing is scored, summed or advised.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "0e742df",
+    "app_revision": null,
+    "started_at": "2026-11-11T00:40:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 8: self.feeling_check_in with FeelingCheckInDetails",
+      "HeartbeatService.recordFeeling and feelings",
+      "How you feel card on Today with a sheet (EN/TR)",
+      "TodaySection.sleep and feeling hideable in Settings (rest of G-72)",
+      "Timeline line",
+      "D-032"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "REVIEWED: one Sonnet reviewer before gates, no blocking findings; should-fix fixed",
+      "TESTED: full suite UTC and New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "G008"
+    ],
+    "review": "one Sonnet reviewer: no blocking; Turkish words that sound clinical replaced (bunalmış, olağan), each chip read with its question, a stale error cleared, consistent format errors; tests for the whole word table in EN and TR, the Timeline line and saved hidden sections",
+    "out_of_scope": [
+      "trends or summaries of check-ins",
+      "nutrition",
+      "activity"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
