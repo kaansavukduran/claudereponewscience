@@ -1,0 +1,64 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0654",
+  "kind": "TEST",
+  "forge_id": "R007@v0.32",
+  "source_revision": "b6470ffc78b82e59306ffa29fd0f5e472cc5064c",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env LANG=C.UTF-8 timeout 900 xvfb-run -a -s '-screen 0 1280x1024x24' flutter test integration_test -d linux",
+  "argv": [
+    "env",
+    "LANG=C.UTF-8",
+    "timeout",
+    "900",
+    "xvfb-run",
+    "-a",
+    "-s",
+    "-screen 0 1280x1024x24",
+    "flutter",
+    "test",
+    "integration_test",
+    "-d",
+    "linux"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-10T12:50:28.536Z",
+  "finished_at": "2026-11-10T12:51:14.597Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v338 x86_64",
+  "summary": "00:25 +9: All tests passed!",
+  "log_sha256": "fce3b4379d3869c0ae69c6fc71acf78d8c9a0b5262790fa37f95a3d039832cce",
+  "log_lines": 43,
+  "log_tail": [
+    "00:03 +3: F004: a lab result keeps every printed field across a relaunch on the real file vault",
+    "00:04 +4: F005 restore drill: backup -> lose the vault -> fresh start -> restore -> relaunch shows the same records",
+    "00:05 +5: F006: a production build starts at the vault gate, creates the encrypted vault (production key cost, in an isolate), and after a relaunch refuses a wrong passphrase and opens with the right one",
+    "[hhos] vault_created warnings=0",
+    "[hhos] vault_unlock_failed error=CryptoFailure(NOT_AUTHENTIC)",
+    "[hhos] vault_unlocked warnings=0",
+    "00:11 +6: F006 on real files: recovery replaces the passphrase; key loss keeps the locked vault aside; a portable vault lives in UserData/ and keeps its identity when the folder moves",
+    "00:12 +7: F007 on real files: measurements typed on Today and a correction survive a relaunch; weight stays schema 3; the first measurement keeps a backup of the earlier vault on disk",
+    "00:22 +8: F007 in a production encrypted vault: measurements leave no plaintext, the checkpoint backup is encrypted, and after a relaunch the gate unlocks to the same readings",
+    "[hhos] vault_unlocked warnings=0",
+    "00:25 +9: (tearDownAll)",
+    "00:25 +9: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}
