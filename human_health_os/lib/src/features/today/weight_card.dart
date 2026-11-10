@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../presentation/widgets/aion.dart';
 import '../../app/appearance_scope.dart';
 import '../../presentation/widgets/number_pad.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
@@ -165,10 +166,18 @@ class _WeightCardState extends State<WeightCard> {
                 style: text.titleMedium,
               )
             else if (latest == null)
-              Text(
-                s.noWeightYet,
-                key: const ValueKey('weight-empty'),
-                style: text.bodyMedium,
+              Row(
+                children: [
+                  const AionFigure(height: 64),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Text(
+                      s.noWeightYet,
+                      key: const ValueKey('weight-empty'),
+                      style: text.bodyMedium,
+                    ),
+                  ),
+                ],
               )
             else
               Row(

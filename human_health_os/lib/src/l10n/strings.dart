@@ -860,6 +860,14 @@ class S {
     'Before installing another version, make a backup from Your data on Today.',
     'Başka bir sürüm kurmadan önce Bugün ekranındaki Verilerin bölümünden yedek al.',
   );
+  String get aionAlt => _t(
+    'Aion, the Human OS character, waving',
+    'Aion, Human OS karakteri, el sallıyor',
+  );
+  String get settingsShowAion => _t(
+    'Show Aion, the Human OS character',
+    'Human OS karakteri Aion\'u göster',
+  );
   String get settingsPadOpen => _t(
     'Open the number pad in every measurement',
     'Her ölçümde sayı tuşları açık başlasın',

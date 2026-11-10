@@ -167,6 +167,13 @@ class SettingsScreen extends StatelessWidget {
                   value: a.reduceMotion,
                   onChanged: (on) => set(a.copyWith(reduceMotion: on)),
                 ),
+                SwitchListTile(
+                  key: const ValueKey('set-show-aion'),
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(s.settingsShowAion),
+                  value: a.showAion,
+                  onChanged: (on) => set(a.copyWith(showAion: on)),
+                ),
               ],
             ),
           ),

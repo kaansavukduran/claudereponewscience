@@ -27,6 +27,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  # Aion, the owner's own Human OS character (A001, D-029): a still picture
+  # from the owner's reference sheet, included at the owner's request.
+  assets:
+    - assets/aion/
   # Reading fonts (U011, D-025): SIL Open Font License 1.1, licence texts
   # beside the files; bundled so they work offline.
   fonts:

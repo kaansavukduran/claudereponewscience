@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../presentation/widgets/aion.dart';
 import '../../app/appearance_scope.dart';
 import '../../domain/settings/appearance.dart';
 import '../../l10n/strings.dart';
@@ -58,6 +59,13 @@ class _FirstRunScreenState extends State<FirstRunScreen> {
           key: const ValueKey('screen-first-run'),
           padding: const EdgeInsets.all(24),
           children: [
+            if (_step == 0) ...[
+              const Align(
+                alignment: Alignment.centerLeft,
+                child: AionFigure(height: 140),
+              ),
+              const SizedBox(height: 12),
+            ],
             // Step and title are announced together when the step changes.
             Semantics(
               liveRegion: true,

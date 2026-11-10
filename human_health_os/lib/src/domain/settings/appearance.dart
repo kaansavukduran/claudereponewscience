@@ -57,6 +57,7 @@ class AppearanceSettings {
     this.wideSpacing = false,
     this.reduceMotion = false,
     this.measurementsFirst = false,
+    this.showAion = true,
     this.units = UnitSystem.metric,
     this.dateOrder = DateOrder.iso,
     this.clock = ClockStyle.h24,
@@ -115,6 +116,10 @@ class AppearanceSettings {
   /// choice; Reset Today clears it).
   final bool measurementsFirst;
 
+  /// Aion, the Human OS character, on the introduction and empty states
+  /// (a still picture; it gives no advice).
+  final bool showAion;
+
   /// Metric as typed, or US units shown beside them (display only).
   final UnitSystem units;
 
@@ -165,6 +170,7 @@ class AppearanceSettings {
     font: font,
     wideSpacing: wideSpacing,
     reduceMotion: reduceMotion,
+    showAion: showAion,
     units: units,
     dateOrder: dateOrder,
     clock: clock,
@@ -197,6 +203,7 @@ class AppearanceSettings {
     bool? wideSpacing,
     bool? reduceMotion,
     bool? measurementsFirst,
+    bool? showAion,
     UnitSystem? units,
     DateOrder? dateOrder,
     ClockStyle? clock,
@@ -220,6 +227,7 @@ class AppearanceSettings {
     wideSpacing: wideSpacing ?? this.wideSpacing,
     reduceMotion: reduceMotion ?? this.reduceMotion,
     measurementsFirst: measurementsFirst ?? this.measurementsFirst,
+    showAion: showAion ?? this.showAion,
     units: units ?? this.units,
     dateOrder: dateOrder ?? this.dateOrder,
     clock: clock ?? this.clock,
@@ -247,6 +255,7 @@ class AppearanceSettings {
     'wideSpacing': wideSpacing,
     'reduceMotion': reduceMotion,
     'measurementsFirst': measurementsFirst,
+    'showAion': showAion,
     'units': units.name,
     'dateOrder': dateOrder.name,
     'clock': clock.name,
@@ -311,6 +320,7 @@ class AppearanceSettings {
       wideSpacing: json['wideSpacing'] == true,
       reduceMotion: json['reduceMotion'] == true,
       measurementsFirst: json['measurementsFirst'] == true,
+      showAion: json['showAion'] != false,
       units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
       dateOrder: pick(DateOrder.values, json['dateOrder'], DateOrder.iso),
       clock: pick(ClockStyle.values, json['clock'], ClockStyle.h24),
@@ -339,6 +349,7 @@ class AppearanceSettings {
       other.wideSpacing == wideSpacing &&
       other.reduceMotion == reduceMotion &&
       other.measurementsFirst == measurementsFirst &&
+      other.showAion == showAion &&
       other.units == units &&
       other.dateOrder == dateOrder &&
       other.clock == clock &&
@@ -365,6 +376,7 @@ class AppearanceSettings {
       wideSpacing,
       reduceMotion,
       measurementsFirst,
+      showAion,
       units,
       dateOrder,
       clock,

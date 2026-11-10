@@ -3,9 +3,48 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "A001",
+    "contract": "v0.32",
+    "run_id": "A001@v0.32",
+    "slice": "Aion on the introduction and the empty weight card; Settings switch",
+    "goal": "Owner's character Aion, from the Drive main reference, greets on the first introduction step and keeps the empty weight card company, as a still labelled picture that can be hidden.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c110ea5",
+    "app_revision": null,
+    "started_at": "2026-11-10T18:45:00Z",
+    "finished_at": null,
+    "scope": [
+      "assets/aion/aion_wave.png from the owner's reference (Drive)",
+      "AionFigure widget with a screen-reader label",
+      "first introduction step and empty weight card",
+      "AppearanceSettings.showAion with a Settings switch",
+      "D-029"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED (prepared in a separate worktree while U023 gates ran)",
+      "TESTED: a001 tests (5)"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "U023"
+    ],
+    "review": null,
+    "out_of_scope": [
+      "frame-by-frame animation (the Drive move sheet does not match the current reference)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
