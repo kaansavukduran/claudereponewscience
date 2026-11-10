@@ -117,6 +117,17 @@ class _TimelineScreenState extends State<TimelineScreen> {
 
 String fmtValue(S s, HealthRecord r) {
   if (r.kind.isMeasurement) return measurementValue(s, r);
+  final d = r.details;
+  if (d is MedicationItemDetails) {
+    return '${d.name} · ${s.medsCategoryLabel(d.category)}';
+  }
+  if (d is MedicationPlanDetails) return d.schedule;
+  if (d is MedicationIntakeDetails) {
+    return [
+      d.status == IntakeStatus.taken ? s.medsDoseTaken : s.medsDoseSkipped,
+      ?d.amount,
+    ].join(' · ');
+  }
   final q = r.quantity;
   if (r.valueStatus != ValueStatus.present || q == null) {
     return s.valueStatus(r.valueStatus);

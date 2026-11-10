@@ -124,28 +124,29 @@ void main() {
   });
 
   testWidgets('check 5: narrow layout exposes compact navigation with exactly '
-      'Today, Timeline, Labs (+ More for planned areas)', (tester) async {
+      'Today, Timeline, Labs, Medications (+ More for planned areas)', (
+    tester,
+  ) async {
     await boot(tester, size: phone);
     expect(bar(), findsOneWidget);
     expect(rail(), findsNothing);
     final nav = tester.widget<NavigationBar>(bar());
     expect(
       [for (final d in nav.destinations) (d as NavigationDestination).label],
-      ['Today', 'Timeline', 'Labs', 'More'],
+      ['Today', 'Timeline', 'Labs', 'Medications', 'More'],
     );
   });
 
   testWidgets('check 6: wide layout exposes side navigation with exactly '
-      'Today, Timeline, Labs; planned areas are a separate group', (
-    tester,
-  ) async {
+      'Today, Timeline, Labs, Medications; planned areas are a separate '
+      'group', (tester) async {
     await boot(tester, size: desktop);
     expect(rail(), findsOneWidget);
     expect(bar(), findsNothing);
     final nav = tester.widget<NavigationRail>(rail());
     expect(
       [for (final d in nav.destinations) (d.label as Text).data],
-      ['Today', 'Timeline', 'Labs'],
+      ['Today', 'Timeline', 'Labs', 'Medications'],
     );
     final group = find.byKey(const ValueKey('rail-planned-group'));
     expect(
@@ -153,9 +154,9 @@ void main() {
       findsOneWidget,
     );
     // Opening a planned area clears the primary selection.
-    await tester.tap(find.byKey(const ValueKey('rail-planned-medications')));
+    await tester.tap(find.byKey(const ValueKey('rail-planned-nutrition')));
     await tester.pumpAndSettle();
-    expect(find.byKey(const ValueKey('screen-medications')), findsOneWidget);
+    expect(find.byKey(const ValueKey('screen-nutrition')), findsOneWidget);
     expect(tester.widget<NavigationRail>(rail()).selectedIndex, isNull);
   });
 
@@ -306,7 +307,7 @@ void main() {
   testWidgets('planned rail items meet the 48 dp touch-target guideline '
       '(UX-4)', (tester) async {
     await boot(tester, size: desktop);
-    for (final d in ['medications', 'learn']) {
+    for (final d in ['nutrition', 'learn']) {
       final size = tester.getSize(find.byKey(ValueKey('rail-planned-$d')));
       expect(size.height, greaterThanOrEqualTo(48), reason: d);
     }

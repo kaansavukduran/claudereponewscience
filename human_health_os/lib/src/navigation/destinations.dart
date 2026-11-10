@@ -76,6 +76,8 @@ const List<DestinationId> kPrimaryDestinations = [
   DestinationId.today,
   DestinationId.timeline,
   DestinationId.labs,
+  // Built in F008.
+  DestinationId.medications,
 ];
 
 const List<Destination> destinations = [
@@ -129,7 +131,8 @@ const List<Destination> destinations = [
     purposeEn: 'Medicines and supplements: products, ingredients, plans and actual intake.',
     purposeTr:
         'İlaç ve takviyeler: ürünler, etken maddeler, planlar ve gerçek alım.',
-    plannedForge: 'Forge F008',
+    // Built in F008: products, plans and recorded doses kept apart.
+    plannedForge: null,
     principleEn: 'A prescription or reminder is not an intake. "No interaction found" is not "safe".',
     principleTr: 'Reçete ya da hatırlatma alım değildir. "Etkileşim bulunamadı", "güvenli" demek değildir.',
   ),

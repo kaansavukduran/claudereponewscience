@@ -107,6 +107,10 @@ class S {
   String get enteredAs => _t('entered as', 'girilen');
   String inputError(String code) => switch (code) {
     'FUTURE_TIME' => _t('This date is in the future.', 'Bu tarih gelecekte.'),
+    'TEXT_TOO_LONG' => _t(
+      'This text is too long (at most 300 characters).',
+      'Bu metin çok uzun (en çok 300 karakter).',
+    ),
     'EMPTY' => _t(
       'Enter a value. Empty is not saved as 0.',
       'Bir değer gir. Boş değer 0 olarak kaydedilmez.',
@@ -365,7 +369,83 @@ class S {
       'Oksijen satürasyonu (SpO2)',
     ),
     RecordKind.respiratoryRate => _t('Respiratory rate', 'Solunum hızı'),
+    RecordKind.medicationItem => _t(
+      'Medicine or supplement',
+      'İlaç ya da takviye',
+    ),
+    RecordKind.medicationPlan => _t('Plan', 'Plan'),
+    RecordKind.medicationIntake => _t('Dose', 'Doz'),
   };
+
+  // Medicines and supplements (F008): the person's own words, never a drug
+  // database, a dose rule or an interaction check. A plan is not an intake.
+  String get medsTitle =>
+      _t('Medicines and supplements', 'İlaçlar ve takviyeler');
+  String get medsIntro => _t(
+    'Write down what you use, how it is meant to be taken, and each dose you actually took or skipped. A plan never counts as a dose taken. Human OS checks nothing about a product and gives no dose advice.',
+    'Kullandıklarını, nasıl kullanılacağını ve gerçekten aldığın ya da atladığın her dozu yaz. Bir plan hiçbir zaman alınmış doz sayılmaz. Human OS bir ürün hakkında hiçbir şey denetlemez ve doz önerisi vermez.',
+  );
+  String get medsNone => _t(
+    'Nothing added yet. Add a medicine or supplement to start.',
+    'Henüz bir şey eklenmedi. Başlamak için bir ilaç ya da takviye ekle.',
+  );
+  String get medsAdd =>
+      _t('Add a medicine or supplement', 'İlaç ya da takviye ekle');
+  String get medsName => _t('Name (as on the pack)', 'Adı (kutudaki gibi)');
+  String get medsCategory => _t('Kind', 'Türü');
+  String medsCategoryLabel(MedicationCategory c) => switch (c) {
+    MedicationCategory.medicine => _t('Medicine', 'İlaç'),
+    MedicationCategory.supplement => _t('Supplement', 'Takviye'),
+    MedicationCategory.other => _t('Other', 'Diğer'),
+  };
+  String get medsIngredients =>
+      _t('Active ingredients (optional)', 'Etken maddeler (isteğe bağlı)');
+  String get medsStrength => _t(
+    'Strength as printed (optional, e.g. 500 mg)',
+    'Kutudaki güç (isteğe bağlı, ör. 500 mg)',
+  );
+  String get medsForm => _t(
+    'Form (optional, e.g. tablet, drops)',
+    'Biçim (isteğe bağlı, ör. tablet, damla)',
+  );
+  String get medsSave => _t('Save', 'Kaydet');
+  String get medsPlanAdd => _t('Write the plan', 'Planı yaz');
+  String get medsPlanSchedule => _t(
+    'How it is meant to be taken (e.g. 1 tablet every morning)',
+    'Nasıl kullanılacağı (ör. her sabah 1 tablet)',
+  );
+  String get medsPlanSource => _t('Where the plan comes from', 'Plan nereden');
+  String medsPlanSourceLabel(PlanSource p) => switch (p) {
+    PlanSource.prescribed => _t('Prescribed', 'Reçeteli'),
+    PlanSource.ownChoice => _t('My own choice', 'Kendi seçimim'),
+    PlanSource.unknown => _t('Not given', 'Belirtilmedi'),
+  };
+  String medsPlanLine(String schedule, String source) =>
+      _t('Plan: $schedule ($source)', 'Plan: $schedule ($source)');
+  String get medsNoPlan => _t('No plan written', 'Plan yazılmadı');
+  String get medsDose => _t('Record a dose', 'Doz kaydet');
+  String get medsDoseTaken => _t('Taken', 'Alındı');
+  String get medsDoseSkipped => _t('Skipped', 'Atlandı');
+  String get medsDoseAmount => _t(
+    'Amount (optional, e.g. 1 tablet)',
+    'Miktar (isteğe bağlı, ör. 1 tablet)',
+  );
+  String get medsDoseWhen => _t(
+    'When (optional, YYYY-MM-DD HH:MM; empty = now)',
+    'Ne zaman (isteğe bağlı, YYYY-AA-GG SS:DD; boş = şimdi)',
+  );
+  String medsDoseCounts(int taken, int skipped) => _t(
+    'Doses you recorded: $taken taken, $skipped skipped',
+    'Kaydettiğin dozlar: $taken alındı, $skipped atlandı',
+  );
+  String get medsNoDoses => _t(
+    'No dose recorded yet. The plan alone is not counted as taken.',
+    'Henüz doz kaydedilmedi. Plan tek başına alınmış sayılmaz.',
+  );
+  String medsDoseLine(String when, bool taken, String? amount) => _t(
+    '$when · ${taken ? 'taken' : 'skipped'}${amount == null ? '' : ' · $amount'}',
+    '$when · ${taken ? 'alındı' : 'atlandı'}${amount == null ? '' : ' · $amount'}',
+  );
 
   // Measurements (F007): kept exactly as typed, never judged.
   String get measurementsTitle => _t('Measurements', 'Ölçümler');

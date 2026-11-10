@@ -101,13 +101,13 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes vault format 1, reads record schema 5 (F007) and '
+    test('this app writes vault format 1, reads record schema 6 (F008) and '
         'writes weight and lab results at 3, reads format 1, never '
         'downgrades', () {
       expect(vaultFormatVersion, 1);
       expect(vaultOldestReadableVersion, 1);
       expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 5);
+      expect(HealthRecord.currentSchemaVersion, 6);
       expect(HealthRecord.defaultWriteSchema, 3);
       expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
       expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
@@ -125,6 +125,13 @@ void main() {
         RecordKind.respiratoryRate,
       ]) {
         expect(HealthRecord.writeSchemaFor(k), 5);
+      }
+      for (final k in [
+        RecordKind.medicationItem,
+        RecordKind.medicationPlan,
+        RecordKind.medicationIntake,
+      ]) {
+        expect(HealthRecord.writeSchemaFor(k), 6);
       }
       expect(Profile.currentSchemaVersion, 1);
     });

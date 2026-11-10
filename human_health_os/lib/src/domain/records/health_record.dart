@@ -84,7 +84,20 @@ enum RecordKind {
 
   /// Respiratory rate counted by hand or read from a device (F007 slice 2,
   /// record schema 5).
-  respiratoryRate('vital.respiratory_rate', minSchema: 5, unit: 'breaths/min');
+  respiratoryRate('vital.respiratory_rate', minSchema: 5, unit: 'breaths/min'),
+
+  /// A medicine or supplement the person uses, as they name it: the product,
+  /// not its ingredients (F008, record schema 6). [MedicationItemDetails].
+  medicationItem('medication.item', minSchema: 6),
+
+  /// How a medicine or supplement is meant to be taken, in the person's or
+  /// the prescriber's words (F008). A plan is never an intake.
+  /// [MedicationPlanDetails].
+  medicationPlan('medication.plan', minSchema: 6),
+
+  /// One dose actually taken, or skipped, recorded by the person (F008).
+  /// Only these records say what was taken. [MedicationIntakeDetails].
+  medicationIntake('medication.intake', minSchema: 6);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -106,11 +119,30 @@ enum RecordKind {
     bodyTemperature ||
     oxygenSaturation ||
     respiratoryRate => true,
-    bodyWeight || labResult => false,
+    bodyWeight ||
+    labResult ||
+    medicationItem ||
+    medicationPlan ||
+    medicationIntake => false,
   };
 
+  /// The F008 medication kinds.
+  bool get isMedication =>
+      this == medicationItem ||
+      this == medicationPlan ||
+      this == medicationIntake;
+
   /// The value is [RecordDetails], never a single quantity.
-  bool get isStructured => this == bloodPressure;
+  bool get isStructured => this == bloodPressure || isMedication;
+
+  /// The `type` of the [RecordDetails] a structured kind carries.
+  String? get detailsType => switch (this) {
+    bloodPressure => BloodPressureDetails.typeTag,
+    medicationItem => MedicationItemDetails.typeTag,
+    medicationPlan => MedicationPlanDetails.typeTag,
+    medicationIntake => MedicationIntakeDetails.typeTag,
+    _ => null,
+  };
 
   static RecordKind fromCode(String code) => RecordKind.values.firstWhere(
     (k) => k.code == code,
@@ -266,9 +298,13 @@ class HealthRecord {
   ///   `body.height`, `vital.body_temperature`, `vital.oxygen_saturation`
   ///   and `vital.respiratory_rate`. No new key. Older records read
   ///   unchanged.
+  /// - 6 (F008, step RS-006, additive): adds the medication kinds
+  ///   `medication.item`, `medication.plan` and `medication.intake`, each
+  ///   with its own `details` type. No new key. Older records read
+  ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 5;
+  static const int currentSchemaVersion = 6;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -348,15 +384,17 @@ class HealthRecord {
     final present = valueStatus == ValueStatus.present;
     if (kind.isStructured) {
       if (quantity != null) {
-        throw const RecordValidationError(
-          'BP_HAS_NO_QUANTITY',
-          'A blood pressure reading is kept as two numbers, never as one',
+        throw RecordValidationError(
+          kind == RecordKind.bloodPressure
+              ? 'BP_HAS_NO_QUANTITY'
+              : 'STRUCTURED_HAS_NO_QUANTITY',
+          '${kind.code} keeps its value in details, never as one number',
         );
       }
       if (present && details == null) {
-        throw const RecordValidationError(
+        throw RecordValidationError(
           'DETAILS_MISMATCH',
-          'A present blood pressure reading needs its systolic and diastolic values',
+          'A present ${kind.code} needs its details',
         );
       }
     } else if (present && quantity == null) {
@@ -373,9 +411,7 @@ class HealthRecord {
     }
     final d = details;
     if (d != null &&
-        (!present ||
-            !kind.isStructured ||
-            d.type != BloodPressureDetails.typeTag)) {
+        (!present || !kind.isStructured || d.type != kind.detailsType)) {
       throw const RecordValidationError(
         'DETAILS_MISMATCH',
         'Structured details belong to a present value of their own kind',
@@ -519,6 +555,16 @@ class HealthRecord {
         // order of the two numbers is checked at entry only: these domain
         // rules may be loosened later, never tightened (D-018).
         _checkNumber(bp.diastolic, allowZero: true);
+      case RecordKind.medicationItem ||
+          RecordKind.medicationPlan ||
+          RecordKind.medicationIntake:
+        final code = switch (details) {
+          final MedicationDetails d => d.problem(),
+          _ => null,
+        };
+        if (code != null) {
+          throw RecordValidationError(code, '${kind.code}: $code');
+        }
     }
   }
 

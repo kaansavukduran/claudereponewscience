@@ -3,9 +3,50 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F008",
+    "contract": "v0.32",
+    "run_id": "F008@v0.32",
+    "slice": "Medications and supplements: product, plan and dose as separate records (prescribed is not taken)",
+    "goal": "A person records what they use, how it is meant to be taken, and each dose actually taken or skipped; a plan never counts as a dose.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "5b4c9b9",
+    "app_revision": null,
+    "started_at": "2026-11-10T20:20:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 6: medication.item, medication.plan, medication.intake with kind-tagged details",
+      "HeartbeatService: addMedication, planMedication, recordDose, medications view",
+      "Medications screen in the primary navigation (EN/TR), Aion on its empty state",
+      "Timeline shows medication records in words",
+      "D-030"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: f008 domain (4) and screen (2) tests; 653 PASS"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "R008"
+    ],
+    "review": null,
+    "out_of_scope": [
+      "reminders",
+      "stopping or pausing a plan",
+      "product catalogue or interaction checks (never without a reviewed source)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

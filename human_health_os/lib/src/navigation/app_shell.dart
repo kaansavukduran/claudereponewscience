@@ -15,6 +15,7 @@ import '../app/app_services.dart';
 import '../config/app_config.dart';
 import '../features/common/planned_destination_screen.dart';
 import '../features/labs/labs_screen.dart';
+import '../features/medications/medications_screen.dart';
 import '../features/timeline/timeline_screen.dart';
 import '../features/today/today_screen.dart';
 import '../l10n/strings.dart';
@@ -54,6 +55,7 @@ class _AppShellState extends State<AppShell> {
       DestinationId.today => TodayScreen(services: widget.services),
       DestinationId.timeline => TimelineScreen(services: widget.services),
       DestinationId.labs => LabsScreen(services: widget.services),
+      DestinationId.medications => MedicationsScreen(services: widget.services),
       _ => PlannedDestinationScreen(destination: destinationById(id)),
     };
   }
