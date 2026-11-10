@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/app/app_services.dart';
+import 'package:human_health_os/src/app/appearance_scope.dart';
 import 'package:human_health_os/src/app/bootstrap.dart';
 import 'package:human_health_os/src/application/heartbeat_service.dart';
 import 'package:human_health_os/src/app/human_os_app.dart';
@@ -20,6 +21,7 @@ import 'package:human_health_os/src/data/local/storage_io.dart';
 import 'package:human_health_os/src/data/local/vault_log.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
+import 'package:human_health_os/src/domain/settings/appearance.dart';
 import 'package:human_health_os/src/navigation/app_shell.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -86,6 +88,14 @@ Future<void> fillKey(WidgetTester tester, String key, String text) async {
   await tester.pump();
 }
 
+/// English for every launch: the app starts in Turkish when the device
+/// language is neither Turkish nor English (U022), and the build host has
+/// no language set.
+AppearanceController english() => AppearanceController(
+  MemoryAppearanceStore(),
+  const AppearanceSettings(language: LanguageChoice.en),
+);
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
@@ -102,7 +112,9 @@ void main() {
       );
       await repo.open();
       final services = await servicesFor(dev, detectHostPlatform(), repo);
-      await tester.pumpWidget(HumanOsApp(services: services));
+      await tester.pumpWidget(
+        HumanOsApp(services: services, appearance: english()),
+      );
       await tester.pumpAndSettle();
     }
 
@@ -185,7 +197,9 @@ void main() {
         jsonDecode(moved.readAsLinesSync().first) as Map<String, Object?>;
     expect(header['format_version'], vaultFormatVersion);
 
-    await tester.pumpWidget(HumanOsApp(services: services));
+    await tester.pumpWidget(
+      HumanOsApp(services: services, appearance: english()),
+    );
     await tester.pumpAndSettle();
     expect(find.text('81.3 kg'), findsWidgets);
     expect(
@@ -240,7 +254,7 @@ void main() {
     final entry = (await s2.heartbeat.timeline(s2.self.id)).single;
     expect(entry.heads.single.id, w.id);
     expect(entry.withdrawn, {c.id});
-    await tester.pumpWidget(HumanOsApp(services: s2));
+    await tester.pumpWidget(HumanOsApp(services: s2, appearance: english()));
     await tester.pumpAndSettle();
     expect(find.text('90 kg'), findsWidgets);
     expect(find.text('9 kg'), findsNothing);
@@ -279,7 +293,7 @@ void main() {
     final again = (await s2.heartbeat.labTimeline(s2.self.id)).single.shown;
     expect(again.toJson(), saved.toJson());
     expect(again.quantity!.unit, isNull, reason: 'missing unit stays missing');
-    await tester.pumpWidget(HumanOsApp(services: s2));
+    await tester.pumpWidget(HumanOsApp(services: s2, appearance: english()));
     await tester.pumpAndSettle();
     await tester.tap(find.text('Labs').first);
     await tester.pumpAndSettle();
@@ -367,7 +381,7 @@ void main() {
       (await s3.heartbeat.currentWeights(s3.self.id)).single.toJson(),
       w.toJson(),
     );
-    await tester.pumpWidget(HumanOsApp(services: s3));
+    await tester.pumpWidget(HumanOsApp(services: s3, appearance: english()));
     await tester.pumpAndSettle();
     expect(find.text('82.5 kg'), findsWidgets);
     data.deleteSync(recursive: true);
@@ -386,7 +400,7 @@ void main() {
     Future<void> launch() async {
       final startup = await startApp(prod, HostPlatform.linux, env: env);
       expect(startup.gate, isNotNull, reason: 'never the shell first');
-      await tester.pumpWidget(HumanOsApp.start(startup));
+      await tester.pumpWidget(HumanOsApp.start(startup, appearance: english()));
       await tester.pumpAndSettle();
     }
 
@@ -551,7 +565,9 @@ void main() {
         report: report,
         files: choice.files,
       );
-      await tester.pumpWidget(HumanOsApp(services: services));
+      await tester.pumpWidget(
+        HumanOsApp(services: services, appearance: english()),
+      );
       await tester.pumpAndSettle();
       await revealMeasurements(tester);
       return services;
@@ -763,7 +779,7 @@ void main() {
     // Relaunch: the gate first, then the same readings.
     final startup = await startApp(prod, HostPlatform.linux, env: env);
     expect(startup.gate, isNotNull);
-    await tester.pumpWidget(HumanOsApp.start(startup));
+    await tester.pumpWidget(HumanOsApp.start(startup, appearance: english()));
     await tester.pumpAndSettle();
     await tester.enterText(find.byKey(const ValueKey('gate-passphrase')), pass);
     await tapKey(tester, 'gate-unlock');
