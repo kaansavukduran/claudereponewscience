@@ -3,9 +3,52 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R009",
+    "contract": "v0.32",
+    "run_id": "R009@v0.32",
+    "slice": "Independent review of F008 and F008-S2 (pause, stop, resume a plan)",
+    "goal": "Review findings on the medications slice fixed; a plan can be paused, stopped and resumed as new plan records.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "d3d350f",
+    "app_revision": null,
+    "started_at": "2026-11-10T22:40:00Z",
+    "finished_at": null,
+    "scope": [
+      "plan state active/paused/stopped (missing = active) and setPlanState",
+      "a refused change is shown in words; one change at a time",
+      "the later-written plan wins on equal save times",
+      "a new wording keeps a paused or stopped plan",
+      "Timeline shows a non-active plan state",
+      "labelled choice groups, bottom safe area, earlier doses hint",
+      "Turkish wording"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: 658 PASS; state and tie-break mutations caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F008"
+    ],
+    "review": "one Sonnet reviewer: no blocking findings; should-fix 1-7 fixed; the dose-hint format nit kept (YYYY-AA-GG is the app's Turkish convention)",
+    "out_of_scope": [
+      "reminders",
+      "product catalogue",
+      "ingredient-level views"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

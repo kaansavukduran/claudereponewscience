@@ -107,6 +107,7 @@ class S {
   String get enteredAs => _t('entered as', 'girilen');
   String inputError(String code) => switch (code) {
     'FUTURE_TIME' => _t('This date is in the future.', 'Bu tarih gelecekte.'),
+    'NO_CHANGE' => _t('Nothing to change.', 'Değişecek bir şey yok.'),
     'TEXT_TOO_LONG' => _t(
       'This text is too long (at most 300 characters).',
       'Bu metin çok uzun (en çok 300 karakter).',
@@ -402,11 +403,11 @@ class S {
       _t('Active ingredients (optional)', 'Etken maddeler (isteğe bağlı)');
   String get medsStrength => _t(
     'Strength as printed (optional, e.g. 500 mg)',
-    'Kutudaki güç (isteğe bağlı, ör. 500 mg)',
+    'Kutuda yazan güç (isteğe bağlı, ör. 500 mg)',
   );
   String get medsForm => _t(
     'Form (optional, e.g. tablet, drops)',
-    'Biçim (isteğe bağlı, ör. tablet, damla)',
+    'Şekil (isteğe bağlı, ör. tablet, damla)',
   );
   String get medsSave => _t('Save', 'Kaydet');
   String get medsPlanAdd => _t('Write the plan', 'Planı yaz');
@@ -414,15 +415,30 @@ class S {
     'How it is meant to be taken (e.g. 1 tablet every morning)',
     'Nasıl kullanılacağı (ör. her sabah 1 tablet)',
   );
-  String get medsPlanSource => _t('Where the plan comes from', 'Plan nereden');
+  String get medsPlanSource =>
+      _t('Where the plan comes from', 'Planın kaynağı');
   String medsPlanSourceLabel(PlanSource p) => switch (p) {
-    PlanSource.prescribed => _t('Prescribed', 'Reçeteli'),
+    PlanSource.prescribed => _t('Prescribed', 'Reçeteyle'),
     PlanSource.ownChoice => _t('My own choice', 'Kendi seçimim'),
     PlanSource.unknown => _t('Not given', 'Belirtilmedi'),
   };
-  String medsPlanLine(String schedule, String source) =>
-      _t('Plan: $schedule ($source)', 'Plan: $schedule ($source)');
+  String medsMoreDoses(int n) => _t(
+    '$n earlier doses are on the Timeline',
+    '$n önceki doz Zaman çizelgesinde',
+  );
   String get medsNoPlan => _t('No plan written', 'Plan yazılmadı');
+  String medsPlanStateLabel(PlanState p) => switch (p) {
+    PlanState.active => _t('active', 'geçerli'),
+    PlanState.paused => _t('paused', 'duraklatıldı'),
+    PlanState.stopped => _t('stopped', 'bırakıldı'),
+  };
+  String medsPlanLineState(String schedule, String source, String state) => _t(
+    'Plan ($state): $schedule ($source)',
+    'Plan ($state): $schedule ($source)',
+  );
+  String get medsPause => _t('Pause the plan', 'Planı duraklat');
+  String get medsStop => _t('Stop the plan', 'Planı bırak');
+  String get medsResume => _t('Follow the plan again', 'Plana yeniden başla');
   String get medsDose => _t('Record a dose', 'Doz kaydet');
   String get medsDoseTaken => _t('Taken', 'Alındı');
   String get medsDoseSkipped => _t('Skipped', 'Atlandı');

@@ -535,6 +535,14 @@ class HeartbeatService {
     PlanSource source = PlanSource.unknown,
   }) async {
     await _liveItem(profileId, itemRootId);
+    // A new wording keeps a paused or stopped plan paused or stopped: only
+    // setPlanState changes the state.
+    final earlier = _latest(
+      buildTimeline(
+        await repository.records(profileId, kind: RecordKind.medicationPlan),
+      ),
+      itemRootId,
+    );
     final record = _medsRecord(
       profileId,
       RecordKind.medicationPlan,
@@ -542,6 +550,37 @@ class HeartbeatService {
         itemRootId: itemRootId,
         schedule: _medsText(schedule, 'schedule', required: true)!,
         source: source,
+        state: earlier?.state ?? PlanState.active,
+      ),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// Pauses, stops or resumes the shown plan of an item: a new plan record
+  /// with the same words and source and the new [state]; the earlier plan
+  /// stays in history. Refused when there is no plan to change.
+  Future<HealthRecord> setPlanState({
+    required String profileId,
+    required String itemRootId,
+    required PlanState state,
+  }) async {
+    await _liveItem(profileId, itemRootId);
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.medicationPlan,
+    );
+    final current = _latest(buildTimeline(all), itemRootId);
+    if (current == null) throw const InputError('TARGET_NOT_FOUND');
+    if (current.state == state) throw const InputError('NO_CHANGE');
+    final record = _medsRecord(
+      profileId,
+      RecordKind.medicationPlan,
+      MedicationPlanDetails(
+        itemRootId: itemRootId,
+        schedule: current.schedule,
+        source: current.source,
+        state: state,
       ),
     );
     await repository.appendRecord(record);
@@ -609,7 +648,8 @@ class HeartbeatService {
       for (final h in p.heads) {
         final d = h.details;
         if (d is! MedicationPlanDetails || d.itemRootId != itemRootId) continue;
-        if (best == null || h.recordedAt.isAfter(best.recordedAt)) best = h;
+        // Equal save times (a coarse clock): the later-written record wins.
+        if (best == null || !h.recordedAt.isBefore(best.recordedAt)) best = h;
       }
     }
     return best?.details as MedicationPlanDetails?;

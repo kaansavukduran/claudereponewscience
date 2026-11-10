@@ -183,11 +183,16 @@ class MedicationItemDetails extends MedicationDetails {
 /// Who the plan comes from, as the person says. "Prescribed" is not "taken".
 enum PlanSource { prescribed, ownChoice, unknown }
 
+/// Whether a plan is followed, paused or stopped, as the person records it.
+/// A paused or stopped plan is a new plan record; the earlier one stays.
+enum PlanState { active, paused, stopped }
+
 class MedicationPlanDetails extends MedicationDetails {
   const MedicationPlanDetails({
     required this.itemRootId,
     required this.schedule,
     this.source = PlanSource.unknown,
+    this.state = PlanState.active,
   });
 
   static const String typeTag = 'medication_plan';
@@ -199,6 +204,9 @@ class MedicationPlanDetails extends MedicationDetails {
   /// Not parsed into times: a plan is never turned into doses.
   final String schedule;
   final PlanSource source;
+
+  /// Active unless the person paused or stopped it (F008 slice 2).
+  final PlanState state;
 
   @override
   String get type => typeTag;
@@ -214,6 +222,7 @@ class MedicationPlanDetails extends MedicationDetails {
     'item_root_id': itemRootId,
     'schedule': schedule,
     'source': source.name,
+    'state': state.name,
   };
 
   static MedicationPlanDetails fromJson(Map<String, Object?> j) =>
@@ -221,6 +230,10 @@ class MedicationPlanDetails extends MedicationDetails {
         itemRootId: j['item_root_id']! as String,
         schedule: j['schedule']! as String,
         source: PlanSource.values.byName(j['source']! as String),
+        // Plans written before slice 2 carry no state: they were active.
+        state: j['state'] == null
+            ? PlanState.active
+            : PlanState.values.byName(j['state']! as String),
       );
 
   @override
@@ -228,10 +241,11 @@ class MedicationPlanDetails extends MedicationDetails {
       other is MedicationPlanDetails &&
       other.itemRootId == itemRootId &&
       other.schedule == schedule &&
-      other.source == source;
+      other.source == source &&
+      other.state == state;
 
   @override
-  int get hashCode => Object.hash(itemRootId, schedule, source);
+  int get hashCode => Object.hash(itemRootId, schedule, source, state);
 }
 
 /// What happened to one dose, as the person records it.

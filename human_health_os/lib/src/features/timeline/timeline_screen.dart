@@ -121,7 +121,11 @@ String fmtValue(S s, HealthRecord r) {
   if (d is MedicationItemDetails) {
     return '${d.name} · ${s.medsCategoryLabel(d.category)}';
   }
-  if (d is MedicationPlanDetails) return d.schedule;
+  if (d is MedicationPlanDetails) {
+    return d.state == PlanState.active
+        ? d.schedule
+        : '${d.schedule} · ${s.medsPlanStateLabel(d.state)}';
+  }
   if (d is MedicationIntakeDetails) {
     return [
       d.status == IntakeStatus.taken ? s.medsDoseTaken : s.medsDoseSkipped,

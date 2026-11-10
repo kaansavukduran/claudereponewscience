@@ -3,6 +3,7 @@
 // both languages; the words judge nothing and give no advice.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:human_health_os/src/domain/records/health_record.dart';
 import 'package:human_health_os/src/l10n/strings.dart';
 
 import 'f004_labs_test.dart' show interpretive, judged;
@@ -46,7 +47,7 @@ void main() {
     await tapKey(tester, 'meds-source-ownChoice');
     await tapKey(tester, 'meds-plan-save');
     expect(
-      find.text('Plan: 1 capsule every morning (My own choice)'),
+      find.text('Plan (active): 1 capsule every morning (My own choice)'),
       findsOneWidget,
     );
     expect(find.text(en.medsNoDoses), findsOneWidget, reason: 'plan ≠ dose');
@@ -62,6 +63,35 @@ void main() {
     await tapKey(tester, 'meds-dose-save');
     expect(find.text(en.medsDoseCounts(1, 0)), findsOneWidget);
     expect(find.textContaining('taken · 1 capsule'), findsOneWidget);
+
+    // Pause, then follow again: each is a new plan record; doses stay.
+    Finder byPrefix(String p) => find.byWidgetPredicate(
+      (w) =>
+          w.key is ValueKey<String> &&
+          (w.key! as ValueKey<String>).value.startsWith(p),
+    );
+    await tester.tap(byPrefix('meds-pause-'));
+    await settle(tester);
+    expect(
+      find.text('Plan (paused): 1 capsule every morning (My own choice)'),
+      findsOneWidget,
+    );
+    expect(byPrefix('meds-pause-'), findsNothing);
+    expect(find.text(en.medsDoseCounts(1, 0)), findsOneWidget);
+    await tester.tap(byPrefix('meds-resume-'));
+    await settle(tester);
+    expect(
+      find.text('Plan (active): 1 capsule every morning (My own choice)'),
+      findsOneWidget,
+    );
+    await tester.tap(byPrefix('meds-stop-'));
+    await settle(tester);
+    expect(
+      find.text('Plan (stopped): 1 capsule every morning (My own choice)'),
+      findsOneWidget,
+    );
+    expect(byPrefix('meds-stop-'), findsNothing);
+    expect(byPrefix('meds-resume-'), findsOneWidget);
 
     // The Timeline shows each record in words, not as a bare status.
     await tester.tap(find.text('Timeline').first);
@@ -82,6 +112,15 @@ void main() {
         s.medsDoseCounts(2, 1),
         s.medsPlanSchedule,
         s.medsDoseAmount,
+        for (final p in PlanState.values) s.medsPlanStateLabel(p),
+        for (final p in PlanSource.values) s.medsPlanSourceLabel(p),
+        s.medsPause,
+        s.medsStop,
+        s.medsResume,
+        s.medsMoreDoses(3),
+        s.medsPlanLineState('daily', 'x', 'y'),
+        s.medsDoseLine('today', true, '1 tablet'),
+        s.medsDoseLine('today', false, null),
       ]) {
         expect(interpretive.hasMatch(w), isFalse, reason: w);
         expect(judged.hasMatch(w), isFalse, reason: w);

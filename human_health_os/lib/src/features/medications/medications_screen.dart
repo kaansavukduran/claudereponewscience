@@ -36,6 +36,34 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
     if (mounted) setState(() => _items = items);
   }
 
+  bool _busy = false;
+
+  /// One change at a time; a refused change (a double tap on an older view,
+  /// an item gone) is said in words, and the list is read again either way.
+  Future<void> _setState(String itemRootId, PlanState state) async {
+    if (_busy) return;
+    _busy = true;
+    final s = S.of(context);
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    try {
+      await _svc.setPlanState(
+        profileId: _me,
+        itemRootId: itemRootId,
+        state: state,
+      );
+    } on InputError catch (e) {
+      messenger?.showSnackBar(
+        SnackBar(
+          key: const ValueKey('meds-state-error'),
+          content: Text(s.inputError(e.code)),
+        ),
+      );
+    } finally {
+      _busy = false;
+      await _reload();
+    }
+  }
+
   Future<void> _sheet(Widget Function(BuildContext) builder) async {
     final saved = await showModalBottomSheet<bool>(
       context: context,
@@ -94,6 +122,7 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
               onDose: () => _sheet(
                 (_) => _DoseSheet(svc: _svc, me: _me, itemRootId: m.rootId),
               ),
+              onState: (state) => _setState(m.rootId, state),
             ),
       ],
     );
@@ -105,11 +134,13 @@ class _ItemCard extends StatelessWidget {
     required this.view,
     required this.onPlan,
     required this.onDose,
+    required this.onState,
   });
 
   final MedicationView view;
   final VoidCallback onPlan;
   final VoidCallback onDose;
+  final ValueChanged<PlanState> onState;
 
   @override
   Widget build(BuildContext context) {
@@ -125,6 +156,7 @@ class _ItemCard extends StatelessWidget {
     ].join(' · ');
     return Card(
       key: ValueKey('meds-item-${view.rootId}'),
+      semanticContainer: true,
       margin: const EdgeInsets.only(bottom: 12),
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -140,9 +172,10 @@ class _ItemCard extends StatelessWidget {
             Text(
               plan == null
                   ? s.medsNoPlan
-                  : s.medsPlanLine(
+                  : s.medsPlanLineState(
                       plan.schedule,
                       s.medsPlanSourceLabel(plan.source),
+                      s.medsPlanStateLabel(plan.state),
                     ),
               key: ValueKey('meds-plan-${view.rootId}'),
             ),
@@ -166,6 +199,12 @@ class _ItemCard extends StatelessWidget {
                   (d.details! as MedicationIntakeDetails).amount,
                 ),
               ),
+            if (view.doses.length > 5)
+              Text(
+                s.medsMoreDoses(view.doses.length - 5),
+                key: ValueKey('meds-more-${view.rootId}'),
+                style: text.bodySmall?.copyWith(color: scheme.onSurfaceVariant),
+              ),
             const SizedBox(height: 8),
             Wrap(
               spacing: 8,
@@ -181,6 +220,24 @@ class _ItemCard extends StatelessWidget {
                   onPressed: onDose,
                   child: Text(s.medsDose),
                 ),
+                if (plan != null && plan.state == PlanState.active) ...[
+                  TextButton(
+                    key: ValueKey('meds-pause-${view.rootId}'),
+                    onPressed: () => onState(PlanState.paused),
+                    child: Text(s.medsPause),
+                  ),
+                  TextButton(
+                    key: ValueKey('meds-stop-${view.rootId}'),
+                    onPressed: () => onState(PlanState.stopped),
+                    child: Text(s.medsStop),
+                  ),
+                ],
+                if (plan != null && plan.state != PlanState.active)
+                  TextButton(
+                    key: ValueKey('meds-resume-${view.rootId}'),
+                    onPressed: () => onState(PlanState.active),
+                    child: Text(s.medsResume),
+                  ),
               ],
             ),
           ],
@@ -214,7 +271,9 @@ class _FormSheet extends StatelessWidget {
         16,
         0,
         16,
-        16 + MediaQuery.viewInsetsOf(context).bottom,
+        16 +
+            MediaQuery.viewInsetsOf(context).bottom +
+            MediaQuery.viewPaddingOf(context).bottom,
       ),
       child: SingleChildScrollView(
         child: Column(
@@ -316,19 +375,23 @@ class _AddItemSheetState extends State<_AddItemSheet> {
       saveKey: 'meds-item-save',
       children: [
         _field('meds-name', s.medsName, _name),
-        Text(s.medsCategory),
+        ExcludeSemantics(child: Text(s.medsCategory)),
         const SizedBox(height: 4),
-        Wrap(
-          spacing: 8,
-          children: [
-            for (final c in MedicationCategory.values)
-              ChoiceChip(
-                key: ValueKey('meds-category-${c.name}'),
-                label: Text(s.medsCategoryLabel(c)),
-                selected: c == _category,
-                onSelected: (_) => setState(() => _category = c),
-              ),
-          ],
+        Semantics(
+          container: true,
+          label: s.medsCategory,
+          child: Wrap(
+            spacing: 8,
+            children: [
+              for (final c in MedicationCategory.values)
+                ChoiceChip(
+                  key: ValueKey('meds-category-${c.name}'),
+                  label: Text(s.medsCategoryLabel(c)),
+                  selected: c == _category,
+                  onSelected: (_) => setState(() => _category = c),
+                ),
+            ],
+          ),
         ),
         const SizedBox(height: 8),
         _field('meds-strength', s.medsStrength, _strength),
@@ -390,19 +453,23 @@ class _PlanSheetState extends State<_PlanSheet> {
       saveKey: 'meds-plan-save',
       children: [
         _field('meds-schedule', s.medsPlanSchedule, _schedule),
-        Text(s.medsPlanSource),
+        ExcludeSemantics(child: Text(s.medsPlanSource)),
         const SizedBox(height: 4),
-        Wrap(
-          spacing: 8,
-          children: [
-            for (final p in PlanSource.values)
-              ChoiceChip(
-                key: ValueKey('meds-source-${p.name}'),
-                label: Text(s.medsPlanSourceLabel(p)),
-                selected: p == _source,
-                onSelected: (_) => setState(() => _source = p),
-              ),
-          ],
+        Semantics(
+          container: true,
+          label: s.medsPlanSource,
+          child: Wrap(
+            spacing: 8,
+            children: [
+              for (final p in PlanSource.values)
+                ChoiceChip(
+                  key: ValueKey('meds-source-${p.name}'),
+                  label: Text(s.medsPlanSourceLabel(p)),
+                  selected: p == _source,
+                  onSelected: (_) => setState(() => _source = p),
+                ),
+            ],
+          ),
         ),
       ],
     );

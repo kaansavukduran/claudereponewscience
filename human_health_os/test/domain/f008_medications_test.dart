@@ -3,18 +3,26 @@
 // kept as typed; corrections and deletions follow the usual history rules.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/application/heartbeat_service.dart';
+import 'package:human_health_os/src/core/ids.dart';
 import 'package:human_health_os/src/data/local/log_repository.dart';
 import 'package:human_health_os/src/domain/ports/health_repository.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
 
-Future<(HeartbeatService, String, LogRepository)> fresh() async {
+class _SameInstant implements Clock {
+  @override
+  DateTime nowUtc() => DateTime.utc(2026, 11, 10, 8);
+}
+
+Future<(HeartbeatService, String, LogRepository)> fresh({Clock? clock}) async {
   final repo = LogRepository(
     sink: MemoryLogSink(),
     durability: StorageDurability.localFile,
     location: 'test',
   );
   await repo.open();
-  final svc = HeartbeatService(repo);
+  final svc = clock == null
+      ? HeartbeatService(repo)
+      : HeartbeatService(repo, clock: clock);
   final me = (await svc.ensureSelfProfile()).id;
   return (svc, me, repo);
 }
@@ -211,5 +219,143 @@ void main() {
         ),
       ),
     );
+  });
+
+  test('pause, stop and resume add plan records; the earlier ones stay; '
+      'nothing to change or no plan is refused', () async {
+    final (svc, me, repo) = await fresh();
+    final item = await svc.addMedication(
+      profileId: me,
+      name: 'Magnesium',
+      category: MedicationCategory.supplement,
+    );
+    expect(
+      () => svc.setPlanState(
+        profileId: me,
+        itemRootId: item.id,
+        state: PlanState.paused,
+      ),
+      inputError('TARGET_NOT_FOUND'),
+    );
+    await svc.planMedication(
+      profileId: me,
+      itemRootId: item.id,
+      schedule: '1 tablet at night',
+    );
+    expect(
+      () => svc.setPlanState(
+        profileId: me,
+        itemRootId: item.id,
+        state: PlanState.active,
+      ),
+      inputError('NO_CHANGE'),
+    );
+    await svc.setPlanState(
+      profileId: me,
+      itemRootId: item.id,
+      state: PlanState.stopped,
+    );
+    final plan = (await svc.medications(me)).single.plan!;
+    expect(plan.state, PlanState.stopped);
+    expect(plan.schedule, '1 tablet at night');
+    expect(
+      await repo.records(me, kind: RecordKind.medicationPlan),
+      hasLength(2),
+    );
+  });
+
+  test('a plan written before slice 2 has no state and reads as active', () {
+    final d = MedicationPlanDetails.fromJson({
+      'type': 'medication_plan',
+      'item_root_id': 'x',
+      'schedule': 'daily',
+      'source': 'unknown',
+    });
+    expect(d.state, PlanState.active);
+    expect(MedicationPlanDetails.fromJson(d.toJson()), d);
+  });
+
+  test('a paused or stopped plan keeps its state through a save and a '
+      'reload, and through a new wording; the source stays', () async {
+    final (svc, me, repo) = await fresh();
+    final item = await svc.addMedication(
+      profileId: me,
+      name: 'Iron',
+      category: MedicationCategory.supplement,
+    );
+    await svc.planMedication(
+      profileId: me,
+      itemRootId: item.id,
+      schedule: '1 tablet a day',
+      source: PlanSource.prescribed,
+    );
+    for (final state in [PlanState.paused, PlanState.stopped]) {
+      final r = await svc.setPlanState(
+        profileId: me,
+        itemRootId: item.id,
+        state: state,
+      );
+      final back = HealthRecord.fromJson(r.toJson());
+      expect((back.details! as MedicationPlanDetails).state, state);
+      expect(
+        (back.details! as MedicationPlanDetails).source,
+        PlanSource.prescribed,
+      );
+    }
+    await svc.planMedication(
+      profileId: me,
+      itemRootId: item.id,
+      schedule: '1 tablet every other day',
+      source: PlanSource.prescribed,
+    );
+    final plan = (await svc.medications(me)).single.plan!;
+    expect(plan.state, PlanState.stopped);
+    expect(plan.schedule, '1 tablet every other day');
+    expect(
+      await repo.records(me, kind: RecordKind.medicationPlan),
+      hasLength(4),
+    );
+  });
+
+  test(
+    'plans saved at the same instant: the later-written one is shown',
+    () async {
+      final (svc, me, _) = await fresh(clock: _SameInstant());
+      final item = await svc.addMedication(
+        profileId: me,
+        name: 'Zinc',
+        category: MedicationCategory.supplement,
+      );
+      await svc.planMedication(
+        profileId: me,
+        itemRootId: item.id,
+        schedule: 'daily',
+      );
+      await svc.setPlanState(
+        profileId: me,
+        itemRootId: item.id,
+        state: PlanState.paused,
+      );
+      expect((await svc.medications(me)).single.plan!.state, PlanState.paused);
+    },
+  );
+
+  test('a dose in the future is refused and nothing is written', () async {
+    final (svc, me, repo) = await fresh();
+    final item = await svc.addMedication(
+      profileId: me,
+      name: 'B12',
+      category: MedicationCategory.supplement,
+    );
+    expect(
+      () => svc.recordDose(
+        profileId: me,
+        itemRootId: item.id,
+        status: IntakeStatus.taken,
+        when: '2999-01-01 08:00',
+      ),
+      inputError('FUTURE_TIME'),
+    );
+    expect(await repo.records(me, kind: RecordKind.medicationIntake), isEmpty);
   });
 }
