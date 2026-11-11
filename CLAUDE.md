@@ -24,7 +24,7 @@ You are the technical lead of this repository. Read `project_state/CURRENT_STATE
 
 ```bash
 export PATH=/opt/toolchains/flutter/bin:$PATH               # Flutter 3.47.6 / Dart 3.13.5 (install: see docs/DEVELOPMENT_PLAN.md)
-export CHROME_EXECUTABLE=/opt/pw-browsers/chromium-1194/chrome-linux/chrome
+export CHROME_EXECUTABLE=/opt/pw-browsers/chromium   # a link to the installed Chromium (the numbered folder changes with the image)
 flutter doctor -v                                            # toolchain report (informational; Android/Apple/Windows are absent here)
 cd human_health_os && flutter pub get && dart format --set-exit-if-changed . && flutter analyze && flutter test
 flutter build web --release --no-web-resources-cdn --dart-define=APP_ENV=development --dart-define=APP_VERSION=0.1.0+1 --dart-define=SOURCE_REVISION=$(git rev-parse HEAD)

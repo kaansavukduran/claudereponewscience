@@ -10,7 +10,7 @@ mkdir -p /opt/toolchains && tar xf flutter.tar.xz -C /opt/toolchains
 git config --global --add safe.directory /opt/toolchains/flutter
 export PATH=/opt/toolchains/flutter/bin:$PATH
 flutter config --no-analytics && flutter precache --web
-export CHROME_EXECUTABLE=/opt/pw-browsers/chromium-1194/chrome-linux/chrome   # Playwright Chromium
+export CHROME_EXECUTABLE=/opt/pw-browsers/chromium   # Playwright Chromium
 ```
 
 Cloud sessions start from a fresh container, so this has to be repeated each time. A SessionStart hook can automate it. That is recommended, but not configured yet.
