@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U026",
+    "contract": "v0.32",
+    "run_id": "U026@v0.32",
+    "slice": "Today: Sleep and How you feel at the top, by a Settings choice (G-74)",
+    "goal": "The daily check-ins are reachable without a long scroll, as the person chooses.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "f8a9410",
+    "app_revision": null,
+    "started_at": "2026-11-11T09:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "AppearanceSettings.checkInsFirst (saved; Reset Today clears it)",
+      "Settings switch",
+      "Today order"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: 703 PASS UTC"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "U025"
+    ],
+    "review": "lead review (R010 finding 3)",
+    "out_of_scope": [
+      "free reordering of every Today section"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

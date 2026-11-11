@@ -38,6 +38,17 @@ class TodayScreen extends StatelessWidget {
     final weight = WeightCard(services: services);
     final measurements = MeasurementsCard(services: services);
     bool show(TodaySection x) => !hidden.contains(x);
+    // Sleep and How you feel, together; placed first when chosen.
+    final checkIns = [
+      if (show(TodaySection.sleep)) ...[
+        SleepCard(services: services),
+        const SizedBox(height: 28),
+      ],
+      if (show(TodaySection.feeling)) ...[
+        FeelingCard(services: services),
+        const SizedBox(height: 28),
+      ],
+    ];
     return ListView(
       key: const ValueKey('screen-today'),
       padding: const EdgeInsets.all(16),
@@ -55,18 +66,12 @@ class TodayScreen extends StatelessWidget {
           ),
         ),
         const SizedBox(height: 20),
+        if (look.checkInsFirst) ...checkIns,
         look.measurementsFirst ? measurements : weight,
         const SizedBox(height: 28),
         look.measurementsFirst ? weight : measurements,
         const SizedBox(height: 28),
-        if (show(TodaySection.sleep)) ...[
-          SleepCard(services: services),
-          const SizedBox(height: 28),
-        ],
-        if (show(TodaySection.feeling)) ...[
-          FeelingCard(services: services),
-          const SizedBox(height: 28),
-        ],
+        if (!look.checkInsFirst) ...checkIns,
         if (show(TodaySection.tools)) ...[
           Semantics(
             container: true,

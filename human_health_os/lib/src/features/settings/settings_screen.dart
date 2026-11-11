@@ -599,6 +599,13 @@ class _TodayLayout extends StatelessWidget {
           value: settings.measurementsFirst,
           onChanged: (on) => onChange(settings.copyWith(measurementsFirst: on)),
         ),
+        SwitchListTile(
+          key: const ValueKey('set-checkins-first'),
+          contentPadding: EdgeInsets.zero,
+          title: Text(s.settingsCheckInsFirst),
+          value: settings.checkInsFirst,
+          onChanged: (on) => onChange(settings.copyWith(checkInsFirst: on)),
+        ),
         const SizedBox(height: 4),
         OutlinedButton(
           key: const ValueKey('set-reset-today'),

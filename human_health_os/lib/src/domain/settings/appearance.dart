@@ -57,6 +57,7 @@ class AppearanceSettings {
     this.wideSpacing = false,
     this.reduceMotion = false,
     this.measurementsFirst = false,
+    this.checkInsFirst = false,
     this.showAion = true,
     this.units = UnitSystem.metric,
     this.dateOrder = DateOrder.iso,
@@ -115,6 +116,11 @@ class AppearanceSettings {
   /// Today shows Measurements before the weight card (a Today layout
   /// choice; Reset Today clears it).
   final bool measurementsFirst;
+
+  /// Today shows Sleep and How you feel right under the date, before the
+  /// weight and measurement cards (a Today layout choice; Reset Today
+  /// clears it).
+  final bool checkInsFirst;
 
   /// Aion, the Human OS character, on the introduction and empty states
   /// (a still picture; it gives no advice).
@@ -203,6 +209,7 @@ class AppearanceSettings {
     bool? wideSpacing,
     bool? reduceMotion,
     bool? measurementsFirst,
+    bool? checkInsFirst,
     bool? showAion,
     UnitSystem? units,
     DateOrder? dateOrder,
@@ -227,6 +234,7 @@ class AppearanceSettings {
     wideSpacing: wideSpacing ?? this.wideSpacing,
     reduceMotion: reduceMotion ?? this.reduceMotion,
     measurementsFirst: measurementsFirst ?? this.measurementsFirst,
+    checkInsFirst: checkInsFirst ?? this.checkInsFirst,
     showAion: showAion ?? this.showAion,
     units: units ?? this.units,
     dateOrder: dateOrder ?? this.dateOrder,
@@ -255,6 +263,7 @@ class AppearanceSettings {
     'wideSpacing': wideSpacing,
     'reduceMotion': reduceMotion,
     'measurementsFirst': measurementsFirst,
+    'checkInsFirst': checkInsFirst,
     'showAion': showAion,
     'units': units.name,
     'dateOrder': dateOrder.name,
@@ -320,6 +329,7 @@ class AppearanceSettings {
       wideSpacing: json['wideSpacing'] == true,
       reduceMotion: json['reduceMotion'] == true,
       measurementsFirst: json['measurementsFirst'] == true,
+      checkInsFirst: json['checkInsFirst'] == true,
       showAion: json['showAion'] != false,
       units: pick(UnitSystem.values, json['units'], UnitSystem.metric),
       dateOrder: pick(DateOrder.values, json['dateOrder'], DateOrder.iso),
@@ -349,6 +359,7 @@ class AppearanceSettings {
       other.wideSpacing == wideSpacing &&
       other.reduceMotion == reduceMotion &&
       other.measurementsFirst == measurementsFirst &&
+      other.checkInsFirst == checkInsFirst &&
       other.showAion == showAion &&
       other.units == units &&
       other.dateOrder == dateOrder &&
@@ -368,6 +379,7 @@ class AppearanceSettings {
     hiddenTiles.length,
     hiddenSections.length,
     padOpen,
+    checkInsFirst,
     Object.hash(
       startScreen,
       density,

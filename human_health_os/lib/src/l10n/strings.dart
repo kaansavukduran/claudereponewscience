@@ -1193,6 +1193,10 @@ class S {
     TodaySection.yourData => _t('Your data (backups)', 'Verilerin (yedekler)'),
     TodaySection.buildFacts => _t('About this build', 'Bu derleme hakkında'),
   };
+  String get settingsCheckInsFirst => _t(
+    'Sleep and How you feel at the top of Today',
+    'Uyku ve Nasıl hissediyorsun Bugün ekranının en üstünde',
+  );
   String get settingsMeasurementsFirst =>
       _t('Measurements before the weight card', 'Ölçümler kilo kartından önce');
   String get settingsUpdatesTitle =>
