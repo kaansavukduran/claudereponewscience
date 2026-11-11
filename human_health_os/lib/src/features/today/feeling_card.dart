@@ -4,6 +4,7 @@ import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../../presentation/widgets/sheet_parts.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
 /// How the person feels on Today (F007 slice 4): energy, mood and stress as
@@ -207,65 +208,44 @@ class _FeelingSheetState extends State<_FeelingSheet> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final scheme = Theme.of(context).colorScheme;
-    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        16,
-        0,
-        16,
-        16 +
-            (keyboard > 0
-                ? keyboard
-                : MediaQuery.viewPaddingOf(context).bottom),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                widget.correcting == null ? s.feelTitle : s.feelCorrectTitle,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(s.feelIntro),
-            const SizedBox(height: 12),
-            _row(FeelingQuestion.energy, _energy, (v) => _energy = v),
-            _row(FeelingQuestion.mood, _mood, (v) => _mood = v),
-            _row(FeelingQuestion.stress, _stress, (v) => _stress = v),
-            if (_error != null)
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _error!,
-                  key: const ValueKey('feel-error'),
-                  style: TextStyle(color: scheme.error),
-                ),
-              ),
-            const SizedBox(height: 12),
-            // Save, and a visible way out without saving (mouse only).
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton(
-                  key: const ValueKey('feel-save'),
-                  onPressed: _busy ? null : _save,
-                  child: Text(s.feelSave),
-                ),
-                TextButton(
-                  key: const ValueKey('feel-cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(s.cancel),
-                ),
-              ],
-            ),
-          ],
+    return SheetFrame(
+      fields: [
+        Semantics(
+          header: true,
+          child: Text(
+            widget.correcting == null ? s.feelTitle : s.feelCorrectTitle,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
-      ),
+        const SizedBox(height: 4),
+        Text(s.feelIntro),
+        const SizedBox(height: 12),
+        _row(FeelingQuestion.energy, _energy, (v) => _energy = v),
+        _row(FeelingQuestion.mood, _mood, (v) => _mood = v),
+        _row(FeelingQuestion.stress, _stress, (v) => _stress = v),
+        if (_error != null)
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              _error!,
+              key: const ValueKey('feel-error'),
+              style: TextStyle(color: scheme.error),
+            ),
+          ),
+        const SizedBox(height: 12),
+      ],
+      actions: [
+        FilledButton(
+          key: const ValueKey('feel-save'),
+          onPressed: _busy ? null : _save,
+          child: Text(s.feelSave),
+        ),
+        TextButton(
+          key: const ValueKey('feel-cancel'),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(s.cancel),
+        ),
+      ],
     );
   }
 }

@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U025",
+    "contract": "v0.32",
+    "run_id": "U025@v0.32",
+    "slice": "Usability follow-ups G-74: Save and Cancel pinned under long sheets, quick time picks, shared sheet helpers",
+    "goal": "Every sheet's buttons stay in view on a short window or with large text; a time can be given by clicking.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "2dd3fc5",
+    "app_revision": null,
+    "started_at": "2026-11-11T08:10:00Z",
+    "finished_at": null,
+    "scope": [
+      "SheetFrame: scrolling fields, pinned Save/Cancel, keyboard or system inset (never both)",
+      "TimePicks: quick picks on the sleep, food, activity and dose time fields",
+      "shared typedLocal/typedWall helpers"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: 701 PASS UTC"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "R010"
+    ],
+    "review": "lead review (R010 findings)",
+    "out_of_scope": [
+      "Today jump links or section order (rest of G-74)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

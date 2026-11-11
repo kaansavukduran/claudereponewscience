@@ -4,6 +4,7 @@ import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../../presentation/widgets/sheet_parts.dart';
 import '../../presentation/widgets/aion.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
@@ -291,59 +292,39 @@ class _FormSheet extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final s = S.of(context);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        16,
-        0,
-        16,
-        16 +
-            (MediaQuery.viewInsetsOf(context).bottom > 0
-                ? MediaQuery.viewInsetsOf(context).bottom
-                : MediaQuery.viewPaddingOf(context).bottom),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(title, style: Theme.of(context).textTheme.titleLarge),
-            ),
-            const SizedBox(height: 12),
-            ...children,
-            if (error != null) ...[
-              const SizedBox(height: 8),
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  error!,
-                  key: const ValueKey('meds-error'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            // Save, and a visible way out without saving (mouse only).
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton(
-                  key: ValueKey(saveKey),
-                  onPressed: onSave,
-                  child: Text(s.medsSave),
-                ),
-                TextButton(
-                  key: const ValueKey('meds-cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(s.cancel),
-                ),
-              ],
-            ),
-          ],
+    return SheetFrame(
+      fields: [
+        Semantics(
+          header: true,
+          child: Text(title, style: Theme.of(context).textTheme.titleLarge),
         ),
-      ),
+        const SizedBox(height: 12),
+        ...children,
+        if (error != null) ...[
+          const SizedBox(height: 8),
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              error!,
+              key: const ValueKey('meds-error'),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        ],
+      ],
+      // Save, and a visible way out without saving (mouse only).
+      actions: [
+        FilledButton(
+          key: ValueKey(saveKey),
+          onPressed: onSave,
+          child: Text(s.medsSave),
+        ),
+        TextButton(
+          key: const ValueKey('meds-cancel'),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(s.cancel),
+        ),
+      ],
     );
   }
 }
@@ -587,6 +568,11 @@ class _DoseSheetState extends State<_DoseSheet> {
         const SizedBox(height: 8),
         _field('meds-amount', s.medsDoseAmount, _amount),
         _field('meds-when', s.medsDoseWhen, _when),
+        TimePicks(
+          keyPrefix: 'meds-when',
+          controller: _when,
+          picks: TimePicks.recent(s),
+        ),
       ],
     );
   }

@@ -5,6 +5,7 @@ import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../../presentation/widgets/sheet_parts.dart';
 import '../../presentation/widgets/aion.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
@@ -150,7 +151,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
       _what.text = d.what;
       _minutes.text = d.minutes?.toString() ?? '';
       _steps.text = d.steps?.toString() ?? '';
-      _when.text = _shownWhen = _typed(widget.correcting!.observedAt);
+      _when.text = _shownWhen = typedLocal(widget.correcting!.observedAt);
     }
   }
 
@@ -231,99 +232,71 @@ class _ActivitySheetState extends State<_ActivitySheet> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
-    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        16,
-        0,
-        16,
-        16 +
-            (keyboard > 0
-                ? keyboard
-                : MediaQuery.viewPaddingOf(context).bottom),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                widget.correcting == null ? s.actAdd : s.actCorrectTitle,
-                style: text.titleLarge,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _field('act-what', s.actWhat, _what, 'what'),
-            _field(
-              'act-minutes',
-              s.actMinutes,
-              _minutes,
-              'minutes',
-              keyboard: TextInputType.number,
-            ),
-            _field(
-              'act-steps',
-              s.actSteps,
-              _steps,
-              'steps',
-              keyboard: TextInputType.number,
-            ),
-            _field(
-              'act-when',
-              s.foodWhen,
-              _when,
-              'when',
-              help: s.foodWhenHelp,
-              keyboard: TextInputType.datetime,
-            ),
-            // An error without a field of its own is said here; one on a
-            // field is shown (and read) on that field only.
-            if (_error != null &&
-                !const {
-                  'what',
-                  'minutes',
-                  'steps',
-                  'when',
-                }.contains(_errorField))
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _error!,
-                  key: const ValueKey('act-error'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
-            const SizedBox(height: 12),
-            // Save, and a visible way out without saving (mouse only).
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton(
-                  key: const ValueKey('act-save'),
-                  onPressed: _busy ? null : _save,
-                  child: Text(s.save),
-                ),
-                TextButton(
-                  key: const ValueKey('act-cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(s.cancel),
-                ),
-              ],
-            ),
-          ],
+    return SheetFrame(
+      fields: [
+        Semantics(
+          header: true,
+          child: Text(
+            widget.correcting == null ? s.actAdd : s.actCorrectTitle,
+            style: text.titleLarge,
+          ),
         ),
-      ),
+        const SizedBox(height: 12),
+        _field('act-what', s.actWhat, _what, 'what'),
+        _field(
+          'act-minutes',
+          s.actMinutes,
+          _minutes,
+          'minutes',
+          keyboard: TextInputType.number,
+        ),
+        _field(
+          'act-steps',
+          s.actSteps,
+          _steps,
+          'steps',
+          keyboard: TextInputType.number,
+        ),
+        _field(
+          'act-when',
+          s.foodWhen,
+          _when,
+          'when',
+          help: s.foodWhenHelp,
+          keyboard: TextInputType.datetime,
+        ),
+        TimePicks(
+          keyPrefix: 'act-when',
+          controller: _when,
+          picks: TimePicks.recent(s),
+          onPicked: () => setState(() => _error = _errorField = null),
+        ),
+        // An error without a field of its own is said here; one on a
+        // field is shown (and read) on that field only.
+        if (_error != null &&
+            !const {'what', 'minutes', 'steps', 'when'}.contains(_errorField))
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              _error!,
+              key: const ValueKey('act-error'),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        const SizedBox(height: 12),
+      ],
+      actions: [
+        FilledButton(
+          key: const ValueKey('act-save'),
+          onPressed: _busy ? null : _save,
+          child: Text(s.save),
+        ),
+        TextButton(
+          key: const ValueKey('act-cancel'),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(s.cancel),
+        ),
+      ],
     );
   }
-}
-
-/// An instant as it would be typed: local `YYYY-MM-DD HH:MM`.
-String _typed(DateTime utc) {
-  final t = utc.toLocal();
-  String two(int v) => v.toString().padLeft(2, '0');
-  return '${t.year.toString().padLeft(4, '0')}-${two(t.month)}-${two(t.day)} '
-      '${two(t.hour)}:${two(t.minute)}';
 }

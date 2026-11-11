@@ -4,6 +4,7 @@ import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../../presentation/widgets/sheet_parts.dart';
 import '../../presentation/widgets/aion.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
@@ -152,7 +153,7 @@ class _FoodSheetState extends State<_FoodSheet> {
     if (d is FoodEntryDetails) {
       _what.text = d.what;
       _amount.text = d.amount ?? '';
-      _when.text = _shownWhen = _typed(widget.correcting!.observedAt);
+      _when.text = _shownWhen = typedLocal(widget.correcting!.observedAt);
       _per = d.per;
       for (final e in d.nutrients.entries) {
         _nutrients[e.key]!.text = e.value;
@@ -237,117 +238,94 @@ class _FoodSheetState extends State<_FoodSheet> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final text = Theme.of(context).textTheme;
-    final keyboard = MediaQuery.viewInsetsOf(context).bottom;
     const number = TextInputType.numberWithOptions(decimal: true);
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        16,
-        0,
-        16,
-        16 +
-            (keyboard > 0
-                ? keyboard
-                : MediaQuery.viewPaddingOf(context).bottom),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                widget.correcting == null ? s.foodAdd : s.foodCorrectTitle,
-                style: text.titleLarge,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _field('food-what', s.foodWhat, _what, field: 'what'),
-            _field('food-amount', s.foodAmount, _amount, field: 'amount'),
-            _field(
-              'food-when',
-              s.foodWhen,
-              _when,
-              field: 'when',
-              help: s.foodWhenHelp,
-              keyboard: TextInputType.datetime,
-            ),
-            const SizedBox(height: 4),
-            Semantics(
-              header: true,
-              child: Text(s.foodLabelTitle, style: text.titleSmall),
-            ),
-            const SizedBox(height: 4),
-            Text(s.foodLabelHelp, style: text.bodySmall),
-            const SizedBox(height: 8),
-            ExcludeSemantics(child: Text(s.foodPer)),
-            const SizedBox(height: 4),
-            Semantics(
-              container: true,
-              label: s.foodPer,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 4,
-                children: [
-                  for (final b in LabelBasis.values)
-                    ChoiceChip(
-                      key: ValueKey('food-per-${b.name}'),
-                      label: Text(s.foodBasis(b)),
-                      selected: _per == b,
-                      onSelected: (on) => setState(() => _per = on ? b : null),
-                    ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 12),
-            for (final n in PrintedNutrient.values)
-              _field(
-                'food-n-${n.name}',
-                s.foodNutrientField(n),
-                _nutrients[n]!,
-                field: 'nutrient-${n.name}',
-                keyboard: number,
-              ),
-            // An error on no field of its own (or a field out of view) is
-            // also said here, read out when it appears.
-            if (_error != null)
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _error!,
-                  key: const ValueKey('food-error'),
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              ),
-            const SizedBox(height: 12),
-            // Save, and a visible way out without saving (mouse only).
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton(
-                  key: const ValueKey('food-save'),
-                  onPressed: _busy ? null : _save,
-                  child: Text(s.save),
-                ),
-                TextButton(
-                  key: const ValueKey('food-cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(s.cancel),
-                ),
-              ],
-            ),
-          ],
+    return SheetFrame(
+      fields: [
+        Semantics(
+          header: true,
+          child: Text(
+            widget.correcting == null ? s.foodAdd : s.foodCorrectTitle,
+            style: text.titleLarge,
+          ),
         ),
-      ),
+        const SizedBox(height: 12),
+        _field('food-what', s.foodWhat, _what, field: 'what'),
+        _field('food-amount', s.foodAmount, _amount, field: 'amount'),
+        _field(
+          'food-when',
+          s.foodWhen,
+          _when,
+          field: 'when',
+          help: s.foodWhenHelp,
+          keyboard: TextInputType.datetime,
+        ),
+        TimePicks(
+          keyPrefix: 'food-when',
+          controller: _when,
+          picks: TimePicks.recent(s),
+          onPicked: () => setState(() => _error = _errorField = null),
+        ),
+        const SizedBox(height: 4),
+        Semantics(
+          header: true,
+          child: Text(s.foodLabelTitle, style: text.titleSmall),
+        ),
+        const SizedBox(height: 4),
+        Text(s.foodLabelHelp, style: text.bodySmall),
+        const SizedBox(height: 8),
+        ExcludeSemantics(child: Text(s.foodPer)),
+        const SizedBox(height: 4),
+        Semantics(
+          container: true,
+          label: s.foodPer,
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 4,
+            children: [
+              for (final b in LabelBasis.values)
+                ChoiceChip(
+                  key: ValueKey('food-per-${b.name}'),
+                  label: Text(s.foodBasis(b)),
+                  selected: _per == b,
+                  onSelected: (on) => setState(() => _per = on ? b : null),
+                ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        for (final n in PrintedNutrient.values)
+          _field(
+            'food-n-${n.name}',
+            s.foodNutrientField(n),
+            _nutrients[n]!,
+            field: 'nutrient-${n.name}',
+            keyboard: number,
+          ),
+        // An error on no field of its own (or a field out of view) is
+        // also said here, read out when it appears.
+        if (_error != null)
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              _error!,
+              key: const ValueKey('food-error'),
+              style: TextStyle(color: Theme.of(context).colorScheme.error),
+            ),
+          ),
+        const SizedBox(height: 12),
+      ],
+      actions: [
+        FilledButton(
+          key: const ValueKey('food-save'),
+          onPressed: _busy ? null : _save,
+          child: Text(s.save),
+        ),
+        TextButton(
+          key: const ValueKey('food-cancel'),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(s.cancel),
+        ),
+      ],
     );
   }
-}
-
-/// An instant as it would be typed: local `YYYY-MM-DD HH:MM`.
-String _typed(DateTime utc) {
-  final t = utc.toLocal();
-  String two(int v) => v.toString().padLeft(2, '0');
-  return '${t.year.toString().padLeft(4, '0')}-${two(t.month)}-${two(t.day)} '
-      '${two(t.hour)}:${two(t.minute)}';
 }

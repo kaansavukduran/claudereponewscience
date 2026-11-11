@@ -4,6 +4,7 @@ import '../../app/app_services.dart';
 import '../../application/heartbeat_service.dart';
 import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
+import '../../presentation/widgets/sheet_parts.dart';
 import '../timeline/timeline_screen.dart' show fmtWhen;
 
 /// Sleep on Today (F007 slice 3): the last nights as typed, going to bed and
@@ -134,8 +135,8 @@ class _NightSheetState extends State<_NightSheet> {
     super.initState();
     final d = widget.correcting?.details;
     if (d is SleepNightDetails) {
-      _bed.text = _typed(d.wentToBed);
-      _woke.text = _typed(d.wokeUp);
+      _bed.text = typedLocal(d.wentToBed);
+      _woke.text = typedLocal(d.wokeUp);
       _feeling = d.feeling;
     }
   }
@@ -209,92 +210,80 @@ class _NightSheetState extends State<_NightSheet> {
   Widget build(BuildContext context) {
     final s = S.of(context);
     final scheme = Theme.of(context).colorScheme;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(16, 0, 16, 16 + _bottomInset(context)),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Semantics(
-              header: true,
-              child: Text(
-                widget.correcting == null ? s.sleepAdd : s.sleepCorrectTitle,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-            ),
-            const SizedBox(height: 12),
-            _field('sleep-bed', s.sleepBed, s.sleepBedHelp, _bed, 'bed'),
-            _field('sleep-woke', s.sleepWoke, s.sleepWokeHelp, _woke, 'woke'),
-            ExcludeSemantics(child: Text(s.sleepFeeling)),
-            const SizedBox(height: 4),
-            Semantics(
-              container: true,
-              label: s.sleepFeeling,
-              child: Wrap(
-                spacing: 8,
-                runSpacing: 8,
-                children: [
-                  for (final f in WakeFeeling.values)
-                    ChoiceChip(
-                      key: ValueKey('sleep-feeling-${f.name}'),
-                      label: Text(s.sleepFeelingLabel(f)),
-                      selected: _feeling == f,
-                      // Tapping the chosen one again clears it: not said.
-                      onSelected: (on) =>
-                          setState(() => _feeling = on ? f : null),
-                    ),
-                ],
-              ),
-            ),
-            if (_error != null &&
-                _errorField != 'bed' &&
-                _errorField != 'woke') ...[
-              const SizedBox(height: 8),
-              Semantics(
-                liveRegion: true,
-                child: Text(
-                  _error!,
-                  key: const ValueKey('sleep-error'),
-                  style: TextStyle(color: scheme.error),
-                ),
-              ),
-            ],
-            const SizedBox(height: 12),
-            // Save, and a visible way out without saving (mouse only).
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                FilledButton(
-                  key: const ValueKey('sleep-save'),
-                  onPressed: _busy ? null : _save,
-                  child: Text(s.save),
-                ),
-                TextButton(
-                  key: const ValueKey('sleep-cancel'),
-                  onPressed: () => Navigator.of(context).pop(false),
-                  child: Text(s.cancel),
-                ),
-              ],
-            ),
-          ],
+    return SheetFrame(
+      fields: [
+        Semantics(
+          header: true,
+          child: Text(
+            widget.correcting == null ? s.sleepAdd : s.sleepCorrectTitle,
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
         ),
-      ),
+        const SizedBox(height: 12),
+        _field('sleep-bed', s.sleepBed, s.sleepBedHelp, _bed, 'bed'),
+        TimePicks(
+          keyPrefix: 'sleep-bed',
+          controller: _bed,
+          picks: TimePicks.clock(['22:00', '23:00', '00:00']),
+          onPicked: () => setState(() => _error = _errorField = null),
+        ),
+        _field('sleep-woke', s.sleepWoke, s.sleepWokeHelp, _woke, 'woke'),
+        TimePicks(
+          keyPrefix: 'sleep-woke',
+          controller: _woke,
+          picks: [
+            (s.presetNow, '', true),
+            ...TimePicks.clock(['06:00', '07:00', '08:00']),
+          ],
+          onPicked: () => setState(() => _error = _errorField = null),
+        ),
+        ExcludeSemantics(child: Text(s.sleepFeeling)),
+        const SizedBox(height: 4),
+        Semantics(
+          container: true,
+          label: s.sleepFeeling,
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final f in WakeFeeling.values)
+                ChoiceChip(
+                  key: ValueKey('sleep-feeling-${f.name}'),
+                  label: Text(s.sleepFeelingLabel(f)),
+                  selected: _feeling == f,
+                  // Tapping the chosen one again clears it: not said.
+                  onSelected: (on) => setState(() => _feeling = on ? f : null),
+                ),
+            ],
+          ),
+        ),
+        if (_error != null &&
+            _errorField != 'bed' &&
+            _errorField != 'woke') ...[
+          const SizedBox(height: 8),
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              _error!,
+              key: const ValueKey('sleep-error'),
+              style: TextStyle(color: scheme.error),
+            ),
+          ),
+        ],
+        const SizedBox(height: 12),
+      ],
+      actions: [
+        FilledButton(
+          key: const ValueKey('sleep-save'),
+          onPressed: _busy ? null : _save,
+          child: Text(s.save),
+        ),
+        TextButton(
+          key: const ValueKey('sleep-cancel'),
+          onPressed: () => Navigator.of(context).pop(false),
+          child: Text(s.cancel),
+        ),
+      ],
     );
   }
-}
-
-/// The keyboard when it is open, else the system's bottom area: never both.
-double _bottomInset(BuildContext context) {
-  final keyboard = MediaQuery.viewInsetsOf(context).bottom;
-  return keyboard > 0 ? keyboard : MediaQuery.viewPaddingOf(context).bottom;
-}
-
-/// An instant as it would be typed: local `YYYY-MM-DD HH:MM`.
-String _typed(DateTime utc) {
-  final t = utc.toLocal();
-  String two(int v) => v.toString().padLeft(2, '0');
-  return '${t.year.toString().padLeft(4, '0')}-${two(t.month)}-${two(t.day)} '
-      '${two(t.hour)}:${two(t.minute)}';
 }
