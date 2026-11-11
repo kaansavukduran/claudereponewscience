@@ -6,6 +6,7 @@ import '../domain/settings/date_style.dart';
 import '../features/onboarding/first_run_screen.dart';
 import '../data/local/encrypted_vault.dart';
 import '../features/vault/vault_gate_screen.dart';
+import '../l10n/strings.dart';
 import '../navigation/app_shell.dart';
 import '../presentation/theme/human_os_theme.dart';
 import '../presentation/widgets/interface_scale.dart';
@@ -159,6 +160,8 @@ class _HumanOsAppState extends State<HumanOsApp> {
         localizationsDelegates: GlobalMaterialLocalizations.delegates,
         // The chosen text size multiplies what the system asks for.
         builder: (context, child) {
+          // 12-hour markers of the displayed language (U028).
+          displayDayPeriods = S(langOf(context)).dayPeriods;
           final mq = MediaQuery.of(context);
           final factor = a.textFactor;
           return MediaQuery(

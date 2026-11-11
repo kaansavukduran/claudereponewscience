@@ -5,11 +5,13 @@ library;
 
 import 'package:flutter/widgets.dart';
 
+import '../config/app_config.dart' show BuildProfile;
 import '../domain/ports/health_repository.dart';
 import '../domain/ports/storage_status.dart';
 import '../domain/records/health_record.dart';
 import '../app/appearance_scope.dart';
 import '../domain/settings/appearance.dart';
+import '../domain/settings/date_style.dart';
 import '../domain/units/display_units.dart';
 
 enum AppLang { en, tr }
@@ -18,6 +20,21 @@ AppLang langOf(BuildContext context) {
   final code = Localizations.maybeLocaleOf(context)?.languageCode;
   return code == 'tr' ? AppLang.tr : AppLang.en;
 }
+
+/// The two 12-hour markers every displayed time uses (U028): the pure
+/// domain formatter writes AM/PM; the app sets the markers of the chosen
+/// language (Turkish ÖÖ/ÖS) where it knows the locale.
+(String, String) displayDayPeriods = ('AM', 'PM');
+
+/// [formatWhen] with the 12-hour markers of the displayed language.
+String formatWhenShown(DateTime local, DateOrder order, ClockStyle clock) =>
+    formatWhen(
+      local,
+      order,
+      clock,
+      am: displayDayPeriods.$1,
+      pm: displayDayPeriods.$2,
+    );
 
 class S {
   const S(this.lang, {this.units = UnitSystem.metric});
@@ -48,30 +65,52 @@ class S {
   String _t(String en, String tr) => lang == AppLang.tr ? tr : en;
 
   String get appTitle => 'Human OS';
-  String get more => _t('More', 'Daha fazla');
-  String get notBuiltYet => _t('Not built yet', 'Henüz yapılmadı');
-  String plannedIn(String forge) =>
-      _t('Planned in $forge', '$forge içinde planlandı');
+  String get more => _t('More', 'Diğer');
+  String get notBuiltYet => _t('Not built yet', 'Henüz yok');
+
+  /// Shown for a planned destination; the Forge id stays a developer field
+  /// (destinations.dart) and is never printed (U028).
+  String get plannedLater =>
+      _t('Planned for a later version', 'İleriki bir sürümde gelecek');
   String get noRecordsYet => _t('No records yet', 'Henüz kayıt yok');
-  String get thisBuild => _t('This build', 'Bu derleme');
-  String get profile => _t('Build profile', 'Derleme profili');
+  String get thisBuild => _t('This build', 'Bu sürüm');
+  String get profile => _t('Build profile', 'Sürüm türü');
+
+  /// The build profile as shown to a person (never the raw enum name).
+  String profileName(BuildProfile p) => switch (p) {
+    BuildProfile.development => _t('DEVELOPMENT', 'GELİŞTİRME'),
+    BuildProfile.staging => _t('STAGING', 'TEST'),
+    BuildProfile.production => _t('PRODUCTION', 'YAYIN'),
+  };
+
+  /// The 12-hour markers (morning, afternoon) of this language.
+  (String, String) get dayPeriods =>
+      lang == AppLang.tr ? ('ÖÖ', 'ÖS') : ('AM', 'PM');
+
+  /// The sample shown for the 12-hour clock choice in Settings.
+  String get clock12Sample => '8:05 ${dayPeriods.$2}';
+
+  /// "Technical detail: CODE" on its own line under a message (U028): the
+  /// sentence stays in the person's language; the code helps support.
+  String technicalDetail(String code) =>
+      _t('Technical detail: $code', 'Teknik ayrıntı: $code');
   String get version => _t('Version', 'Sürüm');
   String get platform => _t('Platform', 'Platform');
-  String get sourceRevision => _t('Source revision', 'Kaynak revizyonu');
+  String get sourceRevision => _t('Source revision', 'Kaynak kodu sürümü');
   String get flutterVersion => _t('Flutter', 'Flutter');
   String get dartVersion => _t('Dart', 'Dart');
   String get recordSchema => _t('Record schema', 'Kayıt şeması');
   String get capabilities =>
-      _t('Capabilities on this device', 'Bu cihazdaki yetenekler');
+      _t('Capabilities on this device', 'Bu cihazda neler çalışıyor');
   // The clinical disclaimer comes first so a narrow or large-text banner
   // that ellipsizes never cuts it.
   String get devBanner => _t(
     'Not for clinical decisions · DEVELOPMENT BUILD · test use only',
-    'Klinik karar için değil · GELİŞTİRME DERLEMESİ · yalnız test',
+    'Klinik karar için değildir · GELİŞTİRME SÜRÜMÜ · yalnızca deneme amaçlı',
   );
   String get stagingBanner => _t(
     'Not for clinical decisions · STAGING BUILD · test use only',
-    'Klinik karar için değil · STAGING DERLEMESİ · yalnız test',
+    'Klinik karar için değildir · TEST SÜRÜMÜ · yalnızca deneme amaçlı',
   );
   String get todayIntro => _t(
     'Human OS is being built to keep every part of your health on one timeline. Today it records body weight, blood pressure, resting heart rate and waist circumference by hand; each entry keeps where it came from.',
@@ -79,11 +118,11 @@ class S {
   );
   String get checkInsAndMissions => _t(
     'Check-ins and daily missions: not built yet.',
-    'Kontroller ve günlük görevler: henüz yapılmadı.',
+    'Günlük yoklamalar ve görevler: henüz yok.',
   );
   String get yourData => _t('Your data', 'Verilerin');
   String get available => _t('Available', 'Kullanılabilir');
-  String get notImplemented => _t('Not built yet', 'Henüz yapılmadı');
+  String get notImplemented => _t('Not built yet', 'Henüz yok');
   String get unsupported => _t('Not on this platform', 'Bu platformda yok');
   String get notRequired => _t('Not required', 'Gerekmiyor');
   String get savingOff => _t('Saving off', 'Kayıt kapalı');
@@ -232,7 +271,7 @@ class S {
     'CONTEXT_NOT_SUPPORTED' ||
     'CONTEXT_EMPTY' => _t(
       'Not saved: this entry breaks a record rule ($code). Nothing was written.',
-      'Kaydedilmedi: bu giriş bir kayıt kuralını çiğniyor ($code). Hiçbir şey yazılmadı.',
+      'Kaydedilmedi: bu giriş bir kayıt kuralına uymuyor ($code). Hiçbir şey yazılmadı.',
     ),
     // Also after a restore that failed half-way: no promise of restored data.
     'RESTART_REQUIRED' => _t(
@@ -273,7 +312,7 @@ class S {
     null || StorageReason.saving => null,
     StorageReason.profilePolicy => _t(
       'This $profile browser build does not save health data: it never stores them unencrypted, and encrypted browser storage is not built yet. Entries last until the page closes.',
-      'Bu $profile tarayıcı derlemesi sağlık verisi kaydetmez: onları asla şifresiz saklamaz ve şifreli tarayıcı depolaması henüz yapılmadı. Girişler sayfa kapanana kadar kalır.',
+      'Bu $profile tarayıcı sürümü sağlık verisi kaydetmez: onları asla şifresiz saklamaz ve şifreli tarayıcı depolaması henüz hazır değil. Girişler sayfa kapanana kadar kalır.',
     ),
     StorageReason.sessionOnly when detail == 'LOCKED_VAULT_KEPT' => _t(
       'Your encrypted vault stays locked and untouched. This session is kept in memory only; entries last until the app closes.',
@@ -285,7 +324,7 @@ class S {
     ),
     StorageReason.platformNotBuilt => _t(
       'Saving on this platform is not built yet. Entries are kept only until the app closes.',
-      'Bu platformda kayıt henüz yapılmadı. Girişler yalnız uygulama kapanana kadar tutulur.',
+      'Bu platformda kayıt henüz hazır değil. Girişler yalnız uygulama kapanana kadar tutulur.',
     ),
     StorageReason.dataDirInvalid => _t(
       '${detail ?? 'The data folder setting'} must be an absolute folder path. Nothing is saved until it is fixed; entries last until the app closes.',
@@ -304,12 +343,12 @@ class S {
         'Kayıtlı verilerin Human OS\'un daha yeni bir sürümüyle yazılmış; bu sürüm onları açmaz. Diskte hiçbir şey değiştirilmedi; görmek için uygulamayı güncelle. Yeni girişler yalnız bellekte tutulur.',
       ),
     StorageReason.vaultUnreadable => _t(
-      'Your saved data could not be opened (${detail ?? 'unknown error'}). Nothing was changed on disk. New entries are kept in memory only until this is fixed.',
-      'Kayıtlı verilerin açılamadı (${detail ?? 'bilinmeyen hata'}). Diskte hiçbir şey değiştirilmedi. Bu düzelene kadar yeni girişler yalnız bellekte tutulur.',
+      'Your saved data could not be opened. Nothing was changed on disk. New entries are kept in memory only until this is fixed.\n${technicalDetail(detail ?? 'unknown error')}',
+      'Kayıtlı verilerin açılamadı. Diskte hiçbir şey değiştirilmedi. Bu düzelene kadar yeni girişler yalnız bellekte tutulur.\n${technicalDetail(detail ?? 'bilinmeyen hata')}',
     ),
     StorageReason.vaultReadOnly => _t(
-      'Your saved data uses an older format. It is shown as it is, but new entries are not saved until an upgrade with a backup exists (Forge F005). The file was not changed.',
-      'Kayıtlı verilerin eski bir biçimde. Olduğu gibi gösteriliyor, ama yedekli bir yükseltme gelene kadar (Forge F005) yeni girişler kaydedilmez. Dosya değiştirilmedi.',
+      'Your saved data uses an older format. It is shown as it is, but new entries are not saved until an upgrade with a backup exists in a later version. The file was not changed.',
+      'Kayıtlı verilerin eski bir biçimde. Olduğu gibi gösteriliyor, ama ileriki bir sürümde yedekli bir yükseltme gelene kadar yeni girişler kaydedilmez. Dosya değiştirilmedi.',
     ),
   };
 
@@ -339,7 +378,7 @@ class S {
     ),
     LoadWarningKind.entryInvalid => _t(
       'Saved entry ${w.line} breaks a record rule (${w.code}) and was skipped. The file was not changed.',
-      'Kayıtlı giriş ${w.line} bir kayıt kuralını çiğniyor (${w.code}) ve atlandı. Dosya değiştirilmedi.',
+      'Kayıtlı giriş ${w.line} bir kayıt kuralına uymuyor (${w.code}) ve atlandı. Dosya değiştirilmedi.',
     ),
     LoadWarningKind.entryMissing => _t(
       'Entry ${w.line} is missing from the encrypted vault: it was removed from the file, or a save that failed never reached it. Nothing replaces it; any other problem found is listed here.',
@@ -376,7 +415,7 @@ class S {
     ValueStatus.present => _t('Value', 'Değer'),
     ValueStatus.notReported => _t('Not reported', 'Bildirilmedi'),
     ValueStatus.notMeasured => _t('Not measured', 'Ölçülmedi'),
-    ValueStatus.notApplicable => _t('Not applicable', 'Uygulanamaz'),
+    ValueStatus.notApplicable => _t('Not applicable', 'Geçerli değil'),
     ValueStatus.unknown => _t('Unknown', 'Bilinmiyor'),
   };
 
@@ -398,19 +437,19 @@ class S {
     'Key protection': 'Anahtar koruması',
     'Health platform': 'Sağlık platformu',
     'Network': 'Ağ',
-    'Android adapter planned (Forge F013).':
-        'Android bağlantısı planlandı (Forge F013).',
-    'iOS adapter planned (Forge F013).':
-        'iOS bağlantısı planlandı (Forge F013).',
-    'No HealthKit or Health Connect on this platform. Typing entries works now; importing from other health apps is not built.': 'Bu platformda HealthKit ya da Health Connect yok. Elle giriş şimdi çalışıyor; başka sağlık uygulamalarından aktarma henüz yapılmadı.',
-    'Browser: no system key store, and encrypted browser storage is not built yet.': 'Tarayıcı: sistem anahtar deposu yok ve şifreli tarayıcı depolaması henüz yapılmadı.',
+    'Android connection planned for a later version.':
+        'Android bağlantısı ileriki bir sürümde gelecek.',
+    'iOS connection planned for a later version.':
+        'iOS bağlantısı ileriki bir sürümde gelecek.',
+    'No HealthKit or Health Connect on this platform. Typing entries works now; importing from other health apps is not built.': 'Bu platformda HealthKit ya da Health Connect yok. Elle giriş şimdi çalışıyor; başka sağlık uygulamalarından aktarma henüz hazır değil.',
+    'Browser: no system key store, and encrypted browser storage is not built yet.': 'Tarayıcı: sistem anahtar deposu yok ve şifreli tarayıcı depolaması henüz hazır değil.',
     'Your passphrase protects the encrypted vault (staging, production and portable builds). The system key store is not used yet.': 'Parolan şifreli kasayı korur (test, üretim ve taşınabilir sürümler). Sistem anahtar deposu henüz kullanılmıyor.',
     'Not required. This build makes no network calls.':
         'Gerekmiyor. Bu sürüm hiçbir ağ isteği yapmaz.',
     'Saved in an encrypted vault on this device (Argon2id + ChaCha20-Poly1305). It opens only with your passphrase or recovery key.': 'Bu cihazda şifreli bir kasada saklanır (Argon2id + ChaCha20-Poly1305). Yalnız parolan ya da kurtarma anahtarınla açılır.',
     'Saved in a file on this device. Not encrypted (development build only).': 'Bu cihazda bir dosyada saklanır. Şifreli değil (yalnız geliştirme sürümü).',
     'Saved in this browser. The browser may clear it; not encrypted yet (development build).': 'Bu tarayıcıda saklanır. Tarayıcı silebilir; henüz şifreli değil (geliştirme sürümü).',
-    'Not saved in this browser build: health data are never stored unencrypted, and encrypted browser storage is not built yet.': 'Bu tarayıcı sürümünde saklanmaz: sağlık verisi asla şifresiz saklanmaz ve şifreli tarayıcı depolaması henüz yapılmadı.',
+    'Not saved in this browser build: health data are never stored unencrypted, and encrypted browser storage is not built yet.': 'Bu tarayıcı sürümünde saklanmaz: sağlık verisi asla şifresiz saklanmaz ve şifreli tarayıcı depolaması henüz hazır değil.',
     'Not saved in this session: you chose memory only. The encrypted vault, if any, is untouched.': 'Bu oturumda saklanmaz: yalnız belleği seçtin. Varsa şifreli kasaya dokunulmadı.',
     'Not saved: the data folder setting is not an absolute path.':
         'Saklanmaz: veri klasörü ayarı tam bir yol değil.',
@@ -418,7 +457,7 @@ class S {
         'Saklanmaz: bu tarayıcı yerel depolamayı engelliyor.',
     'Not saved: the saved data could not be opened and was left untouched.':
         'Saklanmaz: kayıtlı veri açılamadı ve olduğu gibi bırakıldı.',
-    'Saved data is shown read-only: its format needs an upgrade, which waits for backups (Forge F005).': 'Kayıtlı veri yalnız okunur gösterilir: biçimi yükseltme bekliyor, bu da yedekleri bekliyor (Forge F005).',
+    'Saved data is shown read-only: its format needs an upgrade, which comes with backups in a later version.': 'Kayıtlı veri yalnız okunur gösterilir: biçiminin yükseltilmesi gerekiyor; bu, ileriki bir sürümde yedeklerle gelecek.',
     'Not saved on this platform yet: entries last only until the app closes.': 'Bu platformda henüz saklanmaz: girişler yalnız uygulama kapanana kadar kalır.',
     'Not saved right now: entries last only until the app closes.':
         'Şu an saklanmaz: girişler yalnız uygulama kapanana kadar kalır.',
@@ -444,7 +483,7 @@ class S {
     ),
     RecordKind.medicationPlan => _t('Plan', 'Plan'),
     RecordKind.medicationIntake => _t('Dose', 'Doz'),
-    RecordKind.sleepNight => _t('Night', 'Gece'),
+    RecordKind.sleepNight => _t('Night', 'Uyku gecesi'),
     RecordKind.feelingCheckIn => _t('How I feel', 'Nasıl hissediyorum'),
     RecordKind.foodEntry => _t('Food or drink', 'Yiyecek ya da içecek'),
     RecordKind.activityEntry => _t('Activity', 'Aktivite'),
@@ -901,7 +940,7 @@ class S {
       _t('Delete last character', 'Son karakteri sil');
   String get numberPadDecimal => _t('Decimal separator', 'Ondalık ayırıcı');
   String numberPadDigit(int d) => _t('Digit $d', '$d rakamı');
-  String get numberPadFor => _t('Typing into', 'Yazılan alan');
+  String get numberPadFor => _t('Typing into', 'Yazdığın alan:');
 
   /// The weekday and date shown at the top of Today.
   String dateLine(DateTime d) {
@@ -1024,7 +1063,7 @@ class S {
       _t('Save as a page to print', 'Yazdırmak için sayfa olarak kaydet');
   String get summarySaveNotHere => _t(
     'This build keeps data encrypted, so the summary is shown here only and is not saved as an open file.',
-    'Bu derleme verileri şifreli tutar; bu yüzden özet yalnız burada gösterilir, açık bir dosya olarak kaydedilmez.',
+    'Bu sürüm verileri şifreli tutar; bu yüzden özet yalnız burada gösterilir, açık bir dosya olarak kaydedilmez.',
   );
   String summaryMore(int shown, int total) => _t(
     'Showing the newest $shown of $total.',
@@ -1185,7 +1224,7 @@ class S {
     '%80–%200. Yazılar, düğmeler, simgeler ve boşluklar birlikte ölçeklenir. Kaydırıcı 5 puanlık adımlarla ilerler. Dar ekranda gerekirse yana kaydır. Aşağıdaki yazı boyutu ayarı bağımsızdır.',
   );
   String get interfaceExact =>
-      _t('Exact scale (80–200)', 'Kesin ölçek (80–200)');
+      _t('Exact scale (80–200)', 'Ölçeği elle gir (80–200)');
   String get interfaceInvalid => _t(
     'Enter a whole number from 80 to 200, for example 135.',
     '80 ile 200 arasında bir tam sayı yaz, örneğin 135.',
@@ -1232,7 +1271,7 @@ class S {
     AccentChoice.green => _t('Green', 'Yeşil'),
     AccentChoice.graphite => _t('Graphite', 'Grafit'),
   };
-  String get settingsSpacing => _t('Spacing', 'Aralık');
+  String get settingsSpacing => _t('Spacing', 'Yoğunluk');
   String get settingsFont => _t('Font', 'Yazı tipi');
   String get settingsUnits => _t('Units', 'Birimler');
   String get settingsDates => _t('Date and time', 'Tarih ve saat');
@@ -1260,8 +1299,8 @@ class S {
     'More space between letters, words and lines',
     'Harfler, sözcükler ve satırlar arasında daha fazla boşluk',
   );
-  String get settingsComfortable => _t('Comfortable', 'Rahat');
-  String get settingsCompact => _t('Compact', 'Sıkışık');
+  String get settingsComfortable => _t('Comfortable', 'Ferah');
+  String get settingsCompact => _t('Compact', 'Sıkı');
   String get settingsContrast => _t('Contrast', 'Kontrast');
   String get settingsHighContrast => _t(
     'Stronger contrast (darker text and edges)',
@@ -1289,7 +1328,7 @@ class S {
     TodaySection.feeling => _t('How you feel', 'Nasıl hissediyorsun'),
     TodaySection.tools => _t('Tools', 'Araçlar'),
     TodaySection.yourData => _t('Your data (backups)', 'Verilerin (yedekler)'),
-    TodaySection.buildFacts => _t('About this build', 'Bu derleme hakkında'),
+    TodaySection.buildFacts => _t('About this build', 'Bu sürüm hakkında'),
   };
   String get settingsCheckInsFirst => _t(
     'Sleep and How you feel at the top of Today',
@@ -1335,7 +1374,7 @@ class S {
   );
   String get settingsSessionOnly => _t(
     'Changes apply at once. This build keeps them until the app is closed.',
-    'Değişiklikler hemen uygulanır. Bu derleme onları uygulama kapanana kadar tutar.',
+    'Değişiklikler hemen uygulanır. Bu sürüm onları uygulama kapanana kadar tutar.',
   );
   String get settingsSaveFailed => _t(
     'The change applies now but could not be saved; it lasts until the app is closed.',
@@ -1566,7 +1605,7 @@ class S {
     ),
     'GZ_HERE' => _t(
       'This build cannot unpack .gz files. Unpack it first (to variant_summary.txt) and load that.',
-      'Bu derleme .gz dosyalarını açamıyor. Önce dosyayı aç (variant_summary.txt) ve onu yükle.',
+      'Bu sürüm .gz dosyalarını açamıyor. Önce dosyayı aç (variant_summary.txt) ve onu yükle.',
     ),
     _ => _t('The file could not be read.', 'Dosya okunamadı.'),
   };
@@ -1588,7 +1627,7 @@ class S {
   );
   String clinvarAlleles(String ref, String alt, String assembly) => _t(
     'ClinVar alleles (plus strand, $assembly): $ref > $alt',
-    'ClinVar alelleri (artı şerit, $assembly): $ref > $alt',
+    'ClinVar alelleri (artı zincir, $assembly): $ref > $alt',
   );
   String clinvarGenotype(String g) =>
       _t('Genotype in your file: $g', 'Dosyandaki genotip: $g');
@@ -1647,7 +1686,7 @@ class S {
   String dbsnpCall(String call, String alts) => switch (call) {
     'listsAlternate' => _t(
       'Your file lists the alternate allele $alts',
-      'Dosyan alternatif alel $alts listeliyor',
+      'Dosyanda alternatif alel ($alts) var',
     ),
     'referenceOnly' => _t(
       'Your file lists only the reference allele',
@@ -1655,20 +1694,20 @@ class S {
     ),
     'noCall' => _t(
       'No call at this position in your file',
-      'Dosyanda bu konum için çağrı yok',
+      'Dosyanda bu konum için okuma yok',
     ),
     'otherAllele' => _t(
       'Your file lists a letter the source does not name here (a strand or build difference, or another allele); nothing is compared',
-      'Dosyan, kaynağın burada adlandırmadığı bir harf listeliyor (şerit ya da sürüm farkı veya başka bir alel); karşılaştırma yapılmadı',
+      'Dosyan, kaynağın burada adlandırmadığı bir harf listeliyor (zincir ya da sürüm farkı veya başka bir alel); karşılaştırma yapılmadı',
     ),
     _ => _t(
       'Not compared (an insertion or deletion, or A/T, C/G letters whose strand cannot be told apart)',
-      'Karşılaştırılmadı (bir ekleme ya da silme, ya da şeridi ayırt edilemeyen A/T, C/G harfleri)',
+      'Karşılaştırılmadı (bir ekleme ya da silme, ya da zinciri ayırt edilemeyen A/T, C/G harfleri)',
     ),
   };
   String dbsnpAlleles(String ref, String alts) => _t(
     'dbSNP alleles (plus strand): $ref > $alts',
-    'dbSNP alelleri (artı şerit): $ref > $alts',
+    'dbSNP alelleri (artı zincir): $ref > $alts',
   );
   String dbsnpConsequence(String c) =>
       _t('dbSNP consequence: $c', 'dbSNP işlevsel sonucu: $c');
@@ -1721,11 +1760,11 @@ class S {
     ),
     'notComparable' => _t(
       'The call here is an insertion or deletion, so it is not compared with allele $allele',
-      'Buradaki çağrı bir ekleme ya da silme olduğundan $allele aleliyle karşılaştırılmaz',
+      'Buradaki okuma bir ekleme ya da silme olduğundan $allele aleliyle karşılaştırılmaz',
     ),
     'notRead' => _t(
       'No call at this position in your file',
-      'Dosyanda bu konum için çağrı yok',
+      'Dosyanda bu konum için okuma yok',
     ),
     _ => _t(
       'Cannot be told apart by strand (A/T or C/G), so nothing is claimed',
@@ -1822,7 +1861,7 @@ class S {
     ),
     EntryStatus.deleted => _t(
       'You deleted this measurement. It no longer counts anywhere and stays only in this history; completely erasing it is not built yet.',
-      'Bu ölçümü sildin. Artık hiçbir yerde sayılmıyor ve yalnız bu geçmişte duruyor; tamamen silme henüz yapılmadı.',
+      'Bu ölçümü sildin. Artık hiçbir yerde sayılmıyor ve yalnız bu geçmişte duruyor; tamamen silme henüz yok.',
     ),
     EntryStatus.enteredInError => _t(
       'Marked as entered in error: it never counted as a real measurement.',
@@ -1870,11 +1909,11 @@ class S {
     ),
     AmendReason.enteredInError => _t(
       'Use this when this entry should never have been saved (for example, a whole wrong entry). It stops counting and stays in history marked as withdrawn. If it was a correction, the previous version counts again.',
-      'Bu giriş hiç kaydedilmemeliydiyse kullan (ör. tamamen yanlış bir giriş). Sayılmayı bırakır ve geçmişte geri çekildi olarak kalır. Bir düzeltmeyse önceki sürüm yeniden geçerli olur.',
+      'Bu giriş hiç kaydedilmemeliydiyse kullan (ör. tamamen yanlış bir giriş). Artık hesaba katılmaz ve geçmişte geri çekildi olarak kalır. Bir düzeltmeyse önceki sürüm yeniden geçerli olur.',
     ),
     AmendReason.deleted => _t(
       'Use this to remove a measurement you no longer want counted. Every version leaves your views; it stays only in history, and a later correction cannot bring it back. Completely erasing it is not built yet.',
-      'Artık sayılmasını istemediğin bir ölçümü kaldırmak için kullan. Tüm sürümleri görünümlerinden çıkar; yalnız geçmişte kalır ve sonraki bir düzeltme onu geri getiremez. Tamamen silme henüz yapılmadı.',
+      'Artık sayılmasını istemediğin bir ölçümü kaldırmak için kullan. Tüm sürümleri görünümlerinden çıkar; yalnız geçmişte kalır ve sonraki bir düzeltme onu geri getiremez. Tamamen silme henüz yok.',
     ),
   };
 
@@ -1893,7 +1932,7 @@ class S {
   );
   String get dataUnencrypted => _t(
     'Backups and exports are not encrypted yet (development build). Keep the files private.',
-    'Yedekler ve dışa aktarımlar henüz şifreli değil (geliştirme derlemesi). Dosyaları gizli tut.',
+    'Yedekler ve dışa aktarımlar henüz şifreli değil (geliştirme sürümü). Dosyaları gizli tut.',
   );
   String get createBackup => _t('Create backup', 'Yedek oluştur');
   String get exportJson =>
@@ -1920,7 +1959,7 @@ class S {
   String get restoreBackup => _t('Restore', 'Geri yükle');
   String get browserRestoreNotBuilt => _t(
     'In the browser a backup downloads as a file. Restoring it here is not built yet.',
-    'Tarayıcıda yedek bir dosya olarak iner. Burada geri yükleme henüz yapılmadı.',
+    'Tarayıcıda yedek bir dosya olarak iner. Burada geri yükleme henüz yok.',
   );
   String backupChecked(int records, int profiles, String made) => _t(
     'Checked: $records records and $profiles profiles, checksum matches. Made $made.',
@@ -1936,8 +1975,8 @@ class S {
     'Bu yedeğin alındığı kasanın o zamanki parolasını ya da o kasanın kurtarma anahtarını gir. Sonradan oluşturulan bir kasanın anahtarları farklıdır. Yedek, hiçbir şey yazılmadan önce bellekte açılır ve kontrol edilir.',
   );
   String dataFileFailed(String code) => _t(
-    'That did not work ($code). Nothing was changed.',
-    'Bu işlem yapılamadı ($code). Hiçbir şey değişmedi.',
+    'That did not work. Nothing was changed.\n${technicalDetail(code)}',
+    'Bu işlem yapılamadı. Hiçbir şey değişmedi.\n${technicalDetail(code)}',
   );
   String get useRecoveryKeyInstead => _t(
     'Use the recovery key instead',
@@ -1987,6 +2026,10 @@ class S {
     'BACKUP_ENCRYPTED_UNSUPPORTED' => _t(
       'This backup uses an encryption this version cannot open. Nothing was changed.',
       'Bu yedek, bu sürümün açamadığı bir şifreleme kullanıyor. Hiçbir şey değişmedi.',
+    ),
+    'BACKUP_KEY_NEEDED' => _t(
+      'This encrypted backup needs its passphrase or recovery key.',
+      'Bu şifreli yedeği açmak için parolası ya da kurtarma anahtarı gerekiyor.',
     ),
     'BACKUP_KEY_WRONG' => _t(
       'This passphrase or recovery key does not open the backup. Nothing was changed.',
@@ -2153,16 +2196,16 @@ class S {
           'Kasa dosyası hasarlı ya da bir Human OS kasası değil ($code). Dosya değiştirilmedi.',
         );
   String passphraseReplacedNotOpened(String code) => _t(
-    'The new passphrase is set, but the vault could not be opened ($code). Unlock it with the new passphrase.',
-    'Yeni parola ayarlandı ama kasa açılamadı ($code). Yeni parolayla kilidini aç.',
+    'The new passphrase is set, but the vault could not be opened. Unlock it with the new passphrase.\n${technicalDetail(code)}',
+    'Yeni parola ayarlandı ama kasa açılamadı. Yeni parolayla kilidini aç.\n${technicalDetail(code)}',
   );
   String vaultCreatedNotOpened(String code) => _t(
-    'The vault was created, but it could not be opened ($code). Unlock it with the passphrase you just chose.',
-    'Kasa oluşturuldu ama açılamadı ($code). Az önce seçtiğin parolayla kilidini aç.',
+    'The vault was created, but it could not be opened. Unlock it with the passphrase you just chose.\n${technicalDetail(code)}',
+    'Kasa oluşturuldu ama açılamadı. Az önce seçtiğin parolayla kilidini aç.\n${technicalDetail(code)}',
   );
   String gateFailed(String code) => _t(
-    'Something went wrong ($code). Nothing was changed.',
-    'Bir şey ters gitti ($code). Hiçbir şey değiştirilmedi.',
+    'Something went wrong. Nothing was changed.\n${technicalDetail(code)}',
+    'Bir şey ters gitti. Hiçbir şey değiştirilmedi.\n${technicalDetail(code)}',
   );
 
   String storageLabel(String durability, bool encrypted) {

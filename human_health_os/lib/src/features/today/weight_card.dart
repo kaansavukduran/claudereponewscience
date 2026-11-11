@@ -143,7 +143,7 @@ class _WeightCardState extends State<WeightCard> {
     final notice = s.storageNotice(
       services.storageReason,
       detail: services.storageDetail,
-      profile: services.config.profile.name.toUpperCase(),
+      profile: s.profileName(services.config.profile),
     );
     return Card(
       semanticContainer: false,

@@ -41,10 +41,7 @@ class PlannedDestinationScreen extends StatelessWidget {
                   children: [
                     StatusChip(label: s.notBuiltYet, tone: StatusTone.muted),
                     if (destination.plannedForge != null)
-                      StatusChip(
-                        label: s.plannedIn(destination.plannedForge!),
-                        tone: StatusTone.info,
-                      ),
+                      StatusChip(label: s.plannedLater, tone: StatusTone.info),
                   ],
                 ),
                 const SizedBox(height: 12),

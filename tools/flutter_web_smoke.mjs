@@ -42,7 +42,7 @@ const browserVersion = browser.version();
 const RUNS = [
   { label: 'desktop-en', viewport: { width: 1440, height: 900 }, locale: 'en-US', today: 'Today', timeline: 'Timeline', timelineText: /A correction adds a new version/, labs: 'Labs', labsText: /Reference interval ≠ optimal target/, banner: /DEVELOPMENT BUILD/ },
   { label: 'phone-en', viewport: { width: 390, height: 844 }, locale: 'en-US', today: 'Today', timeline: 'Timeline', timelineText: /A correction adds a new version/, labs: 'Labs', labsText: /Reference interval ≠ optimal target/, banner: /DEVELOPMENT BUILD/ },
-  { label: 'phone-tr', viewport: { width: 390, height: 844 }, locale: 'tr-TR', today: 'Bugün', timeline: 'Zaman çizelgesi', timelineText: /Düzeltme yeni bir sürüm ekler/, labs: 'Lab', labsText: /Referans aralığı ≠ optimal hedef/, banner: /GELİŞTİRME DERLEMESİ/ },
+  { label: 'phone-tr', viewport: { width: 390, height: 844 }, locale: 'tr-TR', today: 'Bugün', timeline: 'Zaman çizelgesi', timelineText: /Düzeltme yeni bir sürüm ekler/, labs: 'Lab', labsText: /Referans aralığı ≠ optimal hedef/, banner: /GELİŞTİRME SÜRÜMÜ/ },
 ];
 const expectFlutter = process.env.EXPECT_FLUTTER_VERSION;
 for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel, timelineText, labs: labsLabel, labsText, banner } of RUNS) {
@@ -385,7 +385,7 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     const A = en
       ? { meds: 'Medications', medsTitle: 'Medicines and supplements', medsNone: /^Nothing added yet\. Add a medicine or supplement/, more: 'More', none: 'Nothing recorded yet.', sleep: 'Sleep', feel: 'How you feel',
           areas: [['Nutrition', 'Nutrition'], ['Activity', 'Activity'], ['Conditions', 'Conditions and symptoms'], ['Preventive', 'Vaccinations, screenings, check-ups']] }
-      : { meds: 'İlaçlar', medsTitle: 'İlaçlar ve takviyeler', medsNone: /^Henüz bir şey eklenmedi\. Başlamak için/, more: 'Daha fazla', none: 'Henüz kayıt yok.', sleep: 'Uyku', feel: 'Nasıl hissediyorsun',
+      : { meds: 'İlaçlar', medsTitle: 'İlaçlar ve takviyeler', medsNone: /^Henüz bir şey eklenmedi\. Başlamak için/, more: 'Diğer', none: 'Henüz kayıt yok.', sleep: 'Uyku', feel: 'Nasıl hissediyorsun',
           areas: [['Nutrition', 'Beslenme', 'Beslenme'], ['Activity', 'Aktivite', 'Aktivite'], ['Conditions', 'Durumlar', 'Durumlar ve belirtiler'], ['Preventive', 'Koruyucu', 'Aşılar, taramalar, kontroller']].map(([, item, title]) => [item, title]) };
     // A secondary area: under "More areas" on the rail, or in the "More" sheet.
     const openArea = async (item) => {

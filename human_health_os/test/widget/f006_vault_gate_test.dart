@@ -670,7 +670,7 @@ void main() {
       expect(find.byKey(const ValueKey('gate-start-new')), findsNothing);
       await tapKey(tester, 'gate-memory-only');
       expect(
-        find.textContaining('could not be opened (VAULT_READ_FAILED)'),
+        find.textContaining('Technical detail: VAULT_READ_FAILED'),
         findsOneWidget,
       );
       expect(disk.keptAside, isNull);

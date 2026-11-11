@@ -8,8 +8,15 @@ enum DateOrder { iso, dayMonth, monthDay }
 
 enum ClockStyle { h24, h12 }
 
-/// [local] in the chosen order and clock.
-String formatWhen(DateTime local, DateOrder order, ClockStyle clock) {
+/// [local] in the chosen order and clock. [am] and [pm] are the 12-hour
+/// markers; the presentation passes the displayed language's (U028).
+String formatWhen(
+  DateTime local,
+  DateOrder order,
+  ClockStyle clock, {
+  String am = 'AM',
+  String pm = 'PM',
+}) {
   String two(int n) => n.toString().padLeft(2, '0');
   final date = switch (order) {
     DateOrder.iso => '${local.year}-${two(local.month)}-${two(local.day)}',
@@ -20,7 +27,7 @@ String formatWhen(DateTime local, DateOrder order, ClockStyle clock) {
     ClockStyle.h24 => '${two(local.hour)}:${two(local.minute)}',
     ClockStyle.h12 =>
       '${local.hour % 12 == 0 ? 12 : local.hour % 12}:${two(local.minute)} '
-          '${local.hour < 12 ? 'AM' : 'PM'}',
+          '${local.hour < 12 ? am : pm}',
   };
   return '$date $time';
 }

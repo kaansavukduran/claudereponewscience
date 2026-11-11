@@ -81,13 +81,13 @@ class CapabilityRegistry {
         id: 'health_platform',
         label: 'Health Connect',
         status: CapabilityStatus.notImplemented,
-        detail: 'Android adapter planned (Forge F013).',
+        detail: 'Android connection planned for a later version.',
       ),
       HostPlatform.ios => const Capability(
         id: 'health_platform',
         label: 'Apple Health (HealthKit)',
         status: CapabilityStatus.notImplemented,
-        detail: 'iOS adapter planned (Forge F013).',
+        detail: 'iOS connection planned for a later version.',
       ),
       _ => const Capability(
         id: 'health_platform',
@@ -190,7 +190,7 @@ Capability _storageCapability(
     ),
     StorageReason.vaultReadOnly => cap(
       CapabilityStatus.off,
-      'Saved data is shown read-only: its format needs an upgrade, which waits for backups (Forge F005).',
+      'Saved data is shown read-only: its format needs an upgrade, which comes with backups in a later version.',
     ),
     StorageReason.platformNotBuilt => cap(
       CapabilityStatus.notImplemented,

@@ -3,9 +3,50 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U028",
+    "contract": "v0.32",
+    "run_id": "U028@v0.32",
+    "slice": "Complete Turkish: profile names, banner, 12-hour clock, no raw type names or Forge ids in user text, natural wording; web smoke for the new areas (T003)",
+    "goal": "No English or developer jargon is visible when the app is Turkish; the browser smoke proves the areas built since F008.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "ce85e62",
+    "app_revision": null,
+    "started_at": "2026-11-11T17:10:00Z",
+    "finished_at": null,
+    "scope": [
+      "S.profileName; Turkish banners",
+      "12-hour clock markers from the displayed language",
+      "Technical detail line instead of a type name inside the sentence",
+      "Planned for a later version instead of Forge ids",
+      "BACKUP_KEY_NEEDED sentence",
+      "natural Turkish wording from the audit",
+      "web smoke: Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel (129 checks)",
+      "CHROME_EXECUTABLE docs path"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "AUDITED by an Opus reviewer (read-only)",
+      "IMPLEMENTED by two Opus implementers in worktrees; merged by the lead",
+      "TESTED by the implementers: 740 PASS UTC, 741 New York; smoke 129 checks"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F009-S2"
+    ],
+    "review": "read-only Turkish audit by an Opus reviewer; lead merged and aligned the smoke's Turkish label",
+    "out_of_scope": []
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

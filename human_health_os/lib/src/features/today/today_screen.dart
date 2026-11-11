@@ -188,10 +188,7 @@ class TodayScreen extends StatelessWidget {
                   color: Theme.of(context).colorScheme.outline,
                 ),
               ),
-              StatusChip(
-                label: s.plannedIn(today.plannedForge!),
-                tone: StatusTone.muted,
-              ),
+              StatusChip(label: s.plannedLater, tone: StatusTone.muted),
             ],
           ),
           const SizedBox(height: 12),
@@ -199,10 +196,7 @@ class TodayScreen extends StatelessWidget {
             title: s.thisBuild,
             child: Column(
               children: [
-                _KeyValue(
-                  s.profile,
-                  services.config.profile.name.toUpperCase(),
-                ),
+                _KeyValue(s.profile, s.profileName(services.config.profile)),
                 _KeyValue(s.version, services.config.version),
                 _KeyValue(s.platform, services.registry.platform.name),
                 _KeyValue(s.sourceRevision, services.config.shortRevision),

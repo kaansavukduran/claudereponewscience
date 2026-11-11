@@ -362,7 +362,7 @@ void main() {
     await tapKey(tester, 'confirm-restore');
     expect(
       message(tester),
-      'That did not work (FileSystemException). Nothing was changed.',
+      'That did not work. Nothing was changed.\nTechnical detail: FileSystemException',
     );
     expect(files.vaultText, isNull);
     expect(find.byKey(const ValueKey('restart-to-use')), findsNothing);
@@ -414,7 +414,7 @@ void main() {
     await tapKey(tester, 'confirm-restore');
     expect(
       message(tester),
-      'That did not work (FileSystemException). Nothing was changed.',
+      'That did not work. Nothing was changed.\nTechnical detail: FileSystemException',
     );
     expect(files.reads, 1);
     expect(files.vaultText, isNull, reason: 'nothing restored');

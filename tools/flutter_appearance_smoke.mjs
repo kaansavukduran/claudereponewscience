@@ -55,7 +55,7 @@ try {
       await page.mouse.click(Math.min(370, b.x + b.width / 2), b.y + b.height / 2);
       await page.waitForTimeout(350);
     };
-    const input = page.getByRole('textbox', { name: tr ? /Kesin ölçek/ : /Exact scale/ }).first();
+    const input = page.getByRole('textbox', { name: tr ? /Ölçeği elle gir/ : /Exact scale/ }).first();
     await reveal(input);
     const baseInputHeight = (await input.boundingBox()).height;
     await page.screenshot({ path: join(out, `before-input-${locale}.png`) });

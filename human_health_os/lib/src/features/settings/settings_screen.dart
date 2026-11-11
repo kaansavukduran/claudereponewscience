@@ -218,7 +218,10 @@ class SettingsScreen extends StatelessWidget {
                 const SizedBox(height: 8),
                 choices(
                   'set-clock',
-                  [(ClockStyle.h24, '20:05'), (ClockStyle.h12, '8:05 PM')],
+                  [
+                    (ClockStyle.h24, '20:05'),
+                    (ClockStyle.h12, s.clock12Sample),
+                  ],
                   a.clock,
                   (v) => set(a.copyWith(clock: v)),
                 ),

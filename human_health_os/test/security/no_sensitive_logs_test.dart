@@ -424,7 +424,7 @@ void main() {
         .data!;
     expect(
       error,
-      'Something went wrong (FileSystemException). Nothing was changed.',
+      'Something went wrong. Nothing was changed.\nTechnical detail: FileSystemException',
     );
     expectClean(error, where: 'the gate');
     expectClean(lines.join('\n'), where: 'the log');

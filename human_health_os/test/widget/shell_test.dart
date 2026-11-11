@@ -216,8 +216,8 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.byKey(ValueKey('screen-${d.id.name}')), findsOneWidget);
       if (d.plannedForge != null) {
-        // Honest empty state: names the FORGE that builds it, shows no fake data.
-        expect(find.text('Planned in ${d.plannedForge}'), findsOneWidget);
+        // Honest empty state: says it is planned (no Forge id), shows no fake data.
+        expect(find.text('Planned for a later version'), findsOneWidget);
         if (d.id == DestinationId.today) {
           // Today's built part is the weight card; its empty state is specific.
           expect(find.byKey(const ValueKey('weight-empty')), findsOneWidget);
@@ -329,7 +329,7 @@ void main() {
       locale: const Locale('tr'),
     );
     expect(tester.takeException(), isNull);
-    expect(find.textContaining('GELİŞTİRME DERLEMESİ'), findsOneWidget);
+    expect(find.textContaining('GELİŞTİRME SÜRÜMÜ'), findsOneWidget);
     await tester.tap(find.text('Lab'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
