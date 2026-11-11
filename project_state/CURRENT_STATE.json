@@ -3,9 +3,47 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F011-S1",
+    "contract": "v0.32",
+    "run_id": "F011-S1@v0.32",
+    "slice": "First deterministic engines in Dart passing the golden vectors (core derived, nutrition math, lab interpretation: 43 of 73 vectors)",
+    "goal": "The Dart core computes the same results as the TypeScript and Python references for three engines, each result carrying its rule id, version, inputs, missing inputs and limitations.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "3fa8dc4",
+    "app_revision": null,
+    "started_at": "2026-11-11T18:00:00Z",
+    "finished_at": null,
+    "scope": [
+      "lib/src/domain/engines: calc_result, core_derived (MP-CORE-DERIVED-1 1.0.0, 19 vectors), nutrition_math (NUTRITION-MATH-1 0.20.0, 5), lab_interpretation (LAB-INTERPRETATION-ENGINE-1 0.24.0, 19)",
+      "test/domain/f011_golden_vectors_test.dart: every covered vector exactly; uncovered files listed; a new vector file fails the test",
+      "D-037"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree",
+      "TESTED by the implementer: 53 vector tests, 793 PASS full suite, pnpm and verify_contracts unchanged; a changed MAD constant fails two vectors"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "Domain only: no screen uses the engines yet. medication_safety_vectors.json (10) and preventive_vectors.json (20) are not ported.",
+    "depends_on": [
+      "U028"
+    ],
+    "review": "lead read of the implementer's report; independent review planned (R012)",
+    "out_of_scope": [
+      "UI",
+      "medication safety and preventive engines"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
