@@ -225,8 +225,8 @@ class TodayScreen extends StatelessWidget {
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(c.label, style: text.titleMedium),
-                              Text(c.detail, style: text.bodyMedium),
+                              Text(s.capText(c.label), style: text.titleMedium),
+                              Text(s.capText(c.detail), style: text.bodyMedium),
                             ],
                           ),
                         ),

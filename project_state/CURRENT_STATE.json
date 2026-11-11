@@ -3,9 +3,50 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R010",
+    "contract": "v0.32",
+    "run_id": "R010@v0.32",
+    "slice": "Cross-domain review of the daily domains: mouse-only use, Turkish completeness, narrow and large text",
+    "goal": "Every sheet can be left with a visible button; every record type on the new screens can be corrected by click; device texts are all in Turkish.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "f63daf9",
+    "app_revision": null,
+    "started_at": "2026-11-11T06:45:00Z",
+    "finished_at": null,
+    "scope": [
+      "visible Cancel on every sheet (sleep, how you feel, food, activity, medications)",
+      "correct a how-you-feel check-in (time kept)",
+      "Stop a plan asks once more",
+      "Correct buttons under the entry text on Nutrition and Activity",
+      "device capability texts in Turkish; stale texts about F005/F006 corrected",
+      "G-74"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "REVIEWED: one Sonnet UX reviewer (probe at 320 dp, 200%, Turkish: no overflow on Today sheets; others by reading)",
+      "TESTED: 698 PASS UTC, 699 New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "The reviewer's runtime probe covered Today's Sleep and How you feel sheets only; Nutrition, Activity and Medications were reviewed by reading.",
+    "depends_on": [
+      "F007-S6"
+    ],
+    "review": "no blocking; should-fix 1, 4, 5, 6 fixed; 2 and 3 and the time quick picks recorded as G-74; capability screen English fixed",
+    "out_of_scope": [
+      "pinned sheet buttons, Today jump links or section order, time quick picks (G-74)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

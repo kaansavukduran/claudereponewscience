@@ -93,7 +93,7 @@ class CapabilityRegistry {
         id: 'health_platform',
         label: 'Health platform',
         status: CapabilityStatus.unsupportedOnPlatform,
-        detail: 'No HealthKit or Health Connect on this platform. Manual entry works now; file import is planned (Forge F005).',
+        detail: 'No HealthKit or Health Connect on this platform. Typing entries works now; importing from other health apps is not built.',
       ),
     };
     final keyStore = switch (platform) {
@@ -101,13 +101,13 @@ class CapabilityRegistry {
         id: 'key_store',
         label: 'Key protection',
         status: CapabilityStatus.notImplemented,
-        detail: 'Browser: no OS keychain. WebCrypto + passphrase planned (Forge F006).',
+        detail: 'Browser: no system key store, and encrypted browser storage is not built yet.',
       ),
       _ => const Capability(
         id: 'key_store',
         label: 'Key protection',
         status: CapabilityStatus.notImplemented,
-        detail: 'Encrypted vault with passphrase + platform key store planned (Forge F006).',
+        detail: 'Your passphrase protects the encrypted vault (staging, production and portable builds). The system key store is not used yet.',
       ),
     };
     final storageCap = _storageCapability(platform, storage, reason);

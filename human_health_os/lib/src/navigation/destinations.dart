@@ -1,8 +1,8 @@
-/// Destinations. Primary navigation is exactly Today, Timeline and Labs
-/// (v0.32 kernel). The other seven areas from v0.27 doc 209 already exist as
-/// tested, honest placeholders and stay reachable as a secondary "Planned"
-/// group (conflict C-8). Each names the Forge that builds it, so an unbuilt
-/// area says so instead of faking content.
+/// Destinations. Primary navigation is Today, Timeline, Labs (v0.32 kernel)
+/// and Medications (F008). The other areas from v0.27 doc 209 are reachable
+/// as a secondary "More areas" group (conflict C-8): Nutrition and Activity
+/// are built (F007); each still unbuilt area names the Forge that builds it,
+/// so it says so instead of faking content.
 library;
 
 import 'package:flutter/material.dart';

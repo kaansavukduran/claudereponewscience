@@ -261,10 +261,22 @@ class _NightSheetState extends State<_NightSheet> {
               ),
             ],
             const SizedBox(height: 12),
-            FilledButton(
-              key: const ValueKey('sleep-save'),
-              onPressed: _busy ? null : _save,
-              child: Text(s.save),
+            // Save, and a visible way out without saving (mouse only).
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton(
+                  key: const ValueKey('sleep-save'),
+                  onPressed: _busy ? null : _save,
+                  child: Text(s.save),
+                ),
+                TextButton(
+                  key: const ValueKey('sleep-cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(s.cancel),
+                ),
+              ],
             ),
           ],
         ),

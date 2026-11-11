@@ -84,7 +84,18 @@ void main() {
       find.text('Plan (active): 1 capsule every morning (My own choice)'),
       findsOneWidget,
     );
+    // Stopping is asked once more; Cancel changes nothing.
     await tester.tap(byPrefix('meds-stop-'));
+    await settle(tester);
+    await tapKey(tester, 'meds-stop-cancel');
+    await settle(tester);
+    expect(
+      find.text('Plan (active): 1 capsule every morning (My own choice)'),
+      findsOneWidget,
+    );
+    await tester.tap(byPrefix('meds-stop-'));
+    await settle(tester);
+    await tapKey(tester, 'meds-stop-confirm');
     await settle(tester);
     expect(
       find.text('Plan (stopped): 1 capsule every morning (My own choice)'),

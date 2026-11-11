@@ -389,6 +389,40 @@ class S {
   String get versions => _t('Versions', 'Sürümler');
   String get enteredOn => _t('entered', 'girildi');
   String get cancel => _t('Cancel', 'Vazgeç');
+
+  /// The device capability texts (written in English in the pure core) in
+  /// the chosen language; an unknown text is shown as it is.
+  String capText(String en) => lang == AppLang.tr ? (_capTr[en] ?? en) : en;
+  static const Map<String, String> _capTr = {
+    'Local health records': 'Yerel sağlık kayıtları',
+    'Key protection': 'Anahtar koruması',
+    'Health platform': 'Sağlık platformu',
+    'Network': 'Ağ',
+    'Android adapter planned (Forge F013).':
+        'Android bağlantısı planlandı (Forge F013).',
+    'iOS adapter planned (Forge F013).':
+        'iOS bağlantısı planlandı (Forge F013).',
+    'No HealthKit or Health Connect on this platform. Typing entries works now; importing from other health apps is not built.': 'Bu platformda HealthKit ya da Health Connect yok. Elle giriş şimdi çalışıyor; başka sağlık uygulamalarından aktarma henüz yapılmadı.',
+    'Browser: no system key store, and encrypted browser storage is not built yet.': 'Tarayıcı: sistem anahtar deposu yok ve şifreli tarayıcı depolaması henüz yapılmadı.',
+    'Your passphrase protects the encrypted vault (staging, production and portable builds). The system key store is not used yet.': 'Parolan şifreli kasayı korur (test, üretim ve taşınabilir sürümler). Sistem anahtar deposu henüz kullanılmıyor.',
+    'Not required. This build makes no network calls.':
+        'Gerekmiyor. Bu sürüm hiçbir ağ isteği yapmaz.',
+    'Saved in an encrypted vault on this device (Argon2id + ChaCha20-Poly1305). It opens only with your passphrase or recovery key.': 'Bu cihazda şifreli bir kasada saklanır (Argon2id + ChaCha20-Poly1305). Yalnız parolan ya da kurtarma anahtarınla açılır.',
+    'Saved in a file on this device. Not encrypted (development build only).': 'Bu cihazda bir dosyada saklanır. Şifreli değil (yalnız geliştirme sürümü).',
+    'Saved in this browser. The browser may clear it; not encrypted yet (development build).': 'Bu tarayıcıda saklanır. Tarayıcı silebilir; henüz şifreli değil (geliştirme sürümü).',
+    'Not saved in this browser build: health data are never stored unencrypted, and encrypted browser storage is not built yet.': 'Bu tarayıcı sürümünde saklanmaz: sağlık verisi asla şifresiz saklanmaz ve şifreli tarayıcı depolaması henüz yapılmadı.',
+    'Not saved in this session: you chose memory only. The encrypted vault, if any, is untouched.': 'Bu oturumda saklanmaz: yalnız belleği seçtin. Varsa şifreli kasaya dokunulmadı.',
+    'Not saved: the data folder setting is not an absolute path.':
+        'Saklanmaz: veri klasörü ayarı tam bir yol değil.',
+    'Not saved: this browser blocks local storage.':
+        'Saklanmaz: bu tarayıcı yerel depolamayı engelliyor.',
+    'Not saved: the saved data could not be opened and was left untouched.':
+        'Saklanmaz: kayıtlı veri açılamadı ve olduğu gibi bırakıldı.',
+    'Saved data is shown read-only: its format needs an upgrade, which waits for backups (Forge F005).': 'Kayıtlı veri yalnız okunur gösterilir: biçimi yükseltme bekliyor, bu da yedekleri bekliyor (Forge F005).',
+    'Not saved on this platform yet: entries last only until the app closes.': 'Bu platformda henüz saklanmaz: girişler yalnız uygulama kapanana kadar kalır.',
+    'Not saved right now: entries last only until the app closes.':
+        'Şu an saklanmaz: girişler yalnız uygulama kapanana kadar kalır.',
+  };
   String get saveCorrection => _t('Save correction', 'Düzeltmeyi kaydet');
 
   String recordKind(RecordKind k) => switch (k) {
@@ -507,6 +541,13 @@ class S {
   // How I feel (F007 slice 4): the person's own levels, never a score or a
   // diagnosis; a level not picked is not given.
   String get feelTitle => _t('How you feel', 'Nasıl hissediyorsun');
+  String get medsStopConfirmTitle =>
+      _t('Stop this plan?', 'Bu plan bırakılsın mı?');
+  String get medsStopConfirmBody => _t(
+    'The plan is kept in history as stopped. Resume brings it back.',
+    'Plan geçmişte bırakıldı olarak kalır. Sürdür ile geri gelir.',
+  );
+  String get feelCorrectTitle => _t('Correct this check-in', 'Bu kaydı düzelt');
   String get feelIntro => _t(
     'Your own words for now. Pick any of the three; nothing is scored.',
     'Şu an için kendi seçimin. Üçünden istediğini seç; hiçbir şey puanlanmaz.',

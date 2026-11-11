@@ -93,14 +93,21 @@ class _ActivityScreenState extends State<ActivityScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 title: Text(s.actLine(r.details! as ActivityEntryDetails)),
-                subtitle: Text(
-                  fmtWhen(r.observedAt),
-                  style: TextStyle(color: scheme.onSurfaceVariant),
-                ),
-                trailing: TextButton(
-                  key: ValueKey('act-correct-${r.id}'),
-                  onPressed: () => _open(correcting: r),
-                  child: Text(s.amendAction(AmendReason.correction)),
+                // The button sits under the text, so a narrow window or large
+                // text never squeezes the entry into a thin column.
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fmtWhen(r.observedAt),
+                      style: TextStyle(color: scheme.onSurfaceVariant),
+                    ),
+                    TextButton(
+                      key: ValueKey('act-correct-${r.id}'),
+                      onPressed: () => _open(correcting: r),
+                      child: Text(s.amendAction(AmendReason.correction)),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -289,10 +296,22 @@ class _ActivitySheetState extends State<_ActivitySheet> {
                 ),
               ),
             const SizedBox(height: 12),
-            FilledButton(
-              key: const ValueKey('act-save'),
-              onPressed: _busy ? null : _save,
-              child: Text(s.save),
+            // Save, and a visible way out without saving (mouse only).
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton(
+                  key: const ValueKey('act-save'),
+                  onPressed: _busy ? null : _save,
+                  child: Text(s.save),
+                ),
+                TextButton(
+                  key: const ValueKey('act-cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(s.cancel),
+                ),
+              ],
             ),
           ],
         ),

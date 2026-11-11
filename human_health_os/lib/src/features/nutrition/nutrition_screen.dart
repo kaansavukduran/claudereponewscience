@@ -93,14 +93,21 @@ class _NutritionScreenState extends State<NutritionScreen> {
               margin: const EdgeInsets.only(bottom: 8),
               child: ListTile(
                 title: Text(s.foodLine(r.details! as FoodEntryDetails)),
-                subtitle: Text(
-                  fmtWhen(r.observedAt),
-                  style: TextStyle(color: scheme.onSurfaceVariant),
-                ),
-                trailing: TextButton(
-                  key: ValueKey('food-correct-${r.id}'),
-                  onPressed: () => _add(correcting: r),
-                  child: Text(s.amendAction(AmendReason.correction)),
+                // The button sits under the text, so a narrow window or large
+                // text never squeezes the entry into a thin column.
+                subtitle: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      fmtWhen(r.observedAt),
+                      style: TextStyle(color: scheme.onSurfaceVariant),
+                    ),
+                    TextButton(
+                      key: ValueKey('food-correct-${r.id}'),
+                      onPressed: () => _add(correcting: r),
+                      child: Text(s.amendAction(AmendReason.correction)),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -313,10 +320,22 @@ class _FoodSheetState extends State<_FoodSheet> {
                 ),
               ),
             const SizedBox(height: 12),
-            FilledButton(
-              key: const ValueKey('food-save'),
-              onPressed: _busy ? null : _save,
-              child: Text(s.save),
+            // Save, and a visible way out without saving (mouse only).
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton(
+                  key: const ValueKey('food-save'),
+                  onPressed: _busy ? null : _save,
+                  child: Text(s.save),
+                ),
+                TextButton(
+                  key: const ValueKey('food-cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(s.cancel),
+                ),
+              ],
             ),
           ],
         ),

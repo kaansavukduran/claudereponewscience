@@ -697,7 +697,15 @@ class HeartbeatService {
     SelfLevel? mood,
     SelfLevel? stress,
     String when = '',
+    String? correcting,
   }) async {
+    // A correction replaces the shown version; the earlier one stays.
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.feelingCheckIn) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
     final details = FeelingCheckInDetails(
       energy: energy,
       mood: mood,
@@ -715,9 +723,13 @@ class HeartbeatService {
       quantity: null,
       originalText: null,
       provenance: const Provenance.manual(),
-      observedAt: parseMeasuredAt(when, nowUtc: now) ?? now,
+      // A correction left without a time keeps the check-in's own time.
+      observedAt:
+          parseMeasuredAt(when, nowUtc: now) ?? target?.observedAt ?? now,
       recordedAt: now,
       details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
       schemaVersion: HealthRecord.writeSchemaFor(RecordKind.feelingCheckIn),
     );
     await repository.appendRecord(record);

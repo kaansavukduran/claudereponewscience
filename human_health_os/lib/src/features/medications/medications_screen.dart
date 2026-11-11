@@ -42,8 +42,32 @@ class _MedicationsScreenState extends State<MedicationsScreen> {
   /// an item gone) is said in words, and the list is read again either way.
   Future<void> _setState(String itemRootId, PlanState state) async {
     if (_busy) return;
-    _busy = true;
     final s = S.of(context);
+    // Stopping is asked once more (it can be undone by Resume, but it
+    // should not happen by a stray click).
+    if (state == PlanState.stopped) {
+      final sure = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text(s.medsStopConfirmTitle),
+          content: Text(s.medsStopConfirmBody),
+          actions: [
+            TextButton(
+              key: const ValueKey('meds-stop-cancel'),
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(s.cancel),
+            ),
+            FilledButton(
+              key: const ValueKey('meds-stop-confirm'),
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(s.medsStop),
+            ),
+          ],
+        ),
+      );
+      if (sure != true || !mounted) return;
+    }
+    _busy = true;
     final messenger = ScaffoldMessenger.maybeOf(context);
     try {
       await _svc.setPlanState(
@@ -300,10 +324,22 @@ class _FormSheet extends StatelessWidget {
               ),
             ],
             const SizedBox(height: 12),
-            FilledButton(
-              key: ValueKey(saveKey),
-              onPressed: onSave,
-              child: Text(s.medsSave),
+            // Save, and a visible way out without saving (mouse only).
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton(
+                  key: ValueKey(saveKey),
+                  onPressed: onSave,
+                  child: Text(s.medsSave),
+                ),
+                TextButton(
+                  key: const ValueKey('meds-cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(s.cancel),
+                ),
+              ],
             ),
           ],
         ),

@@ -35,13 +35,13 @@ class _FeelingCardState extends State<FeelingCard> {
     if (mounted) setState(() => _entries = entries);
   }
 
-  Future<void> _open() async {
+  Future<void> _open({HealthRecord? correcting}) async {
     final saved = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
-      builder: (_) => _FeelingSheet(svc: _svc, me: _me),
+      builder: (_) => _FeelingSheet(svc: _svc, me: _me, correcting: correcting),
     );
     if (saved == true) await _reload();
   }
@@ -68,12 +68,23 @@ class _FeelingCardState extends State<FeelingCard> {
               Text(s.feelNone, key: const ValueKey('feel-none'))
             else if (entries != null)
               for (final r in entries.take(2))
-                Text(
-                  '${fmtWhen(r.observedAt)} · ${_line(s, r)}',
-                  key: ValueKey('feel-entry-${r.id}'),
-                  style: text.bodyMedium?.copyWith(
-                    color: scheme.onSurfaceVariant,
-                  ),
+                Wrap(
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: 8,
+                  children: [
+                    Text(
+                      '${fmtWhen(r.observedAt)} · ${_line(s, r)}',
+                      key: ValueKey('feel-entry-${r.id}'),
+                      style: text.bodyMedium?.copyWith(
+                        color: scheme.onSurfaceVariant,
+                      ),
+                    ),
+                    TextButton(
+                      key: ValueKey('feel-correct-${r.id}'),
+                      onPressed: () => _open(correcting: r),
+                      child: Text(s.amendAction(AmendReason.correction)),
+                    ),
+                  ],
                 ),
             const SizedBox(height: 8),
             OutlinedButton.icon(
@@ -90,10 +101,13 @@ class _FeelingCardState extends State<FeelingCard> {
 }
 
 class _FeelingSheet extends StatefulWidget {
-  const _FeelingSheet({required this.svc, required this.me});
+  const _FeelingSheet({required this.svc, required this.me, this.correcting});
 
   final HeartbeatService svc;
   final String me;
+
+  /// The shown check-in being corrected; null for a new one.
+  final HealthRecord? correcting;
 
   @override
   State<_FeelingSheet> createState() => _FeelingSheetState();
@@ -106,6 +120,17 @@ class _FeelingSheetState extends State<_FeelingSheet> {
   String? _error;
   bool _busy = false;
 
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.correcting?.details;
+    if (d is FeelingCheckInDetails) {
+      _energy = d.energy;
+      _mood = d.mood;
+      _stress = d.stress;
+    }
+  }
+
   Future<void> _save() async {
     if (_busy) return;
     final s = S.of(context);
@@ -117,6 +142,7 @@ class _FeelingSheetState extends State<_FeelingSheet> {
         energy: _energy,
         mood: _mood,
         stress: _stress,
+        correcting: widget.correcting?.id,
       );
       saved = true;
     } on InputError catch (e) {
@@ -200,7 +226,7 @@ class _FeelingSheetState extends State<_FeelingSheet> {
             Semantics(
               header: true,
               child: Text(
-                s.feelTitle,
+                widget.correcting == null ? s.feelTitle : s.feelCorrectTitle,
                 style: Theme.of(context).textTheme.titleLarge,
               ),
             ),
@@ -220,10 +246,22 @@ class _FeelingSheetState extends State<_FeelingSheet> {
                 ),
               ),
             const SizedBox(height: 12),
-            FilledButton(
-              key: const ValueKey('feel-save'),
-              onPressed: _busy ? null : _save,
-              child: Text(s.feelSave),
+            // Save, and a visible way out without saving (mouse only).
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton(
+                  key: const ValueKey('feel-save'),
+                  onPressed: _busy ? null : _save,
+                  child: Text(s.feelSave),
+                ),
+                TextButton(
+                  key: const ValueKey('feel-cancel'),
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: Text(s.cancel),
+                ),
+              ],
             ),
           ],
         ),
