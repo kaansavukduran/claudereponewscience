@@ -3,50 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F009",
-    "contract": "v0.32",
-    "run_id": "F009@v0.32",
-    "slice": "Conditions slice 1: a condition or symptom as named, with who it comes from (record schema 11)",
-    "goal": "A person records conditions and symptoms in their own words with their source; the app confirms nothing.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "e0b1227",
-    "app_revision": null,
-    "started_at": "2026-11-11T10:20:00Z",
-    "finished_at": null,
-    "scope": [
-      "record schema 11: condition.entry with ConditionEntryDetails",
-      "HeartbeatService.recordCondition (with correction) and conditions",
-      "Conditions screen built",
-      "D-035"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "REVIEWED: one Sonnet reviewer before gates, no blocking; should-fix 1-4 fixed",
-      "TESTED: full suite"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": null,
-    "depends_on": [
-      "U026"
-    ],
-    "review": "one Sonnet reviewer: no blocking; robust stored since, default not sure, Turkish label Durumu, JSON key nature, document wording; tests for source chips, Turkish line, blank since, wrong kind",
-    "out_of_scope": [
-      "treatments",
-      "care pathways",
-      "preventive"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -57,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U026@v0.32 (2026-11-11, source revision 3ef4619cbc7b)",
+  "last_completed_forge": "F009@v0.32 (2026-11-11, source revision debb3c00d65f)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -70,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0855",
+      "evidence_id": "EV-TEST-F007-0868",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0856",
+      "evidence_id": "EV-TEST-F007-0869",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0857",
+      "evidence_id": "EV-TEST-F007-0870",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (703 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0858",
+      "gate": "flutter test, TZ=UTC (710 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0871",
       "criterion": "AC-1..AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0859",
+      "evidence_id": "EV-TEST-F007-0872",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0860",
+      "evidence_id": "EV-BUILD-F007-0873",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0861",
+      "evidence_id": "EV-RUNTIME-F007-0874",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0862",
+      "evidence_id": "EV-TEST-F007-0875",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0863",
+      "evidence_id": "EV-BUILD-F007-0876",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0864",
+      "evidence_id": "EV-RUNTIME-F007-0877",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (704 PASS)",
-      "evidence_id": "EV-TEST-F007-0865",
+      "gate": "flutter test with TZ=America/New_York (711 PASS)",
+      "evidence_id": "EV-TEST-F007-0878",
       "criterion": "AC-1..AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0866",
+      "evidence_id": "EV-TEST-F007-0879",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0867",
+      "evidence_id": "EV-TEST-F007-0880",
       "criterion": "AC-4",
-      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
       "result": "PASS"
     }
   ],
@@ -189,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "F009",
+    "forge_id": "R011",
     "contract": "v0.32",
-    "run_id": "F009@v0.32",
-    "slice": "Conditions slice 1: a condition or symptom as the person names it, with who reported or confirmed it (self-reported is not a confirmed diagnosis)",
-    "why": "Roadmap F009 is NOT_STARTED and is the next product ladder step after the F007 daily domains; the Conditions area is still planned.",
+    "run_id": "R011@v0.32",
+    "slice": "Independent safety and compatibility review of record schemas 7-11 (sleep, how you feel, food, activity, conditions): old stores, backups and restore across versions",
+    "why": "Five additive schema steps landed in a row; a restore drill and an old-app refusal check across them is the bounded next step before more domains.",
     "depends_on": [
-      "U026"
+      "F009"
     ]
   },
-  "updated_at": "2026-11-11T09:42:59Z",
+  "updated_at": "2026-11-11T10:39:55Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -10611,6 +10570,171 @@
       "review": "lead review (R010 finding 3)",
       "out_of_scope": [
         "free reordering of every Today section"
+      ]
+    },
+    "F009@v0.32": {
+      "forge_id": "F009",
+      "contract": "v0.32",
+      "run_id": "F009@v0.32",
+      "slice": "Conditions slice 1: a condition or symptom as named, with who it comes from (record schema 11)",
+      "goal": "A person records conditions and symptoms in their own words with their source; the app confirms nothing.",
+      "status": "DONE",
+      "baseline_commit": "e0b1227",
+      "app_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "started_at": "2026-11-11T10:20:00Z",
+      "finished_at": "2026-11-11T10:39:55Z",
+      "scope": [
+        "record schema 11: condition.entry with ConditionEntryDetails",
+        "HeartbeatService.recordCondition (with correction) and conditions",
+        "Conditions screen built",
+        "D-035"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "REVIEWED: one Sonnet reviewer before gates, no blocking; should-fix 1-4 fixed",
+        "TESTED: full suite",
+        "GATES: 13 receipts on clean tree debb3c0, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0880",
+      "next_action": null,
+      "files_touched": [
+        "docs/ROADMAP.md",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/domain/records/record_details.dart",
+        "human_health_os/lib/src/features/conditions/conditions_screen.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/navigation/app_shell.dart",
+        "human_health_os/lib/src/navigation/destinations.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/domain/f009_conditions_test.dart",
+        "human_health_os/test/widget/f009_conditions_screen_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0868",
+        "EV-TEST-F007-0869",
+        "EV-TEST-F007-0870",
+        "EV-TEST-F007-0871",
+        "EV-TEST-F007-0872",
+        "EV-BUILD-F007-0873",
+        "EV-RUNTIME-F007-0874",
+        "EV-TEST-F007-0875",
+        "EV-BUILD-F007-0876",
+        "EV-RUNTIME-F007-0877",
+        "EV-TEST-F007-0878",
+        "EV-TEST-F007-0879",
+        "EV-TEST-F007-0880"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0868",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0869",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0870",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (710 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0871",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0872",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0873",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0874",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0875",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0876",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0877",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (711 PASS)",
+          "evidence_id": "EV-TEST-F007-0878",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0879",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0880",
+          "criterion": "AC-4",
+          "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "F009_COMPLETE",
+      "limitations": null,
+      "depends_on": [
+        "U026"
+      ],
+      "review": "one Sonnet reviewer before gates: no blocking; should-fix 1-4 fixed",
+      "out_of_scope": [
+        "treatments",
+        "care pathways",
+        "preventive"
       ]
     }
   },
