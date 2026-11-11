@@ -448,7 +448,60 @@ class S {
     RecordKind.feelingCheckIn => _t('How I feel', 'Nasıl hissediyorum'),
     RecordKind.foodEntry => _t('Food or drink', 'Yiyecek ya da içecek'),
     RecordKind.activityEntry => _t('Activity', 'Aktivite'),
+    RecordKind.conditionEntry => _t(
+      'Condition or symptom',
+      'Durum ya da belirti',
+    ),
   };
+
+  // Conditions (F009 slice 1): as the person names them, with who they come
+  // from; a self-report is not a confirmed diagnosis; nothing is coded.
+  String get condTitle =>
+      _t('Conditions and symptoms', 'Durumlar ve belirtiler');
+  String get condIntro => _t(
+    'In your own words, with who it comes from. Human OS confirms nothing and suggests no diagnosis; what you record is your account.',
+    'Kendi sözlerinle, kimden geldiğiyle birlikte. Human OS hiçbir şeyi doğrulamaz ve tanı önermez; kaydettiğin senin anlatımındır.',
+  );
+  String get condAdd =>
+      _t('Add a condition or symptom', 'Durum ya da belirti ekle');
+  String get condCorrectTitle => _t('Correct this entry', 'Bu kaydı düzelt');
+  String get condNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get condName =>
+      _t('What it is, in your words', 'Ne olduğu, kendi sözlerinle');
+  String get condSince => _t(
+    'Since when (optional, e.g. 2019)',
+    'Ne zamandan beri (isteğe bağlı, ör. 2019)',
+  );
+  String get condNatureLabel => _t('It is a', 'Bu bir');
+  String condNature(ConditionType t) => switch (t) {
+    ConditionType.condition => _t('condition', 'durum'),
+    ConditionType.symptom => _t('symptom', 'belirti'),
+  };
+  String get condTimeLabel => _t('It is', 'Durumu');
+  String condTime(ConditionTime t) => switch (t) {
+    ConditionTime.current => _t('current', 'sürüyor'),
+    ConditionTime.past => _t('in the past', 'geçmişte kaldı'),
+    ConditionTime.unsure => _t('not sure', 'emin değilim'),
+  };
+  String get condSourceLabel => _t('It comes from', 'Kaynağı');
+  String condSource(ConditionSource c) => switch (c) {
+    ConditionSource.selfReported => _t('my own account', 'kendi anlatımım'),
+    ConditionSource.toldByClinician => _t(
+      'what a clinician told me',
+      'bir sağlık çalışanının bana söylediği',
+    ),
+    ConditionSource.fromDocument => _t(
+      'a document I was given',
+      'bana verilen bir belge',
+    ),
+  };
+  String condLine(ConditionEntryDetails d) => [
+    d.name,
+    condNature(d.nature),
+    '$condTimeLabel: ${condTime(d.time)}',
+    condSource(d.source),
+    if (d.since != null) _t('since ${d.since}', 'başlangıç: ${d.since}'),
+  ].join(' · ');
 
   // Activity (F007 slice 6): typed by hand; minutes and steps as whole
   // numbers; nothing estimated (no calories), nothing summed with devices.

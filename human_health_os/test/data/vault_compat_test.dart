@@ -102,14 +102,14 @@ void main() {
 
   group('compatibility metadata (§35.3)', () {
     test(
-      'this app writes vault format 1, reads record schema 10 (activity) and '
+      'this app writes vault format 1, reads record schema 11 (conditions) and '
       'writes weight and lab results at 3, reads format 1, never '
       'downgrades',
       () {
         expect(vaultFormatVersion, 1);
         expect(vaultOldestReadableVersion, 1);
         expect(vaultDowngradeSupported, isFalse);
-        expect(HealthRecord.currentSchemaVersion, 10);
+        expect(HealthRecord.currentSchemaVersion, 11);
         expect(HealthRecord.defaultWriteSchema, 3);
         expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
         expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
@@ -139,6 +139,7 @@ void main() {
         expect(HealthRecord.writeSchemaFor(RecordKind.feelingCheckIn), 8);
         expect(HealthRecord.writeSchemaFor(RecordKind.foodEntry), 9);
         expect(HealthRecord.writeSchemaFor(RecordKind.activityEntry), 10);
+        expect(HealthRecord.writeSchemaFor(RecordKind.conditionEntry), 11);
         expect(Profile.currentSchemaVersion, 1);
       },
     );
@@ -764,7 +765,7 @@ void main() {
       expect(raw.text, before, reason: 'opening writes nothing');
     });
 
-    test('a store newer than this app (schema 11) is refused whole', () {
+    test('a store newer than this app (schema 12) is refused whole', () {
       final lines = text.trimRight().split('\n');
       final last = (jsonDecode(lines.last) as Map).cast<String, Object?>();
       final data = (last['data']! as Map).cast<String, Object?>()

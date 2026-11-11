@@ -124,6 +124,7 @@ String fmtValue(S s, HealthRecord r) {
   if (d is FeelingCheckInDetails) return s.feelLine(d.energy, d.mood, d.stress);
   if (d is FoodEntryDetails) return s.foodLine(d);
   if (d is ActivityEntryDetails) return s.actLine(d);
+  if (d is ConditionEntryDetails) return s.condLine(d);
   if (d is SleepNightDetails) {
     return s.sleepLine(
       fmtWhen(d.wentToBed),

@@ -881,6 +881,71 @@ class HeartbeatService {
     return record;
   }
 
+  /// Records a condition or symptom as the person names it, with who it
+  /// comes from. [correcting] makes it a new version of that entry.
+  Future<HealthRecord> recordCondition({
+    required String profileId,
+    required String name,
+    required ConditionType nature,
+    required ConditionTime time,
+    required ConditionSource source,
+    String since = '',
+    String? correcting,
+  }) async {
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.conditionEntry) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
+    final details = ConditionEntryDetails(
+      name: name.trim(),
+      nature: nature,
+      time: time,
+      source: source,
+      since: since.trim().isEmpty ? null : since.trim(),
+    );
+    final problem = details.problem();
+    if (problem != null) {
+      throw InputError(
+        problem.endsWith('_TOO_LONG') ? 'TEXT_TOO_LONG' : 'EMPTY',
+        problem.startsWith('CONDITION_SINCE') ? 'since' : 'name',
+      );
+    }
+    final now = clock.nowUtc();
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.conditionEntry,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: target?.observedAt ?? now,
+      recordedAt: now,
+      details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.conditionEntry),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live condition entries, the latest recorded first.
+  Future<List<HealthRecord>> conditions(String profileId) async {
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.conditionEntry,
+    );
+    return [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is ConditionEntryDetails) h,
+    ]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+  }
+
   /// The live activity entries, the latest first.
   Future<List<HealthRecord>> activities(String profileId) async {
     final all = await repository.records(

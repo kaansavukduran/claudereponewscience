@@ -28,6 +28,7 @@ abstract class RecordDetails {
     FeelingCheckInDetails.typeTag => FeelingCheckInDetails.fromJson(j),
     FoodEntryDetails.typeTag => FoodEntryDetails.fromJson(j),
     ActivityEntryDetails.typeTag => ActivityEntryDetails.fromJson(j),
+    ConditionEntryDetails.typeTag => ConditionEntryDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -629,4 +630,90 @@ class ActivityEntryDetails extends RecordDetails {
 
   @override
   int get hashCode => Object.hash(what, minutes, steps);
+}
+
+/// Whether the person records a condition or a symptom.
+enum ConditionType { condition, symptom }
+
+/// Whether it is current, in the past, or the person is not sure.
+enum ConditionTime { current, past, unsure }
+
+/// Who the person says it comes from. The app never confirms anything: a
+/// self-report is not a diagnosis, and "told by a clinician" is what the
+/// person says they were told, not a clinical record.
+enum ConditionSource { selfReported, toldByClinician, fromDocument }
+
+/// A condition or a symptom as the person names it (F009 slice 1, record
+/// schema 11): the name as typed, whether it is current, past or unsure,
+/// who it comes from, and since when as typed. No coding, no inference.
+class ConditionEntryDetails extends RecordDetails {
+  const ConditionEntryDetails({
+    required this.name,
+    required this.nature,
+    required this.time,
+    required this.source,
+    this.since,
+  });
+
+  static const String typeTag = 'condition_entry';
+
+  final String name;
+  final ConditionType nature;
+  final ConditionTime time;
+  final ConditionSource source;
+
+  /// Since when, as typed (e.g. "2019", "childhood"); null = not given.
+  final String? since;
+
+  @override
+  String get type => typeTag;
+
+  String? problem() =>
+      MedicationDetails.text(name, 'CONDITION_NAME', required: true) ??
+      MedicationDetails.text(since, 'CONDITION_SINCE');
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'name': name,
+    'nature': nature.name,
+    'time': time.name,
+    'source': source.name,
+    'since': since,
+  };
+
+  static T _pick<T extends Enum>(List<T> values, Object? v, String what) =>
+      switch (v) {
+        final String n when values.asNameMap().containsKey(n) =>
+          values.asNameMap()[n]!,
+        final x => throw FormatException('Unknown $what "$x"'),
+      };
+
+  static ConditionEntryDetails fromJson(Map<String, Object?> j) =>
+      ConditionEntryDetails(
+        name: switch (j['name']) {
+          final String n => n,
+          final x => throw FormatException('Condition without a name: "$x"'),
+        },
+        nature: _pick(ConditionType.values, j['nature'], 'condition nature'),
+        time: _pick(ConditionTime.values, j['time'], 'condition time'),
+        source: _pick(ConditionSource.values, j['source'], 'condition source'),
+        since: switch (j['since']) {
+          null => null,
+          final String s => s,
+          final x => throw FormatException('Bad condition since "$x"'),
+        },
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is ConditionEntryDetails &&
+      other.name == name &&
+      other.nature == nature &&
+      other.time == time &&
+      other.source == source &&
+      other.since == since;
+
+  @override
+  int get hashCode => Object.hash(name, nature, time, source, since);
 }

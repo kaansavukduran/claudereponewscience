@@ -170,9 +170,12 @@ const List<Destination> destinations = [
     tr: 'Durumlar',
     icon: Icons.healing_outlined,
     selectedIcon: Icons.healing,
-    purposeEn: 'Conditions, symptoms and treatments with who reported or confirmed them.',
-    purposeTr: 'Durumlar, belirtiler ve tedaviler; kimin bildirdiği ya da doğruladığıyla.',
-    plannedForge: 'Forge F009',
+    purposeEn:
+        'Conditions and symptoms in your words, with who they come from.',
+    purposeTr:
+        'Durumlar ve belirtiler kendi sözlerinle, kimden geldiğiyle birlikte.',
+    // Built in F009 slice 1; treatments and care pathways come later.
+    plannedForge: null,
     principleEn: 'Self-reported is not a confirmed diagnosis.',
     principleTr: 'Öz bildirim, doğrulanmış tanı değildir.',
   ),

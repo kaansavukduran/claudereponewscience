@@ -114,7 +114,12 @@ enum RecordKind {
 
   /// One activity typed by hand (F007 slice 6, record schema 10).
   /// [ActivityEntryDetails]. Never merged with device data.
-  activityEntry('activity.entry', minSchema: 10);
+  activityEntry('activity.entry', minSchema: 10),
+
+  /// A condition or symptom as the person names it, with who it comes from
+  /// (F009 slice 1, record schema 11). [ConditionEntryDetails]. A
+  /// self-report is never a confirmed diagnosis.
+  conditionEntry('condition.entry', minSchema: 11);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -144,7 +149,8 @@ enum RecordKind {
     sleepNight ||
     feelingCheckIn ||
     foodEntry ||
-    activityEntry => false,
+    activityEntry ||
+    conditionEntry => false,
   };
 
   /// The F008 medication kinds.
@@ -160,7 +166,8 @@ enum RecordKind {
       this == sleepNight ||
       this == feelingCheckIn ||
       this == foodEntry ||
-      this == activityEntry;
+      this == activityEntry ||
+      this == conditionEntry;
 
   /// The `type` of the [RecordDetails] a structured kind carries.
   String? get detailsType => switch (this) {
@@ -172,6 +179,7 @@ enum RecordKind {
     feelingCheckIn => FeelingCheckInDetails.typeTag,
     foodEntry => FoodEntryDetails.typeTag,
     activityEntry => ActivityEntryDetails.typeTag,
+    conditionEntry => ConditionEntryDetails.typeTag,
     _ => null,
   };
 
@@ -335,7 +343,7 @@ class HealthRecord {
   ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 10;
+  static const int currentSchemaVersion = 11;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -599,12 +607,14 @@ class HealthRecord {
       case RecordKind.sleepNight ||
           RecordKind.feelingCheckIn ||
           RecordKind.foodEntry ||
-          RecordKind.activityEntry:
+          RecordKind.activityEntry ||
+          RecordKind.conditionEntry:
         final code = switch (details) {
           final SleepNightDetails d => d.problem(),
           final FeelingCheckInDetails d => d.problem(),
           final FoodEntryDetails d => d.problem(),
           final ActivityEntryDetails d => d.problem(),
+          final ConditionEntryDetails d => d.problem(),
           _ => null,
         };
         if (code != null) {

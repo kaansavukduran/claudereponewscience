@@ -3,9 +3,50 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F009",
+    "contract": "v0.32",
+    "run_id": "F009@v0.32",
+    "slice": "Conditions slice 1: a condition or symptom as named, with who it comes from (record schema 11)",
+    "goal": "A person records conditions and symptoms in their own words with their source; the app confirms nothing.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "e0b1227",
+    "app_revision": null,
+    "started_at": "2026-11-11T10:20:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 11: condition.entry with ConditionEntryDetails",
+      "HeartbeatService.recordCondition (with correction) and conditions",
+      "Conditions screen built",
+      "D-035"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "REVIEWED: one Sonnet reviewer before gates, no blocking; should-fix 1-4 fixed",
+      "TESTED: full suite"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "U026"
+    ],
+    "review": "one Sonnet reviewer: no blocking; robust stored since, default not sure, Turkish label Durumu, JSON key nature, document wording; tests for source chips, Turkish line, blank since, wrong kind",
+    "out_of_scope": [
+      "treatments",
+      "care pathways",
+      "preventive"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
