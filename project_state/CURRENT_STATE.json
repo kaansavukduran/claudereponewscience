@@ -3,50 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U028",
-    "contract": "v0.32",
-    "run_id": "U028@v0.32",
-    "slice": "Complete Turkish: profile names, banner, 12-hour clock, no raw type names or Forge ids in user text, natural wording; web smoke for the new areas (T003)",
-    "goal": "No English or developer jargon is visible when the app is Turkish; the browser smoke proves the areas built since F008.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "ce85e62",
-    "app_revision": null,
-    "started_at": "2026-11-11T17:10:00Z",
-    "finished_at": null,
-    "scope": [
-      "S.profileName; Turkish banners",
-      "12-hour clock markers from the displayed language",
-      "Technical detail line instead of a type name inside the sentence",
-      "Planned for a later version instead of Forge ids",
-      "BACKUP_KEY_NEEDED sentence",
-      "natural Turkish wording from the audit",
-      "web smoke: Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel (129 checks)",
-      "CHROME_EXECUTABLE docs path"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "AUDITED by an Opus reviewer (read-only)",
-      "IMPLEMENTED by two Opus implementers in worktrees; merged by the lead",
-      "TESTED by the implementers: 740 PASS UTC, 741 New York; smoke 129 checks"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": null,
-    "depends_on": [
-      "F009-S2"
-    ],
-    "review": "read-only Turkish audit by an Opus reviewer; lead merged and aligned the smoke's Turkish label",
-    "out_of_scope": []
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -57,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F009-S2@v0.32 (2026-11-11, source revision 19b4fe305a90)",
+  "last_completed_forge": "U028@v0.32 (2026-11-11, source revision a3bfdbfa09dd)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -70,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0894",
+      "evidence_id": "EV-TEST-F007-0907",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0895",
+      "evidence_id": "EV-TEST-F007-0908",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0896",
+      "evidence_id": "EV-TEST-F007-0909",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (733 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0897",
+      "gate": "flutter test, TZ=UTC (740 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0910",
       "criterion": "AC-1..AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0898",
+      "evidence_id": "EV-TEST-F007-0911",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0899",
+      "evidence_id": "EV-BUILD-F007-0912",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
-      "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0900",
+      "gate": "Playwright smoke in Chromium (129 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup, Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel; no console errors, no external requests",
+      "evidence_id": "EV-RUNTIME-F007-0913",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0901",
+      "evidence_id": "EV-TEST-F007-0914",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0902",
+      "evidence_id": "EV-BUILD-F007-0915",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0903",
+      "evidence_id": "EV-RUNTIME-F007-0916",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (734 PASS)",
-      "evidence_id": "EV-TEST-F007-0904",
+      "gate": "flutter test with TZ=America/New_York (741 PASS)",
+      "evidence_id": "EV-TEST-F007-0917",
       "criterion": "AC-1..AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0905",
+      "evidence_id": "EV-TEST-F007-0918",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0906",
+      "evidence_id": "EV-TEST-F007-0919",
       "criterion": "AC-4",
-      "source_revision": "19b4fe305a902ccf9ed84603eeec97f488e00e9e",
+      "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
       "result": "PASS"
     }
   ],
@@ -189,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U028",
+    "forge_id": "F011-S1",
     "contract": "v0.32",
-    "run_id": "U028@v0.32",
-    "slice": "Complete Turkish: profile names, banner, 12-hour clock, no raw type names or Forge ids in user text, natural wording; web smoke for the new areas (T003)",
-    "why": "Owner priority: complete Turkish; an audit found five must-fix items; the web smoke does not yet cover the areas built since F008.",
+    "run_id": "F011-S1@v0.32",
+    "slice": "First deterministic engines in Dart passing the golden vectors (core derived, nutrition math, lab interpretation: 43 of 73 vectors)",
+    "why": "Roadmap F011 was NOT_STARTED in Dart; implemented by an Opus implementer and ready to gate.",
     "depends_on": [
-      "F009-S2"
+      "U028"
     ]
   },
-  "updated_at": "2026-11-11T16:18:02Z",
+  "updated_at": "2026-11-11T16:51:01Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -11097,6 +11056,176 @@
         "due dates and reminders",
         "results of screenings"
       ]
+    },
+    "U028@v0.32": {
+      "forge_id": "U028",
+      "contract": "v0.32",
+      "run_id": "U028@v0.32",
+      "slice": "Complete Turkish: profile names, banner, 12-hour clock, no raw type names or Forge ids in user text, natural wording; web smoke for the new areas (T003)",
+      "goal": "No English or developer jargon is visible when the app is Turkish; the browser smoke proves the areas built since F008.",
+      "status": "DONE",
+      "baseline_commit": "ce85e62",
+      "app_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+      "started_at": "2026-11-11T17:10:00Z",
+      "finished_at": "2026-11-11T16:51:01Z",
+      "scope": [
+        "S.profileName; Turkish banners",
+        "12-hour clock markers from the displayed language",
+        "Technical detail line instead of a type name inside the sentence",
+        "Planned for a later version instead of Forge ids",
+        "BACKUP_KEY_NEEDED sentence",
+        "natural Turkish wording from the audit",
+        "web smoke: Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel (129 checks)",
+        "CHROME_EXECUTABLE docs path"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "AUDITED by an Opus reviewer (read-only)",
+        "IMPLEMENTED by two Opus implementers in worktrees; merged by the lead",
+        "TESTED by the implementers: 740 PASS UTC, 741 New York; smoke 129 checks",
+        "GATES: 13 receipts on clean tree a3bfdbf, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0919",
+      "next_action": null,
+      "files_touched": [
+        "CLAUDE.md",
+        "docs/DEVELOPMENT_PLAN.md",
+        "human_health_os/lib/src/app/human_os_app.dart",
+        "human_health_os/lib/src/core/capabilities.dart",
+        "human_health_os/lib/src/domain/settings/date_style.dart",
+        "human_health_os/lib/src/features/common/planned_destination_screen.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/features/today/weight_card.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/security/no_sensitive_logs_test.dart",
+        "human_health_os/test/widget/f002_persistence_test.dart",
+        "human_health_os/test/widget/f005_your_data_test.dart",
+        "human_health_os/test/widget/f006_vault_gate_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "human_health_os/test/widget/u028_turkish_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "tools/flutter_appearance_smoke.mjs",
+        "tools/flutter_web_smoke.mjs"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0907",
+        "EV-TEST-F007-0908",
+        "EV-TEST-F007-0909",
+        "EV-TEST-F007-0910",
+        "EV-TEST-F007-0911",
+        "EV-BUILD-F007-0912",
+        "EV-RUNTIME-F007-0913",
+        "EV-TEST-F007-0914",
+        "EV-BUILD-F007-0915",
+        "EV-RUNTIME-F007-0916",
+        "EV-TEST-F007-0917",
+        "EV-TEST-F007-0918",
+        "EV-TEST-F007-0919"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0907",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0908",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0909",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (740 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0910",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0911",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0912",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (129 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup, Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0913",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0914",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0915",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0916",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (741 PASS)",
+          "evidence_id": "EV-TEST-F007-0917",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0918",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0919",
+          "criterion": "AC-4",
+          "source_revision": "a3bfdbfa09ddb9ecfdcfe1bf61e62bd152fe921d",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "U028_COMPLETE",
+      "limitations": null,
+      "depends_on": [
+        "F009-S2"
+      ],
+      "review": "read-only Turkish audit by an Opus reviewer; implementers' changes merged by the lead",
+      "out_of_scope": []
     }
   },
   "forge_history_legacy_ids": {
