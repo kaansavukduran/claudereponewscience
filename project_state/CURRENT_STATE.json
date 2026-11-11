@@ -3,45 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "R011",
-    "contract": "v0.32",
-    "run_id": "R011@v0.32",
-    "slice": "Compatibility review of record schemas 7-11, and focus on the field in error (G-73)",
-    "goal": "Old stores, backups and restore are proven across the five new schema steps; a refused save puts focus on its field.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "c7f20fb",
-    "app_revision": null,
-    "started_at": "2026-11-11T11:30:00Z",
-    "finished_at": null,
-    "scope": [
-      "test/data/r011_schema_7_11_compat_test.dart: every kind reopens identically, each at its own schema, backup and restore, the schema-5 fixture stays byte-identical, a newer store is refused, the checkpoint fires once per schema step",
-      "FieldFocus: focus and scroll to the field in error in the sleep, food, activity and condition sheets"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED by two Opus implementers in separate worktrees; lead read the changes",
-      "TESTED by the implementers: full suite each"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": "Restore of an encrypted backup across schemas 7-11 is not covered by the new tests (plain bundle only); no parser hook exists to pretend a lower maximum schema, so refusal is tested one step higher (schema 12).",
-    "depends_on": [
-      "F009"
-    ],
-    "review": "no product bug found by the compatibility tests",
-    "out_of_scope": [
-      "encrypted restore across the new schemas"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -52,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F009@v0.32 (2026-11-11, source revision debb3c00d65f)",
+  "last_completed_forge": "R011@v0.32 (2026-11-11, source revision 1674ddcd4442)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -65,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0868",
+      "evidence_id": "EV-TEST-F007-0881",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0869",
+      "evidence_id": "EV-TEST-F007-0882",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0870",
+      "evidence_id": "EV-TEST-F007-0883",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (710 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0871",
+      "gate": "flutter test, TZ=UTC (724 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0884",
       "criterion": "AC-1..AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0872",
+      "evidence_id": "EV-TEST-F007-0885",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0873",
+      "evidence_id": "EV-BUILD-F007-0886",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0874",
+      "evidence_id": "EV-RUNTIME-F007-0887",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0875",
+      "evidence_id": "EV-TEST-F007-0888",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0876",
+      "evidence_id": "EV-BUILD-F007-0889",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0877",
+      "evidence_id": "EV-RUNTIME-F007-0890",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (711 PASS)",
-      "evidence_id": "EV-TEST-F007-0878",
+      "gate": "flutter test with TZ=America/New_York (725 PASS)",
+      "evidence_id": "EV-TEST-F007-0891",
       "criterion": "AC-1..AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0879",
+      "evidence_id": "EV-TEST-F007-0892",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0880",
+      "evidence_id": "EV-TEST-F007-0893",
       "criterion": "AC-4",
-      "source_revision": "debb3c00d65ff14f721292a7759a4e104c9193dc",
+      "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
       "result": "PASS"
     }
   ],
@@ -184,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "R011",
+    "forge_id": "F009-S2",
     "contract": "v0.32",
-    "run_id": "R011@v0.32",
-    "slice": "Independent safety and compatibility review of record schemas 7-11 (sleep, how you feel, food, activity, conditions): old stores, backups and restore across versions",
-    "why": "Five additive schema steps landed in a row; a restore drill and an old-app refusal check across them is the bounded next step before more domains.",
+    "run_id": "F009-S2@v0.32",
+    "slice": "Preventive items as named (record schema 12): vaccination, screening, check-up; planned is not done; nothing recommended",
+    "why": "Roadmap F009: the Preventive area is still planned; implemented by an Opus implementer and ready to gate.",
     "depends_on": [
-      "F009"
+      "R011"
     ]
   },
-  "updated_at": "2026-11-11T10:39:55Z",
+  "updated_at": "2026-11-11T11:12:25Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -10771,6 +10735,160 @@
         "treatments",
         "care pathways",
         "preventive"
+      ]
+    },
+    "R011@v0.32": {
+      "forge_id": "R011",
+      "contract": "v0.32",
+      "run_id": "R011@v0.32",
+      "slice": "Compatibility review of record schemas 7-11, and focus on the field in error (G-73)",
+      "goal": "Old stores, backups and restore are proven across the five new schema steps; a refused save puts focus on its field.",
+      "status": "DONE",
+      "baseline_commit": "c7f20fb",
+      "app_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+      "started_at": "2026-11-11T11:30:00Z",
+      "finished_at": "2026-11-11T11:12:25Z",
+      "scope": [
+        "test/data/r011_schema_7_11_compat_test.dart: every kind reopens identically, each at its own schema, backup and restore, the schema-5 fixture stays byte-identical, a newer store is refused, the checkpoint fires once per schema step",
+        "FieldFocus: focus and scroll to the field in error in the sleep, food, activity and condition sheets"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED by two Opus implementers in separate worktrees; lead read the changes",
+        "TESTED by the implementers: full suite each",
+        "GATES: 13 receipts on clean tree 1674ddc, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0893",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/features/activity/activity_screen.dart",
+        "human_health_os/lib/src/features/conditions/conditions_screen.dart",
+        "human_health_os/lib/src/features/nutrition/nutrition_screen.dart",
+        "human_health_os/lib/src/features/today/sleep_card.dart",
+        "human_health_os/lib/src/presentation/widgets/sheet_parts.dart",
+        "human_health_os/test/data/r011_schema_7_11_compat_test.dart",
+        "human_health_os/test/widget/u027_error_focus_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0881",
+        "EV-TEST-F007-0882",
+        "EV-TEST-F007-0883",
+        "EV-TEST-F007-0884",
+        "EV-TEST-F007-0885",
+        "EV-BUILD-F007-0886",
+        "EV-RUNTIME-F007-0887",
+        "EV-TEST-F007-0888",
+        "EV-BUILD-F007-0889",
+        "EV-RUNTIME-F007-0890",
+        "EV-TEST-F007-0891",
+        "EV-TEST-F007-0892",
+        "EV-TEST-F007-0893"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0881",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0882",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0883",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (724 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0884",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0885",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0886",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0887",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0888",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0889",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0890",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (725 PASS)",
+          "evidence_id": "EV-TEST-F007-0891",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0892",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0893",
+          "criterion": "AC-4",
+          "source_revision": "1674ddcd4442bd11c422c75e0bab1e56dd64194a",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "R011_COMPLETE",
+      "limitations": "Restore of an encrypted backup across schemas 7-11 is not covered by the new tests (plain bundle only); no parser hook exists to pretend a lower maximum schema, so refusal is tested one step higher (schema 12).",
+      "depends_on": [
+        "F009"
+      ],
+      "review": "two Opus implementers; no product bug found by the compatibility tests",
+      "out_of_scope": [
+        "encrypted restore across the new schemas"
       ]
     }
   },
