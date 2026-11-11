@@ -45,6 +45,42 @@ class SheetFrame extends StatelessWidget {
   }
 }
 
+/// One focus node per text field of a form sheet, by the field name an
+/// `InputError` carries (G-73). After a refused save the field the error is
+/// about takes keyboard focus and is scrolled into view, so a keyboard or
+/// screen-reader user lands on it. An error on no text field moves nothing.
+class FieldFocus {
+  final _nodes = <String, FocusNode>{};
+
+  FocusNode operator [](String field) =>
+      _nodes.putIfAbsent(field, () => FocusNode(debugLabel: field));
+
+  /// After the next frame (the error is shown by then), if [state] is still
+  /// mounted, focuses [field] and brings it into view.
+  void focusAfterFrame(State state, String? field) {
+    final node = field == null ? null : _nodes[field];
+    if (node == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!state.mounted) return;
+      node.requestFocus();
+      final target = node.context;
+      if (target != null) {
+        Scrollable.ensureVisible(
+          target,
+          alignment: 0.2,
+          duration: const Duration(milliseconds: 200),
+        );
+      }
+    });
+  }
+
+  void dispose() {
+    for (final n in _nodes.values) {
+      n.dispose();
+    }
+  }
+}
+
 /// An instant as it would be typed: local `YYYY-MM-DD HH:MM`.
 String typedLocal(DateTime utc) => typedWall(utc.toLocal());
 

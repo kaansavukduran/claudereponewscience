@@ -134,6 +134,7 @@ class _FoodSheetState extends State<_FoodSheet> {
   final _what = TextEditingController();
   final _amount = TextEditingController();
   final _when = TextEditingController();
+  final _focus = FieldFocus();
   final _nutrients = {
     for (final n in PrintedNutrient.values) n: TextEditingController(),
   };
@@ -169,6 +170,7 @@ class _FoodSheetState extends State<_FoodSheet> {
     for (final c in _nutrients.values) {
       c.dispose();
     }
+    _focus.dispose();
     super.dispose();
   }
 
@@ -197,6 +199,7 @@ class _FoodSheetState extends State<_FoodSheet> {
           Navigator.of(context).pop(true);
         } else {
           setState(() => _busy = false);
+          _focus.focusAfterFrame(this, _errorField);
         }
       }
     }
@@ -214,6 +217,7 @@ class _FoodSheetState extends State<_FoodSheet> {
     child: TextField(
       key: ValueKey(key),
       controller: c,
+      focusNode: field == null ? null : _focus[field],
       keyboardType: keyboard,
       onChanged: (_) {
         if (_error != null) {

@@ -127,6 +127,7 @@ class _NightSheet extends StatefulWidget {
 class _NightSheetState extends State<_NightSheet> {
   final _bed = TextEditingController();
   final _woke = TextEditingController();
+  final _focus = FieldFocus();
   WakeFeeling? _feeling;
   String? _error;
 
@@ -148,6 +149,7 @@ class _NightSheetState extends State<_NightSheet> {
   void dispose() {
     _bed.dispose();
     _woke.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
@@ -177,6 +179,7 @@ class _NightSheetState extends State<_NightSheet> {
           Navigator.of(context).pop(true);
         } else {
           setState(() => _busy = false);
+          _focus.focusAfterFrame(this, _errorField);
         }
       }
     }
@@ -193,6 +196,7 @@ class _NightSheetState extends State<_NightSheet> {
     child: TextField(
       key: ValueKey(key),
       controller: c,
+      focusNode: _focus[field],
       keyboardType: TextInputType.datetime,
       decoration: InputDecoration(
         labelText: label,

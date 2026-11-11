@@ -126,6 +126,7 @@ class _ConditionSheet extends StatefulWidget {
 class _ConditionSheetState extends State<_ConditionSheet> {
   final _name = TextEditingController();
   final _since = TextEditingController();
+  final _focus = FieldFocus();
   var _nature = ConditionType.condition;
   // Not sure until the person says: a state they did not choose is never
   // recorded for them.
@@ -152,6 +153,7 @@ class _ConditionSheetState extends State<_ConditionSheet> {
   void dispose() {
     _name.dispose();
     _since.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
@@ -180,6 +182,7 @@ class _ConditionSheetState extends State<_ConditionSheet> {
           Navigator.of(context).pop(true);
         } else {
           setState(() => _busy = false);
+          _focus.focusAfterFrame(this, _errorField);
         }
       }
     }
@@ -191,6 +194,7 @@ class _ConditionSheetState extends State<_ConditionSheet> {
         child: TextField(
           key: ValueKey(key),
           controller: c,
+          focusNode: _focus[f],
           textCapitalization: TextCapitalization.sentences,
           onChanged: (_) {
             if (_error != null) setState(() => _error = _errorField = null);

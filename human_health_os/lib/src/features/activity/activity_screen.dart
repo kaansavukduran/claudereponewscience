@@ -135,6 +135,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
   final _minutes = TextEditingController();
   final _steps = TextEditingController();
   final _when = TextEditingController();
+  final _focus = FieldFocus();
   String? _error;
   String? _errorField;
   bool _busy = false;
@@ -161,6 +162,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
     _minutes.dispose();
     _steps.dispose();
     _when.dispose();
+    _focus.dispose();
     super.dispose();
   }
 
@@ -188,6 +190,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
           Navigator.of(context).pop(true);
         } else {
           setState(() => _busy = false);
+          _focus.focusAfterFrame(this, _errorField);
         }
       }
     }
@@ -205,6 +208,7 @@ class _ActivitySheetState extends State<_ActivitySheet> {
     child: TextField(
       key: ValueKey(key),
       controller: c,
+      focusNode: _focus[field],
       keyboardType: keyboard,
       inputFormatters: keyboard == TextInputType.number
           ? [FilteringTextInputFormatter.digitsOnly]
