@@ -376,6 +376,110 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
       check(`${label}: backup downloads with a matching checksum`, false, e.message.split('\n')[0]);
     }
   }
+  // T003: the areas built since F007 (Medications, Nutrition, Activity,
+  // Conditions, Preventive) and Today's Sleep and "How you feel" cards. Every run sees
+  // each title and empty state; the English runs also add one activity and
+  // one condition. The network and console checks below cover these steps.
+  {
+    const en = locale === 'en-US';
+    const A = en
+      ? { meds: 'Medications', medsTitle: 'Medicines and supplements', medsNone: /^Nothing added yet\. Add a medicine or supplement/, more: 'More', none: 'Nothing recorded yet.', sleep: 'Sleep', feel: 'How you feel',
+          areas: [['Nutrition', 'Nutrition'], ['Activity', 'Activity'], ['Conditions', 'Conditions and symptoms'], ['Preventive', 'Vaccinations, screenings, check-ups']] }
+      : { meds: 'İlaçlar', medsTitle: 'İlaçlar ve takviyeler', medsNone: /^Henüz bir şey eklenmedi\. Başlamak için/, more: 'Daha fazla', none: 'Henüz kayıt yok.', sleep: 'Uyku', feel: 'Nasıl hissediyorsun',
+          areas: [['Nutrition', 'Beslenme', 'Beslenme'], ['Activity', 'Aktivite', 'Aktivite'], ['Conditions', 'Durumlar', 'Durumlar ve belirtiler'], ['Preventive', 'Koruyucu', 'Aşılar, taramalar, kontroller']].map(([, item, title]) => [item, title]) };
+    // A secondary area: under "More areas" on the rail, or in the "More" sheet.
+    const openArea = async (item) => {
+      const onRail = page.getByRole('button', { name: item, exact: true }).first();
+      if ((await onRail.count()) === 0) {
+        await page.getByRole('tab', { name: A.more, exact: true }).first().click({ timeout: 10_000 });
+        await page.waitForTimeout(600);
+      }
+      await page.getByRole('button', { name: item, exact: true }).or(page.getByText(item, { exact: true })).last().click({ timeout: 10_000 });
+    };
+    // Flutter merges a row's texts into one node named by aria-label (an
+    // empty state is a group), so match the accessible name or the text.
+    const named = (re) => page.getByLabel(re).or(page.getByText(re)).first();
+    const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    try {
+      await navItem(A.meds).click({ timeout: 15_000 });
+      await heading(A.medsTitle).waitFor({ timeout: 15_000 }).catch(() => {});
+      check(`${label}: navigates to ${A.meds}`, await heading(A.medsTitle).isVisible().catch(() => false));
+      check(`${label}: ${A.meds} empty state shown`, await named(A.medsNone).isVisible().catch(() => false));
+    } catch (e) {
+      check(`${label}: ${A.meds} navigation item found`, false, e.message.split('\n')[0]);
+    }
+    for (const [item, title] of A.areas) {
+      try {
+        await openArea(item);
+        await heading(title).waitFor({ timeout: 15_000 }).catch(() => {});
+        check(`${label}: opens ${item} from the more areas`, await heading(title).isVisible().catch(() => false));
+        check(`${label}: ${item} empty state says nothing recorded`, await named(new RegExp(`^${esc(A.none)}$`)).isVisible().catch(() => false));
+      } catch (e) {
+        check(`${label}: opens ${item} from the more areas`, false, e.message.split('\n')[0]);
+      }
+      if (en && item === 'Activity') {
+        try {
+          await page.getByRole('button', { name: 'Add an activity' }).first().click({ timeout: 10_000 });
+          await page.waitForTimeout(600);
+          for (const [name, value] of [[/^What it was/, 'Walk'], [/^Minutes \(optional\)/, '20']]) {
+            await page.getByRole('textbox', { name }).first().click({ timeout: 10_000 });
+            await page.waitForTimeout(400);
+            await page.keyboard.type(value, { delay: 60 });
+            await page.waitForTimeout(200);
+          }
+          await page.getByRole('button', { name: 'Save', exact: true }).last().click({ timeout: 10_000 });
+        } catch (e) {
+          check(`${label}: activity sheet usable`, false, e.message.split('\n')[0]);
+        }
+        const walk = named(/^Walk · 20 min(\s|$)/);
+        await walk.waitFor({ timeout: 15_000 }).catch(() => {});
+        check(`${label}: activity saved as "Walk · 20 min"`, await walk.isVisible().catch(() => false));
+        await page.screenshot({ path: join(out, `flutter-web-${label}-activity.png`) });
+      }
+      if (en && item === 'Conditions') {
+        try {
+          await page.getByRole('button', { name: 'Add a condition or symptom' }).first().click({ timeout: 10_000 });
+          await page.waitForTimeout(600);
+          await page.getByRole('textbox', { name: /^What it is, in your words/ }).first().click({ timeout: 10_000 });
+          await page.waitForTimeout(400);
+          await page.keyboard.type('Cough', { delay: 60 });
+          await page.waitForTimeout(200);
+          await page.getByRole('button', { name: 'Save', exact: true }).last().click({ timeout: 10_000 });
+        } catch (e) {
+          check(`${label}: condition sheet usable`, false, e.message.split('\n')[0]);
+        }
+        // The line names it as typed and keeps "not sure" until the person chooses.
+        const cough = named(/^Cough · condition · It is: not sure · my own account/);
+        await cough.waitFor({ timeout: 15_000 }).catch(() => {});
+        check(`${label}: condition saved as named ("Cough", not sure, self-reported)`, await cough.isVisible().catch(() => false));
+        await page.screenshot({ path: join(out, `flutter-web-${label}-conditions.png`) });
+      }
+    }
+    // Today's check-in cards (lazy list: wheel over the padding until built).
+    await navItem(todayLabel).click().catch(() => {});
+    await heading(todayLabel).waitFor({ timeout: 15_000 }).catch(() => {});
+    const h = await heading(todayLabel).boundingBox().catch(() => null);
+    const cx = h ? Math.max(2, h.x - 8) : viewport.width - 6;
+    // Today keeps its scroll position from earlier steps: back to the top first.
+    for (let i = 0; i < 10; i++) {
+      await page.mouse.move(cx, viewport.height / 2);
+      await page.mouse.wheel(0, -2000);
+      await page.waitForTimeout(100);
+    }
+    await page.waitForTimeout(300);
+    for (const card of [A.sleep, A.feel]) {
+      // The card's header node carries its title first, then its body.
+      const re = new RegExp(`^${esc(card)}(\\s|$)`);
+      const t = page.getByRole('heading', { name: re }).or(page.getByLabel(re)).first();
+      for (let i = 0; i < 40 && (await t.count()) === 0; i++) {
+        await page.mouse.move(cx, viewport.height / 2);
+        await page.mouse.wheel(0, 200);
+        await page.waitForTimeout(300);
+      }
+      check(`${label}: Today shows the ${card} card`, await t.isVisible().catch(() => false));
+    }
+    await page.screenshot({ path: join(out, `flutter-web-${label}-checkin-cards.png`) });
+  }
   check(`${label}: no external network requests`, external.length === 0, external.slice(0, 5).join(' '));
   check(`${label}: no page errors`, errors.length === 0, errors.slice(0, 3).join(' | '));
   check(`${label}: no console errors`, consoleErrors.length === 0, consoleErrors.slice(0, 3).join(' | '));
