@@ -3,9 +3,45 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R011",
+    "contract": "v0.32",
+    "run_id": "R011@v0.32",
+    "slice": "Compatibility review of record schemas 7-11, and focus on the field in error (G-73)",
+    "goal": "Old stores, backups and restore are proven across the five new schema steps; a refused save puts focus on its field.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c7f20fb",
+    "app_revision": null,
+    "started_at": "2026-11-11T11:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "test/data/r011_schema_7_11_compat_test.dart: every kind reopens identically, each at its own schema, backup and restore, the schema-5 fixture stays byte-identical, a newer store is refused, the checkpoint fires once per schema step",
+      "FieldFocus: focus and scroll to the field in error in the sleep, food, activity and condition sheets"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by two Opus implementers in separate worktrees; lead read the changes",
+      "TESTED by the implementers: full suite each"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "Restore of an encrypted backup across schemas 7-11 is not covered by the new tests (plain bundle only); no parser hook exists to pretend a lower maximum schema, so refusal is tested one step higher (schema 12).",
+    "depends_on": [
+      "F009"
+    ],
+    "review": "no product bug found by the compatibility tests",
+    "out_of_scope": [
+      "encrypted restore across the new schemas"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
