@@ -3,9 +3,51 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F007-S5",
+    "contract": "v0.32",
+    "run_id": "F007-S5@v0.32",
+    "slice": "Nutrition: a food or drink as typed; label values kept with their basis (record schema 9)",
+    "goal": "A person records what they ate or drank; label numbers stay the label's, with what they are per; missing stays missing; nothing is added up.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "f58ea47",
+    "app_revision": null,
+    "started_at": "2026-11-11T04:20:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 9: nutrition.food_entry with FoodEntryDetails, PrintedNutrient (kcal and kJ as printed), LabelBasis",
+      "HeartbeatService.recordFood and foods (field-named errors)",
+      "Nutrition screen built; the secondary group is now More areas",
+      "Timeline line",
+      "D-033, G-73"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "REVIEWED: one Sonnet reviewer before gates; the blocking finding (label value read as the amount eaten) fixed with a required basis; kJ, units in field labels, number limits, zero-vs-blank and line tests added",
+      "TESTED: 688 PASS UTC, 689 New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F007-S4"
+    ],
+    "review": "one Sonnet reviewer: blocking label-basis finding fixed; should-fix 2,3,5,6 fixed; focus move and typed correction recorded as G-73",
+    "out_of_scope": [
+      "food database",
+      "totals or targets",
+      "typed correction of a food entry (G-73)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

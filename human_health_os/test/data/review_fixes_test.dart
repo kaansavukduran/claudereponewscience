@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:human_health_os/src/domain/records/health_record.dart';
 import 'package:human_health_os/src/application/heartbeat_service.dart';
 import 'package:human_health_os/src/data/backup/backup_bundle.dart';
 import 'package:human_health_os/src/data/backup/data_files.dart';
@@ -128,7 +129,10 @@ void main() {
     test('a vault written by a newer app is refused, untouched', () async {
       final newer = File('test/fixtures/vault/v1_f003_schema2.hhoslog.jsonl')
           .readAsStringSync()
-          .replaceAll('"schema_version":2', '"schema_version":9');
+          .replaceAll(
+            '"schema_version":2',
+            '"schema_version":${HealthRecord.currentSchemaVersion + 1}',
+          );
       vault.writeAsStringSync(newer);
       final files = FileDataFiles(dataDir: tmp, vault: vault);
       await expectLater(

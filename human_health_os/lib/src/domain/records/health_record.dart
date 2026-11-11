@@ -106,7 +106,11 @@ enum RecordKind {
   /// How the person says they feel: energy, mood, stress as their own
   /// levels (F007 slice 4, record schema 8). [FeelingCheckInDetails].
   /// Self-report, never a diagnosis.
-  feelingCheckIn('self.feeling_check_in', minSchema: 8);
+  feelingCheckIn('self.feeling_check_in', minSchema: 8),
+
+  /// Something eaten or drunk, typed by hand (F007 slice 5, record schema
+  /// 9). [FoodEntryDetails]. Nutrients only as printed; missing stays missing.
+  foodEntry('nutrition.food_entry', minSchema: 9);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -134,7 +138,8 @@ enum RecordKind {
     medicationPlan ||
     medicationIntake ||
     sleepNight ||
-    feelingCheckIn => false,
+    feelingCheckIn ||
+    foodEntry => false,
   };
 
   /// The F008 medication kinds.
@@ -148,7 +153,8 @@ enum RecordKind {
       this == bloodPressure ||
       isMedication ||
       this == sleepNight ||
-      this == feelingCheckIn;
+      this == feelingCheckIn ||
+      this == foodEntry;
 
   /// The `type` of the [RecordDetails] a structured kind carries.
   String? get detailsType => switch (this) {
@@ -158,6 +164,7 @@ enum RecordKind {
     medicationIntake => MedicationIntakeDetails.typeTag,
     sleepNight => SleepNightDetails.typeTag,
     feelingCheckIn => FeelingCheckInDetails.typeTag,
+    foodEntry => FoodEntryDetails.typeTag,
     _ => null,
   };
 
@@ -321,7 +328,7 @@ class HealthRecord {
   ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 8;
+  static const int currentSchemaVersion = 9;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -582,10 +589,13 @@ class HealthRecord {
         if (code != null) {
           throw RecordValidationError(code, '${kind.code}: $code');
         }
-      case RecordKind.sleepNight || RecordKind.feelingCheckIn:
+      case RecordKind.sleepNight ||
+          RecordKind.feelingCheckIn ||
+          RecordKind.foodEntry:
         final code = switch (details) {
           final SleepNightDetails d => d.problem(),
           final FeelingCheckInDetails d => d.problem(),
+          final FoodEntryDetails d => d.problem(),
           _ => null,
         };
         if (code != null) {

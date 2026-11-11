@@ -93,7 +93,9 @@ class S {
     'Nothing was changed on disk. Close and reopen the app; if this keeps happening, keep the message below for a bug report.',
     'Diskte hiçbir şey değiştirilmedi. Uygulamayı kapatıp yeniden aç; tekrar olursa aşağıdaki mesajı hata bildirimi için sakla.',
   );
-  String get plannedGroup => _t('Planned', 'Planlanan');
+  // Areas outside the primary navigation: some built, some still planned
+  // (each planned one says so on its own screen).
+  String get plannedGroup => _t('More areas', 'Diğer alanlar');
 
   // Persistence heartbeat (F002): body weight
   String get weightTitle => _t('Body weight', 'Vücut ağırlığı');
@@ -107,6 +109,14 @@ class S {
   String get enteredAs => _t('entered as', 'girilen');
   String inputError(String code) => switch (code) {
     'FUTURE_TIME' => _t('This date is in the future.', 'Bu tarih gelecekte.'),
+    'FOOD_NUTRIENT_NOT_A_NUMBER' => _t(
+      'Type each label value as a number, e.g. 12 or 12,5.',
+      'Her etiket değerini sayı olarak yaz, ör. 12 ya da 12,5.',
+    ),
+    'FOOD_LABEL_BASIS_REQUIRED' => _t(
+      'Say what the label values are per (for example per 100 g).',
+      'Etiket değerlerinin neye göre olduğunu seç (ör. 100 g için).',
+    ),
     'CHECKIN_EMPTY' => _t(
       'Pick at least one of energy, mood or stress.',
       'Enerji, ruh hâli ya da stresten en az birini seç.',
@@ -390,7 +400,72 @@ class S {
     RecordKind.medicationIntake => _t('Dose', 'Doz'),
     RecordKind.sleepNight => _t('Night', 'Gece'),
     RecordKind.feelingCheckIn => _t('How I feel', 'Nasıl hissediyorum'),
+    RecordKind.foodEntry => _t('Food or drink', 'Yiyecek ya da içecek'),
   };
+
+  // Nutrition (F007 slice 5): what was eaten as typed; nutrients only as
+  // copied from a label; a nutrient not given is missing, never zero.
+  String get foodTitle => _t('Nutrition', 'Beslenme');
+  String get foodIntro => _t(
+    'What you ate or drank, in your words. Copy nutrients from a label if you like; one left empty is not known, not zero. Nothing is added up.',
+    'Ne yediğin ya da içtiğin, kendi sözlerinle. İstersen besin değerlerini etiketten kopyala; boş bırakılan bilinmiyor demektir, sıfır değil. Hiçbir şey toplanmaz.',
+  );
+  String get foodAdd => _t('Add food or drink', 'Yiyecek ya da içecek ekle');
+  String get foodNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get foodWhat => _t('What it was', 'Ne olduğu');
+  String get foodAmount => _t(
+    'How much (optional, e.g. 1 bowl, 250 g)',
+    'Ne kadar (isteğe bağlı, ör. 1 kase, 250 g)',
+  );
+  String get foodWhen => _t('When', 'Ne zaman');
+  String get foodWhenHelp => _t(
+    'HH:MM, or YYYY-MM-DD HH:MM; blank = now',
+    'SS:DD ya da YYYY-AA-GG SS:DD; boş = şimdi',
+  );
+  String get foodLabelTitle =>
+      _t('From the label (optional)', 'Etiketten (isteğe bağlı)');
+  String get foodLabelHelp => _t(
+    'Copy each number exactly as printed, in the unit shown here; leave a field empty if the label uses another unit. These are the label\'s numbers, not what you ate.',
+    'Her sayıyı yazdığı gibi, burada gösterilen birimle kopyala; etiket başka bir birim kullanıyorsa alanı boş bırak. Bunlar etiketin sayıları, yediğin miktar değil.',
+  );
+  String get foodPer => _t('The label values are', 'Etiket değerleri');
+  String foodBasis(LabelBasis b) => switch (b) {
+    LabelBasis.per100g => _t('per 100 g', '100 g için'),
+    LabelBasis.per100ml => _t('per 100 ml', '100 ml için'),
+    LabelBasis.perServing => _t('per serving', 'porsiyon başına'),
+    LabelBasis.perPack => _t('per pack', 'paket başına'),
+    LabelBasis.notStated => _t(
+      'not stated on the label',
+      'etikette belirtilmemiş',
+    ),
+  };
+
+  /// A nutrient's field label, with its unit (read aloud too).
+  String foodNutrientField(PrintedNutrient n) =>
+      '${foodNutrient(n)} (${printedNutrientUnit(n)})';
+  String foodNutrient(PrintedNutrient n) => switch (n) {
+    PrintedNutrient.energyKcal => _t('Energy', 'Enerji'),
+    PrintedNutrient.energyKj => _t('Energy', 'Enerji'),
+    PrintedNutrient.protein => _t('Protein', 'Protein'),
+    PrintedNutrient.carbohydrate => _t('Carbohydrate', 'Karbonhidrat'),
+    PrintedNutrient.fat => _t('Fat', 'Yağ'),
+    PrintedNutrient.fibre => _t('Fibre', 'Lif'),
+    PrintedNutrient.salt => _t('Salt', 'Tuz'),
+  };
+  String foodLine(FoodEntryDetails d) {
+    final label = [
+      for (final n in PrintedNutrient.values)
+        if (d.nutrients[n] != null)
+          '${foodNutrient(n)} ${d.nutrients[n]} ${printedNutrientUnit(n)}',
+    ];
+    return [
+      d.what,
+      ?d.amount,
+      if (label.isNotEmpty)
+        '${_t('label', 'etiket')} ${d.per == null ? '' : '(${foodBasis(d.per!)}) '}'
+            '${label.join(', ')}',
+    ].join(' · ');
+  }
 
   // How I feel (F007 slice 4): the person's own levels, never a score or a
   // diagnosis; a level not picked is not given.

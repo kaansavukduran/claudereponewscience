@@ -26,6 +26,7 @@ abstract class RecordDetails {
     MedicationIntakeDetails.typeTag => MedicationIntakeDetails.fromJson(j),
     SleepNightDetails.typeTag => SleepNightDetails.fromJson(j),
     FeelingCheckInDetails.typeTag => FeelingCheckInDetails.fromJson(j),
+    FoodEntryDetails.typeTag => FoodEntryDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -432,4 +433,129 @@ class FeelingCheckInDetails extends RecordDetails {
 
   @override
   int get hashCode => Object.hash(energy, mood, stress);
+}
+
+/// The nutrients a label usually prints, each kept as printed.
+/// Energy is kept in the unit the label prints it in (kcal or kJ, never
+/// converted); the others in grams.
+enum PrintedNutrient {
+  energyKcal,
+  energyKj,
+  protein,
+  carbohydrate,
+  fat,
+  fibre,
+  salt,
+}
+
+/// The only unit kept for each printed nutrient.
+String printedNutrientUnit(PrintedNutrient n) => switch (n) {
+  PrintedNutrient.energyKcal => 'kcal',
+  PrintedNutrient.energyKj => 'kJ',
+  _ => 'g',
+};
+
+/// What the label's numbers are per. A label value is not the amount eaten:
+/// "per 100 g" stays per 100 g, whatever the person ate.
+enum LabelBasis { per100g, per100ml, perServing, perPack, notStated }
+
+/// Something eaten or drunk, as the person types it (F007 slice 5, record
+/// schema 9): what it was, how much, and any nutrient values the person
+/// copies from a label, each kept as typed. A nutrient not given is missing,
+/// never zero; the app holds no food database and computes nothing.
+class FoodEntryDetails extends RecordDetails {
+  const FoodEntryDetails({
+    required this.what,
+    this.amount,
+    this.nutrients = const {},
+    this.per,
+  });
+
+  static const String typeTag = 'food_entry';
+
+  /// What it was, as typed (e.g. "lentil soup").
+  final String what;
+
+  /// How much, as typed (e.g. "1 bowl", "250 g"); null = not given.
+  final String? amount;
+
+  /// Values as typed (e.g. "12,5", with "," or "." as the decimal mark),
+  /// only for the nutrients given; per [per], never per the amount eaten.
+  final Map<PrintedNutrient, String> nutrients;
+
+  /// What the label values are per; required when any is given.
+  final LabelBasis? per;
+
+  @override
+  String get type => typeTag;
+
+  String? problem() {
+    final t =
+        MedicationDetails.text(what, 'FOOD_WHAT', required: true) ??
+        MedicationDetails.text(amount, 'FOOD_AMOUNT');
+    if (t != null) return t;
+    for (final v in nutrients.values) {
+      if (parsePrintedNumber(v) == null) return 'FOOD_NUTRIENT_NOT_A_NUMBER';
+    }
+    if (nutrients.isNotEmpty && per == null) return 'FOOD_LABEL_BASIS_REQUIRED';
+    return null;
+  }
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'what': what,
+    'amount': amount,
+    'nutrients': {for (final e in nutrients.entries) e.key.name: e.value},
+    'per': per?.name,
+  };
+
+  static FoodEntryDetails fromJson(Map<String, Object?> j) {
+    final raw = (j['nutrients'] as Map?)?.cast<String, Object?>() ?? const {};
+    final names = PrintedNutrient.values.asNameMap();
+    return FoodEntryDetails(
+      what: j['what']! as String,
+      amount: j['amount'] as String?,
+      per: switch (j['per']) {
+        null => null,
+        final String p =>
+          LabelBasis.values.asNameMap()[p] ??
+              (throw FormatException('Unknown label basis "$p"')),
+        final p => throw FormatException('Unknown label basis "$p"'),
+      },
+      nutrients: {
+        for (final e in raw.entries)
+          (names[e.key] ??
+                  (throw FormatException('Unknown nutrient "${e.key}"'))):
+              e.value! as String,
+      },
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is FoodEntryDetails &&
+      other.what == what &&
+      other.amount == amount &&
+      other.per == per &&
+      other.nutrients.length == nutrients.length &&
+      nutrients.entries.every((e) => other.nutrients[e.key] == e.value);
+
+  @override
+  int get hashCode => Object.hash(
+    what,
+    amount,
+    per,
+    Object.hashAllUnordered([
+      for (final e in nutrients.entries) Object.hash(e.key, e.value),
+    ]),
+  );
+}
+
+/// A non-negative number as typed on a label: up to 7 digits, with one "."
+/// or "," as the decimal mark and up to 4 decimals; null when it is not one.
+double? parsePrintedNumber(String text) {
+  final t = text.trim();
+  if (!RegExp(r'^\d{1,7}([.,]\d{1,4})?$').hasMatch(t)) return null;
+  return double.parse(t.replaceAll(',', '.'));
 }

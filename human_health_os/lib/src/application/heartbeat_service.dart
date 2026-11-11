@@ -724,6 +724,81 @@ class HeartbeatService {
     return record;
   }
 
+  /// Records something eaten or drunk, as typed. [nutrients] holds only the
+  /// values the person typed (blank ones are left out: missing, not zero).
+  Future<HealthRecord> recordFood({
+    required String profileId,
+    required String what,
+    String amount = '',
+    Map<PrintedNutrient, String> nutrients = const {},
+    LabelBasis? per,
+    String when = '',
+  }) async {
+    final now = clock.nowUtc();
+    final at = parseMeasuredAt(when, nowUtc: now) ?? now;
+    String? opt(String v) => v.trim().isEmpty ? null : v.trim();
+    // Each label value is checked on its own, so the error names its field.
+    for (final e in nutrients.entries) {
+      final v = opt(e.value);
+      if (v != null && parsePrintedNumber(v) == null) {
+        throw InputError(
+          'FOOD_NUTRIENT_NOT_A_NUMBER',
+          'nutrient-${e.key.name}',
+        );
+      }
+    }
+    final details = FoodEntryDetails(
+      what: what.trim(),
+      amount: opt(amount),
+      per: per,
+      nutrients: {
+        for (final e in nutrients.entries)
+          if (opt(e.value) != null) e.key: opt(e.value)!,
+      },
+    );
+    final problem = details.problem();
+    if (problem != null) {
+      throw InputError(
+        problem.endsWith('_TOO_LONG')
+            ? 'TEXT_TOO_LONG'
+            : problem.startsWith('FOOD_WHAT')
+            ? 'EMPTY'
+            : problem,
+        problem == 'FOOD_LABEL_BASIS_REQUIRED'
+            ? 'per'
+            : problem.startsWith('FOOD_AMOUNT')
+            ? 'amount'
+            : 'what',
+      );
+    }
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.foodEntry,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: at,
+      recordedAt: now,
+      details: details,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.foodEntry),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live food entries, the latest first.
+  Future<List<HealthRecord>> foods(String profileId) async {
+    final all = await repository.records(profileId, kind: RecordKind.foodEntry);
+    return [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is FoodEntryDetails) h,
+    ]..sort((a, b) => b.observedAt.compareTo(a.observedAt));
+  }
+
   /// The live check-ins, the latest first.
   Future<List<HealthRecord>> feelings(String profileId) async {
     final all = await repository.records(

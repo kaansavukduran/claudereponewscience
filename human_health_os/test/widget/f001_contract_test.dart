@@ -150,7 +150,7 @@ void main() {
     );
     final group = find.byKey(const ValueKey('rail-planned-group'));
     expect(
-      find.descendant(of: group, matching: find.text('Planned')),
+      find.descendant(of: group, matching: find.text('More areas')),
       findsOneWidget,
     );
     // Opening a planned area clears the primary selection.

@@ -143,9 +143,10 @@ const List<Destination> destinations = [
     icon: Icons.restaurant_outlined,
     selectedIcon: Icons.restaurant,
     purposeEn:
-        'Foods, meals and recipes with an immutable nutrient snapshot per log.',
-    purposeTr: 'Her kayıt için değişmez besin anlık görüntüsüyle yiyecekler, öğünler ve tarifler.',
-    plannedForge: 'Forge F007',
+        'What you ate or drank, with nutrients only as copied from a label.',
+    purposeTr: 'Ne yediğin ya da içtiğin; besin değerleri yalnız etiketten kopyalandığı gibi.',
+    // Built in F007 slice 5: entries as typed; no food database, no totals.
+    plannedForge: null,
     principleEn: 'A nutrient the label does not report is missing, not zero.',
     principleTr: 'Etikette yazmayan bir besin öğesi eksiktir, sıfır değil.',
   ),
