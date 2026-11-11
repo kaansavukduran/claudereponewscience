@@ -946,6 +946,73 @@ class HeartbeatService {
     ]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
   }
 
+  /// Records a preventive item (vaccination, screening, check-up) as the
+  /// person names it: done, planned or unsure, with who it comes from and
+  /// when as typed. No result is stored and nothing is scheduled or
+  /// recommended. [correcting] makes it a new version of that entry.
+  Future<HealthRecord> recordPreventive({
+    required String profileId,
+    required String name,
+    required PreventiveType nature,
+    required PreventiveStatus status,
+    required ConditionSource source,
+    String when = '',
+    String? correcting,
+  }) async {
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.preventiveEntry) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
+    final details = PreventiveEntryDetails(
+      name: name.trim(),
+      nature: nature,
+      status: status,
+      source: source,
+      when: when.trim().isEmpty ? null : when.trim(),
+    );
+    final problem = details.problem();
+    if (problem != null) {
+      throw InputError(
+        problem.endsWith('_TOO_LONG') ? 'TEXT_TOO_LONG' : 'EMPTY',
+        problem.startsWith('PREVENTIVE_WHEN') ? 'when' : 'name',
+      );
+    }
+    final now = clock.nowUtc();
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.preventiveEntry,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: target?.observedAt ?? now,
+      recordedAt: now,
+      details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.preventiveEntry),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live preventive entries, the latest recorded first.
+  Future<List<HealthRecord>> preventives(String profileId) async {
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.preventiveEntry,
+    );
+    return [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is PreventiveEntryDetails) h,
+    ]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+  }
+
   /// The live activity entries, the latest first.
   Future<List<HealthRecord>> activities(String profileId) async {
     final all = await repository.records(

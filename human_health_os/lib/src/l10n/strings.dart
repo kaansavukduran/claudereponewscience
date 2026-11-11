@@ -452,7 +452,52 @@ class S {
       'Condition or symptom',
       'Durum ya da belirti',
     ),
+    RecordKind.preventiveEntry => _t('Preventive item', 'Koruyucu kayıt'),
   };
+
+  // Preventive (F009 slice 2): vaccinations, screenings and check-ups as the
+  // person names them; planned is never done; no result is kept; nothing is
+  // recommended, scheduled or reminded.
+  String get prevTitle => _t(
+    'Vaccinations, screenings, check-ups',
+    'Aşılar, taramalar, kontroller',
+  );
+  String get prevIntro => _t(
+    'As you name them: done, planned or not sure, with who it comes from. Human OS recommends nothing, keeps no schedule and sends no reminders. A screening is kept without its result.',
+    'Senin adlandırdığın gibi: yapıldı, planlandı ya da emin değilim, kimden geldiğiyle birlikte. Human OS hiçbir şey önermez, takvim tutmaz ve hatırlatma göndermez. Bir tarama sonucu olmadan kaydedilir.',
+  );
+  String get prevAdd => _t('Add an item', 'Kayıt ekle');
+  String get prevCorrectTitle => _t('Correct this entry', 'Bu kaydı düzelt');
+  String get prevNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get prevName => _t(
+    'What it is, in your words (e.g. tetanus vaccine)',
+    'Ne olduğu, kendi sözlerinle (ör. tetanoz aşısı)',
+  );
+  String get prevWhen => _t(
+    'When (optional, e.g. 2024-05 or last spring)',
+    'Ne zaman (isteğe bağlı, ör. 2024-05 ya da geçen bahar)',
+  );
+  String get prevNatureLabel => _t('It is a', 'Bu bir');
+  String prevNature(PreventiveType t) => switch (t) {
+    PreventiveType.vaccination => _t('vaccination', 'aşı'),
+    PreventiveType.screening => _t('screening', 'tarama'),
+    PreventiveType.checkup => _t('check-up', 'kontrol'),
+    PreventiveType.other => _t('other', 'diğer'),
+  };
+  String get prevStatusLabel => _t('Status', 'Durumu');
+  String prevStatus(PreventiveStatus t) => switch (t) {
+    PreventiveStatus.done => _t('done', 'yapıldı'),
+    PreventiveStatus.planned => _t('planned', 'planlandı'),
+    PreventiveStatus.unsure => _t('not sure', 'emin değilim'),
+  };
+  String get prevSourceLabel => _t('It comes from', 'Kaynağı');
+  String prevLine(PreventiveEntryDetails d) => [
+    d.name,
+    prevNature(d.nature),
+    '$prevStatusLabel: ${prevStatus(d.status)}',
+    condSource(d.source),
+    if (d.when != null) _t('when: ${d.when}', 'zaman: ${d.when}'),
+  ].join(' · ');
 
   // Conditions (F009 slice 1): as the person names them, with who they come
   // from; a self-report is not a confirmed diagnosis; nothing is coded.

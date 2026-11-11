@@ -3,9 +3,50 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F009-S2",
+    "contract": "v0.32",
+    "run_id": "F009-S2@v0.32",
+    "slice": "Preventive items as named (record schema 12): vaccination, screening, check-up; planned is not done; nothing recommended",
+    "goal": "A person records preventive items in their own words with status and source; the app recommends and schedules nothing.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "0660cb5",
+    "app_revision": null,
+    "started_at": "2026-11-11T12:20:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 12: preventive.entry with PreventiveEntryDetails",
+      "HeartbeatService.recordPreventive (with correction) and preventives",
+      "Preventive screen built",
+      "compatibility tests extended to schema 12",
+      "D-036"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree; lead read the strings and wiring",
+      "TESTED by the implementer: 733 PASS UTC, 734 New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "R011"
+    ],
+    "review": "lead review of the implementer's change; same pattern as the reviewed Conditions slice",
+    "out_of_scope": [
+      "guideline packs",
+      "due dates and reminders",
+      "results of screenings"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

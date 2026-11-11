@@ -185,9 +185,10 @@ const List<Destination> destinations = [
     tr: 'Koruyucu',
     icon: Icons.shield_outlined,
     selectedIcon: Icons.shield,
-    purposeEn: 'Vaccines and screenings from a guideline pack you choose for your country.',
-    purposeTr: 'Ülken için seçtiğin kılavuz paketine göre aşılar ve taramalar.',
-    plannedForge: 'Forge F009',
+    purposeEn: 'Vaccinations, screenings and check-ups in your words: done, planned or not sure. Nothing is recommended or scheduled.',
+    purposeTr: 'Aşılar, taramalar ve kontroller kendi sözlerinle: yapıldı, planlandı ya da emin değilim. Hiçbir şey önerilmez ya da takvime konmaz.',
+    // Built in F009 slice 2 (as named, no guideline pack, no schedule).
+    plannedForge: null,
     principleEn:
         'Unknown history is not "never done". Screening is not diagnosis.',
     principleTr:

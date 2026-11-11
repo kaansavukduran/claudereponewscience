@@ -29,6 +29,7 @@ abstract class RecordDetails {
     FoodEntryDetails.typeTag => FoodEntryDetails.fromJson(j),
     ActivityEntryDetails.typeTag => ActivityEntryDetails.fromJson(j),
     ConditionEntryDetails.typeTag => ConditionEntryDetails.fromJson(j),
+    PreventiveEntryDetails.typeTag => PreventiveEntryDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -716,4 +717,91 @@ class ConditionEntryDetails extends RecordDetails {
 
   @override
   int get hashCode => Object.hash(name, nature, time, source, since);
+}
+
+/// What kind of preventive item the person records.
+enum PreventiveType { vaccination, screening, checkup, other }
+
+/// Whether the person says it was done, is planned, or is not sure. Planned
+/// is never done; a missing state is not chosen for them.
+enum PreventiveStatus { done, planned, unsure }
+
+/// A preventive item as the person names it (F009 slice 2, record schema
+/// 12): a vaccination, a screening, a check-up or something else, whether it
+/// was done, is planned or the person is not sure, who it comes from, and
+/// when as typed. No result or interpretation is stored (screening is not
+/// diagnosis); the app recommends nothing, keeps no schedule, sets no due
+/// dates and sends no reminders.
+class PreventiveEntryDetails extends RecordDetails {
+  const PreventiveEntryDetails({
+    required this.name,
+    required this.nature,
+    required this.status,
+    required this.source,
+    this.when,
+  });
+
+  static const String typeTag = 'preventive_entry';
+
+  final String name;
+  final PreventiveType nature;
+  final PreventiveStatus status;
+  final ConditionSource source;
+
+  /// When, as typed (e.g. "2024-05", "last spring"); null = not given,
+  /// which is missing, never "never".
+  final String? when;
+
+  @override
+  String get type => typeTag;
+
+  String? problem() =>
+      MedicationDetails.text(name, 'PREVENTIVE_NAME', required: true) ??
+      MedicationDetails.text(when, 'PREVENTIVE_WHEN');
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'name': name,
+    'nature': nature.name,
+    'status': status.name,
+    'source': source.name,
+    'when': when,
+  };
+
+  static T _pick<T extends Enum>(List<T> values, Object? v, String what) =>
+      switch (v) {
+        final String n when values.asNameMap().containsKey(n) =>
+          values.asNameMap()[n]!,
+        final x => throw FormatException('Unknown $what "$x"'),
+      };
+
+  static PreventiveEntryDetails fromJson(
+    Map<String, Object?> j,
+  ) => PreventiveEntryDetails(
+    name: switch (j['name']) {
+      final String n => n,
+      final x => throw FormatException('Preventive item without a name: "$x"'),
+    },
+    nature: _pick(PreventiveType.values, j['nature'], 'preventive nature'),
+    status: _pick(PreventiveStatus.values, j['status'], 'preventive status'),
+    source: _pick(ConditionSource.values, j['source'], 'preventive source'),
+    when: switch (j['when']) {
+      null => null,
+      final String s => s,
+      final x => throw FormatException('Bad preventive when "$x"'),
+    },
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      other is PreventiveEntryDetails &&
+      other.name == name &&
+      other.nature == nature &&
+      other.status == status &&
+      other.source == source &&
+      other.when == when;
+
+  @override
+  int get hashCode => Object.hash(name, nature, status, source, when);
 }
