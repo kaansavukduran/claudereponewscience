@@ -3,51 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F007-S5",
-    "contract": "v0.32",
-    "run_id": "F007-S5@v0.32",
-    "slice": "Nutrition: a food or drink as typed; label values kept with their basis (record schema 9)",
-    "goal": "A person records what they ate or drank; label numbers stay the label's, with what they are per; missing stays missing; nothing is added up.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "f58ea47",
-    "app_revision": null,
-    "started_at": "2026-11-11T04:20:00Z",
-    "finished_at": null,
-    "scope": [
-      "record schema 9: nutrition.food_entry with FoodEntryDetails, PrintedNutrient (kcal and kJ as printed), LabelBasis",
-      "HeartbeatService.recordFood and foods (field-named errors)",
-      "Nutrition screen built; the secondary group is now More areas",
-      "Timeline line",
-      "D-033, G-73"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "REVIEWED: one Sonnet reviewer before gates; the blocking finding (label value read as the amount eaten) fixed with a required basis; kJ, units in field labels, number limits, zero-vs-blank and line tests added",
-      "TESTED: 688 PASS UTC, 689 New York"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": null,
-    "depends_on": [
-      "F007-S4"
-    ],
-    "review": "one Sonnet reviewer: blocking label-basis finding fixed; should-fix 2,3,5,6 fixed; focus move and typed correction recorded as G-73",
-    "out_of_scope": [
-      "food database",
-      "totals or targets",
-      "typed correction of a food entry (G-73)"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -58,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F007-S4@v0.32 (2026-11-10, source revision f67d9d0e29a3)",
+  "last_completed_forge": "F007-S5@v0.32 (2026-11-11, source revision 045a5e2b3bc6)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -71,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0764",
+      "evidence_id": "EV-TEST-F007-0777",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0765",
+      "evidence_id": "EV-TEST-F007-0778",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0766",
+      "evidence_id": "EV-TEST-F007-0779",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (679 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0767",
+      "gate": "flutter test, TZ=UTC (688 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0780",
       "criterion": "AC-1..AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0768",
+      "evidence_id": "EV-TEST-F007-0781",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0769",
+      "evidence_id": "EV-BUILD-F007-0782",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0770",
+      "evidence_id": "EV-RUNTIME-F007-0783",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0771",
+      "evidence_id": "EV-TEST-F007-0784",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0772",
+      "evidence_id": "EV-BUILD-F007-0785",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0773",
+      "evidence_id": "EV-RUNTIME-F007-0786",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (680 PASS)",
-      "evidence_id": "EV-TEST-F007-0774",
+      "gate": "flutter test with TZ=America/New_York (689 PASS)",
+      "evidence_id": "EV-TEST-F007-0787",
       "criterion": "AC-1..AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0775",
+      "evidence_id": "EV-TEST-F007-0788",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0776",
+      "evidence_id": "EV-TEST-F007-0789",
       "criterion": "AC-4",
-      "source_revision": "f67d9d0e29a32a4753f241927742f9efe228d592",
+      "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
       "result": "PASS"
     }
   ],
@@ -190,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "F007-S5",
+    "forge_id": "G009",
     "contract": "v0.32",
-    "run_id": "F007-S5@v0.32",
-    "slice": "Nutrition: a meal or food as typed, nutrients only as printed (missing stays missing)",
-    "why": "Roadmap F007 daily domains: nutrition is not started; the Nutrition area is still planned.",
+    "run_id": "G009@v0.32",
+    "slice": "Correct a food entry from the Nutrition screen (G-73)",
+    "why": "History rules: a wrong entry is corrected as a new version; prepared and tested.",
     "depends_on": [
-      "F007-S4"
+      "F007-S5"
     ]
   },
-  "updated_at": "2026-11-10T23:49:02Z",
+  "updated_at": "2026-11-11T04:29:29Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -9644,6 +9602,175 @@
         "trends or summaries of check-ins",
         "nutrition",
         "activity"
+      ]
+    },
+    "F007-S5@v0.32": {
+      "forge_id": "F007-S5",
+      "contract": "v0.32",
+      "run_id": "F007-S5@v0.32",
+      "slice": "Nutrition: a food or drink as typed; label values kept with their basis (record schema 9)",
+      "goal": "A person records what they ate or drank; label numbers stay the label's, with what they are per; missing stays missing; nothing is added up.",
+      "status": "DONE",
+      "baseline_commit": "f58ea47",
+      "app_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+      "started_at": "2026-11-11T04:20:00Z",
+      "finished_at": "2026-11-11T04:29:29Z",
+      "scope": [
+        "record schema 9: nutrition.food_entry with FoodEntryDetails, PrintedNutrient (kcal and kJ as printed), LabelBasis",
+        "HeartbeatService.recordFood and foods (field-named errors)",
+        "Nutrition screen built; the secondary group is now More areas",
+        "Timeline line",
+        "D-033, G-73"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "REVIEWED: one Sonnet reviewer before gates; the blocking finding (label value read as the amount eaten) fixed with a required basis; kJ, units in field labels, number limits, zero-vs-blank and line tests added",
+        "TESTED: 688 PASS UTC, 689 New York",
+        "GATES: 13 receipts on clean tree 045a5e2, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0789",
+      "next_action": null,
+      "files_touched": [
+        "docs/ROADMAP.md",
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/domain/records/health_record.dart",
+        "human_health_os/lib/src/domain/records/record_details.dart",
+        "human_health_os/lib/src/features/nutrition/nutrition_screen.dart",
+        "human_health_os/lib/src/features/timeline/timeline_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/lib/src/navigation/app_shell.dart",
+        "human_health_os/lib/src/navigation/destinations.dart",
+        "human_health_os/test/data/review_fixes_test.dart",
+        "human_health_os/test/data/vault_compat_test.dart",
+        "human_health_os/test/domain/f007s5_food_test.dart",
+        "human_health_os/test/widget/f001_contract_test.dart",
+        "human_health_os/test/widget/f007s5_nutrition_screen_test.dart",
+        "human_health_os/test/widget/shell_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0777",
+        "EV-TEST-F007-0778",
+        "EV-TEST-F007-0779",
+        "EV-TEST-F007-0780",
+        "EV-TEST-F007-0781",
+        "EV-BUILD-F007-0782",
+        "EV-RUNTIME-F007-0783",
+        "EV-TEST-F007-0784",
+        "EV-BUILD-F007-0785",
+        "EV-RUNTIME-F007-0786",
+        "EV-TEST-F007-0787",
+        "EV-TEST-F007-0788",
+        "EV-TEST-F007-0789"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0777",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0778",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0779",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (688 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0780",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0781",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0782",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0783",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0784",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0785",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0786",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (689 PASS)",
+          "evidence_id": "EV-TEST-F007-0787",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0788",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0789",
+          "criterion": "AC-4",
+          "source_revision": "045a5e2b3bc6ea2c5325882e5307e8ec31c1b236",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "F007-S5_COMPLETE",
+      "limitations": null,
+      "depends_on": [
+        "F007-S4"
+      ],
+      "review": "one Sonnet reviewer before gates: the blocking label-basis finding fixed",
+      "out_of_scope": [
+        "food database",
+        "totals or targets",
+        "typed correction of a food entry (G-73)"
       ]
     }
   },
