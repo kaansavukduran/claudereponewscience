@@ -3,46 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "U026",
-    "contract": "v0.32",
-    "run_id": "U026@v0.32",
-    "slice": "Today: Sleep and How you feel at the top, by a Settings choice (G-74)",
-    "goal": "The daily check-ins are reachable without a long scroll, as the person chooses.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "f8a9410",
-    "app_revision": null,
-    "started_at": "2026-11-11T09:30:00Z",
-    "finished_at": null,
-    "scope": [
-      "AppearanceSettings.checkInsFirst (saved; Reset Today clears it)",
-      "Settings switch",
-      "Today order"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED",
-      "TESTED: 703 PASS UTC"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": null,
-    "depends_on": [
-      "U025"
-    ],
-    "review": "lead review (R010 finding 3)",
-    "out_of_scope": [
-      "free reordering of every Today section"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -53,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "U025@v0.32 (2026-11-11, source revision 9f98b161d5bd)",
+  "last_completed_forge": "U026@v0.32 (2026-11-11, source revision 3ef4619cbc7b)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -66,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0842",
+      "evidence_id": "EV-TEST-F007-0855",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0843",
+      "evidence_id": "EV-TEST-F007-0856",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0844",
+      "evidence_id": "EV-TEST-F007-0857",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (701 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0845",
+      "gate": "flutter test, TZ=UTC (703 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0858",
       "criterion": "AC-1..AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0846",
+      "evidence_id": "EV-TEST-F007-0859",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0847",
+      "evidence_id": "EV-BUILD-F007-0860",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0848",
+      "evidence_id": "EV-RUNTIME-F007-0861",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0849",
+      "evidence_id": "EV-TEST-F007-0862",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0850",
+      "evidence_id": "EV-BUILD-F007-0863",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0851",
+      "evidence_id": "EV-RUNTIME-F007-0864",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (702 PASS)",
-      "evidence_id": "EV-TEST-F007-0852",
+      "gate": "flutter test with TZ=America/New_York (704 PASS)",
+      "evidence_id": "EV-TEST-F007-0865",
       "criterion": "AC-1..AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0853",
+      "evidence_id": "EV-TEST-F007-0866",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0854",
+      "evidence_id": "EV-TEST-F007-0867",
       "criterion": "AC-4",
-      "source_revision": "9f98b161d5bd10ebe492ef55ce227e80964f442d",
+      "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
       "result": "PASS"
     }
   ],
@@ -185,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "U026",
+    "forge_id": "F009",
     "contract": "v0.32",
-    "run_id": "U026@v0.32",
-    "slice": "Today: jump links to its sections and a chosen section order (rest of G-74)",
-    "why": "R010: Sleep and How you feel sit far down Today at 200% text; owner priorities: mouse use and customisation.",
+    "run_id": "F009@v0.32",
+    "slice": "Conditions slice 1: a condition or symptom as the person names it, with who reported or confirmed it (self-reported is not a confirmed diagnosis)",
+    "why": "Roadmap F009 is NOT_STARTED and is the next product ladder step after the F007 daily domains; the Conditions area is still planned.",
     "depends_on": [
-      "U025"
+      "U026"
     ]
   },
-  "updated_at": "2026-11-11T07:23:53Z",
+  "updated_at": "2026-11-11T09:42:59Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -10454,6 +10417,159 @@
       "review": "lead review of the R010 findings",
       "out_of_scope": [
         "Today jump links or section order (rest of G-74)"
+      ]
+    },
+    "U026@v0.32": {
+      "forge_id": "U026",
+      "contract": "v0.32",
+      "run_id": "U026@v0.32",
+      "slice": "Today: Sleep and How you feel at the top, by a Settings choice (G-74)",
+      "goal": "The daily check-ins are reachable without a long scroll, as the person chooses.",
+      "status": "DONE",
+      "baseline_commit": "f8a9410",
+      "app_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+      "started_at": "2026-11-11T09:30:00Z",
+      "finished_at": "2026-11-11T09:42:59Z",
+      "scope": [
+        "AppearanceSettings.checkInsFirst (saved; Reset Today clears it)",
+        "Settings switch",
+        "Today order"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED",
+        "TESTED: 703 PASS UTC",
+        "GATES: 13 receipts on clean tree 3ef4619, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0867",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/domain/settings/appearance.dart",
+        "human_health_os/lib/src/features/settings/settings_screen.dart",
+        "human_health_os/lib/src/features/today/today_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/widget/u026_checkins_first_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/KNOWN_GAPS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0855",
+        "EV-TEST-F007-0856",
+        "EV-TEST-F007-0857",
+        "EV-TEST-F007-0858",
+        "EV-TEST-F007-0859",
+        "EV-BUILD-F007-0860",
+        "EV-RUNTIME-F007-0861",
+        "EV-TEST-F007-0862",
+        "EV-BUILD-F007-0863",
+        "EV-RUNTIME-F007-0864",
+        "EV-TEST-F007-0865",
+        "EV-TEST-F007-0866",
+        "EV-TEST-F007-0867"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0855",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0856",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0857",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (703 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0858",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0859",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0860",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (89 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0861",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0862",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0863",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0864",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (704 PASS)",
+          "evidence_id": "EV-TEST-F007-0865",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0866",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0867",
+          "criterion": "AC-4",
+          "source_revision": "3ef4619cbc7b3017adf4ce759ec8abb451a39c73",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "U026_COMPLETE",
+      "limitations": null,
+      "depends_on": [
+        "U025"
+      ],
+      "review": "lead review (R010 finding 3)",
+      "out_of_scope": [
+        "free reordering of every Today section"
       ]
     }
   },

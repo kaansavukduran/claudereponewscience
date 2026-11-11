@@ -953,3 +953,7 @@ Source **5ef84d30079876c7c7f9f823bac1594000fb71e1**, branch **codex/forge-u022-a
 # FORGE U025@v0.32 — sheet buttons in view, quick time picks, 2026-11-11 — U025_COMPLETE
 
 **Built** for mouse-only use (G-74 from R010): every form sheet (sleep, how you feel, food, activity, medicines) now scrolls its fields while Save and Cancel stay in view at the bottom, on a short window or with large text; the keyboard, when open, lifts the sheet, otherwise the system's bottom area is kept clear. Quick picks fill the time fields by click: going to bed 22:00/23:00/00:00 and waking now/06:00/07:00/08:00; now, an hour ago, this morning 08:00 and yesterday 20:00 for food, activity and doses. The sheets share one frame and one time helper. Today jump links and section order remain in G-74. **Gates** 701 PASS in UTC, 702 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm. **Next** U026 Today jump links and section order.
+
+# FORGE U026@v0.32 — check-ins at the top of Today, 2026-11-11 — U026_COMPLETE
+
+**Built** a Settings choice, "Sleep and How you feel at the top of Today", that places the two check-in cards right under the date, before the weight and measurement cards (R010 finding: at 200% text they sat far down the page). Saved with the other Today choices; Reset Today clears it. **Gates** 703 PASS in UTC, 704 in New York, web smoke, Linux integration and runtime, tooling, contracts, pnpm. **Next** F009 conditions, slice 1.
