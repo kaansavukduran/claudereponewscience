@@ -27,6 +27,7 @@ abstract class RecordDetails {
     SleepNightDetails.typeTag => SleepNightDetails.fromJson(j),
     FeelingCheckInDetails.typeTag => FeelingCheckInDetails.fromJson(j),
     FoodEntryDetails.typeTag => FoodEntryDetails.fromJson(j),
+    ActivityEntryDetails.typeTag => ActivityEntryDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -558,4 +559,74 @@ double? parsePrintedNumber(String text) {
   final t = text.trim();
   if (!RegExp(r'^\d{1,7}([.,]\d{1,4})?$').hasMatch(t)) return null;
   return double.parse(t.replaceAll(',', '.'));
+}
+
+/// Longest single activity kept, in minutes (a day).
+const int maxActivityMinutes = 1440;
+
+/// Most steps kept for one entry.
+const int maxActivitySteps = 200000;
+
+/// One activity as the person types it (F007 slice 6, record schema 10):
+/// what it was, and optionally how many minutes and how many steps, as
+/// whole numbers. Typed by hand, so nothing is de-duplicated or summed with
+/// a device; a value not given is missing, never zero; no calories are
+/// estimated.
+class ActivityEntryDetails extends RecordDetails {
+  const ActivityEntryDetails({required this.what, this.minutes, this.steps});
+
+  static const String typeTag = 'activity_entry';
+
+  /// What it was, as typed (e.g. "walk", "squats").
+  final String what;
+  final int? minutes;
+  final int? steps;
+
+  @override
+  String get type => typeTag;
+
+  String? problem() =>
+      MedicationDetails.text(what, 'ACTIVITY_WHAT', required: true) ??
+      (minutes != null && (minutes! < 1 || minutes! > maxActivityMinutes)
+          ? 'ACTIVITY_MINUTES_RANGE'
+          : steps != null && (steps! < 1 || steps! > maxActivitySteps)
+          ? 'ACTIVITY_STEPS_RANGE'
+          : null);
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'what': what,
+    'minutes': minutes,
+    'steps': steps,
+  };
+
+  /// A whole number as stored (an integral 20.0 from another writer reads
+  /// as 20); anything else is a format error, not a crash.
+  static int? _whole(Object? v) => switch (v) {
+    null => null,
+    final int i => i,
+    final num n when n == n.truncate() => n.toInt(),
+    final x => throw FormatException('Not a whole number: "$x"'),
+  };
+
+  static ActivityEntryDetails fromJson(Map<String, Object?> j) =>
+      ActivityEntryDetails(
+        what: switch (j['what']) {
+          final String w => w,
+          final x => throw FormatException('Activity without text: "$x"'),
+        },
+        minutes: _whole(j['minutes']),
+        steps: _whole(j['steps']),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is ActivityEntryDetails &&
+      other.what == what &&
+      other.minutes == minutes &&
+      other.steps == steps;
+
+  @override
+  int get hashCode => Object.hash(what, minutes, steps);
 }

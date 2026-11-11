@@ -113,6 +113,18 @@ class S {
       'Type each label value as a number, e.g. 12 or 12,5.',
       'Her etiket değerini sayı olarak yaz, ör. 12 ya da 12,5.',
     ),
+    'NOT_A_WHOLE_NUMBER' => _t(
+      'Type a whole number, e.g. 30.',
+      'Tam sayı yaz, ör. 30.',
+    ),
+    'ACTIVITY_MINUTES_RANGE' => _t(
+      'Minutes go from 1 to 1440 (a day).',
+      'Dakika 1 ile 1440 (bir gün) arasında olmalı.',
+    ),
+    'ACTIVITY_STEPS_RANGE' => _t(
+      'Steps go from 1 to 200000.',
+      'Adım 1 ile 200000 arasında olmalı.',
+    ),
     'FOOD_LABEL_BASIS_REQUIRED' => _t(
       'Say what the label values are per (for example per 100 g).',
       'Etiket değerlerinin neye göre olduğunu seç (ör. 100 g için).',
@@ -401,7 +413,31 @@ class S {
     RecordKind.sleepNight => _t('Night', 'Gece'),
     RecordKind.feelingCheckIn => _t('How I feel', 'Nasıl hissediyorum'),
     RecordKind.foodEntry => _t('Food or drink', 'Yiyecek ya da içecek'),
+    RecordKind.activityEntry => _t('Activity', 'Aktivite'),
   };
+
+  // Activity (F007 slice 6): typed by hand; minutes and steps as whole
+  // numbers; nothing estimated (no calories), nothing summed with devices.
+  String get actTitle => _t('Activity', 'Aktivite');
+  String get actIntro => _t(
+    'Walks, workouts and steps, typed by hand. Leave minutes or steps empty if you do not know them. Nothing is estimated or added up.',
+    'Yürüyüş, antrenman ve adımlar, elle yazılır. Dakikayı ya da adımı bilmiyorsan boş bırak. Hiçbir şey tahmin edilmez ya da toplanmaz.',
+  );
+  String get actAdd => _t('Add an activity', 'Aktivite ekle');
+  String get actCorrectTitle =>
+      _t('Correct this activity', 'Bu aktiviteyi düzelt');
+  String get actNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get actWhat => _t(
+    'What it was (e.g. walk, cycling)',
+    'Ne olduğu (ör. yürüyüş, bisiklet)',
+  );
+  String get actMinutes => _t('Minutes (optional)', 'Dakika (isteğe bağlı)');
+  String get actSteps => _t('Steps (optional)', 'Adım (isteğe bağlı)');
+  String actLine(ActivityEntryDetails d) => [
+    d.what,
+    if (d.minutes != null) _t('${d.minutes} min', '${d.minutes} dk'),
+    if (d.steps != null) _t('${d.steps} steps', '${d.steps} adım'),
+  ].join(' · ');
 
   // Nutrition (F007 slice 5): what was eaten as typed; nutrients only as
   // copied from a label; a nutrient not given is missing, never zero.

@@ -15,6 +15,7 @@ import '../app/app_services.dart';
 import '../config/app_config.dart';
 import '../features/common/planned_destination_screen.dart';
 import '../features/labs/labs_screen.dart';
+import '../features/activity/activity_screen.dart';
 import '../features/medications/medications_screen.dart';
 import '../features/nutrition/nutrition_screen.dart';
 import '../features/timeline/timeline_screen.dart';
@@ -58,6 +59,7 @@ class _AppShellState extends State<AppShell> {
       DestinationId.labs => LabsScreen(services: widget.services),
       DestinationId.medications => MedicationsScreen(services: widget.services),
       DestinationId.nutrition => NutritionScreen(services: widget.services),
+      DestinationId.activity => ActivityScreen(services: widget.services),
       _ => PlannedDestinationScreen(destination: destinationById(id)),
     };
   }

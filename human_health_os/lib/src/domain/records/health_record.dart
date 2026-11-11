@@ -110,7 +110,11 @@ enum RecordKind {
 
   /// Something eaten or drunk, typed by hand (F007 slice 5, record schema
   /// 9). [FoodEntryDetails]. Nutrients only as printed; missing stays missing.
-  foodEntry('nutrition.food_entry', minSchema: 9);
+  foodEntry('nutrition.food_entry', minSchema: 9),
+
+  /// One activity typed by hand (F007 slice 6, record schema 10).
+  /// [ActivityEntryDetails]. Never merged with device data.
+  activityEntry('activity.entry', minSchema: 10);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -139,7 +143,8 @@ enum RecordKind {
     medicationIntake ||
     sleepNight ||
     feelingCheckIn ||
-    foodEntry => false,
+    foodEntry ||
+    activityEntry => false,
   };
 
   /// The F008 medication kinds.
@@ -154,7 +159,8 @@ enum RecordKind {
       isMedication ||
       this == sleepNight ||
       this == feelingCheckIn ||
-      this == foodEntry;
+      this == foodEntry ||
+      this == activityEntry;
 
   /// The `type` of the [RecordDetails] a structured kind carries.
   String? get detailsType => switch (this) {
@@ -165,6 +171,7 @@ enum RecordKind {
     sleepNight => SleepNightDetails.typeTag,
     feelingCheckIn => FeelingCheckInDetails.typeTag,
     foodEntry => FoodEntryDetails.typeTag,
+    activityEntry => ActivityEntryDetails.typeTag,
     _ => null,
   };
 
@@ -328,7 +335,7 @@ class HealthRecord {
   ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 9;
+  static const int currentSchemaVersion = 10;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -591,11 +598,13 @@ class HealthRecord {
         }
       case RecordKind.sleepNight ||
           RecordKind.feelingCheckIn ||
-          RecordKind.foodEntry:
+          RecordKind.foodEntry ||
+          RecordKind.activityEntry:
         final code = switch (details) {
           final SleepNightDetails d => d.problem(),
           final FeelingCheckInDetails d => d.problem(),
           final FoodEntryDetails d => d.problem(),
+          final ActivityEntryDetails d => d.problem(),
           _ => null,
         };
         if (code != null) {

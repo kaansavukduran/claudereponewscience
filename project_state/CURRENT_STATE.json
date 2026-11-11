@@ -3,9 +3,51 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F007-S6",
+    "contract": "v0.32",
+    "run_id": "F007-S6@v0.32",
+    "slice": "Activity typed by hand (record schema 10): what it was, whole minutes and steps; nothing estimated",
+    "goal": "A person records walks, workouts and steps by hand; missing stays missing; nothing is estimated, summed or merged with devices.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "b6ccc05",
+    "app_revision": null,
+    "started_at": "2026-11-11T06:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 10: activity.entry with ActivityEntryDetails",
+      "HeartbeatService.recordActivity (with correction) and activities",
+      "Activity screen built",
+      "a correction without a typed time keeps the entry's time (activity and food)",
+      "D-034"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "REVIEWED: one Sonnet reviewer before gates, no blocking; should-fix 1-4 fixed",
+      "TESTED: 694 PASS UTC"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "G009"
+    ],
+    "review": "one Sonnet reviewer: no blocking; robust stored whole numbers, correction keeps time, one error per field cleared on edit, digits-only fields",
+    "out_of_scope": [
+      "device data (F013)",
+      "calories or intensity",
+      "totals or targets"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

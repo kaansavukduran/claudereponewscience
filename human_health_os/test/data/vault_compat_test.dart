@@ -101,43 +101,47 @@ void main() {
   }
 
   group('compatibility metadata (§35.3)', () {
-    test('this app writes vault format 1, reads record schema 9 (food) and '
-        'writes weight and lab results at 3, reads format 1, never '
-        'downgrades', () {
-      expect(vaultFormatVersion, 1);
-      expect(vaultOldestReadableVersion, 1);
-      expect(vaultDowngradeSupported, isFalse);
-      expect(HealthRecord.currentSchemaVersion, 9);
-      expect(HealthRecord.defaultWriteSchema, 3);
-      expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
-      expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
-      for (final k in [
-        RecordKind.waistCircumference,
-        RecordKind.restingHeartRate,
-        RecordKind.bloodPressure,
-      ]) {
-        expect(HealthRecord.writeSchemaFor(k), 4);
-      }
-      for (final k in [
-        RecordKind.height,
-        RecordKind.bodyTemperature,
-        RecordKind.oxygenSaturation,
-        RecordKind.respiratoryRate,
-      ]) {
-        expect(HealthRecord.writeSchemaFor(k), 5);
-      }
-      for (final k in [
-        RecordKind.medicationItem,
-        RecordKind.medicationPlan,
-        RecordKind.medicationIntake,
-      ]) {
-        expect(HealthRecord.writeSchemaFor(k), 6);
-      }
-      expect(HealthRecord.writeSchemaFor(RecordKind.sleepNight), 7);
-      expect(HealthRecord.writeSchemaFor(RecordKind.feelingCheckIn), 8);
-      expect(HealthRecord.writeSchemaFor(RecordKind.foodEntry), 9);
-      expect(Profile.currentSchemaVersion, 1);
-    });
+    test(
+      'this app writes vault format 1, reads record schema 10 (activity) and '
+      'writes weight and lab results at 3, reads format 1, never '
+      'downgrades',
+      () {
+        expect(vaultFormatVersion, 1);
+        expect(vaultOldestReadableVersion, 1);
+        expect(vaultDowngradeSupported, isFalse);
+        expect(HealthRecord.currentSchemaVersion, 10);
+        expect(HealthRecord.defaultWriteSchema, 3);
+        expect(HealthRecord.writeSchemaFor(RecordKind.bodyWeight), 3);
+        expect(HealthRecord.writeSchemaFor(RecordKind.labResult), 3);
+        for (final k in [
+          RecordKind.waistCircumference,
+          RecordKind.restingHeartRate,
+          RecordKind.bloodPressure,
+        ]) {
+          expect(HealthRecord.writeSchemaFor(k), 4);
+        }
+        for (final k in [
+          RecordKind.height,
+          RecordKind.bodyTemperature,
+          RecordKind.oxygenSaturation,
+          RecordKind.respiratoryRate,
+        ]) {
+          expect(HealthRecord.writeSchemaFor(k), 5);
+        }
+        for (final k in [
+          RecordKind.medicationItem,
+          RecordKind.medicationPlan,
+          RecordKind.medicationIntake,
+        ]) {
+          expect(HealthRecord.writeSchemaFor(k), 6);
+        }
+        expect(HealthRecord.writeSchemaFor(RecordKind.sleepNight), 7);
+        expect(HealthRecord.writeSchemaFor(RecordKind.feelingCheckIn), 8);
+        expect(HealthRecord.writeSchemaFor(RecordKind.foodEntry), 9);
+        expect(HealthRecord.writeSchemaFor(RecordKind.activityEntry), 10);
+        expect(Profile.currentSchemaVersion, 1);
+      },
+    );
 
     test('the production graph is a lossless +1 chain from the oldest '
         'readable format to the current one', () {
@@ -760,7 +764,7 @@ void main() {
       expect(raw.text, before, reason: 'opening writes nothing');
     });
 
-    test('a store newer than this app (schema 10) is refused whole', () {
+    test('a store newer than this app (schema 11) is refused whole', () {
       final lines = text.trimRight().split('\n');
       final last = (jsonDecode(lines.last) as Map).cast<String, Object?>();
       final data = (last['data']! as Map).cast<String, Object?>()

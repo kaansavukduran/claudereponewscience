@@ -134,6 +134,10 @@ class _FoodSheetState extends State<_FoodSheet> {
   String? _errorField;
   bool _busy = false;
 
+  /// The time the sheet opened with; left as is, the entry keeps its own
+  /// time (to the second), not this minute.
+  String? _shownWhen;
+
   @override
   void initState() {
     super.initState();
@@ -141,7 +145,7 @@ class _FoodSheetState extends State<_FoodSheet> {
     if (d is FoodEntryDetails) {
       _what.text = d.what;
       _amount.text = d.amount ?? '';
-      _when.text = _typed(widget.correcting!.observedAt);
+      _when.text = _shownWhen = _typed(widget.correcting!.observedAt);
       _per = d.per;
       for (final e in d.nutrients.entries) {
         _nutrients[e.key]!.text = e.value;
@@ -170,7 +174,7 @@ class _FoodSheetState extends State<_FoodSheet> {
         profileId: widget.me,
         what: _what.text,
         amount: _amount.text,
-        when: _when.text,
+        when: _when.text == _shownWhen ? '' : _when.text,
         nutrients: {for (final e in _nutrients.entries) e.key: e.value.text},
         per: _per,
         correcting: widget.correcting?.id,
@@ -203,6 +207,11 @@ class _FoodSheetState extends State<_FoodSheet> {
       key: ValueKey(key),
       controller: c,
       keyboardType: keyboard,
+      onChanged: (_) {
+        if (_error != null) {
+          setState(() => _error = _errorField = null);
+        }
+      },
       textCapitalization: keyboard == null
           ? TextCapitalization.sentences
           : TextCapitalization.none,

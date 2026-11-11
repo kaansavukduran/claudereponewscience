@@ -202,6 +202,7 @@ void main() {
     );
     expect(fixed.supersedesId, first.id);
     expect(fixed.amendReason, AmendReason.correction);
+    expect(fixed.observedAt, first.observedAt); // no time typed: kept
     expect((await svc.foods(me)).single.id, fixed.id);
     expect(await repo.records(me, kind: RecordKind.foodEntry), hasLength(2));
     expect(

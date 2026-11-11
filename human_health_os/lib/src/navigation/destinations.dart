@@ -156,10 +156,10 @@ const List<Destination> destinations = [
     tr: 'Aktivite',
     icon: Icons.directions_run_outlined,
     selectedIcon: Icons.directions_run,
-    purposeEn:
-        'Steps, workouts and sleep from manual entry or (later) wearables.',
-    purposeTr: 'Elle girişten ya da (ileride) giyilebilir cihazlardan adım, antrenman ve uyku.',
-    plannedForge: 'Forge F007',
+    purposeEn: 'Walks, workouts and steps typed by hand; sleep is on Today; wearables later.',
+    purposeTr: 'Elle yazılan yürüyüş, antrenman ve adımlar; uyku Bugün ekranında; giyilebilir cihazlar ileride.',
+    // Built in F007 slice 6 (typed by hand). Device data comes with F013.
+    plannedForge: null,
     principleEn:
         'Two devices counting the same hour are de-duplicated, never summed.',
     principleTr: 'Aynı saati sayan iki cihaz tekilleştirilir, asla toplanmaz.',

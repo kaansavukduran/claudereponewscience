@@ -744,7 +744,8 @@ class HeartbeatService {
       throw const InputError('TARGET_WRONG_KIND');
     }
     final now = clock.nowUtc();
-    final at = parseMeasuredAt(when, nowUtc: now) ?? now;
+    // A correction left without a time keeps the entry's own time.
+    final at = parseMeasuredAt(when, nowUtc: now) ?? target?.observedAt ?? now;
     String? opt(String v) => v.trim().isEmpty ? null : v.trim();
     // Each label value is checked on its own, so the error names its field.
     for (final e in nutrients.entries) {
@@ -798,6 +799,87 @@ class HeartbeatService {
     );
     await repository.appendRecord(record);
     return record;
+  }
+
+  /// Records one activity as typed: minutes and steps are whole numbers,
+  /// blank = not given. [correcting] makes it a new version of that entry.
+  Future<HealthRecord> recordActivity({
+    required String profileId,
+    required String what,
+    String minutes = '',
+    String steps = '',
+    String when = '',
+    String? correcting,
+  }) async {
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.activityEntry) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
+    int? whole(String raw, String field) {
+      final t = raw.trim();
+      if (t.isEmpty) return null;
+      if (!RegExp(r'^\d{1,6}$').hasMatch(t)) {
+        throw InputError('NOT_A_WHOLE_NUMBER', field);
+      }
+      return int.parse(t);
+    }
+
+    final now = clock.nowUtc();
+    // A correction left without a time keeps the entry's own time.
+    final at = parseMeasuredAt(when, nowUtc: now) ?? target?.observedAt ?? now;
+    final details = ActivityEntryDetails(
+      what: what.trim(),
+      minutes: whole(minutes, 'minutes'),
+      steps: whole(steps, 'steps'),
+    );
+    final problem = details.problem();
+    if (problem != null) {
+      throw InputError(
+        switch (problem) {
+          final p when p.endsWith('_TOO_LONG') => 'TEXT_TOO_LONG',
+          final p when p.startsWith('ACTIVITY_WHAT') => 'EMPTY',
+          final p => p,
+        },
+        switch (problem) {
+          'ACTIVITY_MINUTES_RANGE' => 'minutes',
+          'ACTIVITY_STEPS_RANGE' => 'steps',
+          _ => 'what',
+        },
+      );
+    }
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.activityEntry,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: at,
+      recordedAt: now,
+      details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.activityEntry),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live activity entries, the latest first.
+  Future<List<HealthRecord>> activities(String profileId) async {
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.activityEntry,
+    );
+    return [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is ActivityEntryDetails) h,
+    ]..sort((a, b) => b.observedAt.compareTo(a.observedAt));
   }
 
   /// The live food entries, the latest first.
