@@ -36,13 +36,13 @@ class _NutritionScreenState extends State<NutritionScreen> {
     if (mounted) setState(() => _entries = entries);
   }
 
-  Future<void> _add() async {
+  Future<void> _add({HealthRecord? correcting}) async {
     final saved = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
       showDragHandle: true,
       useSafeArea: true,
-      builder: (_) => _FoodSheet(svc: _svc, me: _me),
+      builder: (_) => _FoodSheet(svc: _svc, me: _me, correcting: correcting),
     );
     if (saved == true) await _reload();
   }
@@ -97,6 +97,11 @@ class _NutritionScreenState extends State<NutritionScreen> {
                   fmtWhen(r.observedAt),
                   style: TextStyle(color: scheme.onSurfaceVariant),
                 ),
+                trailing: TextButton(
+                  key: ValueKey('food-correct-${r.id}'),
+                  onPressed: () => _add(correcting: r),
+                  child: Text(s.amendAction(AmendReason.correction)),
+                ),
               ),
             ),
       ],
@@ -105,10 +110,13 @@ class _NutritionScreenState extends State<NutritionScreen> {
 }
 
 class _FoodSheet extends StatefulWidget {
-  const _FoodSheet({required this.svc, required this.me});
+  const _FoodSheet({required this.svc, required this.me, this.correcting});
 
   final HeartbeatService svc;
   final String me;
+
+  /// The shown version being corrected; null for a new entry.
+  final HealthRecord? correcting;
 
   @override
   State<_FoodSheet> createState() => _FoodSheetState();
@@ -125,6 +133,21 @@ class _FoodSheetState extends State<_FoodSheet> {
   String? _error;
   String? _errorField;
   bool _busy = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final d = widget.correcting?.details;
+    if (d is FoodEntryDetails) {
+      _what.text = d.what;
+      _amount.text = d.amount ?? '';
+      _when.text = _typed(widget.correcting!.observedAt);
+      _per = d.per;
+      for (final e in d.nutrients.entries) {
+        _nutrients[e.key]!.text = e.value;
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -150,6 +173,7 @@ class _FoodSheetState extends State<_FoodSheet> {
         when: _when.text,
         nutrients: {for (final e in _nutrients.entries) e.key: e.value.text},
         per: _per,
+        correcting: widget.correcting?.id,
       );
       saved = true;
     } on InputError catch (e) {
@@ -216,7 +240,10 @@ class _FoodSheetState extends State<_FoodSheet> {
           children: [
             Semantics(
               header: true,
-              child: Text(s.foodAdd, style: text.titleLarge),
+              child: Text(
+                widget.correcting == null ? s.foodAdd : s.foodCorrectTitle,
+                style: text.titleLarge,
+              ),
             ),
             const SizedBox(height: 12),
             _field('food-what', s.foodWhat, _what, field: 'what'),
@@ -287,4 +314,12 @@ class _FoodSheetState extends State<_FoodSheet> {
       ),
     );
   }
+}
+
+/// An instant as it would be typed: local `YYYY-MM-DD HH:MM`.
+String _typed(DateTime utc) {
+  final t = utc.toLocal();
+  String two(int v) => v.toString().padLeft(2, '0');
+  return '${t.year.toString().padLeft(4, '0')}-${two(t.month)}-${two(t.day)} '
+      '${two(t.hour)}:${two(t.minute)}';
 }

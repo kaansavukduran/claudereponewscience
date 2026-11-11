@@ -733,7 +733,16 @@ class HeartbeatService {
     Map<PrintedNutrient, String> nutrients = const {},
     LabelBasis? per,
     String when = '',
+    String? correcting,
   }) async {
+    // A correction replaces the shown version of an entry; the earlier one
+    // stays in history.
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.foodEntry) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
     final now = clock.nowUtc();
     final at = parseMeasuredAt(when, nowUtc: now) ?? now;
     String? opt(String v) => v.trim().isEmpty ? null : v.trim();
@@ -783,6 +792,8 @@ class HeartbeatService {
       observedAt: at,
       recordedAt: now,
       details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
       schemaVersion: HealthRecord.writeSchemaFor(RecordKind.foodEntry),
     );
     await repository.appendRecord(record);

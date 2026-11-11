@@ -189,4 +189,29 @@ void main() {
       },
     );
   });
+
+  test('an entry is corrected as a new version; the earlier one stays; only '
+      'the shown entry of this kind', () async {
+    final (svc, me, repo) = await fresh();
+    final first = await svc.recordFood(profileId: me, what: 'Lentil soup');
+    final fixed = await svc.recordFood(
+      profileId: me,
+      what: 'Lentil soup',
+      amount: '2 bowls',
+      correcting: first.id,
+    );
+    expect(fixed.supersedesId, first.id);
+    expect(fixed.amendReason, AmendReason.correction);
+    expect((await svc.foods(me)).single.id, fixed.id);
+    expect(await repo.records(me, kind: RecordKind.foodEntry), hasLength(2));
+    expect(
+      () => svc.recordFood(profileId: me, what: 'x', correcting: first.id),
+      inputError('TARGET_NOT_CURRENT'),
+    );
+    final w = await svc.recordWeightKg(profileId: me, input: '70');
+    expect(
+      () => svc.recordFood(profileId: me, what: 'x', correcting: w.id),
+      inputError('TARGET_WRONG_KIND'),
+    );
+  });
 }

@@ -411,6 +411,7 @@ class S {
     'Ne yediğin ya da içtiğin, kendi sözlerinle. İstersen besin değerlerini etiketten kopyala; boş bırakılan bilinmiyor demektir, sıfır değil. Hiçbir şey toplanmaz.',
   );
   String get foodAdd => _t('Add food or drink', 'Yiyecek ya da içecek ekle');
+  String get foodCorrectTitle => _t('Correct this entry', 'Bu kaydı düzelt');
   String get foodNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
   String get foodWhat => _t('What it was', 'Ne olduğu');
   String get foodAmount => _t(

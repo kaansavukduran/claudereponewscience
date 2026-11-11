@@ -37,6 +37,26 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('Fat'), findsNothing);
+
+    // Correct it: the sheet opens with what was typed; a new version shows.
+    await tester.tap(
+      find.byWidgetPredicate(
+        (w) =>
+            w.key is ValueKey<String> &&
+            (w.key! as ValueKey<String>).value.startsWith('food-correct-'),
+      ),
+    );
+    await settle(tester);
+    expect(find.text('Correct this entry'), findsOneWidget);
+    expect(find.text('Hummus'), findsWidgets);
+    await tester.enterText(find.byKey(const ValueKey('food-amount')), '150 g');
+    await tapKey(tester, 'food-save');
+    await settle(tester);
+    expect(
+      find.text('Hummus · 150 g · label (per 100 g) Protein 7,9 g'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('Hummus · 100 g'), findsNothing);
   });
 
   test('the Timeline line keeps the label apart from the amount eaten', () {

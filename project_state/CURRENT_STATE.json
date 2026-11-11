@@ -3,9 +3,45 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G009",
+    "contract": "v0.32",
+    "run_id": "G009@v0.32",
+    "slice": "Correct a food entry from the Nutrition screen (G-73)",
+    "goal": "A wrong food entry is corrected as a new version; the earlier one stays in history.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c577c57",
+    "app_revision": null,
+    "started_at": "2026-11-11T05:10:00Z",
+    "finished_at": null,
+    "scope": [
+      "recordFood(correcting:) appends a correction of the shown entry; other kinds and older versions refused",
+      "Correct on each entry; the sheet opens with what was typed"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED",
+      "TESTED: nutrition tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F007-S5"
+    ],
+    "review": "lead review; same pattern as G008",
+    "out_of_scope": [
+      "moving focus to the field in error (rest of G-73)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
