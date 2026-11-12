@@ -2,6 +2,7 @@
 // named. Planned is never done; no result is stored; nothing is recommended.
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
+import 'package:human_health_os/src/application/heartbeat_service.dart';
 
 import 'f009_conditions_test.dart' show fresh, inputError;
 
@@ -92,13 +93,30 @@ void main() {
     expect(back.details, r.details);
     expect(back.kind, RecordKind.preventiveEntry);
     expect(back.validate, returnsNormally);
+    // A correction never turns planned into done: carrying out a plan is a
+    // new entry (planned ≠ completed).
+    expect(
+      () => svc.recordPreventive(
+        profileId: me,
+        name: 'Mammography',
+        nature: PreventiveType.screening,
+        status: PreventiveStatus.done,
+        source: ConditionSource.selfReported,
+        correcting: r.id,
+      ),
+      throwsA(
+        isA<InputError>()
+            .having((e) => e.code, 'code', 'PLANNED_NOT_DONE')
+            .having((e) => e.field, 'field', 'status'),
+      ),
+    );
     final fixed = await svc.recordPreventive(
       profileId: me,
       name: 'Mammography',
       nature: PreventiveType.screening,
-      status: PreventiveStatus.done,
+      status: PreventiveStatus.planned,
       source: ConditionSource.fromDocument,
-      when: 'last spring',
+      when: 'next spring',
       correcting: r.id,
     );
     expect(fixed.supersedesId, r.id);
@@ -107,8 +125,8 @@ void main() {
     final shown = (await svc.preventives(me)).single;
     expect(shown.id, fixed.id);
     expect(
-      (shown.details! as PreventiveEntryDetails).status,
-      PreventiveStatus.done,
+      (shown.details! as PreventiveEntryDetails).source,
+      ConditionSource.fromDocument,
     );
     final stored = await repo.records(me, kind: RecordKind.preventiveEntry);
     expect(stored, hasLength(2));
@@ -195,5 +213,63 @@ void main() {
     );
     expect((await svc.preventives(me)).single.id, r.id);
     expect((await svc.conditions(me)).single.id, c.id);
+  });
+
+  test('R012: errors name their field; bad stored values are format errors; '
+      'unsure to done stays a correction', () async {
+    final (svc, me, _) = await fresh();
+    expect(
+      () => svc.recordPreventive(
+        profileId: me,
+        name: 'Flu vaccine',
+        nature: PreventiveType.vaccination,
+        status: PreventiveStatus.planned,
+        source: ConditionSource.selfReported,
+        when: 'w' * 301,
+      ),
+      inputError('TEXT_TOO_LONG', 'when'),
+    );
+    expect(
+      () => svc.recordPreventive(
+        profileId: me,
+        name: 'n' * 301,
+        nature: PreventiveType.vaccination,
+        status: PreventiveStatus.planned,
+        source: ConditionSource.selfReported,
+      ),
+      inputError('TEXT_TOO_LONG', 'name'),
+    );
+    final r = await svc.recordPreventive(
+      profileId: me,
+      name: 'Flu vaccine',
+      nature: PreventiveType.vaccination,
+      status: PreventiveStatus.unsure,
+      source: ConditionSource.selfReported,
+    );
+    for (final bad in [
+      {'status': 'overdue'},
+      {'nature': 'surgery'},
+      {'source': 'confirmed'},
+      {'when': 2024},
+    ]) {
+      expect(
+        () => HealthRecord.fromJson({
+          ...r.toJson(),
+          'details': {...r.details!.toJson(), ...bad},
+        }),
+        throwsA(isA<FormatException>()),
+        reason: '$bad',
+      );
+    }
+    // Not sure was a mistake: correcting it to done is allowed.
+    final fixed = await svc.recordPreventive(
+      profileId: me,
+      name: 'Flu vaccine',
+      nature: PreventiveType.vaccination,
+      status: PreventiveStatus.done,
+      source: ConditionSource.selfReported,
+      correcting: r.id,
+    );
+    expect(fixed.supersedesId, r.id);
   });
 }

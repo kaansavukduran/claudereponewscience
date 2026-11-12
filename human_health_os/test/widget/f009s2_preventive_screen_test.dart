@@ -17,8 +17,8 @@ final RegExp advising = RegExp(
 );
 
 void main() {
-  testWidgets('add a planned item; the sheet starts at not sure; correct it '
-      'to done', (tester) async {
+  testWidgets('add a planned item; the sheet starts at not sure and other; '
+      'a correction cannot turn the plan into done', (tester) async {
     await launchWith(tester);
     await tester.tap(find.byKey(const ValueKey('rail-planned-preventive')));
     await settle(tester);
@@ -31,12 +31,14 @@ void main() {
     expect(chip('prev-status-unsure').selected, isTrue);
     expect(chip('prev-status-done').selected, isFalse);
     expect(chip('prev-status-planned').selected, isFalse);
+    expect(chip('prev-nature-other').selected, isTrue);
     await tapKey(tester, 'prev-save');
     expect(find.text(S(AppLang.en).inputError('EMPTY')), findsOneWidget);
     await tester.enterText(
       find.byKey(const ValueKey('prev-name')),
       'Tetanus vaccine',
     );
+    await tapKey(tester, 'prev-nature-vaccination');
     await tapKey(tester, 'prev-status-planned');
     await tapKey(tester, 'prev-source-toldByClinician');
     await tester.enterText(find.byKey(const ValueKey('prev-when')), '2027-03');
@@ -44,7 +46,7 @@ void main() {
     await settle(tester);
     const planned =
         'Tetanus vaccine · vaccination · Status: planned · '
-        'what a clinician told me · when: 2027-03';
+        'what a clinician told me · planned for: 2027-03';
     expect(find.text(planned), findsOneWidget);
     expect(planned, isNot(contains('done')));
     await tester.tap(
@@ -60,14 +62,14 @@ void main() {
     await tapKey(tester, 'prev-status-done');
     await tapKey(tester, 'prev-save');
     await settle(tester);
+    // Refused in words; the plan stays a plan.
     expect(
-      find.text(
-        'Tetanus vaccine · vaccination · Status: done · '
-        'what a clinician told me · when: 2027-03',
-      ),
+      find.text(S(AppLang.en).inputError('PLANNED_NOT_DONE')),
       findsOneWidget,
     );
-    expect(find.text(planned), findsNothing);
+    await tapKey(tester, 'prev-cancel');
+    await settle(tester);
+    expect(find.text(planned), findsOneWidget);
   });
 
   testWidgets('cancel writes nothing; a screening saved untouched reads as '
@@ -122,7 +124,7 @@ void main() {
     expect(
       S(AppLang.tr).prevLine(d),
       'Diş kontrolü · kontrol · Durumu: yapıldı · kendi anlatımım · '
-      'zaman: geçen bahar',
+      'yapıldığı zaman: geçen bahar',
     );
     expect(S(AppLang.tr).prevNature(PreventiveType.vaccination), 'aşı');
     expect(S(AppLang.tr).prevNature(PreventiveType.screening), 'tarama');

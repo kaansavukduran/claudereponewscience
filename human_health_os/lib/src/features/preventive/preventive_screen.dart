@@ -131,7 +131,8 @@ class _PreventiveSheetState extends State<_PreventiveSheet> {
   final _name = TextEditingController();
   final _when = TextEditingController();
   final _focus = FieldFocus();
-  var _nature = PreventiveType.vaccination;
+  // Nothing is chosen for the person: the type starts at "other".
+  var _nature = PreventiveType.other;
   // Not sure until the person says: "done" is never picked for them, and a
   // planned item never reads as done.
   var _status = PreventiveStatus.unsure;
@@ -180,6 +181,10 @@ class _PreventiveSheetState extends State<_PreventiveSheet> {
     } on InputError catch (e) {
       _error = s.inputError(e.code);
       _errorField = e.field;
+    } on Object {
+      // A storage failure is said in words; nothing was written.
+      _error = s.saveFailed;
+      _errorField = null;
     } finally {
       if (mounted) {
         if (saved) {

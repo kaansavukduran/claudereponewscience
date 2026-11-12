@@ -965,6 +965,14 @@ class HeartbeatService {
     if (target != null && target.kind != RecordKind.preventiveEntry) {
       throw const InputError('TARGET_WRONG_KIND');
     }
+    // Carrying out a plan is a new fact, not a fix of the plan: a correction
+    // never turns "planned" into "done" (planned ≠ completed).
+    if (target != null &&
+        status == PreventiveStatus.done &&
+        (target.details as PreventiveEntryDetails?)?.status ==
+            PreventiveStatus.planned) {
+      throw const InputError('PLANNED_NOT_DONE', 'status');
+    }
     final details = PreventiveEntryDetails(
       name: name.trim(),
       nature: nature,

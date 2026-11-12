@@ -3,9 +3,50 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R012",
+    "contract": "v0.32",
+    "run_id": "R012@v0.32",
+    "slice": "Independent review of the preventive slice and the Dart engines; preventive fixes (engine fixes ride with F011-S2)",
+    "goal": "Planned never becomes done by a correction; nothing is chosen for the person; storage failures are said in words.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "36fc31b",
+    "app_revision": null,
+    "started_at": "2026-11-12T02:40:00Z",
+    "finished_at": null,
+    "scope": [
+      "PLANNED_NOT_DONE: a correction never turns planned into done",
+      "preventive type starts at other",
+      "save failures shown in words",
+      "status-aware time wording (planned for / done)",
+      "clearer Turkish (Koruyucu sağlık kaydı; Taramaların sonucu kaydedilmez)",
+      "tests: field-named errors, bad stored values, unsure-to-done allowed; guard mutation caught"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED by an Opus reviewer (read-only)",
+      "IMPLEMENTED by the lead",
+      "TESTED: preventive tests; guard mutation caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "The review's engine findings (min_count, non-finite results, input copy, strict vector keys) are handed to F011-S2 and land with it.",
+    "depends_on": [
+      "F011-S1"
+    ],
+    "review": "Opus reviewer: blocking planned-to-done correction fixed; should-fix preventive items fixed; engine items forwarded to F011-S2",
+    "out_of_scope": [
+      "engine fixes (F011-S2)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

@@ -168,6 +168,10 @@ class S {
       'Say what the label values are per (for example per 100 g).',
       'Etiket değerlerinin neye göre olduğunu seç (ör. 100 g için).',
     ),
+    'PLANNED_NOT_DONE' => _t(
+      'A plan that was carried out is a new entry: add it as done. Correct changes only what was wrong.',
+      'Gerçekleşen bir plan yeni bir kayıttır: onu yapıldı olarak ekle. Düzelt yalnızca yanlış olanı değiştirir.',
+    ),
     'CHECKIN_EMPTY' => _t(
       'Pick at least one of energy, mood or stress.',
       'Enerji, ruh hâli ya da stresten en az birini seç.',
@@ -491,7 +495,10 @@ class S {
       'Condition or symptom',
       'Durum ya da belirti',
     ),
-    RecordKind.preventiveEntry => _t('Preventive item', 'Koruyucu kayıt'),
+    RecordKind.preventiveEntry => _t(
+      'Preventive item',
+      'Koruyucu sağlık kaydı',
+    ),
   };
 
   // Preventive (F009 slice 2): vaccinations, screenings and check-ups as the
@@ -503,7 +510,7 @@ class S {
   );
   String get prevIntro => _t(
     'As you name them: done, planned or not sure, with who it comes from. Human OS recommends nothing, keeps no schedule and sends no reminders. A screening is kept without its result.',
-    'Senin adlandırdığın gibi: yapıldı, planlandı ya da emin değilim, kimden geldiğiyle birlikte. Human OS hiçbir şey önermez, takvim tutmaz ve hatırlatma göndermez. Bir tarama sonucu olmadan kaydedilir.',
+    'Senin adlandırdığın gibi: yapıldı, planlandı ya da emin değilim, kimden geldiğiyle birlikte. Human OS hiçbir şey önermez, takvim tutmaz ve hatırlatma göndermez. Taramaların sonucu kaydedilmez.',
   );
   String get prevAdd => _t('Add an item', 'Kayıt ekle');
   String get prevCorrectTitle => _t('Correct this entry', 'Bu kaydı düzelt');
@@ -535,7 +542,18 @@ class S {
     prevNature(d.nature),
     '$prevStatusLabel: ${prevStatus(d.status)}',
     condSource(d.source),
-    if (d.when != null) _t('when: ${d.when}', 'zaman: ${d.when}'),
+    if (d.when != null)
+      switch (d.status) {
+        PreventiveStatus.planned => _t(
+          'planned for: ${d.when}',
+          'planlanan zaman: ${d.when}',
+        ),
+        PreventiveStatus.done => _t(
+          'done: ${d.when}',
+          'yapıldığı zaman: ${d.when}',
+        ),
+        PreventiveStatus.unsure => _t('when: ${d.when}', 'zaman: ${d.when}'),
+      },
   ].join(' · ');
 
   // Conditions (F009 slice 1): as the person names them, with who they come
@@ -740,6 +758,10 @@ class S {
   String get sleepWokeHelp => _t(
     'HH:MM, or YYYY-MM-DD HH:MM; blank = now',
     'SS:DD ya da YYYY-AA-GG SS:DD; boş = şimdi',
+  );
+  String get saveFailed => _t(
+    'This could not be saved. Nothing was written.',
+    'Bu kaydedilemedi. Hiçbir şey yazılmadı.',
   );
   String get sleepSaveFailed => _t(
     'The night could not be saved. Nothing was written.',
