@@ -118,7 +118,11 @@ enum ScaleError {
   volumeToMassBlocked('VOLUME_TO_MASS_BLOCKED'),
   unknownMeasure('UNKNOWN_MEASURE'),
   invalidQuantity('INVALID_QUANTITY'),
-  basisIncompatible('BASIS_INCOMPATIBLE');
+  basisIncompatible('BASIS_INCOMPATIBLE'),
+
+  /// The arithmetic gave NaN or an infinity (e.g. an overflow); no value is
+  /// reported (same code as `nonFiniteResultCode`).
+  nonFiniteResult(nonFiniteResultCode);
 
   const ScaleError(this.code);
   final String code;
@@ -239,13 +243,26 @@ ScaledNutrients scaleFood(FoodSnapshot food, Quantity q) {
       ]),
     );
   }
+  final scaled = {
+    for (final e in food.nutrients.entries)
+      e.key: e.value == null ? null : e.value! * factor,
+  };
+  if (!factor.isFinite || scaled.values.any((v) => v != null && !v.isFinite)) {
+    return ScaledNutrients(
+      ok: false,
+      error: ScaleError.nonFiniteResult,
+      nutrients: const {},
+      factor: null,
+      conversion: null,
+      food: food,
+      quantity: q,
+      missingInputs: const [],
+    );
+  }
   return ScaledNutrients(
     ok: true,
     error: null,
-    nutrients: Map.unmodifiable({
-      for (final e in food.nutrients.entries)
-        e.key: e.value == null ? null : e.value! * factor,
-    }),
+    nutrients: Map.unmodifiable(scaled),
     factor: factor,
     conversion: s.conversion,
     food: food,
@@ -409,13 +426,33 @@ RecipeResult computeRecipe(RecipeVersion recipe) {
             e.key: e.value.known == null ? null : e.value.known! / d,
         });
   final mass = recipe.finalCookedMassG;
+  final perServing = div(recipe.servingCount);
+  // Cooking yield is never assumed: per-100 g cooked needs a measured mass.
+  final per100g = mass != null && mass != 0 ? div(mass / 100) : null;
+  bool bad(double? v) => v != null && !v.isFinite;
+  if (totals.values.any((t) => bad(t.known)) ||
+      (perServing?.values.any(bad) ?? false) ||
+      (per100g?.values.any(bad) ?? false)) {
+    // An overflowing sum or division is refused as a whole, never shown.
+    return RecipeResult(
+      ok: false,
+      errors: List.unmodifiable([
+        ...errors,
+        (ingredient: recipe.name, error: ScaleError.nonFiniteResult),
+      ]),
+      totals: const {},
+      perServing: null,
+      per100gCooked: null,
+      recipe: recipe,
+      missingInputs: const [],
+    );
+  }
   return RecipeResult(
     ok: errors.isEmpty,
     errors: List.unmodifiable(errors),
     totals: Map.unmodifiable(totals),
-    perServing: div(recipe.servingCount),
-    // Cooking yield is never assumed: per-100 g cooked needs a measured mass.
-    per100gCooked: mass != null && mass != 0 ? div(mass / 100) : null,
+    perServing: perServing,
+    per100gCooked: per100g,
     recipe: recipe,
     missingInputs: List.unmodifiable([
       if (recipe.servingCount == null) 'serving_count',

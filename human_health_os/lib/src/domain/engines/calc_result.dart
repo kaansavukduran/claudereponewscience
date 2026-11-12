@@ -67,19 +67,27 @@ class CalcResult {
     required this.errorCode,
   });
 
-  /// A successful calculation.
-  factory CalcResult.ok(
-    ModelRef m,
-    double value,
-    Map<String, Object?> inputs,
-  ) => CalcResult._(
-    status: CalcStatus.ok,
-    value: value,
-    model: m,
-    inputs: inputs,
-    missingInputs: const [],
-    errorCode: null,
-  );
+  /// A successful calculation. A non-finite value (NaN or an infinity,
+  /// e.g. from an overflow) is never reported as a result: it becomes an
+  /// INVALID_INPUT refusal with the code [nonFiniteResultCode] and no value.
+  factory CalcResult.ok(ModelRef m, double value, Map<String, Object?> inputs) {
+    if (!value.isFinite) {
+      return CalcResult.fail(
+        m,
+        CalcStatus.invalidInput,
+        nonFiniteResultCode,
+        inputs,
+      );
+    }
+    return CalcResult._(
+      status: CalcStatus.ok,
+      value: value,
+      model: m,
+      inputs: _frozen(inputs),
+      missingInputs: const [],
+      errorCode: null,
+    );
+  }
 
   /// A refused calculation: no value, an error code and, when inputs were
   /// missing, their names.
@@ -95,7 +103,7 @@ class CalcResult {
       status: status,
       value: null,
       model: m,
-      inputs: inputs,
+      inputs: _frozen(inputs),
       missingInputs: List.unmodifiable(missingInputs),
       errorCode: errorCode,
     );
@@ -107,7 +115,8 @@ class CalcResult {
   final double? value;
   final ModelRef model;
 
-  /// The inputs as given (not normalised).
+  /// An unmodifiable copy of the inputs as given (not normalised); changing
+  /// the caller's map afterwards does not change the result.
   final Map<String, Object?> inputs;
   final List<String> missingInputs;
   final String? errorCode;
@@ -118,6 +127,33 @@ class CalcResult {
   String? get unit => model.unit;
   List<String> get limitations => model.limitations;
 }
+
+/// Error code of a calculation whose arithmetic gave NaN or an infinity
+/// (all engines use it for a number, or a number inside a map, that is not
+/// finite).
+const String nonFiniteResultCode = 'NON_FINITE_RESULT';
+
+/// A deep, unmodifiable copy of an input value (maps and lists are copied;
+/// other values are immutable in the engines' JSON-like inputs).
+Object? _freezeValue(Object? v) {
+  if (v is Map && v.keys.every((k) => k is String)) {
+    return Map<String, Object?>.unmodifiable({
+      for (final e in v.entries) e.key as String: _freezeValue(e.value),
+    });
+  }
+  if (v is Map) {
+    return Map<Object?, Object?>.unmodifiable({
+      for (final e in v.entries) e.key: _freezeValue(e.value),
+    });
+  }
+  if (v is List) return List<Object?>.unmodifiable(v.map(_freezeValue));
+  return v;
+}
+
+Map<String, Object?> _frozen(Map<String, Object?> inputs) =>
+    Map<String, Object?>.unmodifiable({
+      for (final e in inputs.entries) e.key: _freezeValue(e.value),
+    });
 
 /// A value is present only if it is a finite number. null, NaN, infinities
 /// and non-numbers are missing, never 0.

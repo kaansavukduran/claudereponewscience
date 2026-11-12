@@ -71,6 +71,7 @@ double _num(Map<String, Object?> inputs, String key) =>
 /// Median of an already sorted, non-empty list.
 double median(List<double> sorted) {
   final n = sorted.length;
+  if (n == 0) throw ArgumentError.value(sorted, 'sorted', 'empty list');
   final mid = n ~/ 2;
   return n.isOdd ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
 }
@@ -271,6 +272,28 @@ CalcResult trainingVolumeLoad(Map<String, Object?> inputs) {
       ),
     );
   }
+  // min_count: absent or null means 1; anything else must be a finite whole
+  // number >= 1 (a string, NaN, 0 or a negative count is refused).
+  final rawMin = inputs['min_count'];
+  final double minCount;
+  if (rawMin == null) {
+    minCount = 1;
+  } else if (rawMin is num &&
+      rawMin.isFinite &&
+      rawMin == rawMin.truncateToDouble() &&
+      rawMin >= 1) {
+    minCount = rawMin.toDouble();
+  } else {
+    return (
+      values: null,
+      refusal: CalcResult.fail(
+        m,
+        CalcStatus.invalidInput,
+        'INVALID_MIN_COUNT',
+        inputs,
+      ),
+    );
+  }
   final all = inputs['values'];
   if (all is! List) {
     return (
@@ -287,8 +310,9 @@ CalcResult trainingVolumeLoad(Map<String, Object?> inputs) {
   final n = w.toInt();
   final start = all.length > n ? all.length - n : 0;
   final vals = presentValues(all.sublist(start));
-  final minCount = inputs['min_count'] as num? ?? 1;
-  if (vals.length < minCount) {
+  // An empty or all-missing window never yields a value (no NaN mean, no
+  // median of nothing), whatever min_count says.
+  if (vals.isEmpty || vals.length < minCount) {
     return (
       values: null,
       refusal: CalcResult.fail(
@@ -304,7 +328,9 @@ CalcResult trainingVolumeLoad(Map<String, Object?> inputs) {
 }
 
 /// Mean of the last `window` observations; missing points are excluded,
-/// never zero-filled. Optional `min_count` (default 1).
+/// never zero-filled. Optional `min_count` (default 1; a finite whole number
+/// >= 1, otherwise INVALID_MIN_COUNT). An empty or all-missing window is
+/// refused with INSUFFICIENT_OBSERVATIONS.
 CalcResult rollingMean(Map<String, Object?> inputs) {
   final m = CoreDerivedModels.rollingMean;
   final w = _window(m, inputs);

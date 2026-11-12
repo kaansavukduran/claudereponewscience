@@ -599,16 +599,20 @@ LabInterpretationAssessment interpretLabResult(LabInterpretationInput input) {
     final prior = input.prior!.value!;
     if (pct == null) {
       rcv = LabRcv('INVALID_CV_INPUT', source: params.source);
+    } else if (!pct.isFinite) {
+      rcv = LabRcv(nonFiniteResultCode, source: params.source);
     } else if (prior == 0) {
       rcv = LabRcv('ZERO_PRIOR', rcvPercent: pct, source: params.source);
     } else {
       final obs = ((x - prior) / prior) * 100;
-      rcv = LabRcv(
-        obs.abs() > pct ? 'EXCEEDS_RCV' : 'WITHIN_RCV',
-        rcvPercent: pct,
-        observedPercentChange: obs,
-        source: params.source,
-      );
+      rcv = !obs.isFinite
+          ? LabRcv(nonFiniteResultCode, rcvPercent: pct, source: params.source)
+          : LabRcv(
+              obs.abs() > pct ? 'EXCEEDS_RCV' : 'WITHIN_RCV',
+              rcvPercent: pct,
+              observedPercentChange: obs,
+              source: params.source,
+            );
     }
   }
 
@@ -626,11 +630,15 @@ LabInterpretationAssessment interpretLabResult(LabInterpretationInput input) {
     } else {
       final z = (x - med) / (madScale * mad);
       final thr = input.baselineThreshold ?? labBaselineDefaultThreshold;
-      baseline = LabBaseline(
-        z.abs() >= thr ? 'UNUSUAL_FOR_PERSON' : 'WITHIN_PERSONAL_BASELINE',
-        z,
-        pts.length,
-      );
+      baseline = !z.isFinite
+          ? LabBaseline(nonFiniteResultCode, null, pts.length)
+          : LabBaseline(
+              z.abs() >= thr
+                  ? 'UNUSUAL_FOR_PERSON'
+                  : 'WITHIN_PERSONAL_BASELINE',
+              z,
+              pts.length,
+            );
     }
   } else {
     missing.add('baseline_points');

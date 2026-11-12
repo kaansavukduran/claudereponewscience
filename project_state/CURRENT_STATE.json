@@ -3,9 +3,49 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F011-S2",
+    "contract": "v0.32",
+    "run_id": "F011-S2@v0.32",
+    "slice": "Medication safety and preventive engines in Dart; all 73 golden vectors; R012 engine hardening",
+    "goal": "The Dart core matches the reference on every golden vector, and refuses inputs and results the vectors do not cover instead of computing nonsense.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "f4563f7",
+    "app_revision": null,
+    "started_at": "2026-11-12T03:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "engines/medication_safety.dart (10 vectors; every finding guaranteedSafe false; TS limitations word for word)",
+      "engines/preventive.dart (20 vectors)",
+      "INVALID_MIN_COUNT, NON_FINITE_RESULT, unmodifiable input copies",
+      "every expected key asserted, unknown keys fail",
+      "D-038, G-75"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree",
+      "TESTED by the implementer: 83 vector + 33 hardening tests; 856 PASS full suite; pnpm and verify_contracts pass; mutations caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "Domain only. tools/verify_contracts.py does not run the medication or preventive vectors (Python side incomplete). The TypeScript reference keeps the holes fixed in Dart (G-75).",
+    "depends_on": [
+      "R012"
+    ],
+    "review": "R012 findings for engines implemented",
+    "out_of_scope": [
+      "UI",
+      "TS and Python fixes (G-75)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

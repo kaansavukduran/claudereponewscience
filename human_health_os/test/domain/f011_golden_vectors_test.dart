@@ -1,8 +1,10 @@
-// F011-S1 (D-037): the Dart engines pass the language-neutral golden vectors
-// in contracts/golden_vectors, the same files the TS reference
-// (packages/domain/test/golden.test.ts) and tools/verify_contracts.py run.
-// Assertions follow the TS harness: states exactly, numbers within the
-// vector's declared tolerance, and a refused calculation has no value.
+// F011-S1/S2 (D-037, D-038): the Dart engines pass all 73 language-neutral
+// golden vectors in contracts/golden_vectors, the same files the TS
+// reference (packages/domain/test/golden.test.ts) runs. Assertions follow
+// the TS harness: states exactly, numbers within the vector's declared
+// tolerance, and a refused calculation has no value. Every key of every
+// `expected` object must be one this test asserts (checkExpectedKeys); an
+// unknown key fails instead of being skipped.
 import 'dart:convert';
 import 'dart:io';
 
@@ -10,7 +12,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/engines/calc_result.dart';
 import 'package:human_health_os/src/domain/engines/core_derived.dart';
 import 'package:human_health_os/src/domain/engines/lab_interpretation.dart';
+import 'package:human_health_os/src/domain/engines/medication_safety.dart';
 import 'package:human_health_os/src/domain/engines/nutrition_math.dart';
+import 'package:human_health_os/src/domain/engines/preventive.dart';
 
 /// Relative to the package root (flutter test runs there).
 const String vectorDir = '../contracts/golden_vectors';
@@ -19,14 +23,14 @@ const String vectorDir = '../contracts/golden_vectors';
 const Map<String, int> covered = {
   'core_derived_vectors.json': 19,
   'lab_interpretation_vectors.json': 19,
-  'nutrition_vectors.json': 5,
-};
-
-/// Vector files not yet ported to Dart (the visible F011 gap).
-const Map<String, int> notCovered = {
   'medication_safety_vectors.json': 10,
+  'nutrition_vectors.json': 5,
   'preventive_vectors.json': 20,
 };
+
+/// Vector files not yet ported to Dart (empty since F011-S2). A new file
+/// must be added to [covered] or listed here, or the guard test fails.
+const Map<String, int> notCovered = {};
 
 Map<String, Object?> load(String name) =>
     jsonDecode(File('$vectorDir/$name').readAsStringSync())
@@ -36,6 +40,19 @@ List<Map<String, Object?>> vectors(String name) => [
   for (final v in load(name)['vectors']! as List<Object?>)
     v! as Map<String, Object?>,
 ];
+
+/// Fails when [expected] has a key this test does not assert.
+void checkExpectedKeys(
+  Map<String, Object?> expected,
+  Set<String> handled,
+  String id,
+) {
+  expect(
+    expected.keys.toSet().difference(handled),
+    isEmpty,
+    reason: '$id: expected keys this test does not assert',
+  );
+}
 
 void close(double? got, Object? expected, Object? tolerance, String what) {
   expect(got, isNotNull, reason: '$what has no value');
@@ -79,13 +96,9 @@ void main() {
       expect(all.values.fold<int>(0, (a, b) => a + b), 73);
     });
 
-    test('files not yet covered in Dart (F011 gap)', () {
-      // Medication safety (MED-SAFETY) and preventive (PREVENTIVE) engines
-      // are still TS/Python only; see D-037.
-      expect(notCovered.keys.toList(), [
-        'medication_safety_vectors.json',
-        'preventive_vectors.json',
-      ]);
+    test('no vector file is left uncovered in Dart (F011 gap closed)', () {
+      expect(notCovered, isEmpty);
+      expect(covered.values.fold<int>(0, (a, b) => a + b), 73);
     });
   });
 
@@ -110,10 +123,13 @@ void main() {
           [r1.status, r1.value, r1.errorCode, r1.missingInputs],
         );
         final e = v['expected']! as Map<String, Object?>;
+        checkExpectedKeys(e, {'status', 'value', 'error_code'}, id);
         expect(r1.status.code, e['status']);
         expect(r1.modelId, modelId);
         expect(r1.version, v['version']);
-        expect(r1.inputs, same(inputs));
+        // An unmodifiable copy of the inputs, not the caller's map.
+        expect(r1.inputs, equals(inputs));
+        expect(r1.inputs, isNot(same(inputs)));
         if (e.containsKey('value')) {
           close(r1.value, e['value'], v['tolerance'], id);
           expect(r1.errorCode, isNull);
@@ -121,7 +137,9 @@ void main() {
         } else {
           expect(r1.value, isNull, reason: 'missing/invalid never a number');
         }
-        if (e['error_code'] != null) expect(r1.errorCode, e['error_code']);
+        if (e.containsKey('error_code')) {
+          expect(r1.errorCode, e['error_code']);
+        }
         if (r1.status == CalcStatus.missingInput) {
           expect(r1.missingInputs, isNotEmpty);
         }
@@ -143,44 +161,52 @@ void main() {
         );
         final a = interpretLabResult(input);
         final e = v['expected']! as Map<String, Object?>;
-        if (e['status'] != null) expect(a.status, e['status']);
-        if (e['reference'] != null) expect(a.referenceState, e['reference']);
-        if (e['critical'] != null) expect(a.critical.state, e['critical']);
-        if (e.containsKey('external_receipt_confirmed')) {
-          expect(a.critical.externalReceiptConfirmed, isFalse);
+        checkExpectedKeys(e, {
+          'status',
+          'reference',
+          'critical',
+          'external_receipt_confirmed',
+          'decision_matched',
+          'comparability',
+          'trend_discontinuity',
+          'rcv',
+          'rcv_percent',
+          'observed_percent_change',
+          'baseline',
+          'robust_z',
+          'flag_origins',
+          'value',
+          // Parameterises near(); not a result field.
+          'tolerance',
+        }, id);
+        void exact(String key, Object? got) {
+          if (e.containsKey(key)) expect(got, e[key], reason: '$id.$key');
         }
-        if (e['decision_matched'] != null) {
-          expect([
-            for (final d in a.decision)
-              if (d.matched) d.ruleId,
-          ], e['decision_matched']);
+
+        void near(String key, double? got) {
+          if (e.containsKey(key)) close(got, e[key], e['tolerance'], id);
         }
-        if (e['comparability'] != null) {
-          expect(a.comparability.state, e['comparability']);
-        }
-        if (e.containsKey('trend_discontinuity')) {
-          expect(a.comparability.trendDiscontinuity, e['trend_discontinuity']);
-        }
-        if (e['rcv'] != null) expect(a.rcv.state, e['rcv']);
-        if (e['rcv_percent'] != null) {
-          close(a.rcv.rcvPercent, e['rcv_percent'], e['tolerance'], id);
-        }
-        if (e['observed_percent_change'] != null) {
-          close(
-            a.rcv.observedPercentChange,
-            e['observed_percent_change'],
-            e['tolerance'],
-            id,
-          );
-        }
-        if (e['baseline'] != null) expect(a.baseline.state, e['baseline']);
-        if (e['robust_z'] != null) {
-          close(a.baseline.robustZ, e['robust_z'], e['tolerance'], id);
-        }
-        if (e['flag_origins'] != null) {
-          expect([for (final f in a.flags) f.origin], e['flag_origins']);
-        }
-        if (e.containsKey('value')) expect(a.value, e['value']);
+
+        exact('status', a.status);
+        exact('reference', a.referenceState);
+        exact('critical', a.critical.state);
+        exact(
+          'external_receipt_confirmed',
+          a.critical.externalReceiptConfirmed,
+        );
+        exact('decision_matched', [
+          for (final d in a.decision)
+            if (d.matched) d.ruleId,
+        ]);
+        exact('comparability', a.comparability.state);
+        exact('trend_discontinuity', a.comparability.trendDiscontinuity);
+        exact('rcv', a.rcv.state);
+        near('rcv_percent', a.rcv.rcvPercent);
+        near('observed_percent_change', a.rcv.observedPercentChange);
+        exact('baseline', a.baseline.state);
+        near('robust_z', a.baseline.robustZ);
+        exact('flag_origins', [for (final f in a.flags) f.origin]);
+        exact('value', a.value);
         expect(a.engineId, labEngineId);
         expect(a.engineVersion, labEngineVersion);
         expect(a.limitations, isNotEmpty);
@@ -201,14 +227,38 @@ void main() {
       final e = v['expected']! as Map<String, Object?>;
       test('$id ${v['note']}', () {
         if (v['kind'] == 'scale') {
+          checkExpectedKeys(e, {'ok', 'error', 'nutrients'}, id);
+          final food = FoodSnapshot.fromJson(
+            v['food']! as Map<String, Object?>,
+          );
           final r = scaleFood(
-            FoodSnapshot.fromJson(v['food']! as Map<String, Object?>),
+            food,
             Quantity.fromJson(v['quantity']! as Map<String, Object?>),
           );
           expect(r.ok, e['ok']);
-          if (e['error'] != null) expect(r.error?.code, e['error']);
+          if (e.containsKey('error')) {
+            expect(r.error?.code, e['error']);
+          } else {
+            expect(r.error, isNull);
+          }
+          // Result nutrients cannot be matched against `expected` alone:
+          // the vector format lists a subset (GV-NUT-004 lists protein_g
+          // only). So the result holds exactly the food's own nutrients
+          // (nothing invented), every expected one is present, and the
+          // values listed match.
           final nutrients =
               (e['nutrients'] as Map<String, Object?>?) ?? const {};
+          if (r.ok) {
+            expect(r.nutrients.keys.toSet(), food.nutrients.keys.toSet());
+          } else {
+            expect(r.nutrients, isEmpty);
+            expect(nutrients, isEmpty);
+          }
+          expect(
+            r.nutrients.keys.toSet().containsAll(nutrients.keys),
+            isTrue,
+            reason: '$id: expected nutrients missing from the result',
+          );
           for (final n in nutrients.entries) {
             if (n.value == null) {
               expect(r.nutrients.containsKey(n.key), isTrue);
@@ -221,10 +271,22 @@ void main() {
           expect(r.engineId, nutritionEngineId);
           expect(r.limitations, isNotEmpty);
         } else if (v['kind'] == 'recipe') {
-          final r = computeRecipe(
-            RecipeVersion.fromJson(v['recipe']! as Map<String, Object?>),
+          checkExpectedKeys(e, {
+            'ok',
+            'totals_known',
+            'missing_sources',
+            'per_serving',
+            'per_100g_cooked',
+          }, id);
+          final recipe = RecipeVersion.fromJson(
+            v['recipe']! as Map<String, Object?>,
           );
+          final r = computeRecipe(recipe);
           expect(r.ok, e['ok']);
+          // Totals cover exactly the union of the ingredients' nutrients.
+          expect(r.totals.keys.toSet(), {
+            for (final i in recipe.ingredients) ...i.food.nutrients.keys,
+          });
           final totals =
               (e['totals_known'] as Map<String, Object?>?) ?? const {};
           for (final t in totals.entries) {
@@ -252,6 +314,112 @@ void main() {
         } else {
           fail('unknown vector kind ${v['kind']}');
         }
+      });
+    }
+  });
+
+  group('medication_safety_vectors (MED-SAFETY-ENGINE-1)', () {
+    final cat = load('medication_safety_vectors.json');
+    final products = [
+      for (final p in cat['products']! as List<Object?>)
+        ProductConcept.fromJson(p! as Map<String, Object?>),
+    ];
+    final rules = [
+      for (final r in cat['rules']! as List<Object?>)
+        InteractionRule.fromJson(r! as Map<String, Object?>),
+    ];
+    final pack = SafetyPack.fromJson(cat['pack']! as Map<String, Object?>);
+    for (final v in vectors('medication_safety_vectors.json')) {
+      final id = v['vector_id']! as String;
+      test('$id ${v['note']}', () {
+        final entries = [
+          for (final x in v['entries']! as List<Object?>)
+            ExposureEntry.fromJson(x! as Map<String, Object?>),
+        ];
+        final conditions = [
+          for (final c in v['conditions']! as List<Object?>) c! as String,
+        ];
+        final a = assessSafety(products, entries, rules, conditions, pack);
+        final e = v['expected']! as Map<String, Object?>;
+        checkExpectedKeys(e, {
+          'types',
+          'guaranteed_safe',
+          'combined',
+          'combined_reason',
+          'exposure_basis',
+        }, id);
+        expect([for (final f in a.findings) f.type], e['types']);
+        // No interaction found ≠ safe: never true, whatever the vector says.
+        for (final f in a.findings) {
+          expect(f.guaranteedSafe, isFalse);
+        }
+        if (e.containsKey('guaranteed_safe')) {
+          expect(e['guaranteed_safe'], isFalse);
+        }
+        SafetyFinding find(String ing) => a.findings.firstWhere(
+          (x) => x.ingredientId == ing,
+          orElse: () => fail('$id: no finding for $ing'),
+        );
+        final combined = (e['combined'] as Map<String, Object?>?) ?? const {};
+        for (final c in combined.entries) {
+          final f = find(c.key);
+          if (c.value == null) {
+            expect(f.combinedAmount, isNull);
+          } else {
+            final want = c.value! as Map<String, Object?>;
+            close(f.combinedAmount?.value, want['value'], 1e-12, id);
+            expect(f.combinedAmount?.unit, want['unit']);
+          }
+        }
+        final reasons =
+            (e['combined_reason'] as Map<String, Object?>?) ?? const {};
+        for (final c in reasons.entries) {
+          expect(find(c.key).combinedReason, c.value);
+        }
+        if (e.containsKey('exposure_basis')) {
+          expect(a.findings.first.exposureBasis, e['exposure_basis']);
+        }
+        expect(a.engineId, safetyEngineId);
+        expect(a.engineVersion, safetyEngineVersion);
+        expect(a.pack.packId, 'SYNTHETIC-SAFETY-PACK-1');
+        expect(a.limitations, safetyLimitations);
+        expect(a.inputs.entries, same(entries));
+      });
+    }
+  });
+
+  group('preventive_vectors (PREVENTIVE-ENGINE-1)', () {
+    final cat = load('preventive_vectors.json');
+    List<PreventiveRule> parse(Object? rules) => [
+      for (final r in rules! as List<Object?>)
+        PreventiveRule.fromJson(r! as Map<String, Object?>),
+    ];
+    final packRules = parse(cat['rules']);
+    for (final v in vectors('preventive_vectors.json')) {
+      final id = v['vector_id']! as String;
+      test('$id ${v['service_id']}', () {
+        final input = PreventiveInput.fromJson(
+          v['input']! as Map<String, Object?>,
+        );
+        final rules = v['rules'] == null ? packRules : parse(v['rules']);
+        final a = assessService(v['service_id']! as String, rules, input);
+        final got = <String, Object?>{
+          'assessment_status': a.assessmentStatus,
+          'due_state': a.dueState,
+          'eligibility_state': a.eligibilityState,
+          'next_due_date': a.nextDueDate,
+          'recommendation_mode': a.recommendationMode,
+        };
+        final e = v['expected']! as Map<String, Object?>;
+        checkExpectedKeys(e, got.keys.toSet(), id);
+        for (final k in e.keys) {
+          expect(got[k], e[k], reason: '$id.$k');
+        }
+        expect(a.engineId, preventiveEngineId);
+        expect(a.engineVersion, preventiveEngineVersion);
+        expect(a.limitations, isNotEmpty);
+        expect(a.inputs, same(input));
+        expect(a.explanation, isNotEmpty);
       });
     }
   });
