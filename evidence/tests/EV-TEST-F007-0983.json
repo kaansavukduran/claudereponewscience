@@ -1,0 +1,54 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0983",
+  "kind": "TEST",
+  "forge_id": "U029@v0.32",
+  "source_revision": "b1c358b41f469e1684a977195ee848a0728c8ba2",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "python3 tools/verify_contracts.py",
+  "argv": [
+    "python3",
+    "tools/verify_contracts.py"
+  ],
+  "cwd": ".",
+  "started_at": "2026-11-12T07:36:48.629Z",
+  "finished_at": "2026-11-12T07:36:48.881Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v378 x86_64",
+  "summary": "PASS     release_outputs_present       6 files",
+  "log_sha256": "68c3c859dd3054244dd63014aa3c716479dcb9eb77570d67d2e5d5fa6391316b",
+  "log_lines": 11,
+  "log_tail": [
+    "PASS     core_derived_vectors          19 vectors",
+    "PASS     lab_interpretation_vectors    19 vectors",
+    "PASS     nutrition_vectors             5 vectors (3 scale, 2 recipe)",
+    "PASS     medication_safety_vectors     10 vectors",
+    "PASS     preventive_vectors            20 vectors",
+    "PASS     golden_vectors(total)         73/73 vectors ran",
+    "PASS     sqlite_kernel_migrations      1 migration(s), FK on",
+    "NOT_RUN  postgres_runtime              PostgreSQL DDL/RLS not executed in this repository yet (AT-821)",
+    "PASS     golden_vector_id_uniqueness   73 unique IDs",
+    "PASS     v0.25_canonical_id_integrity  18 new IDs",
+    "PASS     release_outputs_present       6 files"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "tools/verify_contracts.py",
+    "contracts",
+    "packages/domain"
+  ]
+}
