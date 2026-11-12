@@ -3,48 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "F015-L2",
-    "contract": "v0.32",
-    "run_id": "F015-L2@v0.32",
-    "slice": "Linux packaging: the .deb and .rpm declare the GL libraries the engine loads at runtime (libGLESv2 defect); CI installs and launches the .deb in minimal Ubuntu 22.04 and 24.04",
-    "goal": "A clean Ubuntu 22.04 or 24.04 installs the package with all it needs and the app starts.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "2eb8173",
-    "app_revision": null,
-    "started_at": "2026-11-12T13:00:00Z",
-    "finished_at": null,
-    "scope": [
-      "deb Depends adds libgles2, libgl1; rpm Requires libGLESv2.so.2 and libGL.so.1",
-      "portable README lists the libraries",
-      "CI job linux-deb-install-smoke (minimal ubuntu:22.04 and 24.04 containers, apt install, xvfb launch)",
-      "D-041; G-12 and R-15 updated"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "IMPLEMENTED by an Opus implementer in a worktree",
-      "RUNTIME_TESTED by the implementer in debootstrap minbase chroots (22.04 and 24.04, Xvfb, Mesa software GL): unfixed deb aborts on both; fixed deb stays up 12 s; uninstall clean"
-    ],
-    "last_verified_gate": null,
-    "next_action": "push and read the linux-deb-install-smoke CI job",
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": "Chroot evidence only (host kernel, no real desktop or Wayland). rpm install/launch, AppImage, Flatpak, Debian, Fedora and Nobara are BLOCKED_ENVIRONMENT here. The CI job has not run until pushed.",
-    "depends_on": [
-      "R014"
-    ],
-    "review": "lead read of the packaging diff and the CI job",
-    "out_of_scope": [
-      "signing",
-      "Windows and macOS packages"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -55,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "R014@v0.32 (2026-11-12, source revision 1da654a4f71b)",
+  "last_completed_forge": "F015-L2@v0.32 (2026-11-12, source revision 298a440416fd)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -68,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-1011",
+      "evidence_id": "EV-TEST-F007-1024",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-1012",
+      "evidence_id": "EV-TEST-F007-1025",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-1013",
+      "evidence_id": "EV-TEST-F007-1026",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "flutter test, TZ=UTC (881 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-1014",
+      "evidence_id": "EV-TEST-F007-1027",
       "criterion": "AC-1..AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-1015",
+      "evidence_id": "EV-TEST-F007-1028",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-1016",
+      "evidence_id": "EV-BUILD-F007-1029",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (the 129 checks plus Documents): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup, Medications, Nutrition, Activity, Conditions, Preventive, Documents, Sleep and How you feel; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-1017",
+      "evidence_id": "EV-RUNTIME-F007-1030",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-1018",
+      "evidence_id": "EV-TEST-F007-1031",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-1019",
+      "evidence_id": "EV-BUILD-F007-1032",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-1020",
+      "evidence_id": "EV-RUNTIME-F007-1033",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "flutter test with TZ=America/New_York (882 PASS)",
-      "evidence_id": "EV-TEST-F007-1021",
+      "evidence_id": "EV-TEST-F007-1034",
       "criterion": "AC-1..AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-1022",
+      "evidence_id": "EV-TEST-F007-1035",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-1023",
+      "evidence_id": "EV-TEST-F007-1036",
       "criterion": "AC-4",
-      "source_revision": "1da654a4f71b3ec924730501763ca0faa2d0cda1",
+      "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
       "result": "PASS"
     }
   ],
@@ -187,16 +148,16 @@
     }
   ],
   "next_recommended_forge": {
-    "forge_id": "F015-L2",
+    "forge_id": "U030",
     "contract": "v0.32",
-    "run_id": "F015-L2@v0.32",
-    "slice": "Linux packaging: fix the Ubuntu 22.04 libGLESv2 dependency defect and re-run the package install/launch checks",
-    "why": "F015-L1 is IN_PROGRESS_RECOVERABLE with an open Ubuntu 22.04 defect; the owner wants current downloads for every platform.",
+    "run_id": "U030@v0.32",
+    "slice": "AIONIA v1.2 audit and design pass: design brief, information architecture, tokens, responsive and accessibility QA on every main screen, regression tests, PASS/FAIL/NOT TESTED report",
+    "why": "Owner asked to develop the product to the AIONIA v1.2 standard (Drive document, 12.11.2026).",
     "depends_on": [
-      "R014"
+      "F015-L2"
     ]
   },
-  "updated_at": "2026-11-12T08:46:06Z",
+  "updated_at": "2026-11-12T13:52:39Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -12520,6 +12481,163 @@
       ],
       "review": "independent Opus review R014: no blocking findings",
       "out_of_scope": []
+    },
+    "F015-L2@v0.32": {
+      "forge_id": "F015-L2",
+      "contract": "v0.32",
+      "run_id": "F015-L2@v0.32",
+      "slice": "Linux packaging: the .deb and .rpm declare the GL libraries the engine loads at runtime (libGLESv2 defect); CI installs and launches the .deb in minimal Ubuntu 22.04 and 24.04",
+      "goal": "A clean Ubuntu 22.04 or 24.04 installs the package with all it needs and the app starts.",
+      "status": "DONE",
+      "baseline_commit": "2eb8173",
+      "app_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+      "started_at": "2026-11-12T13:00:00Z",
+      "finished_at": "2026-11-12T13:52:39Z",
+      "scope": [
+        "deb Depends adds libgles2, libgl1; rpm Requires libGLESv2.so.2 and libGL.so.1",
+        "portable README lists the libraries",
+        "CI job linux-deb-install-smoke (minimal ubuntu:22.04 and 24.04 containers, apt install, xvfb launch)",
+        "D-041; G-12 and R-15 updated"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "IMPLEMENTED by an Opus implementer in a worktree",
+        "RUNTIME_TESTED by the implementer in debootstrap minbase chroots (22.04 and 24.04, Xvfb, Mesa software GL): unfixed deb aborts on both; fixed deb stays up 12 s; uninstall clean",
+        "GATES: 13 receipts on clean tree 298a440, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-1036",
+      "next_action": null,
+      "files_touched": [
+        ".github/workflows/ci.yml",
+        "docs/ROADMAP.md",
+        "packaging/linux/deb/control.in",
+        "packaging/linux/portable/README.txt",
+        "packaging/linux/rpm/human-health-os.spec.in",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md",
+        "project_state/KNOWN_GAPS.md",
+        "project_state/RISKS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-1024",
+        "EV-TEST-F007-1025",
+        "EV-TEST-F007-1026",
+        "EV-TEST-F007-1027",
+        "EV-TEST-F007-1028",
+        "EV-BUILD-F007-1029",
+        "EV-RUNTIME-F007-1030",
+        "EV-TEST-F007-1031",
+        "EV-BUILD-F007-1032",
+        "EV-RUNTIME-F007-1033",
+        "EV-TEST-F007-1034",
+        "EV-TEST-F007-1035",
+        "EV-TEST-F007-1036"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-1024",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-1025",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-1026",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (881 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-1027",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-1028",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-1029",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (the 129 checks plus Documents): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup, Medications, Nutrition, Activity, Conditions, Preventive, Documents, Sleep and How you feel; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-1030",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-1031",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-1032",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-1033",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (882 PASS)",
+          "evidence_id": "EV-TEST-F007-1034",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-1035",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-1036",
+          "criterion": "AC-4",
+          "source_revision": "298a440416fd5bd8cadef26596395bdcbde964a6",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "F015-L2_COMPLETE",
+      "limitations": "Chroot evidence only (host kernel, no real desktop or Wayland). rpm install/launch, AppImage, Flatpak, Debian, Fedora and Nobara are BLOCKED_ENVIRONMENT here. The CI job has not run until pushed.",
+      "depends_on": [
+        "R014"
+      ],
+      "review": "CI linux-deb-install-smoke PASS on run 43187598671 (minimal ubuntu 22.04 and 24.04 install and launch)",
+      "out_of_scope": [
+        "signing",
+        "Windows and macOS packages"
+      ]
     }
   },
   "forge_history_legacy_ids": {
