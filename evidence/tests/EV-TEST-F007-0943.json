@@ -1,0 +1,55 @@
+{
+  "receipt_schema": 2,
+  "evidence_id": "EV-TEST-F007-0943",
+  "kind": "TEST",
+  "forge_id": "R012@v0.32",
+  "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+  "working_tree_dirty": false,
+  "dirty_source_paths": [],
+  "command": "env TZ=America/New_York flutter test",
+  "argv": [
+    "env",
+    "TZ=America/New_York",
+    "flutter",
+    "test"
+  ],
+  "cwd": "human_health_os",
+  "started_at": "2026-11-12T02:43:44.196Z",
+  "finished_at": "2026-11-12T02:47:55.338Z",
+  "exit_code": 0,
+  "expected_exit_code": 0,
+  "result": "PASS",
+  "tool_versions": {
+    "flutter": "3.47.6",
+    "dart": "3.13.5",
+    "flutter_engine": "692136cb6582dbfc5af3fb33c2515a069f2f66d0",
+    "node": "v22.23.4",
+    "python": "Python 3.13.18"
+  },
+  "host": "Linux 6.18.44-fc-v378 x86_64",
+  "summary": "04:07 +795: All tests passed!",
+  "log_sha256": "e8d64d8cd311ffd8164482e2f321661bd8f020e4362e9c45b58e38634dde4ece",
+  "log_lines": 880,
+  "log_tail": [
+    "04:04 +784: /home/user/claudereponewscience/human_health_os/test/domain/g007_uniprot_test.dart: hidden characters are removed and long fields capped",
+    "04:04 +785: /home/user/claudereponewscience/human_health_os/test/domain/f007s4_feeling_test.dart: a check-in keeps only the levels given; none given is refused and nothing is written",
+    "04:04 +786: /home/user/claudereponewscience/human_health_os/test/domain/f007s4_feeling_test.dart: round trip at schema 8; an empty stored check-in is refused",
+    "04:04 +787: /home/user/claudereponewscience/human_health_os/test/domain/f007s4_feeling_test.dart: a check-in entered in error leaves the list",
+    "04:04 +788: /home/user/claudereponewscience/human_health_os/test/domain/g006_clinvar_yield_test.dart: a timer set before reading fires while a burst is read",
+    "04:05 +789: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: only core/redact.dart writes to the console",
+    "04:05 +790: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: an error is shown as its type and code, never its message",
+    "04:05 +791: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: log events keep safe fields only",
+    "04:05 +792: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: framework and uncaught errors are reported redacted",
+    "04:05 +793: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: vault, records, wrong keys, tampering, backups and refused restores print nothing sensitive",
+    "04:05 +794: /home/user/claudereponewscience/human_health_os/test/security/no_sensitive_logs_test.dart: a failing vault store: the gate and the log show only the error type",
+    "04:07 +795: All tests passed!"
+  ],
+  "lockfile_sha256": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+  "lockfiles": {
+    "human_health_os/pubspec.lock": "1499e9db5d664254fb35f0a9733052eb8dfb5b4331e3947f01e63669de88aeda",
+    "pnpm-lock.yaml": "ba397984506f24683f99799a41b2bb013e79b93647676ca0e82de32318734454"
+  },
+  "covers": [
+    "human_health_os"
+  ]
+}

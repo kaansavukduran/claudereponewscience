@@ -1,0 +1,24 @@
+# f008-dev-schema5 2026-11-12T02:43:25Z
+# host: Ubuntu 24.04.5 LTS, x86_64
+# display: DISPLAY=:99
+# command: human_health_os/build/linux/x64/release/bundle/human_health_os
+# vault sha256 before: e81f91aad1a8990904abcda152e14ec81c652e96b3779ed5a1b619dfe76a5112
+# vault record schemas:       1 "schema_version":1       1 "schema_version":2       2 "schema_version":3      11 "schema_version":4       9 "schema_version":5 
+libEGL warning: DRI3 error: Could not get DRI3 device
+libEGL warning: Ensure your X server supports DRI3 to get accelerated rendering
+
+(org.humanhealthos.HumanHealthOS:9414): Atk-CRITICAL **: 02:43:25.143: atk_socket_embed: assertion 'plug_id != NULL' failed
+[IMPORTANT:flutter/shell/platform/embedder/embedder_surface_gl_impeller.cc(126)] Using the Impeller rendering backend (OpenGLESSDF).
+
+** (org.humanhealthos.HumanHealthOS:9414): CRITICAL **: 02:43:25.567: void fl_gnome_settings_set_interface_settings(FlGnomeSettings *, GSettings *): assertion 'G_IS_SETTINGS(settings)' failed
+# screenshot: f008-dev-schema5-today.png
+# screenshot: f008-dev-schema5-measurements.png
+# screenshot: f008-dev-schema5-history.png
+# liveness: alive
+# vault sha256 after: e81f91aad1a8990904abcda152e14ec81c652e96b3779ed5a1b619dfe76a5112
+# vault file: unchanged
+# files: <home>/.local/share/human-health-os/appearance.json <home>/.local/share/human-health-os/vault.hhoslog.jsonl 
+# data folder: only the vault and the display preferences
+# preferences: unchanged
+# error events: none
+# result: PASS

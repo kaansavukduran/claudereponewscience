@@ -3,50 +3,9 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "IMPLEMENTING",
+  "development_state": "READY",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": {
-    "forge_id": "R012",
-    "contract": "v0.32",
-    "run_id": "R012@v0.32",
-    "slice": "Independent review of the preventive slice and the Dart engines; preventive fixes (engine fixes ride with F011-S2)",
-    "goal": "Planned never becomes done by a correction; nothing is chosen for the person; storage failures are said in words.",
-    "status": "IMPLEMENTING",
-    "baseline_commit": "36fc31b",
-    "app_revision": null,
-    "started_at": "2026-11-12T02:40:00Z",
-    "finished_at": null,
-    "scope": [
-      "PLANNED_NOT_DONE: a correction never turns planned into done",
-      "preventive type starts at other",
-      "save failures shown in words",
-      "status-aware time wording (planned for / done)",
-      "clearer Turkish (Koruyucu sağlık kaydı; Taramaların sonucu kaydedilmez)",
-      "tests: field-named errors, bad stored values, unsure-to-done allowed; guard mutation caught"
-    ],
-    "acceptance_criteria": null,
-    "completed_steps": [
-      "REVIEWED by an Opus reviewer (read-only)",
-      "IMPLEMENTED by the lead",
-      "TESTED: preventive tests; guard mutation caught"
-    ],
-    "last_verified_gate": null,
-    "next_action": null,
-    "files_touched": [],
-    "migration_ids": null,
-    "evidence_ids": [],
-    "verified_gates": [],
-    "blocker": null,
-    "result": null,
-    "limitations": "The review's engine findings (min_count, non-finite results, input copy, strict vector keys) are handed to F011-S2 and land with it.",
-    "depends_on": [
-      "F011-S1"
-    ],
-    "review": "Opus reviewer: blocking planned-to-done correction fixed; should-fix preventive items fixed; engine items forwarded to F011-S2",
-    "out_of_scope": [
-      "engine fixes (F011-S2)"
-    ]
-  },
+  "active_forge": null,
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
@@ -57,7 +16,7 @@
       "next_action": "add libgles2 / libGLESv2.so.2()(64bit) dependencies, adopt D-012 names, rebuild staging3, rerun the Linux matrix incl. Ubuntu 22.04"
     }
   ],
-  "last_completed_forge": "F011-S1@v0.32 (2026-11-11, source revision e2f672cecaa9)",
+  "last_completed_forge": "R012@v0.32 (2026-11-12, source revision 0dbe4f52470f)",
   "baseline": {
     "git_commit": "254c534f10b0a5d01e96edcc0bcb5630fbba6936",
     "working_tree": "clean at v0.32 Phase 0 start (only docs/handoff/v0.32 untracked)",
@@ -70,93 +29,93 @@
   "verified_gates": [
     {
       "gate": "flutter pub get",
-      "evidence_id": "EV-TEST-F007-0920",
+      "evidence_id": "EV-TEST-F007-0933",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "dart format --set-exit-if-changed . (0 changed)",
-      "evidence_id": "EV-TEST-F007-0921",
+      "evidence_id": "EV-TEST-F007-0934",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "flutter analyze (no issues)",
-      "evidence_id": "EV-TEST-F007-0922",
+      "evidence_id": "EV-TEST-F007-0935",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
-      "gate": "flutter test, TZ=UTC (793 PASS, 1 skipped)",
-      "evidence_id": "EV-TEST-F007-0923",
+      "gate": "flutter test, TZ=UTC (794 PASS, 1 skipped)",
+      "evidence_id": "EV-TEST-F007-0936",
       "criterion": "AC-1..AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "state/evidence tooling unit tests",
-      "evidence_id": "EV-TEST-F007-0924",
+      "evidence_id": "EV-TEST-F007-0937",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0925",
+      "evidence_id": "EV-BUILD-F007-0938",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "Playwright smoke in Chromium (129 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup, Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel; no console errors, no external requests",
-      "evidence_id": "EV-RUNTIME-F007-0926",
+      "evidence_id": "EV-RUNTIME-F007-0939",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "Linux integration on real files (9 PASS)",
-      "evidence_id": "EV-TEST-F007-0927",
+      "evidence_id": "EV-TEST-F007-0940",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "flutter build linux --release (development profile) COMPILED",
-      "evidence_id": "EV-BUILD-F007-0928",
+      "evidence_id": "EV-BUILD-F007-0941",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
-      "evidence_id": "EV-RUNTIME-F007-0929",
+      "evidence_id": "EV-RUNTIME-F007-0942",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
-      "gate": "flutter test with TZ=America/New_York (794 PASS)",
-      "evidence_id": "EV-TEST-F007-0930",
+      "gate": "flutter test with TZ=America/New_York (795 PASS)",
+      "evidence_id": "EV-TEST-F007-0943",
       "criterion": "AC-1..AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "contracts verification (TS reference)",
-      "evidence_id": "EV-TEST-F007-0931",
+      "evidence_id": "EV-TEST-F007-0944",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     },
     {
       "gate": "pnpm test",
-      "evidence_id": "EV-TEST-F007-0932",
+      "evidence_id": "EV-TEST-F007-0945",
       "criterion": "AC-4",
-      "source_revision": "e2f672cecaa91c5a3c6fe0eefe7f0ff2acc6ef3f",
+      "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
       "result": "PASS"
     }
   ],
@@ -192,13 +151,13 @@
     "forge_id": "F011-S2",
     "contract": "v0.32",
     "run_id": "F011-S2@v0.32",
-    "slice": "Medication safety and preventive engines in Dart; all 73 golden vectors; independent review R012 of the preventive slice and the engines",
-    "why": "30 of 73 vectors are not ported; the preventive slice and the engines were built by implementers and need an independent review.",
+    "slice": "Medication safety and preventive engines in Dart; all 73 golden vectors; R012 engine hardening",
+    "why": "Implemented and tested by an Opus implementer; ready to gate.",
     "depends_on": [
-      "F011-S1"
+      "R012"
     ]
   },
-  "updated_at": "2026-11-11T21:17:18Z",
+  "updated_at": "2026-11-12T02:48:31Z",
   "authoritative_sources": {
     "product_semantics": "docs/handoff/v0.24/LONGEVITY_APP_MASTER_HANDOFF_v0.24.md",
     "process_master": "docs/handoff/v0.32/ (D-013); v0.31 superseded (D-011)",
@@ -11421,6 +11380,163 @@
       "out_of_scope": [
         "UI",
         "medication safety and preventive engines"
+      ]
+    },
+    "R012@v0.32": {
+      "forge_id": "R012",
+      "contract": "v0.32",
+      "run_id": "R012@v0.32",
+      "slice": "Independent review of the preventive slice and the Dart engines; preventive fixes (engine fixes ride with F011-S2)",
+      "goal": "Planned never becomes done by a correction; nothing is chosen for the person; storage failures are said in words.",
+      "status": "DONE",
+      "baseline_commit": "36fc31b",
+      "app_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+      "started_at": "2026-11-12T02:40:00Z",
+      "finished_at": "2026-11-12T02:48:31Z",
+      "scope": [
+        "PLANNED_NOT_DONE: a correction never turns planned into done",
+        "preventive type starts at other",
+        "save failures shown in words",
+        "status-aware time wording (planned for / done)",
+        "clearer Turkish (Koruyucu sağlık kaydı; Taramaların sonucu kaydedilmez)",
+        "tests: field-named errors, bad stored values, unsure-to-done allowed; guard mutation caught"
+      ],
+      "acceptance_criteria": null,
+      "completed_steps": [
+        "REVIEWED by an Opus reviewer (read-only)",
+        "IMPLEMENTED by the lead",
+        "TESTED: preventive tests; guard mutation caught",
+        "GATES: 13 receipts on clean tree 0dbe4f5, all PASS"
+      ],
+      "last_verified_gate": "EV-TEST-F007-0945",
+      "next_action": null,
+      "files_touched": [
+        "human_health_os/lib/src/application/heartbeat_service.dart",
+        "human_health_os/lib/src/features/preventive/preventive_screen.dart",
+        "human_health_os/lib/src/l10n/strings.dart",
+        "human_health_os/test/domain/f009s2_preventive_test.dart",
+        "human_health_os/test/widget/f009s2_preventive_screen_test.dart",
+        "project_state/CURRENT_STATE.json",
+        "project_state/DECISIONS.md"
+      ],
+      "migration_ids": null,
+      "evidence_ids": [
+        "EV-TEST-F007-0933",
+        "EV-TEST-F007-0934",
+        "EV-TEST-F007-0935",
+        "EV-TEST-F007-0936",
+        "EV-TEST-F007-0937",
+        "EV-BUILD-F007-0938",
+        "EV-RUNTIME-F007-0939",
+        "EV-TEST-F007-0940",
+        "EV-BUILD-F007-0941",
+        "EV-RUNTIME-F007-0942",
+        "EV-TEST-F007-0943",
+        "EV-TEST-F007-0944",
+        "EV-TEST-F007-0945"
+      ],
+      "verified_gates": [
+        {
+          "gate": "flutter pub get",
+          "evidence_id": "EV-TEST-F007-0933",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "dart format --set-exit-if-changed . (0 changed)",
+          "evidence_id": "EV-TEST-F007-0934",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter analyze (no issues)",
+          "evidence_id": "EV-TEST-F007-0935",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test, TZ=UTC (794 PASS, 1 skipped)",
+          "evidence_id": "EV-TEST-F007-0936",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "state/evidence tooling unit tests",
+          "evidence_id": "EV-TEST-F007-0937",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build web --release --no-web-resources-cdn (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0938",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "Playwright smoke in Chromium (129 checks): no introduction forced in the browser, Today, Timeline, Labs, measurements, genetics, backup, Medications, Nutrition, Activity, Conditions, Preventive, Sleep and How you feel; no console errors, no external requests",
+          "evidence_id": "EV-RUNTIME-F007-0939",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux integration on real files (9 PASS)",
+          "evidence_id": "EV-TEST-F007-0940",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter build linux --release (development profile) COMPILED",
+          "evidence_id": "EV-BUILD-F007-0941",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "Linux release binary on the schema-5 fixture for a returning person (Xvfb): vault and display preferences unchanged, no other files, no error events",
+          "evidence_id": "EV-RUNTIME-F007-0942",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "flutter test with TZ=America/New_York (795 PASS)",
+          "evidence_id": "EV-TEST-F007-0943",
+          "criterion": "AC-1..AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "contracts verification (TS reference)",
+          "evidence_id": "EV-TEST-F007-0944",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        },
+        {
+          "gate": "pnpm test",
+          "evidence_id": "EV-TEST-F007-0945",
+          "criterion": "AC-4",
+          "source_revision": "0dbe4f52470f722403d9b12b17290edd0329ff7a",
+          "result": "PASS"
+        }
+      ],
+      "blocker": null,
+      "result": "R012_COMPLETE",
+      "limitations": "The review's engine findings (min_count, non-finite results, input copy, strict vector keys) are handed to F011-S2 and land with it.",
+      "depends_on": [
+        "F011-S1"
+      ],
+      "review": "Opus reviewer (read-only): blocking planned-to-done correction fixed",
+      "out_of_scope": [
+        "engine fixes (F011-S2)"
       ]
     }
   },
