@@ -1061,6 +1061,79 @@ class S {
     '$kind: $value, ölçüm zamanı $when${saved == null ? '' : ', kaydedilme zamanı $saved'}, $source',
   );
 
+  // Worked out from your records (U029, D-039): a number and how it was
+  // worked out; never a category, band or advice.
+  String get derivedTitle =>
+      _t('Worked out from your records', 'Kayıtlarından hesaplananlar');
+  String get derivedTileHint => _t(
+    'Numbers a formula works out from what you recorded, with the records used',
+    'Bir formülün kaydettiklerinden hesapladığı sayılar ve kullanılan kayıtlar',
+  );
+  String get derivedIntro => _t(
+    'Each number here is worked out by a formula from your own records. It is '
+        'a calculation, not a measurement. No label or advice is added.',
+    'Buradaki her sayı, kendi kayıtlarından bir formülle hesaplanır. Bir '
+        'ölçüm değil, bir hesaplamadır. Etiket ya da öneri eklenmez.',
+  );
+  String get derivedNotMeasured =>
+      _t('worked out, not measured', 'hesaplandı, ölçülmedi');
+  String derivedModelName(String modelId) => switch (modelId) {
+    'DERIVED-BMI-1' => _t('Body mass index (BMI)', 'Beden kitle indeksi (BKİ)'),
+    'DERIVED-WAIST_HEIGHT_RATIO-1' => _t(
+      'Waist-to-height ratio',
+      'Bel-boy oranı',
+    ),
+    _ => modelId,
+  };
+  String derivedUnit(String? unit) => switch (unit) {
+    'kg/m2' => 'kg/m²',
+    '1' || null => _t('ratio, no unit', 'oran, birimsiz'),
+    _ => unit,
+  };
+  String derivedModel(String id, String version) =>
+      _t('Model: $id, version $version', 'Model: $id, sürüm $version');
+  String derivedPack(String id, String version) =>
+      _t('Model pack: $id $version', 'Model paketi: $id $version');
+  String get derivedUsedTitle => _t('Records used', 'Kullanılan kayıtlar');
+  String derivedUsedLine(String kind, String value, String when) =>
+      '$kind: $value · $when';
+  String get derivedLimitsTitle => _t('Limitations', 'Sınırlamalar');
+  String get derivedNoLimitations =>
+      _t('The model lists none.', 'Model bir sınırlama belirtmiyor.');
+
+  /// The engine's limitation text; a Turkish wording for the known ones,
+  /// the engine's own words otherwise.
+  String derivedLimitation(String text) => lang == AppLang.en
+      ? text
+      : switch (text) {
+          'Number only; no diagnostic category is assigned by this formula.' =>
+            'Yalnızca bir sayı; bu formül tanısal bir kategori atamaz.',
+          'No universal good/bad threshold is bundled with this formula.' =>
+            'Bu formülle birlikte evrensel bir iyi/kötü eşiği gelmez.',
+          _ => text,
+        };
+  String derivedNeeds(List<String> kinds) =>
+      _t('needs: ${kinds.join(', ')}', 'gerekiyor: ${kinds.join(', ')}');
+  String derivedUnresolved(List<String> kinds) => _t(
+    'not worked out: choose one of two versions on the Timeline first: '
+        '${kinds.join(', ')}',
+    'hesaplanmadı: önce Zaman çizelgesinde iki sürümden birini seç: '
+        '${kinds.join(', ')}',
+  );
+  String derivedRefused(String code) => _t(
+    'not worked out: the formula did not accept these records ($code)',
+    'hesaplanmadı: formül bu kayıtları kabul etmedi ($code)',
+  );
+  String derivedDaysApart(int days) => _t(
+    'These records were made $days ${days == 1 ? 'day' : 'days'} apart; '
+        'each date is shown.',
+    'Bu kayıtlar arasında $days gün var; her birinin tarihi gösteriliyor.',
+  );
+  String derivedSpoken(String name, String value, String unit) => _t(
+    '$name: $value $unit, worked out, not measured',
+    '$name: $value $unit, hesaplandı, ölçülmedi',
+  );
+
   // Genetics (G001): a list of what a raw DNA file contains; never a meaning.
   String get summaryTitle => _t('Summary for a visit', 'Muayene için özet');
   String get summaryTileHint => _t(

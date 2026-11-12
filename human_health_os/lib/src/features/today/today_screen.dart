@@ -8,6 +8,7 @@ import '../../domain/records/health_record.dart';
 import '../../l10n/strings.dart';
 import '../../navigation/destinations.dart';
 import '../../presentation/widgets/status_chip.dart';
+import '../derived/derived_screen.dart';
 import '../genetics/genetics_screen.dart';
 import '../guide/body_guide_screen.dart';
 import '../guide/glossary_screen.dart';
@@ -116,6 +117,18 @@ class TodayScreen extends StatelessWidget {
             onTap: () => Navigator.of(context).push(
               MaterialPageRoute<void>(
                 builder: (_) => SummaryScreen(services: services),
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
+          _ToolTile(
+            key: const ValueKey('tool-derived'),
+            icon: Icons.calculate_outlined,
+            title: s.derivedTitle,
+            hint: s.derivedTileHint,
+            onTap: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => DerivedScreen(services: services),
               ),
             ),
           ),

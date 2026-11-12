@@ -3,9 +3,49 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U029",
+    "contract": "v0.32",
+    "run_id": "U029@v0.32",
+    "slice": "Derived values from the person's records, shown with model, inputs, missing inputs and limitations; worked out, not measured",
+    "goal": "The first honest use of the engines in the app: a number is shown only with its formula, its records and its limits, never with a label.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "c435d7a",
+    "app_revision": null,
+    "started_at": "2026-11-12T07:50:00Z",
+    "finished_at": null,
+    "scope": [
+      "domain/derived/derived_from_records.dart (pure Dart view model)",
+      "features/derived/derived_screen.dart (read-only page)",
+      "Today tools tile 'tool-derived'",
+      "BMI and waist-to-height ratio from MP-CORE-DERIVED-1 1.0.0",
+      "needs: <input> when missing; two live versions are never picked",
+      "D-039"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree; lead read the strings",
+      "TESTED by the implementer: 866 PASS UTC, 867 New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "G010"
+    ],
+    "review": "lead read; no category, band or advice in the strings",
+    "out_of_scope": [
+      "lab, nutrition, medication and preventive engines in the UI"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
