@@ -3,7 +3,7 @@
 // are SEPARATE channels. No real clinical threshold is bundled; all demo rules are synthetic.
 
 import { MAD_SCALE, ROBUST_Z_MIN_SAMPLE, median } from './coreDerived.ts';
-import { isPresent } from './result.ts';
+import { NON_FINITE_RESULT, isPresent } from './result.ts';
 
 export const LAB_ENGINE = { engineId: 'LAB-INTERPRETATION-ENGINE-1', version: '0.24.0' } as const;
 
@@ -102,9 +102,17 @@ export type RcvState =
   | 'INVALID_CV_INPUT'
   | 'ZERO_PRIOR'
   | 'WITHIN_RCV'
-  | 'EXCEEDS_RCV';
+  | 'EXCEEDS_RCV'
+  /** The RCV or the observed change is NaN or an infinity (overflow); no number is reported. */
+  | 'NON_FINITE_RESULT';
 
-export type BaselineState = 'INSUFFICIENT_HISTORY' | 'ZERO_MAD' | 'WITHIN_PERSONAL_BASELINE' | 'UNUSUAL_FOR_PERSON';
+export type BaselineState =
+  | 'INSUFFICIENT_HISTORY'
+  | 'ZERO_MAD'
+  | 'WITHIN_PERSONAL_BASELINE'
+  | 'UNUSUAL_FOR_PERSON'
+  /** The robust z is NaN or an infinity (overflow); no number is reported. */
+  | 'NON_FINITE_RESULT';
 
 export type LabAssessmentStatus =
   | 'SUCCESS'
@@ -210,14 +218,15 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
   // 3–4. Reference interval selection and comparison (only after safe unit compatibility).
   let refState: ReferenceState = 'NO_REFERENCE';
   let interval: ReferenceIntervalSnapshot | null = null;
-  const candidates = input.reference.filter((ri) => ri.specimen === null || ri.specimen === r.specimen);
+  const candidates = (input.reference ?? []).filter((ri) => ri.specimen === null || ri.specimen === r.specimen);
   if (candidates.length > 1) {
     const distinct = new Set(candidates.map((c) => `${c.low}|${c.high}|${c.unit}`));
     if (distinct.size > 1) refState = 'CONFLICTING_REFERENCE_SOURCES';
   }
   if (refState !== 'CONFLICTING_REFERENCE_SOURCES' && candidates.length) {
     interval = candidates[0] as ReferenceIntervalSnapshot;
-    const missingCtx = interval.required_context.filter((k) => input.context[k] === null || input.context[k] === undefined || input.context[k] === '');
+    const ctx = input.context ?? {};
+    const missingCtx = interval.required_context.filter((k) => ctx[k] === null || ctx[k] === undefined || ctx[k] === '');
     if (interval.unit !== r.unit) refState = 'UNIT_NOT_COMPARABLE';
     else if (interval.method_id && r.method_id && interval.method_id !== r.method_id) refState = 'METHOD_NOT_COMPARABLE';
     else if (missingCtx.length) refState = 'INSUFFICIENT_REFERENCE_CONTEXT';
@@ -230,7 +239,7 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
     flags.push({ origin: 'APP_REFERENCE_COMPARISON', label: refState });
 
   // 5. Clinical decision limits — evaluated separately from the reference interval (AT-1089).
-  const decision = input.decision_rules
+  const decision = (input.decision_rules ?? [])
     .filter((d) => d.unit === r.unit)
     .map((d) => ({
       rule_id: d.rule_id,
@@ -243,7 +252,7 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
 
   // 6. Critical rules — independent of reference interval; never synthesised (AT-1067..1070, 1094).
   let critical: LabInterpretationAssessment['critical'] = { state: 'NO_ACTIVE_RULE', rule_id: null, external_receipt_confirmed: false };
-  const crit = input.critical_rules.filter((c) => c.status !== 'RETIRED' && (c.specimen === null || c.specimen === r.specimen));
+  const crit = (input.critical_rules ?? []).filter((c) => c.status !== 'RETIRED' && (c.specimen === null || c.specimen === r.specimen));
   const stale = crit.find((c) => c.status === 'STALE');
   const active = crit.filter((c) => c.status === 'ACTIVE');
   if (stale && !active.length) critical = { state: 'RULE_PACK_STALE', rule_id: stale.rule_id, external_receipt_confirmed: false };
@@ -265,7 +274,7 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
   if (critical.state.startsWith('SOURCE_DEFINED')) flags.push({ origin: 'APP_RULE_MATCH', label: critical.state });
 
   // 7. Longitudinal method comparability.
-  const comparability = assessComparability(r, input.prior, input.comparability_records);
+  const comparability = assessComparability(r, input.prior ?? null, input.comparability_records ?? []);
 
   // 8. Delta / RCV (blocked unless directly comparable, AT-1086).
   let rcv: LabInterpretationAssessment['rcv'] = { state: 'NO_PRIOR', rcv_percent: null, observed_percent_change: null, source: null };
@@ -276,10 +285,13 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
       const pct = rcvPercent(input.rcv);
       const prior = input.prior?.value as number;
       if (pct === null) rcv = { ...rcv, state: 'INVALID_CV_INPUT', source: input.rcv.source };
+      else if (!Number.isFinite(pct)) rcv = { ...rcv, state: NON_FINITE_RESULT, source: input.rcv.source };
       else if (prior === 0) rcv = { ...rcv, state: 'ZERO_PRIOR', rcv_percent: pct, source: input.rcv.source };
       else {
         const obs = ((x - prior) / prior) * 100;
-        rcv = {
+        rcv = !Number.isFinite(obs)
+          ? { state: NON_FINITE_RESULT, rcv_percent: pct, observed_percent_change: null, source: input.rcv.source }
+          : {
           state: Math.abs(obs) > pct ? 'EXCEEDS_RCV' : 'WITHIN_RCV',
           rcv_percent: pct,
           observed_percent_change: obs,
@@ -290,7 +302,7 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
   }
 
   // 9. Personal baseline — separate from population reference (AT-1087).
-  const pts = input.baseline_points.filter(isPresent).sort((a, b) => a - b);
+  const pts = (input.baseline_points ?? []).filter(isPresent).sort((a, b) => a - b);
   let baseline: LabInterpretationAssessment['baseline'] = { state: 'INSUFFICIENT_HISTORY', robust_z: null, n: pts.length };
   if (pts.length >= ROBUST_Z_MIN_SAMPLE) {
     const med = median(pts);
@@ -299,7 +311,9 @@ export function interpretLabResult(input: LabInterpretationInput): LabInterpreta
     else {
       const z = (x - med) / (MAD_SCALE * mad);
       const thr = input.baseline_threshold ?? 3.5;
-      baseline = { state: Math.abs(z) >= thr ? 'UNUSUAL_FOR_PERSON' : 'WITHIN_PERSONAL_BASELINE', robust_z: z, n: pts.length };
+      baseline = !Number.isFinite(z)
+        ? { state: NON_FINITE_RESULT, robust_z: null, n: pts.length }
+        : { state: Math.abs(z) >= thr ? 'UNUSUAL_FOR_PERSON' : 'WITHIN_PERSONAL_BASELINE', robust_z: z, n: pts.length };
     }
   }
 

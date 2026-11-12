@@ -1,6 +1,8 @@
 // v0.22 Medication & supplement safety engine (docs 154–163).
 // Product ≠ ingredient; plan ≠ taken; duplicate ingredient ≠ toxicity; no rule found ≠ guaranteed safe.
 
+import { NON_FINITE_RESULT } from './result.ts';
+
 export const SAFETY_ENGINE = { engineId: 'MED-SAFETY-ENGINE-1', version: '0.22.0' } as const;
 
 export type MappingState = 'REVIEWED' | 'AMBIGUOUS' | 'UNKNOWN_COMPOSITION';
@@ -81,7 +83,10 @@ export interface InteractionAssessment {
 
 const MASS_TO_MCG: Record<string, number> = { mcg: 1, mg: 1000, g: 1_000_000 };
 
-/** Sum only identical basis + convertible mass units (AT-986/987). IU never converts without a rule. */
+/**
+ * Sum only identical basis + convertible mass units (AT-986/987). IU never converts without a rule.
+ * A sum that is NaN or an infinity (overflow) gives no value and the reason NON_FINITE_RESULT (as in Dart).
+ */
 export function combineAmounts(parts: Array<{ amount: number | null; unit: string | null; basis: string }>): {
   value: number | null;
   unit: string | null;
@@ -90,11 +95,17 @@ export function combineAmounts(parts: Array<{ amount: number | null; unit: strin
   if (parts.some((p) => p.amount === null || p.unit === null)) return { value: null, unit: null, reason: 'UNDISCLOSED_AMOUNT' };
   if (new Set(parts.map((p) => p.basis)).size > 1) return { value: null, unit: null, reason: 'BASIS_MISMATCH' };
   const units = new Set(parts.map((p) => p.unit as string));
-  if (units.size === 1) return { value: parts.reduce((a, p) => a + (p.amount as number), 0), unit: [...units][0] as string, reason: null };
+  if (units.size === 1) {
+    const sum = parts.reduce((a, p) => a + (p.amount as number), 0);
+    if (!Number.isFinite(sum)) return { value: null, unit: null, reason: NON_FINITE_RESULT };
+    return { value: sum, unit: [...units][0] as string, reason: null };
+  }
   if ([...units].every((u) => u in MASS_TO_MCG)) {
     const mcg = parts.reduce((a, p) => a + (p.amount as number) * (MASS_TO_MCG[p.unit as string] as number), 0);
     const largest = [...units].sort((a, b) => (MASS_TO_MCG[b] as number) - (MASS_TO_MCG[a] as number))[0] as string;
-    return { value: mcg / (MASS_TO_MCG[largest] as number), unit: largest, reason: null };
+    const value = mcg / (MASS_TO_MCG[largest] as number);
+    if (!Number.isFinite(value)) return { value: null, unit: null, reason: NON_FINITE_RESULT };
+    return { value, unit: largest, reason: null };
   }
   return { value: null, unit: null, reason: 'UNIT_CONVERSION_RULE_NOT_INSTALLED' };
 }

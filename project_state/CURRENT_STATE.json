@@ -3,9 +3,44 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "G010",
+    "contract": "v0.32",
+    "run_id": "G010@v0.32",
+    "slice": "G-75: the TypeScript reference and the Python verifier refuse the same inputs as the Dart engines; the verifier covers all 73 vectors",
+    "goal": "All three implementations agree on every vector and on the refused inputs.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "451fe28",
+    "app_revision": null,
+    "started_at": "2026-11-12T04:30:00Z",
+    "finished_at": null,
+    "scope": [
+      "packages/domain: non-finite results refused, inputs frozen and copied, min_count and empty-window refusals, missing lists refused",
+      "packages/domain/test/hardening.test.ts (40 tests)",
+      "tools/verify_contracts.py: all five engines, every expected key, 73 of 73 vectors (41 before)"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree",
+      "TESTED: pnpm test (domain 113), verify_contracts 73/73"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F011-S2"
+    ],
+    "review": "lead read of the implementer's report",
+    "out_of_scope": []
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

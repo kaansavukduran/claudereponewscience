@@ -40,7 +40,31 @@ export interface ModelRef {
   limitations?: string[];
 }
 
+/** Error code of a calculation whose arithmetic gave NaN or an infinity (same code as the Dart engines). */
+export const NON_FINITE_RESULT = 'NON_FINITE_RESULT';
+
+/** A deep, frozen copy of a JSON-like input value (plain objects and arrays are copied; other values are kept). */
+function freezeValue(v: unknown): unknown {
+  if (Array.isArray(v)) return Object.freeze(v.map(freezeValue));
+  if (v !== null && typeof v === 'object' && (Object.getPrototypeOf(v) === Object.prototype || Object.getPrototypeOf(v) === null)) {
+    const out: Record<string, unknown> = {};
+    for (const [k, x] of Object.entries(v as Record<string, unknown>)) out[k] = freezeValue(x);
+    return Object.freeze(out);
+  }
+  return v;
+}
+
+/** The inputs a result keeps: a frozen deep copy, so changing the caller's object afterwards changes nothing. */
+export function frozenInputs(inputs: Record<string, unknown>): Record<string, unknown> {
+  return freezeValue(inputs ?? {}) as Record<string, unknown>;
+}
+
+/**
+ * A successful calculation. A non-finite number (NaN or an infinity, e.g. from an overflow) is never
+ * reported as a result: it becomes an INVALID_INPUT refusal with the code NON_FINITE_RESULT and no value.
+ */
 export function ok<T>(ref: ModelRef, value: T, inputs: Record<string, unknown>): CalcResult<T> {
+  if (typeof value === 'number' && !Number.isFinite(value)) return fail<T>(ref, 'INVALID_INPUT', NON_FINITE_RESULT, inputs);
   return {
     status: 'OK',
     value,
@@ -48,7 +72,7 @@ export function ok<T>(ref: ModelRef, value: T, inputs: Record<string, unknown>):
     modelId: ref.modelId,
     version: ref.version,
     resultClass: ref.resultClass,
-    inputs,
+    inputs: frozenInputs(inputs),
     missingInputs: [],
     errorCode: null,
     limitations: ref.limitations ?? [],
@@ -69,8 +93,8 @@ export function fail<T = number>(
     modelId: ref.modelId,
     version: ref.version,
     resultClass: ref.resultClass,
-    inputs,
-    missingInputs,
+    inputs: frozenInputs(inputs),
+    missingInputs: [...missingInputs],
     errorCode,
     limitations: ref.limitations ?? [],
   };

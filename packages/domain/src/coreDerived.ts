@@ -1,6 +1,10 @@
 // MP-CORE-DERIVED-1 — transparent deterministic calculations owned by the app.
 // Executable specification shared by Site Lab, production client and API.
 // Same golden vectors are checked by tools/verify_contracts.py (independent Python port).
+// Hardened like the Dart port (G-75, D-038): where a missing list (`sets`, `values`, `points`, `series`)
+// would throw, the function refuses instead; rolling mean/median refuse an empty or all-missing window and
+// a `min_count` that is not a finite whole number >= 1 (INVALID_MIN_COUNT); a non-finite result is refused
+// with NON_FINITE_RESULT (see `ok` in result.ts).
 
 import { type CalcResult, type ModelRef, fail, isPresent, missingKeys, ok } from './result.ts';
 
@@ -116,7 +120,10 @@ export interface TrainingSet {
 
 export function trainingVolumeLoad(inputs: { sets: TrainingSet[] }): CalcResult {
   const m = MODELS.VOLUME_LOAD;
-  const completed = inputs.sets.filter((s) => s.state === 'COMPLETED');
+  if (!Array.isArray(inputs.sets)) return fail(m, 'MISSING_INPUT', 'MISSING_REQUIRED_INPUT', inputs, ['sets']);
+  const completed = (inputs.sets as unknown[]).filter(
+    (s): s is TrainingSet => s !== null && typeof s === 'object' && (s as TrainingSet).state === 'COMPLETED',
+  );
   if (!completed.length) return fail(m, 'MISSING_INPUT', 'NO_COMPLETED_SETS', inputs, ['sets']);
   if (completed.some((s) => !isPresent(s.load_kg) || !isPresent(s.reps)))
     return fail(m, 'MISSING_INPUT', 'MISSING_REQUIRED_INPUT', inputs, ['load_kg|reps']);
@@ -130,41 +137,56 @@ function presentValues(values: ReadonlyArray<number | null | undefined>): number
   return values.filter(isPresent);
 }
 
+/** Median of an already sorted, non-empty list; an empty list throws (it never yields NaN). */
 export function median(sorted: number[]): number {
   const n = sorted.length;
+  if (n === 0) throw new RangeError('median of an empty list');
   const mid = Math.floor(n / 2);
   return n % 2 ? (sorted[mid] as number) : ((sorted[mid - 1] as number) + (sorted[mid] as number)) / 2;
 }
 
-/** Rolling mean over the last `window` observations; missing points are excluded, never zero-filled. */
-export function rollingMean(inputs: {
-  values: Array<number | null>;
-  window: number;
-  min_count?: number;
-}): CalcResult {
-  const m = MODELS.ROLLING_MEAN;
+type RollingInputs = { values: Array<number | null>; window: number; min_count?: number | null };
+
+/** The present values among the last `window` entries, or a refusal (same order of checks as the Dart port). */
+function rollingWindow(m: ModelRef, inputs: RollingInputs): { values: number[] } | { refusal: CalcResult } {
   if (!Number.isInteger(inputs.window) || inputs.window <= 0)
-    return fail(m, 'INVALID_INPUT', 'INVALID_WINDOW', inputs);
+    return { refusal: fail(m, 'INVALID_INPUT', 'INVALID_WINDOW', inputs) };
+  // min_count: absent or null means 1; anything else must be a finite whole number >= 1
+  // (a string, NaN, an infinity, 0, a negative or a fractional count is refused).
+  const rawMin: unknown = inputs.min_count;
+  let minCount = 1;
+  if (rawMin !== undefined && rawMin !== null) {
+    if (typeof rawMin !== 'number' || !Number.isInteger(rawMin) || rawMin < 1)
+      return { refusal: fail(m, 'INVALID_INPUT', 'INVALID_MIN_COUNT', inputs) };
+    minCount = rawMin;
+  }
+  if (!Array.isArray(inputs.values))
+    return { refusal: fail(m, 'MISSING_INPUT', 'MISSING_REQUIRED_INPUT', inputs, ['values']) };
   const vals = presentValues(inputs.values.slice(-inputs.window));
-  const minCount = inputs.min_count ?? 1;
-  if (vals.length < minCount)
-    return fail(m, 'MISSING_INPUT', 'INSUFFICIENT_OBSERVATIONS', inputs, ['values']);
-  return ok(m, vals.reduce((a, b) => a + b, 0) / vals.length, inputs);
+  // An empty or all-missing window never yields a value (no NaN mean, no median of nothing), whatever min_count says.
+  if (vals.length === 0 || vals.length < minCount)
+    return { refusal: fail(m, 'MISSING_INPUT', 'INSUFFICIENT_OBSERVATIONS', inputs, ['values']) };
+  return { values: vals };
 }
 
-export function rollingMedian(inputs: {
-  values: Array<number | null>;
-  window: number;
-  min_count?: number;
-}): CalcResult {
+/**
+ * Rolling mean over the last `window` observations; missing points are excluded, never zero-filled.
+ * Optional `min_count` (default 1; a finite whole number >= 1, otherwise INVALID_MIN_COUNT).
+ * An empty or all-missing window is refused with INSUFFICIENT_OBSERVATIONS.
+ */
+export function rollingMean(inputs: RollingInputs): CalcResult {
+  const m = MODELS.ROLLING_MEAN;
+  const w = rollingWindow(m, inputs);
+  if ('refusal' in w) return w.refusal;
+  return ok(m, w.values.reduce((a, b) => a + b, 0) / w.values.length, inputs);
+}
+
+/** Rolling median over the last `window` observations; same refusals as rollingMean. */
+export function rollingMedian(inputs: RollingInputs): CalcResult {
   const m = MODELS.ROLLING_MEDIAN;
-  if (!Number.isInteger(inputs.window) || inputs.window <= 0)
-    return fail(m, 'INVALID_INPUT', 'INVALID_WINDOW', inputs);
-  const vals = presentValues(inputs.values.slice(-inputs.window)).sort((a, b) => a - b);
-  const minCount = inputs.min_count ?? 1;
-  if (vals.length < minCount)
-    return fail(m, 'MISSING_INPUT', 'INSUFFICIENT_OBSERVATIONS', inputs, ['values']);
-  return ok(m, median(vals), inputs);
+  const w = rollingWindow(m, inputs);
+  if ('refusal' in w) return w.refusal;
+  return ok(m, median(w.values.sort((a, b) => a - b)), inputs);
 }
 
 export interface SeriesPoint {
@@ -175,7 +197,10 @@ export interface SeriesPoint {
 
 export function olsSlope(inputs: { points: SeriesPoint[]; min_n?: number }): CalcResult {
   const m = MODELS.OLS_SLOPE;
-  const pts = inputs.points.filter((p) => isPresent(p.t) && isPresent(p.v)) as Array<{
+  const points: unknown[] = Array.isArray(inputs.points) ? inputs.points : [];
+  const pts = points.filter(
+    (p) => p !== null && typeof p === 'object' && isPresent((p as SeriesPoint).t) && isPresent((p as SeriesPoint).v),
+  ) as Array<{
     t: number;
     v: number;
   }>;
@@ -198,7 +223,7 @@ export function olsSlope(inputs: { points: SeriesPoint[]; min_n?: number }): Cal
 export function robustZ(inputs: { x?: number | null; series: Array<number | null> }): CalcResult {
   const m = MODELS.ROBUST_Z;
   if (!isPresent(inputs.x)) return fail(m, 'MISSING_INPUT', 'MISSING_REQUIRED_INPUT', inputs, ['x']);
-  const vals = presentValues(inputs.series).sort((a, b) => a - b);
+  const vals = presentValues(Array.isArray(inputs.series) ? inputs.series : []).sort((a, b) => a - b);
   if (vals.length < ROBUST_Z_MIN_SAMPLE)
     return fail(m, 'MISSING_INPUT', 'INSUFFICIENT_OBSERVATIONS', inputs, ['series']);
   const med = median(vals);

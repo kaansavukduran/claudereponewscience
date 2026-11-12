@@ -1,7 +1,7 @@
 // Nutrition, recipe and portion math engine (doc 140). Missing nutrients stay MISSING, never 0.
 // Volume → mass only with an explicit density/measure mapping. Logged snapshots are immutable.
 
-import { isPresent } from './result.ts';
+import { NON_FINITE_RESULT, isPresent } from './result.ts';
 
 export const NUTRITION_ENGINE = { engineId: 'NUTRITION-MATH-1', version: '0.20.0' } as const;
 
@@ -27,7 +27,13 @@ export interface Quantity {
   unit: 'g' | 'mL' | 'serving' | 'piece' | string;
 }
 
-export type ScaleError = 'VOLUME_TO_MASS_BLOCKED' | 'UNKNOWN_MEASURE' | 'INVALID_QUANTITY' | 'BASIS_INCOMPATIBLE';
+export type ScaleError =
+  | 'VOLUME_TO_MASS_BLOCKED'
+  | 'UNKNOWN_MEASURE'
+  | 'INVALID_QUANTITY'
+  | 'BASIS_INCOMPATIBLE'
+  /** The arithmetic gave NaN or an infinity (e.g. an overflow); no value is reported. */
+  | typeof NON_FINITE_RESULT;
 
 export interface ScaledNutrients {
   ok: boolean;
@@ -63,6 +69,9 @@ export function scaleFood(food: FoodSnapshot, q: Quantity): ScaledNutrients {
   if (factor === null) return { ok: false, error, nutrients: {}, factor: null, conversion: null };
   const nutrients: NutrientMap = {};
   for (const [k, v] of Object.entries(food.nutrients)) nutrients[k] = isPresent(v) ? v * factor : null;
+  // An overflowing factor or nutrient refuses the whole map; NaN or an infinity is never shown.
+  if (!Number.isFinite(factor) || Object.values(nutrients).some((v) => v !== null && !Number.isFinite(v)))
+    return { ok: false, error: NON_FINITE_RESULT, nutrients: {}, factor: null, conversion: null };
   return { ok: true, error: null, nutrients, factor, conversion };
 }
 
@@ -130,14 +139,25 @@ export function computeRecipe(recipe: RecipeVersion): RecipeResult {
   const totals = sumNutrients(scaled.filter((x) => x.s.ok).map((x) => x.s.nutrients));
   const div = (d: number | null) =>
     d === null || d <= 0 ? null : Object.fromEntries(Object.entries(totals).map(([k, t]) => [k, t.known === null ? null : t.known / d]));
-  return {
-    ok: errors.length === 0,
-    errors,
-    totals,
-    per_serving: div(recipe.serving_count),
-    // Cooking yield is never assumed: per-100g cooked density requires a measured final mass.
-    per_100g_cooked: recipe.final_cooked_mass_g ? div(recipe.final_cooked_mass_g / 100) : null,
-  };
+  const perServing = div(recipe.serving_count);
+  // Cooking yield is never assumed: per-100g cooked density requires a measured final mass.
+  const per100g = recipe.final_cooked_mass_g ? div(recipe.final_cooked_mass_g / 100) : null;
+  const bad = (v: number | null) => v !== null && !Number.isFinite(v);
+  if (
+    Object.values(totals).some((t) => bad(t.known)) ||
+    Object.values(perServing ?? {}).some(bad) ||
+    Object.values(per100g ?? {}).some(bad)
+  ) {
+    // An overflowing sum or division is refused as a whole, never shown.
+    return {
+      ok: false,
+      errors: [...errors, { ingredient: recipe.name, error: NON_FINITE_RESULT }],
+      totals: {},
+      per_serving: null,
+      per_100g_cooked: null,
+    };
+  }
+  return { ok: errors.length === 0, errors, totals, per_serving: perServing, per_100g_cooked: per100g };
 }
 
 /** Editing a recipe yields a new version; history keeps the old one untouched. */
