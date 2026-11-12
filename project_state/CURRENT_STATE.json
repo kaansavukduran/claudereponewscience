@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R014",
+    "contract": "v0.32",
+    "run_id": "R014@v0.32",
+    "slice": "Review fixes for documents",
+    "goal": "The chip group and kinds read clearly in both languages; the Timeline line, two live versions and a narrow Turkish layout are tested; the web smoke opens Documents.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "5e5aa26",
+    "app_revision": null,
+    "started_at": "2026-11-12T11:40:00Z",
+    "finished_at": null,
+    "scope": [
+      "'Kind of document' / 'Belge türü' group label",
+      "'letter from a doctor' / 'doktor yazısı'",
+      "tests: Timeline line (URL kept as text), two live versions both listed, 320 dp Turkish 2x text screen and sheet",
+      "web smoke opens Documents in all runs"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED by an Opus reviewer (read-only): no blocking findings",
+      "IMPLEMENTED by the lead",
+      "TESTED: documents tests"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "F010-S1"
+    ],
+    "review": "Opus reviewer: no blocking; should-fix 1-5 fixed; smoke nit fixed",
+    "out_of_scope": []
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

@@ -377,16 +377,16 @@ for (const { label, viewport, locale, today: todayLabel, timeline: timelineLabel
     }
   }
   // T003: the areas built since F007 (Medications, Nutrition, Activity,
-  // Conditions, Preventive) and Today's Sleep and "How you feel" cards. Every run sees
+  // Conditions, Preventive, Documents) and Today's Sleep and "How you feel" cards. Every run sees
   // each title and empty state; the English runs also add one activity and
   // one condition. The network and console checks below cover these steps.
   {
     const en = locale === 'en-US';
     const A = en
       ? { meds: 'Medications', medsTitle: 'Medicines and supplements', medsNone: /^Nothing added yet\. Add a medicine or supplement/, more: 'More', none: 'Nothing recorded yet.', sleep: 'Sleep', feel: 'How you feel',
-          areas: [['Nutrition', 'Nutrition'], ['Activity', 'Activity'], ['Conditions', 'Conditions and symptoms'], ['Preventive', 'Vaccinations, screenings, check-ups']] }
+          areas: [['Nutrition', 'Nutrition'], ['Activity', 'Activity'], ['Conditions', 'Conditions and symptoms'], ['Preventive', 'Vaccinations, screenings, check-ups'], ['Documents', 'Documents']] }
       : { meds: 'İlaçlar', medsTitle: 'İlaçlar ve takviyeler', medsNone: /^Henüz bir şey eklenmedi\. Başlamak için/, more: 'Diğer', none: 'Henüz kayıt yok.', sleep: 'Uyku', feel: 'Nasıl hissediyorsun',
-          areas: [['Nutrition', 'Beslenme', 'Beslenme'], ['Activity', 'Aktivite', 'Aktivite'], ['Conditions', 'Durumlar', 'Durumlar ve belirtiler'], ['Preventive', 'Koruyucu', 'Aşılar, taramalar, kontroller']].map(([, item, title]) => [item, title]) };
+          areas: [['Nutrition', 'Beslenme', 'Beslenme'], ['Activity', 'Aktivite', 'Aktivite'], ['Conditions', 'Durumlar', 'Durumlar ve belirtiler'], ['Preventive', 'Koruyucu', 'Aşılar, taramalar, kontroller'], ['Documents', 'Belgeler', 'Belgeler']].map(([, item, title]) => [item, title]) };
     // A secondary area: under "More areas" on the rail, or in the "More" sheet.
     const openArea = async (item) => {
       const onRail = page.getByRole('button', { name: item, exact: true }).first();

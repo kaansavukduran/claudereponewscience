@@ -3,9 +3,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:human_health_os/src/domain/records/health_record.dart';
+import 'package:human_health_os/src/features/timeline/timeline_screen.dart'
+    show fmtValue;
 import 'package:human_health_os/src/l10n/strings.dart';
 import 'package:human_health_os/src/navigation/destinations.dart';
 
+import 'f001_contract_test.dart' show boot;
 import 'f004_labs_test.dart' show interpretive;
 import 'f007_measurements_test.dart' show settle, tapKey;
 import 'u005_settings_test.dart' show launchWith;
@@ -118,7 +121,7 @@ void main() {
       'saklandığı yer: evdeki dosyada',
     );
     expect(tr.docTitle, 'Belgeler');
-    expect(tr.docNature(DocumentType.letter), 'mektup');
+    expect(tr.docNature(DocumentType.letter), 'doktor yazısı');
     expect(tr.docNature(DocumentType.prescription), 'reçete');
     expect(tr.docNature(DocumentType.imaging), 'görüntüleme');
     expect(tr.docNature(DocumentType.vaccinationCard), 'aşı kartı');
@@ -154,5 +157,84 @@ void main() {
         expect(interpretive.hasMatch(w), isFalse, reason: w);
       }
     }
+  });
+
+  test('R014: the Timeline line keeps every field as typed', () {
+    final r = HealthRecord(
+      id: 'x',
+      profileId: 'p',
+      kind: RecordKind.documentReference,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: DateTime.utc(2026, 11, 12, 9),
+      recordedAt: DateTime.utc(2026, 11, 12, 9),
+      details: const DocumentReferenceDetails(
+        title: 'Discharge summary',
+        nature: DocumentType.letter,
+        date: '2025-03',
+        issuer: 'City clinic',
+        whereKept: 'https://example.org/folder',
+      ),
+      schemaVersion: 13,
+    );
+    expect(
+      fmtValue(S(AppLang.en), r),
+      'Discharge summary · letter from a doctor · dated: 2025-03 · '
+      'from: City clinic · kept: https://example.org/folder',
+    );
+  });
+
+  testWidgets('R014: 320 dp wide, Turkish, text ×2: the Documents screen and '
+      'its sheet lay out without overflow', (tester) async {
+    await boot(
+      tester,
+      size: const Size(320, 640),
+      textScale: 2.0,
+      locale: const Locale('tr'),
+    );
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('nav-bar')),
+        matching: find.text('Diğer'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    final item = find.descendant(
+      of: find.byKey(const ValueKey('more-sheet')),
+      matching: find.text('Belgeler'),
+    );
+    await tester.scrollUntilVisible(
+      item,
+      100,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('more-sheet')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.ensureVisible(item);
+    await tester.pumpAndSettle();
+    await tester.tap(find.ancestor(of: item, matching: find.byType(ListTile)));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('screen-documents')), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    await tester.scrollUntilVisible(
+      find.byKey(const ValueKey('doc-add')),
+      100,
+      scrollable: find
+          .descendant(
+            of: find.byKey(const ValueKey('screen-documents')),
+            matching: find.byType(Scrollable),
+          )
+          .first,
+    );
+    await tester.tap(find.byKey(const ValueKey('doc-add')));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('doc-save')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

@@ -529,10 +529,10 @@ class S {
     'Where you keep it (optional, e.g. paper folder at home)',
     'Nerede saklıyorsun (isteğe bağlı, ör. evdeki dosyada)',
   );
-  String get docNatureLabel => _t('It is a', 'Bu bir');
+  String get docNatureLabel => _t('Kind of document', 'Belge türü');
   String docNature(DocumentType t) => switch (t) {
     DocumentType.labReport => _t('lab report', 'tahlil raporu'),
-    DocumentType.letter => _t('letter', 'mektup'),
+    DocumentType.letter => _t('letter from a doctor', 'doktor yazısı'),
     DocumentType.prescription => _t('prescription', 'reçete'),
     DocumentType.imaging => _t('imaging', 'görüntüleme'),
     DocumentType.vaccinationCard => _t('vaccination card', 'aşı kartı'),

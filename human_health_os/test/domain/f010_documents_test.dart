@@ -216,4 +216,41 @@ void main() {
     );
     expect(await svc.documents(me), hasLength(1));
   });
+
+  test('R014: two live versions of one reference are both listed; neither '
+      'is chosen', () async {
+    final (svc, me, repo) = await fresh();
+    final r = await svc.recordDocument(
+      profileId: me,
+      title: 'Report',
+      nature: DocumentType.other,
+    );
+    HealthRecord version(String id, String title) => HealthRecord(
+      id: id,
+      profileId: me,
+      kind: RecordKind.documentReference,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: r.observedAt,
+      recordedAt: r.recordedAt.add(const Duration(minutes: 1)),
+      details: DocumentReferenceDetails(
+        title: title,
+        nature: DocumentType.other,
+      ),
+      supersedesId: r.id,
+      amendReason: AmendReason.correction,
+      schemaVersion: 13,
+    );
+    // Two devices corrected the same entry (e.g. after a restore or sync).
+    await repo.appendRecord(version('a', 'Report A'));
+    await repo.appendRecord(version('b', 'Report B'));
+    final shown = await svc.documents(me);
+    expect(
+      {for (final d in shown) (d.details! as DocumentReferenceDetails).title},
+      {'Report A', 'Report B'},
+    );
+  });
 }
