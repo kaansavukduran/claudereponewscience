@@ -3,9 +3,46 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "U030",
+    "contract": "v0.32",
+    "run_id": "U030@v0.32",
+    "slice": "AIONIA v1.2 audit and design pass: design brief, information architecture, tokens, responsive and accessibility QA on every main screen, regression tests, PASS/FAIL/NOT TESTED report",
+    "goal": "Every main screen is checked on small phone, large phone, tablet, desktop and web, light and dark, Turkish and English, 200% text; defects are fixed with regression tests; results are reported as PASS/FAIL/NOT TESTED.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "9a2d989",
+    "app_revision": null,
+    "started_at": "2026-11-12T12:45:00Z",
+    "finished_at": null,
+    "scope": [
+      "docs/AIONIA_STANDARD.md, docs/DESIGN_BRIEF.md",
+      "screen QA matrix (Playwright on the web build)",
+      "design-system and information-architecture audit",
+      "fixes with regression tests"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "standard v1.2 read from Drive; applicability recorded"
+    ],
+    "last_verified_gate": null,
+    "next_action": "QA matrix and design audit (Opus agents)",
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "Real phones, tablets, Windows and macOS are not available in this container: those checks are NOT TESTED unless CI or the owner runs them.",
+    "depends_on": [
+      "F015-L2"
+    ],
+    "review": null,
+    "out_of_scope": [
+      "pixel art, lore, gamepad (games only under AIONIA §11/§14.12)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",
