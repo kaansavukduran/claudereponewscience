@@ -26,6 +26,7 @@ class DerivedScreen extends StatefulWidget {
 
 class _DerivedScreenState extends State<DerivedScreen> {
   List<DerivedRow>? _rows;
+  bool _failed = false;
 
   @override
   void initState() {
@@ -36,12 +37,20 @@ class _DerivedScreenState extends State<DerivedScreen> {
   Future<void> _load() async {
     final svc = widget.services.heartbeat;
     final me = widget.services.self.id;
-    final rows = derivedFromRecords(
-      weights: await svc.weightTimeline(me),
-      heights: await svc.measurementTimeline(me, RecordKind.height),
-      waists: await svc.measurementTimeline(me, RecordKind.waistCircumference),
-    );
-    if (mounted) setState(() => _rows = rows);
+    try {
+      final rows = derivedFromRecords(
+        weights: await svc.weightTimeline(me),
+        heights: await svc.measurementTimeline(me, RecordKind.height),
+        waists: await svc.measurementTimeline(
+          me,
+          RecordKind.waistCircumference,
+        ),
+      );
+      if (mounted) setState(() => _rows = rows);
+    } on Object {
+      // The records could not be read: said in words, never a spinner forever.
+      if (mounted) setState(() => _failed = true);
+    }
   }
 
   @override
@@ -51,7 +60,15 @@ class _DerivedScreenState extends State<DerivedScreen> {
     final rows = _rows;
     return Scaffold(
       appBar: AppBar(title: Text(s.derivedTitle)),
-      body: rows == null
+      body: _failed
+          ? Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                s.derivedReadFailed,
+                key: const ValueKey('derived-failed'),
+              ),
+            )
+          : rows == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               key: const ValueKey('screen-derived'),

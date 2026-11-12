@@ -163,4 +163,57 @@ void main() {
     expect(bmi.unresolved, [RecordKind.height]);
     expect(bmi.needs, isEmpty);
   });
+
+  test('R013: a conflict between a measured and a not-measured version is '
+      'not settled by dropping the not-measured one', () {
+    final rows = derivedFromRecords(
+      weights: tl([
+        rec('w', RecordKind.bodyWeight, 80, at: d1),
+        rec(
+          'wa',
+          RecordKind.bodyWeight,
+          81,
+          at: d1,
+          supersedes: 'w',
+          reason: AmendReason.correction,
+        ),
+        rec(
+          'wb',
+          RecordKind.bodyWeight,
+          null,
+          at: d1.add(const Duration(minutes: 1)),
+          supersedes: 'w',
+          reason: AmendReason.correction,
+        ),
+      ]),
+      heights: tl([rec('h', RecordKind.height, 180, at: d1)]),
+      waists: const [],
+    );
+    final bmi = byId(rows, 'DERIVED-BMI-1');
+    expect(bmi.result.value, isNull);
+    expect(bmi.unresolved, [RecordKind.bodyWeight]);
+  });
+
+  test('R013: the newest height withdrawn as entered in error: the earlier '
+      'one is used', () {
+    final rows = derivedFromRecords(
+      weights: tl([rec('w', RecordKind.bodyWeight, 80, at: d2)]),
+      heights: tl([
+        rec('h1', RecordKind.height, 180, at: d1),
+        rec('h2', RecordKind.height, 190, at: d2),
+        rec(
+          'x',
+          RecordKind.height,
+          null,
+          at: d2,
+          supersedes: 'h2',
+          reason: AmendReason.enteredInError,
+        ),
+      ]),
+      waists: const [],
+    );
+    final bmi = byId(rows, 'DERIVED-BMI-1');
+    expect([for (final u in bmi.used) u.record.id], ['w', 'h1']);
+    expect(bmi.result.inputs['height_m'], 1.8);
+  });
 }

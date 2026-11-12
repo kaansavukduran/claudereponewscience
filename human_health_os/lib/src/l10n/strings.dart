@@ -1063,6 +1063,10 @@ class S {
 
   // Worked out from your records (U029, D-039): a number and how it was
   // worked out; never a category, band or advice.
+  String get derivedReadFailed => _t(
+    'Your records could not be read just now. Nothing was changed.',
+    'Kayıtların şu an okunamadı. Hiçbir şey değiştirilmedi.',
+  );
   String get derivedTitle =>
       _t('Worked out from your records', 'Kayıtlarından hesaplananlar');
   String get derivedTileHint => _t(
@@ -1078,7 +1082,7 @@ class S {
   String get derivedNotMeasured =>
       _t('worked out, not measured', 'hesaplandı, ölçülmedi');
   String derivedModelName(String modelId) => switch (modelId) {
-    'DERIVED-BMI-1' => _t('Body mass index (BMI)', 'Beden kitle indeksi (BKİ)'),
+    'DERIVED-BMI-1' => _t('Body mass index (BMI)', 'Vücut kitle indeksi (VKİ)'),
     'DERIVED-WAIST_HEIGHT_RATIO-1' => _t(
       'Waist-to-height ratio',
       'Bel-boy oranı',
@@ -1113,7 +1117,7 @@ class S {
           _ => text,
         };
   String derivedNeeds(List<String> kinds) =>
-      _t('needs: ${kinds.join(', ')}', 'gerekiyor: ${kinds.join(', ')}');
+      _t('needs: ${kinds.join(', ')}', 'eksik: ${kinds.join(', ')}');
   String derivedUnresolved(List<String> kinds) => _t(
     'not worked out: choose one of two versions on the Timeline first: '
         '${kinds.join(', ')}',
@@ -1122,12 +1126,12 @@ class S {
   );
   String derivedRefused(String code) => _t(
     'not worked out: the formula did not accept these records ($code)',
-    'hesaplanmadı: formül bu kayıtları kabul etmedi ($code)',
+    'hesaplanmadı: formül bu kayıtları kabul etmedi (kod: $code)',
   );
   String derivedDaysApart(int days) => _t(
-    'These records were made $days ${days == 1 ? 'day' : 'days'} apart; '
+    'These records were measured $days ${days == 1 ? 'day' : 'days'} apart; '
         'each date is shown.',
-    'Bu kayıtlar arasında $days gün var; her birinin tarihi gösteriliyor.',
+    'Bu ölçümler arasında $days gün var; her birinin tarihi gösteriliyor.',
   );
   String derivedSpoken(String name, String value, String unit) => _t(
     '$name: $value $unit, worked out, not measured',

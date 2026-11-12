@@ -20,11 +20,19 @@ Future<void> record(
   AppServices services, {
   String? kg,
   String? heightCm,
+  String? waistCm,
 }) async {
   await tester.runAsync(() async {
     final me = services.self.id;
     if (kg != null) {
       await services.heartbeat.recordWeightKg(profileId: me, input: kg);
+    }
+    if (waistCm != null) {
+      await services.heartbeat.recordMeasurement(
+        profileId: me,
+        kind: RecordKind.waistCircumference,
+        input: MeasurementInput(value: waistCm),
+      );
     }
     if (heightCm != null) {
       await services.heartbeat.recordMeasurement(
@@ -149,7 +157,7 @@ void main() {
             ),
           )
           .data,
-      'gerekiyor: bel çevresi',
+      'eksik: bel çevresi',
     );
     for (final t in [...early, ...pageTexts(tester)]) {
       expect(interpretive.hasMatch(t), isFalse, reason: t);
@@ -194,5 +202,19 @@ void main() {
         expect(measurementJudged.hasMatch(t), isFalse, reason: t);
       }
     }
+  });
+
+  testWidgets('R013: waist 90 and height 180 give a ratio of 0.50 with two '
+      'decimals, read aloud as worked out', (tester) async {
+    final services = await launch(tester);
+    await record(tester, services, heightCm: '180', waistCm: '90');
+    await openDerived(tester);
+    const key = 'derived-DERIVED-WAIST_HEIGHT_RATIO-1';
+    final value = tester.widget<Text>(find.byKey(const ValueKey('$key-value')));
+    expect(value.data, startsWith('0.50'));
+    expect(
+      find.bySemanticsLabel(RegExp('Waist-to-height ratio: 0.50.*worked out')),
+      findsOneWidget,
+    );
   });
 }

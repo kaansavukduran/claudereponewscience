@@ -3,9 +3,48 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "R013",
+    "contract": "v0.32",
+    "run_id": "R013@v0.32",
+    "slice": "Review fixes for derived values",
+    "goal": "A conflict is never settled by the app; the waist ratio and its spoken label are tested; a failed read is said in words; natural Turkish.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "6f20879",
+    "app_revision": null,
+    "started_at": "2026-11-12T09:00:00Z",
+    "finished_at": null,
+    "scope": [
+      "conflict guard before filtering not-measured heads",
+      "load error message",
+      "VKİ, 'eksik:', '(kod: …)', 'measured N days apart'",
+      "tests: measured vs not-measured conflict, withdrawn newest height, waist ratio 0.50 and spoken label; guard mutation caught"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "REVIEWED by an Opus reviewer (read-only)",
+      "IMPLEMENTED by the lead",
+      "TESTED: derived tests; guard mutation caught"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": null,
+    "depends_on": [
+      "U029"
+    ],
+    "review": "Opus reviewer: blocking conflict rule fixed; should-fix 2-6 fixed",
+    "out_of_scope": [
+      "calendar-day gap wording (nit)"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

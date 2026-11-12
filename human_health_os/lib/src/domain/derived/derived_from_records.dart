@@ -89,6 +89,12 @@ double? _valueIn(HealthRecord r, String unit) {
 ) {
   for (final e in entries) {
     if (!e.isLive) continue;
+    // Two live versions of one fact are never settled here, not even by
+    // dropping a "not measured" one: the person chooses on the Timeline.
+    if (e.status == EntryStatus.conflict &&
+        e.heads.any((h) => _valueIn(h, unit) != null)) {
+      return (record: null, conflict: true);
+    }
     final measured = [
       for (final h in e.heads)
         if (_valueIn(h, unit) != null) h,
