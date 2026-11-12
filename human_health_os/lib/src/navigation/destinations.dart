@@ -18,6 +18,7 @@ enum DestinationId {
   activity,
   conditions,
   preventive,
+  documents,
   compare,
   learn,
 }
@@ -193,6 +194,20 @@ const List<Destination> destinations = [
         'Unknown history is not "never done". Screening is not diagnosis.',
     principleTr:
         'Bilinmeyen geçmiş "hiç yapılmadı" değildir. Tarama tanı değildir.',
+  ),
+  Destination(
+    id: DestinationId.documents,
+    en: 'Documents',
+    tr: 'Belgeler',
+    icon: Icons.description_outlined,
+    selectedIcon: Icons.description,
+    purposeEn: 'A list of the health documents you keep and where you keep them. Human OS never reads, opens or stores them.',
+    purposeTr: 'Sakladığın sağlık belgelerinin ve onları nerede sakladığının listesi. Human OS onları asla okumaz, açmaz ya da saklamaz.',
+    // Built in F010 slice 1 (references only; attachments and reviewed
+    // extraction come later).
+    plannedForge: null,
+    principleEn: 'A reference is not the document; Human OS does not read it.',
+    principleTr: 'Kayıt belgenin kendisi değildir; Human OS onu okumaz.',
   ),
   Destination(
     id: DestinationId.compare,

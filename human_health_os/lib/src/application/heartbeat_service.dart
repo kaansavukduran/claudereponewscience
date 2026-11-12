@@ -1008,6 +1008,79 @@ class HeartbeatService {
     return record;
   }
 
+  /// Records a reference to a document the person keeps (F010 slice 1):
+  /// its title, kind, own date, issuer and where it is kept, each as typed.
+  /// The app never reads, opens, uploads or stores the document.
+  /// [correcting] makes it a new version of that entry, keeping its time.
+  Future<HealthRecord> recordDocument({
+    required String profileId,
+    required String title,
+    required DocumentType nature,
+    String date = '',
+    String issuer = '',
+    String whereKept = '',
+    String? correcting,
+  }) async {
+    final target = correcting == null
+        ? null
+        : await _currentTarget(profileId, correcting);
+    if (target != null && target.kind != RecordKind.documentReference) {
+      throw const InputError('TARGET_WRONG_KIND');
+    }
+    String? opt(String v) => v.trim().isEmpty ? null : v.trim();
+    final details = DocumentReferenceDetails(
+      title: title.trim(),
+      nature: nature,
+      date: opt(date),
+      issuer: opt(issuer),
+      whereKept: opt(whereKept),
+    );
+    final problem = details.problem();
+    if (problem != null) {
+      throw InputError(
+        problem.endsWith('_TOO_LONG') ? 'TEXT_TOO_LONG' : 'EMPTY',
+        switch (problem) {
+          final p when p.startsWith('DOCUMENT_DATE') => 'date',
+          final p when p.startsWith('DOCUMENT_ISSUER') => 'issuer',
+          final p when p.startsWith('DOCUMENT_WHERE') => 'whereKept',
+          _ => 'title',
+        },
+      );
+    }
+    final now = clock.nowUtc();
+    final record = HealthRecord(
+      id: _ids.newId(),
+      profileId: profileId,
+      kind: RecordKind.documentReference,
+      state: RecordState.reported,
+      valueStatus: ValueStatus.present,
+      quantity: null,
+      originalText: null,
+      provenance: const Provenance.manual(),
+      observedAt: target?.observedAt ?? now,
+      recordedAt: now,
+      details: details,
+      supersedesId: target?.id,
+      amendReason: target == null ? null : AmendReason.correction,
+      schemaVersion: HealthRecord.writeSchemaFor(RecordKind.documentReference),
+    );
+    await repository.appendRecord(record);
+    return record;
+  }
+
+  /// The live document references, the latest recorded first.
+  Future<List<HealthRecord>> documents(String profileId) async {
+    final all = await repository.records(
+      profileId,
+      kind: RecordKind.documentReference,
+    );
+    return [
+      for (final e in buildTimeline(all))
+        for (final h in e.heads)
+          if (h.details is DocumentReferenceDetails) h,
+    ]..sort((a, b) => b.recordedAt.compareTo(a.recordedAt));
+  }
+
   /// The live preventive entries, the latest recorded first.
   Future<List<HealthRecord>> preventives(String profileId) async {
     final all = await repository.records(

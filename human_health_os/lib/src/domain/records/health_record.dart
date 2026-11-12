@@ -124,7 +124,13 @@ enum RecordKind {
   /// A preventive item (vaccination, screening, check-up) as the person
   /// names it, done, planned or unsure (F009 slice 2, record schema 12).
   /// [PreventiveEntryDetails]. Planned is never done; no result is stored.
-  preventiveEntry('preventive.entry', minSchema: 12);
+  preventiveEntry('preventive.entry', minSchema: 12),
+
+  /// A reference to a document the person keeps (F010 slice 1, record
+  /// schema 13): what it is, its date and issuer as typed, and where it is
+  /// kept. [DocumentReferenceDetails]. A reference is not the document: no
+  /// file bytes, no reading, no extraction.
+  documentReference('document.reference', minSchema: 13);
 
   const RecordKind(this.code, {this.minSchema = 1, this.unit});
   final String code;
@@ -156,7 +162,8 @@ enum RecordKind {
     foodEntry ||
     activityEntry ||
     conditionEntry ||
-    preventiveEntry => false,
+    preventiveEntry ||
+    documentReference => false,
   };
 
   /// The F008 medication kinds.
@@ -174,7 +181,8 @@ enum RecordKind {
       this == foodEntry ||
       this == activityEntry ||
       this == conditionEntry ||
-      this == preventiveEntry;
+      this == preventiveEntry ||
+      this == documentReference;
 
   /// The `type` of the [RecordDetails] a structured kind carries.
   String? get detailsType => switch (this) {
@@ -188,6 +196,7 @@ enum RecordKind {
     activityEntry => ActivityEntryDetails.typeTag,
     conditionEntry => ConditionEntryDetails.typeTag,
     preventiveEntry => PreventiveEntryDetails.typeTag,
+    documentReference => DocumentReferenceDetails.typeTag,
     _ => null,
   };
 
@@ -351,7 +360,7 @@ class HealthRecord {
   ///   unchanged.
   ///
   /// The newest schema this app reads; a newer one refuses the whole store.
-  static const int currentSchemaVersion = 12;
+  static const int currentSchemaVersion = 13;
 
   /// A record that needs nothing from a newer schema is written at this one
   /// (D-018): weight and lab results stay readable by the apps of F004 to
@@ -617,7 +626,8 @@ class HealthRecord {
           RecordKind.foodEntry ||
           RecordKind.activityEntry ||
           RecordKind.conditionEntry ||
-          RecordKind.preventiveEntry:
+          RecordKind.preventiveEntry ||
+          RecordKind.documentReference:
         final code = switch (details) {
           final SleepNightDetails d => d.problem(),
           final FeelingCheckInDetails d => d.problem(),
@@ -625,6 +635,7 @@ class HealthRecord {
           final ActivityEntryDetails d => d.problem(),
           final ConditionEntryDetails d => d.problem(),
           final PreventiveEntryDetails d => d.problem(),
+          final DocumentReferenceDetails d => d.problem(),
           _ => null,
         };
         if (code != null) {

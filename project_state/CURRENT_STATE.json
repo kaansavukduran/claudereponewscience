@@ -3,9 +3,48 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F010-S1",
+    "contract": "v0.32",
+    "run_id": "F010-S1@v0.32",
+    "slice": "Document references (record schema 13): what exists and where it is kept; the app never reads the document",
+    "goal": "A person keeps a list of their health documents with where each is kept; the app never opens, reads or stores a document.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "34159a7",
+    "app_revision": null,
+    "started_at": "2026-11-12T10:20:00Z",
+    "finished_at": null,
+    "scope": [
+      "record schema 13: document.reference with DocumentReferenceDetails",
+      "HeartbeatService.recordDocument (with correction) and documents",
+      "Documents screen, a new More-areas destination",
+      "compatibility tests through schema 13",
+      "D-040"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree; lead read the strings",
+      "TESTED by the implementer: 878 PASS UTC, 879 New York"
+    ],
+    "last_verified_gate": null,
+    "next_action": null,
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "The web smoke does not open Documents yet.",
+    "depends_on": [
+      "R013"
+    ],
+    "review": "lead read; independent review to follow",
+    "out_of_scope": [
+      "attachments, OCR, extraction"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

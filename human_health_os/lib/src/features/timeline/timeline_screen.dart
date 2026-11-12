@@ -126,6 +126,7 @@ String fmtValue(S s, HealthRecord r) {
   if (d is ActivityEntryDetails) return s.actLine(d);
   if (d is ConditionEntryDetails) return s.condLine(d);
   if (d is PreventiveEntryDetails) return s.prevLine(d);
+  if (d is DocumentReferenceDetails) return s.docLine(d);
   if (d is SleepNightDetails) {
     return s.sleepLine(
       fmtWhen(d.wentToBed),

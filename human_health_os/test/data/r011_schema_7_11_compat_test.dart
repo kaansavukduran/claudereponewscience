@@ -1,6 +1,7 @@
-// R011@v0.32: compatibility review of record schemas 7 to 12
+// R011@v0.32: compatibility review of record schemas 7 to 13
 // (sleep.night, self.feeling_check_in, nutrition.food_entry, activity.entry,
-// condition.entry, preventive.entry since F009-S2) next to the older kinds, on a real LogRepository:
+// condition.entry, preventive.entry since F009-S2, document.reference since
+// F010-S1) next to the older kinds, on a real LogRepository:
 // reopen, per-kind write schema, backup and restore, the schema 5 fixture,
 // refusal of a newer schema, and the D-018 upgrade checkpoint.
 import 'dart:convert';
@@ -50,6 +51,7 @@ const expectedWriteSchema = {
   RecordKind.activityEntry: 10,
   RecordKind.conditionEntry: 11,
   RecordKind.preventiveEntry: 12,
+  RecordKind.documentReference: 13,
 };
 
 const newKinds = [
@@ -59,6 +61,7 @@ const newKinds = [
   RecordKind.activityEntry,
   RecordKind.conditionEntry,
   RecordKind.preventiveEntry,
+  RecordKind.documentReference,
 ];
 
 LogRepository fileRepo(File f) => LogRepository(
@@ -67,7 +70,7 @@ LogRepository fileRepo(File f) => LogRepository(
   location: f.path,
 );
 
-/// One record of each schema 7 to 12 kind, in schema order.
+/// One record of each schema 7 to 13 kind, in schema order.
 Future<void> addNewKinds(HeartbeatService svc, String me) async {
   await svc.recordSleep(
     zone: utc,
@@ -107,9 +110,16 @@ Future<void> addNewKinds(HeartbeatService svc, String me) async {
     source: ConditionSource.fromDocument,
     when: '2027-03',
   );
+  await svc.recordDocument(
+    profileId: me,
+    title: 'Blutbild Befund',
+    nature: DocumentType.labReport,
+    date: '2025-03',
+    whereKept: 'Ordner zu Hause',
+  );
 }
 
-/// One record of every kind (schemas 3 to 12), oldest schema first.
+/// One record of every kind (schemas 3 to 13), oldest schema first.
 Future<void> addEveryKind(HeartbeatService svc, String me) async {
   await svc.recordWeightKg(profileId: me, input: '78,4');
   await svc.recordLab(
@@ -184,7 +194,7 @@ void main() {
     return (repo, svc, me);
   }
 
-  test('(a) a store with one record of every kind of schemas 3 to 12 '
+  test('(a) a store with one record of every kind of schemas 3 to 13 '
       'survives close and reopen with identical records', () async {
     final (repo, _, me) = await openFilled();
     final before = await repo.records(me);
@@ -242,7 +252,7 @@ void main() {
         expect(data.containsKey('details'), isFalse);
       }
     }
-    expect(HealthRecord.currentSchemaVersion, 12);
+    expect(HealthRecord.currentSchemaVersion, 13);
     for (final k in newKinds) {
       expect(k.minSchema, expectedWriteSchema[k]);
     }
@@ -273,6 +283,7 @@ void main() {
       10,
       11,
       12,
+      13,
     ]);
     expect(manifest['record_count'], RecordKind.values.length);
     await files.save(DataFileKind.backup, backupFileName('r011', t0), bundle);
@@ -336,16 +347,16 @@ void main() {
     // parseVaultLog/HealthRecord.fromJson take no "max schema" parameter,
     // so an app limited to an older schema cannot be simulated here. What is
     // tested instead is the same gate one step up: a store holding a record
-    // one schema newer than this app (13) is refused as a whole, and a
-    // schema 7 to 12 kind labelled with an older schema is never accepted.
+    // one schema newer than this app (14) is refused as a whole, and a
+    // schema 7 to 13 kind labelled with an older schema is never accepted.
     String bumped(String log, int from, int to) =>
         log.replaceFirst('"schema_version":$from,', '"schema_version":$to,');
 
-    test('a store holding a schema 13 record refuses to open, by parse, by '
+    test('a store holding a schema 14 record refuses to open, by parse, by '
         'the repository and by restore', () async {
       await openFilled();
       final log = vaultFile.readAsStringSync();
-      final newer = bumped(log, 12, 13);
+      final newer = bumped(log, 13, 14);
       expect(newer, isNot(log));
       expect(
         () => parseVaultLog(newer),
@@ -369,7 +380,7 @@ void main() {
         sourceRevision: 'r011',
         createdAt: t0,
       );
-      // A bundle whose payload holds a schema 13 record (manifest rebuilt
+      // A bundle whose payload holds a schema 14 record (manifest rebuilt
       // around it so only the schema gate can refuse it).
       final d = (jsonDecode(bundle) as Map).cast<String, Object?>();
       final m = (d['manifest']! as Map).cast<String, Object?>();
@@ -389,7 +400,7 @@ void main() {
     });
 
     test(
-      'a schema 7 to 12 kind under an older schema is skipped, never read',
+      'a schema 7 to 13 kind under an older schema is skipped, never read',
       () async {
         await openFilled();
         var log = vaultFile.readAsStringSync();
@@ -417,7 +428,7 @@ void main() {
     );
   });
 
-  group('(f) upgrade checkpoint (D-018) for schemas 7 to 12', () {
+  group('(f) upgrade checkpoint (D-018) for schemas 7 to 13', () {
     Future<(LogRepository, HeartbeatService, String)> withWeight() async {
       final repo = fileRepo(vaultFile);
       await repo.open();
@@ -479,6 +490,14 @@ void main() {
         ),
       );
       expect(seen, [1, 3, 5, 7, 9, 11], reason: '11 to 12');
+      await twice(
+        () => svc.recordDocument(
+          profileId: me,
+          title: 'discharge letter',
+          nature: DocumentType.letter,
+        ),
+      );
+      expect(seen, [1, 3, 5, 7, 9, 11, 13], reason: '12 to 13');
       expect(sizes, [for (final n in seen) n + 2], reason: 'header + profile');
       // Older kinds after the newest schema never ask again.
       await svc.recordWeightKg(profileId: me, input: '71');
@@ -487,7 +506,7 @@ void main() {
         kind: RecordKind.height,
         input: const MeasurementInput(value: '172'),
       );
-      expect(seen, hasLength(6));
+      expect(seen, hasLength(7));
 
       // After a reopen the stored schema is read back: still no checkpoint.
       final reopened = fileRepo(vaultFile);
@@ -507,17 +526,15 @@ void main() {
       expect(again, 0);
     });
 
-    test('a jump straight to schema 12 makes one checkpoint; the skipped '
-        'schemas 7 to 11 then make none', () async {
+    test('a jump straight to schema 13 makes one checkpoint; the skipped '
+        'schemas 7 to 12 then make none', () async {
       final (repo, svc, me) = await withWeight();
       var calls = 0;
       repo.beforeSchemaUpgrade = () async => calls++;
-      await svc.recordPreventive(
+      await svc.recordDocument(
         profileId: me,
-        name: 'dental check',
-        nature: PreventiveType.checkup,
-        status: PreventiveStatus.unsure,
-        source: ConditionSource.selfReported,
+        title: 'vaccination card',
+        nature: DocumentType.vaccinationCard,
       );
       expect(calls, 1);
       await addNewKinds(svc, me);
@@ -556,6 +573,11 @@ void main() {
             profileId: me,
             what: 'yoga',
           ),
+          RecordKind.documentReference => svc.recordDocument(
+            profileId: me,
+            title: 'x-ray report',
+            nature: DocumentType.imaging,
+          ),
           RecordKind.preventiveEntry => svc.recordPreventive(
             profileId: me,
             name: 'colon screening',
@@ -589,7 +611,7 @@ void main() {
     });
 
     test(
-      'an empty store never checkpoints, also for schemas 11 and 12',
+      'an empty store never checkpoints, also for schemas 11 to 13',
       () async {
         final repo = fileRepo(vaultFile);
         await repo.open();
@@ -597,8 +619,13 @@ void main() {
         final me = (await svc.ensureSelfProfile()).id;
         var calls = 0;
         repo.beforeSchemaUpgrade = () async => calls++;
-        // The first record is at schema 12; an older kind after it needs no
+        // The first record is at schema 13; older kinds after it need no
         // upgrade either.
+        await svc.recordDocument(
+          profileId: me,
+          title: 'prescription',
+          nature: DocumentType.prescription,
+        );
         await svc.recordPreventive(
           profileId: me,
           name: 'eye check',

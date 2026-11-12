@@ -499,7 +499,53 @@ class S {
       'Preventive item',
       'Koruyucu sağlık kaydı',
     ),
+    RecordKind.documentReference => _t('Document', 'Belge'),
   };
+
+  // Documents (F010 slice 1): a reference to a document the person keeps,
+  // each field as typed. The app never reads, opens, uploads or stores the
+  // document.
+  String get docTitle => _t('Documents', 'Belgeler');
+  String get docIntro => _t(
+    'A list of the health documents you keep: what each one is and where you keep it. Human OS never reads, opens, uploads or stores the document itself; it keeps only what you type here.',
+    'Sakladığın sağlık belgelerinin listesi: her birinin ne olduğu ve nerede durduğu. Human OS belgenin kendisini asla okumaz, açmaz, yüklemez ya da saklamaz; yalnızca buraya yazdıklarını tutar.',
+  );
+  String get docAdd => _t('Add a document', 'Belge ekle');
+  String get docCorrectTitle => _t('Correct this entry', 'Bu kaydı düzelt');
+  String get docNone => _t('Nothing recorded yet.', 'Henüz kayıt yok.');
+  String get docTitleField => _t(
+    'Title, in your words (e.g. blood test report)',
+    'Başlık, kendi sözlerinle (ör. kan tahlili raporu)',
+  );
+  String get docDate => _t(
+    'Date on the document (optional, e.g. 2025-03)',
+    'Belgenin tarihi (isteğe bağlı, ör. 2025-03)',
+  );
+  String get docIssuer => _t(
+    'Who issued it (optional, e.g. a clinic)',
+    'Kimin verdiği (isteğe bağlı, ör. bir klinik)',
+  );
+  String get docWhere => _t(
+    'Where you keep it (optional, e.g. paper folder at home)',
+    'Nerede saklıyorsun (isteğe bağlı, ör. evdeki dosyada)',
+  );
+  String get docNatureLabel => _t('It is a', 'Bu bir');
+  String docNature(DocumentType t) => switch (t) {
+    DocumentType.labReport => _t('lab report', 'tahlil raporu'),
+    DocumentType.letter => _t('letter', 'mektup'),
+    DocumentType.prescription => _t('prescription', 'reçete'),
+    DocumentType.imaging => _t('imaging', 'görüntüleme'),
+    DocumentType.vaccinationCard => _t('vaccination card', 'aşı kartı'),
+    DocumentType.other => _t('other', 'diğer'),
+  };
+  String docLine(DocumentReferenceDetails d) => [
+    d.title,
+    docNature(d.nature),
+    if (d.date != null) _t('dated: ${d.date}', 'tarihi: ${d.date}'),
+    if (d.issuer != null) _t('from: ${d.issuer}', 'veren: ${d.issuer}'),
+    if (d.whereKept != null)
+      _t('kept: ${d.whereKept}', 'saklandığı yer: ${d.whereKept}'),
+  ].join(' · ');
 
   // Preventive (F009 slice 2): vaccinations, screenings and check-ups as the
   // person names them; planned is never done; no result is kept; nothing is

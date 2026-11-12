@@ -30,6 +30,7 @@ abstract class RecordDetails {
     ActivityEntryDetails.typeTag => ActivityEntryDetails.fromJson(j),
     ConditionEntryDetails.typeTag => ConditionEntryDetails.fromJson(j),
     PreventiveEntryDetails.typeTag => PreventiveEntryDetails.fromJson(j),
+    DocumentReferenceDetails.typeTag => DocumentReferenceDetails.fromJson(j),
     final t => throw FormatException('Unknown details type "$t"'),
   };
 }
@@ -804,4 +805,101 @@ class PreventiveEntryDetails extends RecordDetails {
 
   @override
   int get hashCode => Object.hash(name, nature, status, source, when);
+}
+
+/// What kind of document the person says it is. Not a classification by the
+/// app: nothing is read from the document.
+enum DocumentType {
+  labReport,
+  letter,
+  prescription,
+  imaging,
+  vaccinationCard,
+  other,
+}
+
+/// A reference to a document the person keeps (F010 slice 1, record schema
+/// 13): its title as typed, what kind of document it is, its own date,
+/// issuer and where it is kept, each as typed. A reference is not the
+/// document: the app never reads, opens, uploads or stores it, keeps no file
+/// bytes and extracts nothing (source text is not a normalized
+/// interpretation).
+class DocumentReferenceDetails extends RecordDetails {
+  const DocumentReferenceDetails({
+    required this.title,
+    required this.nature,
+    this.date,
+    this.issuer,
+    this.whereKept,
+  });
+
+  static const String typeTag = 'document_reference';
+
+  /// The title as typed (e.g. "Blood test report").
+  final String title;
+  final DocumentType nature;
+
+  /// The document's own date as typed (e.g. "2025-03"); null = not given,
+  /// never a time the app invents.
+  final String? date;
+
+  /// Who issued it, as typed (e.g. a clinic name); null = not given.
+  final String? issuer;
+
+  /// Where the person keeps it, as typed (e.g. "paper folder at home");
+  /// null = not given.
+  final String? whereKept;
+
+  @override
+  String get type => typeTag;
+
+  String? problem() =>
+      MedicationDetails.text(title, 'DOCUMENT_TITLE', required: true) ??
+      MedicationDetails.text(date, 'DOCUMENT_DATE') ??
+      MedicationDetails.text(issuer, 'DOCUMENT_ISSUER') ??
+      MedicationDetails.text(whereKept, 'DOCUMENT_WHERE');
+
+  @override
+  Map<String, Object?> toJson() => {
+    'type': typeTag,
+    'title': title,
+    'nature': nature.name,
+    'date': date,
+    'issuer': issuer,
+    'where_kept': whereKept,
+  };
+
+  static String? _optional(Object? v, String what) => switch (v) {
+    null => null,
+    final String s => s,
+    final x => throw FormatException('Bad document $what "$x"'),
+  };
+
+  static DocumentReferenceDetails fromJson(Map<String, Object?> j) =>
+      DocumentReferenceDetails(
+        title: switch (j['title']) {
+          final String t => t,
+          final x => throw FormatException('Document without a title: "$x"'),
+        },
+        nature: switch (j['nature']) {
+          final String n when DocumentType.values.asNameMap().containsKey(n) =>
+            DocumentType.values.asNameMap()[n]!,
+          final x => throw FormatException('Unknown document nature "$x"'),
+        },
+        date: _optional(j['date'], 'date'),
+        issuer: _optional(j['issuer'], 'issuer'),
+        whereKept: _optional(j['where_kept'], 'where kept'),
+      );
+
+  @override
+  bool operator ==(Object other) =>
+      other is DocumentReferenceDetails &&
+      other.title == title &&
+      other.nature == nature &&
+      other.date == date &&
+      other.issuer == issuer &&
+      other.whereKept == whereKept;
+
+  @override
+  int get hashCode => Object.hash(title, nature, date, issuer, whereKept);
 }
