@@ -10,9 +10,24 @@
     "detail": "19 vectors"
   },
   {
-    "check": "nutrition_vectors(scale)",
+    "check": "nutrition_vectors",
     "status": "PASS",
-    "detail": "3 scale vectors"
+    "detail": "5 vectors (3 scale, 2 recipe)"
+  },
+  {
+    "check": "medication_safety_vectors",
+    "status": "PASS",
+    "detail": "10 vectors"
+  },
+  {
+    "check": "preventive_vectors",
+    "status": "PASS",
+    "detail": "20 vectors"
+  },
+  {
+    "check": "golden_vectors(total)",
+    "status": "PASS",
+    "detail": "73/73 vectors ran"
   },
   {
     "check": "sqlite_kernel_migrations",
