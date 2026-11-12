@@ -3,9 +3,48 @@
   "project": "Human OS / Human Health OS / Longevity App",
   "product_version": "0.1.0+1 (candidate, not a release)",
   "release_state": "CANDIDATE_UNMERGED (exact v0.26 baseline bytes not present; nothing promoted to CURRENT)",
-  "development_state": "READY",
+  "development_state": "IMPLEMENTING",
   "initialization": "INITIALIZATION_COMPLETE (Phase 0 2026-10-06; reconciled to v0.31 and to v0.32 on the same day)",
-  "active_forge": null,
+  "active_forge": {
+    "forge_id": "F015-L2",
+    "contract": "v0.32",
+    "run_id": "F015-L2@v0.32",
+    "slice": "Linux packaging: the .deb and .rpm declare the GL libraries the engine loads at runtime (libGLESv2 defect); CI installs and launches the .deb in minimal Ubuntu 22.04 and 24.04",
+    "goal": "A clean Ubuntu 22.04 or 24.04 installs the package with all it needs and the app starts.",
+    "status": "IMPLEMENTING",
+    "baseline_commit": "2eb8173",
+    "app_revision": null,
+    "started_at": "2026-11-12T13:00:00Z",
+    "finished_at": null,
+    "scope": [
+      "deb Depends adds libgles2, libgl1; rpm Requires libGLESv2.so.2 and libGL.so.1",
+      "portable README lists the libraries",
+      "CI job linux-deb-install-smoke (minimal ubuntu:22.04 and 24.04 containers, apt install, xvfb launch)",
+      "D-041; G-12 and R-15 updated"
+    ],
+    "acceptance_criteria": null,
+    "completed_steps": [
+      "IMPLEMENTED by an Opus implementer in a worktree",
+      "RUNTIME_TESTED by the implementer in debootstrap minbase chroots (22.04 and 24.04, Xvfb, Mesa software GL): unfixed deb aborts on both; fixed deb stays up 12 s; uninstall clean"
+    ],
+    "last_verified_gate": null,
+    "next_action": "push and read the linux-deb-install-smoke CI job",
+    "files_touched": [],
+    "migration_ids": null,
+    "evidence_ids": [],
+    "verified_gates": [],
+    "blocker": null,
+    "result": null,
+    "limitations": "Chroot evidence only (host kernel, no real desktop or Wayland). rpm install/launch, AppImage, Flatpak, Debian, Fedora and Nobara are BLOCKED_ENVIRONMENT here. The CI job has not run until pushed.",
+    "depends_on": [
+      "R014"
+    ],
+    "review": "lead read of the packaging diff and the CI job",
+    "out_of_scope": [
+      "signing",
+      "Windows and macOS packages"
+    ]
+  },
   "suspended_forges": [
     {
       "forge_id": "F015-L1",

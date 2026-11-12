@@ -11,7 +11,10 @@ Summary:        Human OS personal health timeline (staging preview)
 License:        LicenseRef-proprietary
 URL:            https://github.com/kaansavukduran/claudereponewscience
 ExclusiveArch:  x86_64
+# The engine dlopens these through libepoxy, so rpm auto-requires miss them (R-15).
 Requires:       libEGL.so.1()(64bit)
+Requires:       libGLESv2.so.2()(64bit)
+Requires:       libGL.so.1()(64bit)
 Requires:       hicolor-icon-theme
 
 %description

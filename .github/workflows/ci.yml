@@ -64,6 +64,40 @@ jobs:
       - run: cd .. && pnpm install --frozen-lockfile && pnpm exec playwright install --with-deps chromium && EXPECT_FLUTTER_VERSION=$EXPECTED_FLUTTER node tools/flutter_web_smoke.mjs
       - run: cd .. && node tools/flutter_appearance_smoke.mjs
 
+  linux-deb-install-smoke:
+    # F015-L2 (D-041): build the .deb on the glibc floor, then install it with
+    # apt into minimal ubuntu:22.04 and ubuntu:24.04 containers and launch it
+    # headless. The runner images already carry the GL libraries, so only a
+    # minimal userland catches an undeclared dlopen dependency (R-15).
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          flutter-version: ${{ env.FLUTTER_VERSION }}
+          channel: stable
+      - run: sudo apt-get update && sudo apt-get install -y libgtk-3-dev ninja-build clang cmake pkg-config fakeroot zstd librsvg2-bin
+      - name: Build
+        working-directory: human_health_os
+        run: |
+          flutter pub get --enforce-lockfile
+          flutter build linux --release --dart-define=APP_ENV=development --dart-define=SOURCE_REVISION=${{ github.sha }}
+      - run: tools/linux/package.sh human_health_os/build/linux/x64/release/bundle dist 0.1.0~ci${{ github.run_number }} ${{ github.sha }}
+      - run: dpkg-deb -I dist/*.deb
+      - name: Install and launch in minimal Ubuntu 22.04 and 24.04
+        run: |
+          for image in ubuntu:22.04 ubuntu:24.04; do
+            echo "== $image"
+            docker run --rm -v "$PWD:/w:ro" "$image" bash -c '
+              set -e
+              export DEBIAN_FRONTEND=noninteractive HOME=/tmp/home
+              apt-get update -q && apt-get install -y -q xvfb xauth >/dev/null
+              apt-get install -y -q /w/dist/*.deb
+              mkdir -p "$HOME"
+              xvfb-run -a bash /w/tools/linux/launch_smoke.sh deb-launch /tmp/out "$HOME" -- /usr/bin/human-health-os
+            '
+          done
+
   flutter-android:
     runs-on: ubuntu-latest
     defaults:
